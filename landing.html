@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Al amin Physics - প্রিমিয়াম ফিজিক্স লার্নিং ও কোচিং প্ল্যাটফর্ম</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <!-- Google Fonts Bangla (Hind Siliguri) -->
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Hind Siliguri', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            200: '#bfdbfe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            900: '#1e3a8a',
+                            950: '#172554',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Hind Siliguri', sans-serif; }
+        .hero-glow {
+            background: radial-gradient(ellipse at top, rgba(37, 99, 235, 0.25), transparent 70%);
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col antialiased selection:bg-blue-600 selection:text-white">
+
+    <!-- Navbar (White matching the Logo) -->
+    <header class="bg-white text-slate-800 sticky top-0 z-50 shadow-md border-b border-slate-200 transition-all">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-20">
+            <!-- Brand Logo -->
+            <a href="landing.html" class="flex items-center space-x-3 cursor-pointer select-none group">
+                <img src="logo.jpg" alt="Al amin Physics Logo" class="h-14 w-auto object-contain drop-shadow transition-transform duration-300 group-hover:scale-105"
+                     onerror="this.style.display='none'; document.getElementById('fallback-nav-logo').style.display='flex';">
+                <div id="fallback-nav-logo" class="hidden items-center gap-2">
+                    <div class="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold text-lg">
+                        <i class="fa-solid fa-atom"></i>
+                    </div>
+                    <div>
+                        <span class="text-xl font-bold text-slate-900">Al amin <span class="text-blue-600">Physics</span></span>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Nav Links -->
+            <div class="hidden md:flex items-center space-x-6 text-sm font-semibold text-slate-600">
+                <a href="#about-sir" class="hover:text-blue-600 transition hover:-translate-y-0.5">স্যার সম্পর্কে</a>
+                <a href="#batches" class="hover:text-blue-600 transition hover:-translate-y-0.5">অনলাইন ও অফলাইন ব্যাচ</a>
+                <a href="#quotes" class="hover:text-blue-600 transition hover:-translate-y-0.5">বাণী ও দর্শন</a>
+                <a href="#testimonials" class="hover:text-blue-600 transition hover:-translate-y-0.5">সাফল্যের গল্প</a>
+                <a href="index.html" class="text-blue-600 hover:text-blue-700 flex items-center gap-1 font-bold">
+                    <i class="fa-solid fa-graduation-cap"></i> স্টাডি পোর্টাল (LMS)
+                </a>
+            </div>
+
+            <!-- CTA Button -->
+            <div class="flex items-center gap-3">
+                <a href="index.html" class="hidden sm:inline-flex items-center gap-2 px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs transition border border-slate-300">
+                    <i class="fa-solid fa-book-open text-blue-600"></i> ফ্রি ক্লাস দেখুন
+                </a>
+                <a href="#batches" class="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold rounded-xl text-xs sm:text-sm shadow-md shadow-blue-500/30 hover:scale-105 transition transform flex items-center gap-1.5">
+                    <i class="fa-solid fa-rocket"></i> ভর্তি চলছে
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="relative overflow-hidden py-16 lg:py-24 bg-gradient-to-b from-slate-900 via-slate-950 to-slate-950 border-b border-slate-800">
+        <div class="absolute inset-0 hero-glow"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                
+                <!-- Text Content -->
+                <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
+                    <div class="inline-flex items-center gap-2 bg-blue-500/10 border border-blue-500/30 text-blue-400 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest shadow-sm">
+                        <i class="fa-solid fa-crown text-amber-400"></i> প্রিমিয়াম ফিজিক্স মেন্টরশিপ প্রোগ্রাম ২০২৬-২৭
+                    </div>
+                    
+                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-tight">
+                        পদার্থবিজ্ঞানকে মুখস্থ নয়, <br>
+                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-cyan-300 to-teal-300">অনুভব ও জয় করো।</span>
+                    </h1>
+                    
+                    <p class="text-base sm:text-lg text-slate-300 leading-relaxed max-w-2xl">
+                        এসএসসি (SSC), এইচএসসি (HSC) এবং ভর্তি পরীক্ষার জন্য জটিল ফিজিক্স সূত্রগুলোকে সহজ ভিজ্যুয়াল গ্রাফিক্স, লজিক্যাল অ্যানালাইসিস এবং সিক্রেট শর্টকাট টেকনিকে আয়ত্ত করান <strong class="text-white font-bold">আল আমিন স্যার</strong>।
+                    </p>
+
+                    <!-- Trust Indicators -->
+                    <div class="grid grid-cols-3 gap-4 pt-4 max-w-lg mx-auto lg:mx-0">
+                        <div class="bg-slate-900/80 p-3.5 rounded-2xl border border-slate-800 text-center hover:border-blue-500/40 transition">
+                            <span class="block text-2xl font-extrabold text-blue-400">১০+ বছর</span>
+                            <span class="text-xs text-slate-400">শিক্ষকতা অভিজ্ঞতা</span>
+                        </div>
+                        <div class="bg-slate-900/80 p-3.5 rounded-2xl border border-slate-800 text-center hover:border-blue-500/40 transition">
+                            <span class="block text-2xl font-extrabold text-blue-400">৫০০০+</span>
+                            <span class="text-xs text-slate-400">সফল শিক্ষার্থী</span>
+                        </div>
+                        <div class="bg-slate-900/80 p-3.5 rounded-2xl border border-slate-800 text-center hover:border-blue-500/40 transition">
+                            <span class="block text-2xl font-extrabold text-amber-400">৯৮%</span>
+                            <span class="text-xs text-slate-400">A+ সাফল্য হার</span>
+                        </div>
+                    </div>
+
+                    <!-- CTA Buttons -->
+                    <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-4">
+                        <a href="#batches" class="w-full sm:w-auto px-8 py-4 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-2xl shadow-xl shadow-blue-600/30 transition transform hover:-translate-y-1 text-center flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-circle-check"></i> ব্যাচে সিট বুক করুন
+                        </a>
+                        <a href="index.html" class="w-full sm:w-auto px-6 py-4 bg-slate-900 hover:bg-slate-800 text-slate-200 font-bold rounded-2xl border border-slate-800 transition text-center flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-laptop-code text-blue-400"></i> অনলাইন স্টাডি প্ল্যাটফর্ম
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Sir's Image Frame with Real Photo -->
+                <div class="lg:col-span-5 flex justify-center">
+                    <div class="relative w-full max-w-md">
+                        <!-- Glow effect -->
+                        <div class="absolute -inset-2 bg-gradient-to-r from-blue-600 to-cyan-500 rounded-3xl blur-xl opacity-30 animate-pulse"></div>
+                        
+                        <!-- Image Container -->
+                        <div class="relative bg-slate-900 rounded-3xl border-2 border-blue-500/40 overflow-hidden shadow-2xl p-2.5">
+                            <div class="aspect-[4/5] bg-gradient-to-b from-slate-800 to-slate-950 rounded-2xl overflow-hidden relative flex items-center justify-center">
+                                <img src="teacher.png" alt="আল আমিন স্যার" class="w-full h-full object-cover object-top transition-transform duration-500 hover:scale-105"
+                                     onerror="this.style.display='none'; document.getElementById('fallback-sir-box').style.display='flex';">
+                                
+                                <!-- Fallback if image fails -->
+                                <div id="fallback-sir-box" class="hidden absolute inset-0 flex-col items-center justify-center text-center p-6">
+                                    <i class="fa-solid fa-user-tie text-7xl text-blue-500/40 mb-3"></i>
+                                    <p class="text-base font-bold text-slate-300">আল আমিন স্যার</p>
+                                    <p class="text-xs text-slate-400 mt-1">জলেশ্বরীতলা, বগুড়া</p>
+                                </div>
+
+                                <div class="absolute bottom-3 left-3 right-3 bg-slate-950/85 backdrop-blur-md p-3 rounded-xl border border-white/10 text-center shadow-lg">
+                                    <h4 class="text-sm font-bold text-white">আল আমিন স্যার</h4>
+                                    <p class="text-[11px] text-blue-400 font-semibold">প্রতিষ্ঠাতা ও হেড অব ফিজিক্স • জলেশ্বরীতলা, বগুড়া</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Al Amin Sir's Quotes & Vision Section -->
+    <section id="quotes" class="py-20 bg-slate-900/50 border-b border-slate-800">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <span class="text-xs font-bold uppercase tracking-widest text-blue-400 bg-blue-500/10 px-3.5 py-1 rounded-full border border-blue-500/20">স্যার এর বাণী ও দর্শন</span>
+            
+            <div class="mt-8 relative bg-gradient-to-br from-slate-900 to-slate-950 p-8 sm:p-12 rounded-3xl border border-slate-800 shadow-2xl">
+                <i class="fa-solid fa-quote-left text-5xl text-blue-500/20 absolute top-6 left-6"></i>
+                <i class="fa-solid fa-quote-right text-5xl text-blue-500/20 absolute bottom-6 right-6"></i>
+                
+                <p class="text-xl sm:text-2xl font-semibold text-slate-200 leading-relaxed relative z-10 italic">
+                    "ফিজিক্স কোনো কঠিন বিষয় নয়; এটি হলো আমাদের চারপাশের প্রকৃতির সহজতম রূপের গাণিতিক প্রকাশ। মুখস্থ বিদ্যার ওপর নির্ভর না করে যদি কেউ কনসেপ্ট ক্লিয়ার করতে পারে, তবে ফিজিক্স তার কাছে সবচেয়ে মজার বিষয়ে পরিণত হবে।"
+                </p>
+                
+                <div class="mt-6 flex items-center justify-center gap-3">
+                    <img src="teacher.png" alt="Al amin Sir" class="w-12 h-12 rounded-full object-cover object-top border-2 border-blue-500 shadow-md">
+                    <div class="text-left">
+                        <h4 class="font-bold text-sm text-white">আল আমিন স্যার</h4>
+                        <p class="text-xs text-blue-400">বি.এসসি, এম.এসসি (পদার্থবিজ্ঞান)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Online & Offline Batches Section -->
+    <section id="batches" class="py-20 bg-slate-950">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="text-xs font-bold uppercase tracking-widest text-amber-400 bg-amber-500/10 px-3 py-1 rounded-full border border-amber-500/20">ভর্তি চলছে ২০২৬-২৭ সেশন</span>
+                <h2 class="text-3xl sm:text-4xl font-black mt-3">অফলাইন ও অনলাইন ব্যাচসমূহ</h2>
+                <p class="text-slate-400 text-sm sm:text-base mt-2">আপনার সুবিধা অনুযায়ী অফলাইন (বগুড়া) অথবা অনলাইন ক্লাসে যুক্ত হয়ে সেরা প্রস্তুতি নিন।</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                
+                <!-- Offline Batch Card (Bogura) -->
+                <div class="bg-gradient-to-b from-slate-900 to-slate-900/90 rounded-3xl p-8 border-2 border-blue-500/40 shadow-xl flex flex-col justify-between relative overflow-hidden">
+                    <div class="absolute top-0 right-0 bg-blue-600 text-white font-black text-xs px-4 py-1.5 rounded-bl-2xl uppercase tracking-wider">
+                        সরাসরি ক্লাস (বগুড়া)
+                    </div>
+                    <div>
+                        <div class="w-14 h-14 rounded-2xl bg-blue-500/20 text-blue-400 flex items-center justify-center text-2xl mb-6 border border-blue-500/30">
+                            <i class="fa-solid fa-chalkboard-user"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white mb-2">ফিউচার একাডেমি - অফলাইন ব্যাচ</h3>
+                        <p class="text-xs text-blue-400 font-semibold mb-4"><i class="fa-solid fa-location-dot mr-1"></i> জলেশ্বরীতলা, বগুড়া</p>
+                        
+                        <p class="text-slate-300 text-sm leading-relaxed mb-6">
+                            নবম-দশম ও একাদশ-দ্বাদশ শ্রেণির শিক্ষার্থীদের জন্য আল আমিন স্যারের সরাসরি তত্ত্বাবধানে সীমিত আসনে অফলাইন ব্যাচ। নিয়মিত পরীক্ষা ও ডাউট সলভিং।
+                        </p>
+
+                        <ul class="space-y-3 text-xs sm:text-sm text-slate-300 mb-8">
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-blue-400"></i> সীমিত শিক্ষার্থী (প্রতি ব্যাচে নির্দিষ্ট আসন)</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-blue-400"></i> স্যারের নিজের তৈরি প্রিন্টেড লেকচার শিট</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-blue-400"></i> উইকলি মডেল টেস্ট ও অভিভাবক আপডেট</li>
+                        </ul>
+                    </div>
+
+                    <div class="pt-6 border-t border-slate-800 flex items-center justify-between">
+                        <div>
+                            <span class="text-xs text-slate-400 block">যোগাযোগ ও সিট বুকিং:</span>
+                            <span class="text-sm font-bold text-blue-400">০১৭৯৬৪৩১৭৯৫, ০১৫২১৪৪৩০৬৫</span>
+                        </div>
+                        <a href="tel:01796431795" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl text-xs transition shadow-md flex items-center gap-1.5">
+                            <i class="fa-solid fa-phone"></i> কল করুন
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Online Batch Card -->
+                <div class="bg-gradient-to-b from-slate-900 to-slate-900/90 rounded-3xl p-8 border-2 border-indigo-500/40 shadow-xl flex flex-col justify-between relative overflow-hidden">
+                    <div class="absolute top-0 right-0 bg-indigo-600 text-white font-black text-xs px-4 py-1.5 rounded-bl-2xl uppercase tracking-wider">
+                        ডিজিটাল প্ল্যাটফর্ম
+                    </div>
+                    <div>
+                        <div class="w-14 h-14 rounded-2xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center text-2xl mb-6 border border-indigo-500/30">
+                            <i class="fa-solid fa-laptop-code"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white mb-2">আল আমিন ফিজিক্স অনলাইন মাস্টারক্লাস</h3>
+                        <p class="text-xs text-indigo-400 font-semibold mb-4"><i class="fa-solid fa-globe mr-1"></i> দেশব্যাপী যেকোনো প্রান্ত থেকে</p>
+                        
+                        <p class="text-slate-300 text-sm leading-relaxed mb-6">
+                            ঘরে বসেই লাইভ ক্লাস, রেকর্ডেড ভিডিও, সিমুলেশন ল্যাব এবং অনলাইন পরীক্ষার মাধ্যমে ফুল সিলেবাস প্রস্তুতি নেওয়ার প্রিমিয়াম সুযোগ।
+                        </p>
+
+                        <ul class="space-y-3 text-xs sm:text-sm text-slate-300 mb-8">
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-indigo-400"></i> সম্পূর্ণ ভিডিও ক্লাস ও হ্যান্ডনোট</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-indigo-400"></i> ২৪/৭ ডাউট সলভ ও প্রশ্নোত্তর ফোরাম</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-indigo-400"></i> অধ্যায়ভিত্তিক ফ্রি ও পেইড অনলাইন টেস্ট</li>
+                        </ul>
+                    </div>
+
+                    <div class="pt-6 border-t border-slate-800 flex items-center justify-between">
+                        <div>
+                            <span class="text-xs text-slate-400 block">কোর্স ফি (প্রতি অধ্যায়):</span>
+                            <span class="text-lg font-black text-amber-400">৳ ৩৫০ <span class="text-xs line-through text-slate-500 font-normal">৳ ৭৫০</span></span>
+                        </div>
+                        <a href="index.html" class="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold rounded-xl text-xs transition shadow-md flex items-center gap-1.5">
+                            <i class="fa-solid fa-door-open"></i> অ্যাপে প্রবেশ করুন
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Success Stories / Testimonials -->
+    <section id="testimonials" class="py-20 bg-slate-900/50 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-2xl mx-auto mb-16">
+                <span class="text-xs font-bold uppercase tracking-widest text-blue-400 bg-blue-500/10 px-3 py-1 rounded-full border border-blue-500/20">সাফল্যের কথা</span>
+                <h2 class="text-3xl font-black mt-3">শিক্ষার্থী ও অভিভাবকদের মতামত</h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="p-6 bg-slate-900 rounded-2xl border border-slate-800 hover:border-slate-700 transition">
+                    <div class="flex items-center gap-1 text-amber-400 text-sm mb-3">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                    </div>
+                    <p class="text-xs sm:text-sm text-slate-300 leading-relaxed mb-4">
+                        "আল আমিন স্যারের কাছে ফিজিক্স পড়ার পর থেকে ফিজিক্সের প্রতি ভয় পুরোপুরি কেটে গেছে। গাণিতিক সমস্যাগুলো এখন খুব সহজ লাগে।"
+                    </p>
+                    <span class="font-bold text-xs text-white block">সাদিয়া রহমান</span>
+                    <span class="text-[11px] text-slate-400">এইচএসসি পরীক্ষার্থী, বগুড়া সরকারি বালিকা উচ্চ বিদ্যালয়</span>
+                </div>
+
+                <div class="p-6 bg-slate-900 rounded-2xl border border-slate-800 hover:border-slate-700 transition">
+                    <div class="flex items-center gap-1 text-amber-400 text-sm mb-3">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                    </div>
+                    <p class="text-xs sm:text-sm text-slate-300 leading-relaxed mb-4">
+                        "বগুড়ায় অফলাইন ব্যাচে আমার ছেলে পড়ে। স্যারের পার্সোনাল কেয়ারিং ও বোঝানোর শৈলী সত্যি প্রশংসনীয়।"
+                    </p>
+                    <span class="font-bold text-xs text-white block">আব্দুল করিম (অভিভাবক)</span>
+                    <span class="text-[11px] text-slate-400">জলেশ্বরীতলা, বগুড়া</span>
+                </div>
+
+                <div class="p-6 bg-slate-900 rounded-2xl border border-slate-800 hover:border-slate-700 transition">
+                    <div class="flex items-center gap-1 text-amber-400 text-sm mb-3">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                    </div>
+                    <p class="text-xs sm:text-sm text-slate-300 leading-relaxed mb-4">
+                        "অনলাইন প্ল্যাটফর্মের সিমুলেশন ল্যাব আর লেকচার শিটগুলো অসাধারণ। ঘরে বসেই অফলাইনের মতো ক্লাসের ফিল পাওয়া যায়।"
+                    </p>
+                    <span class="font-bold text-xs text-white block">রাকিবুল হাসান</span>
+                    <span class="text-[11px] text-slate-400">এসএসসি পরীক্ষার্থী, ঢাকা</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer (White Background Matching Logo) -->
+    <footer class="bg-white text-slate-700 py-10 border-t border-slate-200 text-xs shadow-inner">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+            <div class="flex items-center space-x-3">
+                <img src="logo.jpg" alt="Al amin Physics" class="h-10 w-auto object-contain drop-shadow-sm"
+                     onerror="this.style.display='none'">
+                <div>
+                    <span class="font-bold text-slate-900 text-sm">Al amin Physics & Future Academy</span>
+                    <p class="text-[11px] text-slate-500">পদার্থবিজ্ঞান শেখার নির্ভরযোগ্য ও আধুনিক প্ল্যাটফর্ম</p>
+                </div>
+            </div>
+            <div class="font-medium text-slate-600">
+                <p><i class="fa-solid fa-location-dot text-blue-600 mr-1"></i> জলেশ্বরীতলা, বগুড়া</p>
+                <p class="mt-1"><i class="fa-solid fa-phone text-blue-600 mr-1"></i> হটলাইন: ০১৭৯৬৪৩১৭৯৫, ০১৫২১৪৪৩০৬৫</p>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>
