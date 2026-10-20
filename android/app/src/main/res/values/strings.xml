@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Al amin Physics</string>
+    <string name="title_activity_main">Al amin Physics</string>
+    <string name="package_name">com.alamin.physics</string>
+    <string name="custom_url_scheme">com.alamin.physics</string>
+</resources>
