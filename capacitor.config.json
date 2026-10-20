@@ -1,0 +1,8 @@
+{
+  "appId": "com.alamin.physics",
+  "appName": "Al amin Physics",
+  "webDir": "www",
+  "server": {
+    "androidScheme": "https"
+  }
+}

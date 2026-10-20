@@ -1,0 +1,27 @@
+{
+  "name": "al-amin-physics",
+  "version": "1.0.0",
+  "description": "একটি আধুনিক, রেসপনসিভ এবং পূর্ণাঙ্গ এডুকেশনাল ওয়েব অ্যাপ্লিকেশন।",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alaminnazir99-jpg/al-amin-physics.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/alaminnazir99-jpg/al-amin-physics/issues"
+  },
+  "homepage": "https://github.com/alaminnazir99-jpg/al-amin-physics#readme",
+  "dependencies": {
+    "@capacitor/android": "^8.5.3",
+    "@capacitor/cli": "^8.5.3",
+    "@capacitor/core": "^8.5.3",
+    "@capacitor/push-notifications": "^8.1.3"
+  }
+}
