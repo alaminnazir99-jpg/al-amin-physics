@@ -192,14 +192,66 @@ function updateDarkToggleUI(isDark) {
 =================================================== */
 document.addEventListener('DOMContentLoaded', () => {
     initDarkMode();
-    switchLevel('ssc');
     initSimulation();
     runPhysicsCalculator();
+    showLMSDashboard();
 });
 
 /* ===================================================
-   NAVIGATION
+   NAVIGATION & SUB-HOMEPAGE LOGIC
 =================================================== */
+let currentViewMode = 'dashboard'; // 'dashboard' | 'classroom' | 'aggregator'
+
+function showLMSDashboard() {
+    currentViewMode = 'dashboard';
+    
+    // UI visibility
+    const subhome = document.getElementById('lms-subhomepage');
+    const aggView = document.getElementById('global-aggregator-view');
+    const headerCard = document.getElementById('classroom-chapter-header');
+    const contentArea = document.getElementById('content-display-area');
+    
+    if (subhome) subhome.classList.remove('hidden');
+    if (aggView) aggView.classList.add('hidden');
+    if (headerCard) headerCard.classList.add('hidden');
+    if (contentArea) contentArea.classList.add('hidden');
+
+    // Nav button state
+    ['ssc','hsc1','hsc2','class8'].forEach(k => {
+        const btn = document.getElementById(`nav-${k}`);
+        if (btn) btn.classList.remove('nav-active', 'text-white', 'bg-blue-600');
+    });
+    const lmsHomeBtn = document.getElementById('nav-lms-home');
+    if (lmsHomeBtn) {
+        lmsHomeBtn.classList.add('bg-blue-600', 'text-white');
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function selectLevelAndOpen(lvl) {
+    switchLevel(lvl);
+    openClassroomView();
+}
+
+function openClassroomView() {
+    currentViewMode = 'classroom';
+    const subhome = document.getElementById('lms-subhomepage');
+    const aggView = document.getElementById('global-aggregator-view');
+    const headerCard = document.getElementById('classroom-chapter-header');
+    const contentArea = document.getElementById('content-display-area');
+
+    if (subhome) subhome.classList.add('hidden');
+    if (aggView) aggView.classList.add('hidden');
+    if (headerCard) headerCard.classList.remove('hidden');
+    if (contentArea) contentArea.classList.remove('hidden');
+
+    const lmsHomeBtn = document.getElementById('nav-lms-home');
+    if (lmsHomeBtn) {
+        lmsHomeBtn.classList.remove('bg-blue-600', 'text-white');
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
 function switchLevel(lvl) {
     currentLevel        = lvl;
     currentChapterIndex = 0;
@@ -207,21 +259,28 @@ function switchLevel(lvl) {
     ['ssc','hsc1','hsc2','class8'].forEach(k => {
         const btn = document.getElementById(`nav-${k}`);
         if (!btn) return;
-        btn.className = k === lvl
-            ? "px-4 py-2 rounded-xl text-sm font-bold nav-active text-white"
-            : "px-4 py-2 rounded-xl text-sm font-medium transition hover:bg-slate-800 text-slate-300";
+        if (k === lvl) {
+            btn.classList.add('nav-active', 'bg-blue-600', 'text-white');
+            btn.classList.remove('text-slate-600');
+        } else {
+            btn.classList.remove('nav-active', 'bg-blue-600', 'text-white');
+            btn.classList.add('text-slate-600');
+        }
     });
 
-    const select  = document.getElementById('chapter-select');
-    select.innerHTML = '';
-    APP_DATA[lvl].chapters.forEach((chap, idx) => {
-        const opt = document.createElement('option');
-        opt.value = idx;
-        opt.textContent = chap.title;
-        select.appendChild(opt);
-    });
-    select.value = 0;
+    const select = document.getElementById('chapter-select');
+    if (select && APP_DATA[lvl]) {
+        select.innerHTML = '';
+        APP_DATA[lvl].chapters.forEach((chap, idx) => {
+            const opt = document.createElement('option');
+            opt.value = idx;
+            opt.textContent = chap.title;
+            select.appendChild(opt);
+        });
+        select.value = 0;
+    }
     renderChapterData();
+    openClassroomView();
 }
 
 function changeChapter(idx) {
@@ -783,6 +842,169 @@ function applyUserRole() {
 }
 
 /* ===================================================
+   GLOBAL RESOURCE AGGREGATOR (All Formulas, Math, Videos, etc.)
+=================================================== */
+let currentAggregatorType = 'formulas';
+
+function showGlobalAggregator(type) {
+    currentAggregatorType = type;
+    currentViewMode = 'aggregator';
+
+    const subhome = document.getElementById('lms-subhomepage');
+    const aggView = document.getElementById('global-aggregator-view');
+    const headerCard = document.getElementById('classroom-chapter-header');
+    const contentArea = document.getElementById('content-display-area');
+
+    if (subhome) subhome.classList.add('hidden');
+    if (aggView) aggView.classList.remove('hidden');
+    if (headerCard) headerCard.classList.add('hidden');
+    if (contentArea) contentArea.classList.add('hidden');
+
+    const titleEl = document.getElementById('global-agg-title');
+    const subtitleEl = document.getElementById('global-agg-subtitle');
+
+    const titles = {
+        formulas: { title: "সকল গুরুত্বপূর্ণ সূত্রসমূহ (এক নজরে)", sub: "পদার্থবিজ্ঞানের প্রতিটি অধ্যায়ের মূল সমীকরণ ও প্রতীক পরিচিতি।" },
+        math:     { title: "সকল গাণিতিক সমস্যা ও সমাধান", sub: "পরীক্ষায় আসা বিভিন্ন অধ্যায়ের জটিল গাণিতিক উদাহরণ ও নির্ভুল সমাধান।" },
+        video:    { title: "সকল অধ্যায়ের ভিডিও ক্লাস", sub: "কনসেপ্ট ক্লিয়ারিং ও ভিজ্যুয়াল লেকচার ভিডিও সমূহ।" },
+        comprehension: { title: "অনুধাবনমূলক প্রশ্ন ও উত্তর (খ-প্রশ্ন)", sub: "বোর্ড পরীক্ষার জন্য সবচেয়ে গুরুত্বপূর্ণ অনুধাবন প্রশ্ন।" },
+        board:    { title: "বিগত বছরের বোর্ড প্রশ্ন ও সমাধান", sub: "বিভিন্ন শিক্ষা বোর্ডের সৃজনশীল ও বহুনির্বাচনী প্রশ্ন সংকলন।" }
+    };
+
+    if (titles[type]) {
+        titleEl.textContent = titles[type].title;
+        subtitleEl.textContent = titles[type].sub;
+    }
+
+    renderGlobalAggregatorContent();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function renderGlobalAggregatorContent() {
+    const container = document.getElementById('global-agg-content');
+    if (!container) return;
+
+    const levelFilter = document.getElementById('global-agg-level-select')?.value || 'all';
+    container.innerHTML = '';
+
+    const levelsToProcess = levelFilter === 'all' 
+        ? ['ssc', 'hsc1', 'hsc2', 'class8'] 
+        : [levelFilter];
+
+    const levelNames = {
+        ssc: 'নবম-দশম শ্রেণি (SSC)',
+        hsc1: 'একাদশ-দ্বাদশ শ্রেণি — ১ম পত্র (HSC-1)',
+        hsc2: 'একাদশ-দ্বাদশ শ্রেণি — ২য় পত্র (HSC-2)',
+        class8: 'অষ্টম শ্রেণি বিজ্ঞান (NCTB 2026)'
+    };
+
+    levelsToProcess.forEach(lvl => {
+        if (!APP_DATA[lvl]) return;
+
+        const levelBlock = document.createElement('div');
+        levelBlock.className = 'space-y-4 pt-2 border-t first:border-t-0 border-slate-100';
+
+        const levelHeader = document.createElement('div');
+        levelHeader.className = 'flex items-center gap-2 py-2';
+        levelHeader.innerHTML = `
+            <span class="w-3 h-3 rounded-full bg-blue-600"></span>
+            <h3 class="text-base sm:text-lg font-bold text-slate-900">${levelNames[lvl]}</h3>
+            <span class="text-xs text-slate-400">(${APP_DATA[lvl].chapters.length}টি অধ্যায়)</span>
+        `;
+        levelBlock.appendChild(levelHeader);
+
+        const grid = document.createElement('div');
+        grid.className = 'grid grid-cols-1 md:grid-cols-2 gap-4';
+
+        APP_DATA[lvl].chapters.forEach((chap, idx) => {
+            const card = document.createElement('div');
+            card.className = 'p-4 rounded-2xl border border-slate-200 bg-slate-50/70 hover:bg-white hover:border-blue-300 transition shadow-sm space-y-2';
+
+            let snippetHTML = '';
+            if (currentAggregatorType === 'formulas') {
+                snippetHTML = `
+                    <div class="text-xs space-y-1 bg-white p-3 rounded-xl border border-slate-100">
+                        <p class="font-mono text-blue-700 font-bold">s = ut + ½at²  |  v = u + at  |  v² = u² + 2as</p>
+                        <p class="text-slate-500 text-[11px]">F = ma | W = Fs cosθ | P = W/t</p>
+                    </div>
+                `;
+            } else if (currentAggregatorType === 'math') {
+                snippetHTML = `
+                    <div class="text-xs space-y-1.5 bg-white p-3 rounded-xl border border-slate-100">
+                        <p class="font-medium text-slate-800">গাণিতিক সমস্যা: 54 km/h বেগে চলমান গাড়ি 5s এ থেমে গেলে ত্বরণ ও দূরত্ব নির্ণয় করো।</p>
+                        <p class="text-emerald-600 font-semibold text-[11px]"><i class="fa-solid fa-check"></i> সমাধান সূত্র: a = (v-u)/t, s = (u+v)/2 × t</p>
+                    </div>
+                `;
+            } else if (currentAggregatorType === 'video') {
+                snippetHTML = `
+                    <div class="flex items-center gap-3 bg-white p-3 rounded-xl border border-slate-100">
+                        <div class="w-10 h-10 rounded-xl bg-red-100 text-red-600 flex items-center justify-center text-lg"><i class="fa-solid fa-play"></i></div>
+                        <div>
+                            <p class="text-xs font-bold text-slate-800">লেকচার ক্লাস (রেকর্ডেড ও লাইভ নোট)</p>
+                            <p class="text-[11px] text-slate-400">সময়কাল: ৪৫ মিনিট | আল আমিন স্যার</p>
+                        </div>
+                    </div>
+                `;
+            } else if (currentAggregatorType === 'comprehension') {
+                snippetHTML = `
+                    <div class="text-xs space-y-1 bg-white p-3 rounded-xl border border-slate-100">
+                        <p class="font-bold text-slate-800">অনুধাবন প্রশ্ন: সমবেগে চলমান বস্তুর ত্বরণ থাকে কি? ব্যাখ্যা করো।</p>
+                        <p class="text-slate-500 text-[11px]">উত্তর: না, বেগ পরিবর্তনের হারই ত্বরণ। বেগ অপরিবর্তিত থাকলে ত্বরণ শূন্য।</p>
+                    </div>
+                `;
+            } else {
+                snippetHTML = `
+                    <div class="text-xs bg-white p-3 rounded-xl border border-slate-100">
+                        <p class="font-bold text-slate-800">ঢাকা বোর্ড, রাজশাহী বোর্ড, চট্টগ্রাম বোর্ড সমন্বিত CQ & MCQ</p>
+                        <p class="text-[11px] text-slate-400">বিগত ৫ বছরের সমাধানসহ বিশ্লেষণ</p>
+                    </div>
+                `;
+            }
+
+            card.innerHTML = `
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-bold text-blue-600">${chap.title}</span>
+                    <button onclick="goToSpecificChapterAndTab('${lvl}', ${idx}, '${currentAggregatorType}')" class="text-[11px] text-blue-600 hover:text-blue-800 font-bold flex items-center gap-1">
+                        অধ্যায়ে যান <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+                ${snippetHTML}
+            `;
+            grid.appendChild(card);
+        });
+
+        levelBlock.appendChild(grid);
+        container.appendChild(levelBlock);
+    });
+}
+
+function goToSpecificChapterAndTab(lvl, chapIdx, tabKey) {
+    currentLevel = lvl;
+    currentChapterIndex = chapIdx;
+
+    const select = document.getElementById('chapter-select');
+    if (select && APP_DATA[lvl]) {
+        select.innerHTML = '';
+        APP_DATA[lvl].chapters.forEach((chap, idx) => {
+            const opt = document.createElement('option');
+            opt.value = idx;
+            opt.textContent = chap.title;
+            select.appendChild(opt);
+        });
+        select.value = chapIdx;
+    }
+
+    renderChapterData();
+    openClassroomView();
+    switchTab(tabKey);
+}
+
+function openSimulationDirectly() {
+    selectLevelAndOpen('ssc');
+    switchTab('simulation');
+}
+
+/* ===================================================
    PAYMENT & ENROLLMENT
 =================================================== */
 function openPaymentModal()  { document.getElementById('payment-modal').classList.remove('hidden'); }
@@ -808,4 +1030,5 @@ function markVideoComplete() {
 }
 function printFormulaSheet() { window.print(); }
 function downloadPdfNotice() { alert('লেকচার শিট PDF ডাউনলোড হচ্ছে...'); }
-function showHomeView() { switchLevel('ssc'); switchTab('basic'); }
+function showHomeView() { showLMSDashboard(); }
+
