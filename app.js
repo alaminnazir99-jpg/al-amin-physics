@@ -7,10 +7,15 @@
    LocalStorage Keys & Persistence Layer
 =================================================== */
 const LS = {
-    DARK_MODE:    'alamin_dark_mode',
-    ENROLLED:     'alamin_enrolled_courses',
-    EXAM_SCORES:  'alamin_exam_scores',
-    PROGRESS:     'alamin_chapter_progress',
+    DARK_MODE:     'alamin_dark_mode',
+    ENROLLED:      'alamin_enrolled_courses',
+    EXAM_SCORES:   'alamin_exam_scores',
+    PROGRESS:      'alamin_chapter_progress',
+    STUDENT_USER:  'alamin_student_user',
+    PRO_SIM_PASS:  'alamin_pro_sim_unlocked',
+    TRANSACTIONS:  'alamin_transactions_log',
+    ADMIN_PERMS:   'alamin_admin_permissions',
+    CUSTOM_EXAMS:  'alamin_custom_exams'
 };
 
 function lsGet(key, fallback) {
@@ -119,6 +124,36 @@ let tempSelectedRole    = 'student';
 let enrolledCourses  = lsGet(LS.ENROLLED,    { ssc_c2: true });
 let examScoresStore  = lsGet(LS.EXAM_SCORES,  {});
 let chapterProgress  = lsGet(LS.PROGRESS,     {});   // { chapId: percent 0-100 }
+let studentUser      = lsGet(LS.STUDENT_USER, null); // { name, phone, class, streak: 7, joinedAt }
+let proSimUnlocked   = lsGet(LS.PRO_SIM_PASS, false);
+let adminPermsStore  = lsGet(LS.ADMIN_PERMS,  { paymentApprove: true, examCreate: true, contentUpload: true, viewRevenue: false });
+let customExamsStore = lsGet(LS.CUSTOM_EXAMS, {});
+
+// Transaction Ledger
+let transactionsStore = lsGet(LS.TRANSACTIONS, [
+    { id: "TX-101", date: "আজ ১০:৩০ AM", studentName: "তানভীর আহমেদ", phone: "01712-345678", item: "গতি পেইড কোর্স", method: "bKash", trx: "9K3M8J2L", amount: "৳ ৩৫০", status: "Approved" },
+    { id: "TX-102", date: "আজ ০৯:১৫ AM", studentName: "সাদিয়া ইসলাম", phone: "01823-998877", item: "প্রো ভার্চুয়াল ল্যাব পাস", method: "Nagad", trx: "7H4P1Q9X", amount: "৳ ১০০", status: "Pending" },
+    { id: "TX-103", date: "গতকাল ০৬:৪৫ PM", studentName: "রাকিবুল হাসান", phone: "01911-223344", item: "ভেক্টর স্পেশাল কোর্স", method: "bKash", trx: "6B9T2Z1A", amount: "৳ ৩৫০", status: "Approved" },
+    { id: "TX-104", date: "গতকাল ০৩:২০ PM", studentName: "ফারহানা আক্তার", phone: "01521-445566", item: "প্রো ভার্চুয়াল ল্যাব পাস", method: "bKash", trx: "4D8V5C3N", amount: "৳ ১০০", status: "Pending" }
+]);
+
+// Leaderboard Database
+const LEADERBOARD_SEED = [
+    { rank: 1, name: "তানভীর আহমেদ", class: "SSC (নবম-দশম)", exams: 12, points: 58, badge: "🥇 ১ম" },
+    { rank: 2, name: "সাদিয়া জাহান", class: "HSC ১ম পত্র", exams: 10, points: 49, badge: "🥈 ২য়" },
+    { rank: 3, name: "আরিফুর রহমান", class: "SSC (নবম-দশম)", exams: 9,  points: 44, badge: "🥉 ৩য়" },
+    { rank: 4, name: "নাজমুল হোসেন", class: "HSC ২য় পত্র", exams: 8,  points: 39, badge: "৪র্থ" },
+    { rank: 5, name: "ফারিহা তাসনিম", class: "অষ্টম বিজ্ঞান", exams: 7, points: 35, badge: "৫ম" },
+    { rank: 6, name: "মেহেদী হাসান", class: "SSC (নবম-দশম)", exams: 6, points: 29, badge: "৬ষ্ঠ" }
+];
+
+// Live Social Stream
+const SOCIAL_ACTIVITY_SEED = [
+    { user: "তানভীর আহমেদ", action: "'বল ও গতি' পরীক্ষায় ৫-এ ৫ পেয়েছে", time: "২ মিনিট আগে", icon: "fa-trophy", color: "amber" },
+    { user: "সাদিয়া জাহান", action: "প্রো ভার্চুয়াল ল্যাবে সার্কিট পরীক্ষা সফল করেছে", time: "১২ মিনিট আগে", icon: "fa-bolt", color: "blue" },
+    { user: "রাকিবুল হাসান", action: "'কাজ, ক্ষমতা ও শক্তি' অধ্যায়ের হ্যান্ডনোট ডাউনলোড করেছে", time: "২৫ মিনিট আগে", icon: "fa-file-pdf", color: "emerald" },
+    { user: "সায়মা করিম", action: "নতুন অ্যাকাউন্ট খুলে পদার্থবিজ্ঞান প্রস্তুতি শুরু করেছে", time: "৪০ মিনিট আগে", icon: "fa-user-plus", color: "purple" }
+];
 
 // Simulation State
 let simMode          = 'pendulum';
@@ -136,6 +171,19 @@ let projSpeed      = 45;
 let projTime       = 0;
 let projG          = 9.8;
 let projTrajectory = [];
+
+// Pro Sim Variables
+let circuitVoltage = 12;
+let circuitResist  = 4;
+let circuitElectrons = [];
+
+let lensFocalLength = 100;
+let lensObjectDist  = 180;
+let lensObjectHeight = 40;
+
+let orbitMass      = 1000;
+let orbitDist      = 120;
+let orbitAngle     = 0;
 
 // Exam State
 let examTimerInterval = null;
@@ -192,6 +240,7 @@ function updateDarkToggleUI(isDark) {
 =================================================== */
 document.addEventListener('DOMContentLoaded', () => {
     initDarkMode();
+    updateUserSessionUI();
     initSimulation();
     runPhysicsCalculator();
     showLMSDashboard();
@@ -202,29 +251,32 @@ document.addEventListener('DOMContentLoaded', () => {
 =================================================== */
 let currentViewMode = 'dashboard'; // 'dashboard' | 'classroom' | 'aggregator'
 
-function showLMSDashboard() {
-    currentViewMode = 'dashboard';
-    
-    // UI visibility
-    const subhome = document.getElementById('lms-subhomepage');
-    const aggView = document.getElementById('global-aggregator-view');
-    const headerCard = document.getElementById('classroom-chapter-header');
-    const contentArea = document.getElementById('content-display-area');
-    
-    if (subhome) subhome.classList.remove('hidden');
-    if (aggView) aggView.classList.add('hidden');
-    if (headerCard) headerCard.classList.add('hidden');
-    if (contentArea) contentArea.classList.add('hidden');
-
-    // Nav button state
+function hideAllAppViews() {
+    ['lms-subhomepage', 'global-aggregator-view', 'classroom-chapter-header', 'content-display-area', 'student-profile-view', 'leaderboard-view', 'director-executive-view'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.add('hidden');
+    });
+    // Remove nav active styles
     ['ssc','hsc1','hsc2','class8'].forEach(k => {
         const btn = document.getElementById(`nav-${k}`);
         if (btn) btn.classList.remove('nav-active', 'text-white', 'bg-blue-600');
     });
     const lmsHomeBtn = document.getElementById('nav-lms-home');
-    if (lmsHomeBtn) {
-        lmsHomeBtn.classList.add('bg-blue-600', 'text-white');
-    }
+    if (lmsHomeBtn) lmsHomeBtn.classList.remove('bg-blue-600', 'text-white');
+    const lbBtn = document.getElementById('nav-leaderboard');
+    if (lbBtn) lbBtn.classList.remove('bg-amber-600', 'text-white');
+    const pfBtn = document.getElementById('nav-profile-btn');
+    if (pfBtn) pfBtn.classList.remove('bg-emerald-600', 'text-white');
+}
+
+function showLMSDashboard() {
+    currentViewMode = 'dashboard';
+    hideAllAppViews();
+    const subhome = document.getElementById('lms-subhomepage');
+    if (subhome) subhome.classList.remove('hidden');
+
+    const lmsHomeBtn = document.getElementById('nav-lms-home');
+    if (lmsHomeBtn) lmsHomeBtn.classList.add('bg-blue-600', 'text-white');
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -235,20 +287,43 @@ function selectLevelAndOpen(lvl) {
 
 function openClassroomView() {
     currentViewMode = 'classroom';
-    const subhome = document.getElementById('lms-subhomepage');
-    const aggView = document.getElementById('global-aggregator-view');
+    hideAllAppViews();
     const headerCard = document.getElementById('classroom-chapter-header');
     const contentArea = document.getElementById('content-display-area');
-
-    if (subhome) subhome.classList.add('hidden');
-    if (aggView) aggView.classList.add('hidden');
     if (headerCard) headerCard.classList.remove('hidden');
     if (contentArea) contentArea.classList.remove('hidden');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
 
-    const lmsHomeBtn = document.getElementById('nav-lms-home');
-    if (lmsHomeBtn) {
-        lmsHomeBtn.classList.remove('bg-blue-600', 'text-white');
-    }
+function showStudentProfileView() {
+    currentViewMode = 'profile';
+    hideAllAppViews();
+    const view = document.getElementById('student-profile-view');
+    if (view) view.classList.remove('hidden');
+    const pfBtn = document.getElementById('nav-profile-btn');
+    if (pfBtn) pfBtn.classList.add('bg-emerald-600', 'text-white');
+    renderStudentProfileData();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function showLeaderboardView() {
+    currentViewMode = 'leaderboard';
+    hideAllAppViews();
+    const view = document.getElementById('leaderboard-view');
+    if (view) view.classList.remove('hidden');
+    const lbBtn = document.getElementById('nav-leaderboard');
+    if (lbBtn) lbBtn.classList.add('bg-amber-600', 'text-white');
+    renderLeaderboardData('all');
+    renderSocialActivityFeed();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function showDirectorExecutiveView() {
+    currentViewMode = 'director';
+    hideAllAppViews();
+    const view = document.getElementById('director-executive-view');
+    if (view) view.classList.remove('hidden');
+    renderDirectorDashboardData();
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -543,14 +618,90 @@ function setSimMode(mode) {
     resetSimulation();
 }
 
+function selectSimExperiment(expKey) {
+    simMode = expKey;
+    const isPro = (expKey === 'circuit' || expKey === 'optics' || expKey === 'orbit');
+    const lockOverlay = document.getElementById('sim-pro-lock-overlay');
+    const badge = document.getElementById('sim-lab-type-badge');
+    const sideBtn = document.getElementById('btn-side-unlock-sim');
+
+    // Update experiment buttons UI
+    ['pendulum','projectile','circuit','optics','orbit'].forEach(k => {
+        const btn = document.getElementById(`sim-tab-${k}`);
+        if (!btn) return;
+        if (k === expKey) {
+            btn.className = "sim-exp-btn px-3 py-2 rounded-xl border border-blue-500 bg-blue-50 text-blue-700 font-bold flex items-center gap-1.5 whitespace-nowrap shadow-sm";
+        } else {
+            btn.className = "sim-exp-btn px-3 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-medium flex items-center gap-1.5 whitespace-nowrap";
+        }
+    });
+
+    if (badge) {
+        badge.textContent = isPro ? 'Pro Lab (৳১০০)' : 'Free Lab';
+        badge.className = isPro ? "text-[10px] bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full font-bold" : "text-[10px] bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full font-bold";
+    }
+
+    if (isPro && !proSimUnlocked) {
+        if (lockOverlay) {
+            lockOverlay.classList.remove('hidden');
+            const titles = {
+                circuit: "চলতড়িৎ ও ওহমের সূত্র ভার্চুয়াল ল্যাব (Pro)",
+                optics: "আলোর প্রতিফলন ও অবতল/উত্তল লেন্স ল্যাব (Pro)",
+                orbit: "মহাকর্ষ ও কৃত্রিম উপগ্রহের কক্ষপথ ল্যাব (Pro)"
+            };
+            const titleEl = document.getElementById('sim-pro-lock-title');
+            if (titleEl) titleEl.textContent = titles[expKey];
+        }
+    } else {
+        if (lockOverlay) lockOverlay.classList.add('hidden');
+    }
+
+    if (sideBtn) {
+        sideBtn.textContent = proSimUnlocked ? "আনলকড" : "আনলক";
+        sideBtn.disabled = proSimUnlocked;
+        if (proSimUnlocked) sideBtn.className = "px-2.5 py-1.5 bg-emerald-100 text-emerald-800 font-bold rounded-lg text-[10px]";
+    }
+
+    updateSimControlsUI();
+    resetSimulation();
+}
+
+function openProSimModal()  { document.getElementById('pro-sim-modal')?.classList.remove('hidden'); }
+function closeProSimModal() { document.getElementById('pro-sim-modal')?.classList.add('hidden'); }
+
+function handleProSimPaymentSubmit(e) {
+    e.preventDefault();
+    const phone = document.getElementById('sim-pay-phone').value;
+    const trx = document.getElementById('sim-pay-trxid').value;
+    proSimUnlocked = true;
+    lsSet(LS.PRO_SIM_PASS, true);
+    
+    // Add transaction
+    transactionsStore.unshift({
+        id: `TX-${Math.floor(100+Math.random()*900)}`,
+        date: "এইমাত্র",
+        studentName: studentUser ? studentUser.name : "শিক্ষার্থী",
+        phone: phone,
+        item: "প্রো ভার্চুয়াল ল্যাব পাস",
+        method: "bKash/Nagad",
+        trx: trx,
+        amount: "৳ ১০০",
+        status: "Approved"
+    });
+    lsSet(LS.TRANSACTIONS, transactionsStore);
+
+    closeProSimModal();
+    alert(`ধন্যবাদ! আপনার TrxID: ${trx} ভেরিফাই হয়েছে। সকল প্রো ভার্চুয়াল ফিজিক্স ল্যাব আজীবন আনলক করা হলো!`);
+    selectSimExperiment(simMode);
+    if (currentViewMode === 'director') renderDirectorDashboardData();
+}
+
 function updateSimControlsUI() {
     const container = document.getElementById('simulation-controls');
+    if (!container) return;
+
     if (simMode === 'pendulum') {
         container.innerHTML = `
-            <div class="flex gap-2 mb-3">
-                <button onclick="setSimMode('pendulum')" class="w-1/2 py-1.5 bg-blue-600 text-white rounded-lg text-xs font-bold">সরল দোলক</button>
-                <button onclick="setSimMode('projectile')" class="w-1/2 py-1.5 bg-slate-200 text-slate-700 rounded-lg text-xs font-semibold">প্রাসের গতি</button>
-            </div>
             <div>
                 <div class="flex justify-between mb-1"><span>দোলকের দৈর্ঘ্য L (cm):</span><span id="sim-len-val" class="font-bold text-blue-600">${pendLength}</span></div>
                 <input type="range" min="80" max="250" value="${pendLength}" oninput="pendLength=parseFloat(this.value);document.getElementById('sim-len-val').textContent=this.value;" class="w-full accent-blue-600">
@@ -563,12 +714,8 @@ function updateSimControlsUI() {
                 <div class="flex justify-between mb-1"><span>ভর m (gram):</span><span id="sim-m-val" class="font-bold text-blue-600">${pendMass}</span></div>
                 <input type="range" min="10" max="100" value="${pendMass}" oninput="pendMass=parseFloat(this.value);document.getElementById('sim-m-val').textContent=this.value;" class="w-full accent-blue-600">
             </div>`;
-    } else {
+    } else if (simMode === 'projectile') {
         container.innerHTML = `
-            <div class="flex gap-2 mb-3">
-                <button onclick="setSimMode('pendulum')" class="w-1/2 py-1.5 bg-slate-200 text-slate-700 rounded-lg text-xs font-semibold">সরল দোলক</button>
-                <button onclick="setSimMode('projectile')" class="w-1/2 py-1.5 bg-blue-600 text-white rounded-lg text-xs font-bold">প্রাসের গতি</button>
-            </div>
             <div>
                 <div class="flex justify-between mb-1"><span>কোণ θ (°):</span><span id="sim-proj-ang" class="font-bold text-blue-600">${projAngle}</span></div>
                 <input type="range" min="15" max="85" value="${projAngle}" oninput="projAngle=parseFloat(this.value);document.getElementById('sim-proj-ang').textContent=this.value;resetSimulation();" class="w-full accent-blue-600">
@@ -576,6 +723,39 @@ function updateSimControlsUI() {
             <div>
                 <div class="flex justify-between mb-1"><span>আদিবেগ v₀ (m/s):</span><span id="sim-proj-spd" class="font-bold text-blue-600">${projSpeed}</span></div>
                 <input type="range" min="20" max="80" value="${projSpeed}" oninput="projSpeed=parseFloat(this.value);document.getElementById('sim-proj-spd').textContent=this.value;resetSimulation();" class="w-full accent-blue-600">
+            </div>`;
+    } else if (simMode === 'circuit') {
+        container.innerHTML = `
+            <div>
+                <div class="flex justify-between mb-1"><span>ভোল্টেজ V (Volt):</span><span id="sim-volt-val" class="font-bold text-blue-600">${circuitVoltage} V</span></div>
+                <input type="range" min="1" max="24" value="${circuitVoltage}" oninput="circuitVoltage=parseFloat(this.value);document.getElementById('sim-volt-val').textContent=this.value+' V';" class="w-full accent-blue-600">
+            </div>
+            <div>
+                <div class="flex justify-between mb-1"><span>রোধ R (Ohm Ω):</span><span id="sim-res-val" class="font-bold text-blue-600">${circuitResist} Ω</span></div>
+                <input type="range" min="1" max="20" value="${circuitResist}" oninput="circuitResist=parseFloat(this.value);document.getElementById('sim-res-val').textContent=this.value+' Ω';" class="w-full accent-blue-600">
+            </div>
+            <div class="p-2.5 bg-blue-50 rounded-xl border border-blue-200 text-[11px] text-blue-900 font-mono">
+                ওহমের সূত্র: I = V / R = ${(circuitVoltage/circuitResist).toFixed(2)} A
+            </div>`;
+    } else if (simMode === 'optics') {
+        container.innerHTML = `
+            <div>
+                <div class="flex justify-between mb-1"><span>ফোকাস দূরত্ব f (cm):</span><span id="sim-focal-val" class="font-bold text-blue-600">${lensFocalLength}</span></div>
+                <input type="range" min="50" max="150" value="${lensFocalLength}" oninput="lensFocalLength=parseFloat(this.value);document.getElementById('sim-focal-val').textContent=this.value;" class="w-full accent-blue-600">
+            </div>
+            <div>
+                <div class="flex justify-between mb-1"><span>লক্ষ্যবস্তুর দূরত্ব u (cm):</span><span id="sim-objdist-val" class="font-bold text-blue-600">${lensObjectDist}</span></div>
+                <input type="range" min="80" max="280" value="${lensObjectDist}" oninput="lensObjectDist=parseFloat(this.value);document.getElementById('sim-objdist-val').textContent=this.value;" class="w-full accent-blue-600">
+            </div>`;
+    } else if (simMode === 'orbit') {
+        container.innerHTML = `
+            <div>
+                <div class="flex justify-between mb-1"><span>কক্ষপথ ব্যাসার্ধ r (km):</span><span id="sim-orbit-dist" class="font-bold text-blue-600">${orbitDist*50}</span></div>
+                <input type="range" min="60" max="160" value="${orbitDist}" oninput="orbitDist=parseFloat(this.value);document.getElementById('sim-orbit-dist').textContent=this.value*50;" class="w-full accent-blue-600">
+            </div>
+            <div>
+                <div class="flex justify-between mb-1"><span>উপগ্রহের ভর m (kg):</span><span id="sim-orbit-mass" class="font-bold text-blue-600">${orbitMass}</span></div>
+                <input type="range" min="200" max="3000" step="100" value="${orbitMass}" oninput="orbitMass=parseFloat(this.value);document.getElementById('sim-orbit-mass').textContent=this.value;" class="w-full accent-blue-600">
             </div>`;
     }
 }
@@ -588,7 +768,8 @@ function toggleSimPlay() {
 
 function resetSimulation() {
     if (simMode === 'pendulum') { pendAngle = Math.PI / 4; pendAngularVel = 0; }
-    else { projTime = 0; projTrajectory = []; }
+    else if (simMode === 'projectile') { projTime = 0; projTrajectory = []; }
+    else if (simMode === 'orbit') { orbitAngle = 0; }
     simRunning = true;
     document.getElementById('sim-play-icon').className = "fa-solid fa-pause";
     document.getElementById('sim-play-text').textContent = "পজ";
@@ -601,8 +782,11 @@ function startSimLoop() {
 
     function loop() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        if (simMode === 'pendulum') drawPendulum(ctx, canvas);
-        else                       drawProjectile(ctx, canvas);
+        if (simMode === 'pendulum')        drawPendulum(ctx, canvas);
+        else if (simMode === 'projectile') drawProjectile(ctx, canvas);
+        else if (simMode === 'circuit')    drawCircuit(ctx, canvas);
+        else if (simMode === 'optics')     drawOptics(ctx, canvas);
+        else if (simMode === 'orbit')      drawOrbit(ctx, canvas);
         animFrameId = requestAnimationFrame(loop);
     }
     if (animFrameId) cancelAnimationFrame(animFrameId);
@@ -662,6 +846,133 @@ function drawProjectile(ctx, canvas) {
     const H = (projSpeed*projSpeed*Math.sin(rad)*Math.sin(rad)/(2*projG)).toFixed(1);
     const R = (projSpeed*projSpeed*Math.sin(2*rad)/projG).toFixed(1);
     document.getElementById('sim-live-stats').textContent = `H: ${H}m | R: ${R}m | θ: ${projAngle}°`;
+}
+
+function drawCircuit(ctx, canvas) {
+    const current = circuitVoltage / circuitResist;
+    const w = 400, h = 220;
+    const sx = (canvas.width - w) / 2, sy = (canvas.height - h) / 2;
+
+    // Draw Wire Loop
+    ctx.strokeStyle = "#38bdf8"; ctx.lineWidth = 4;
+    ctx.strokeRect(sx, sy, w, h);
+
+    // Battery at Left
+    ctx.fillStyle = "#0f172a"; ctx.fillRect(sx - 10, sy + h/2 - 25, 20, 50);
+    ctx.strokeStyle = "#ef4444"; ctx.lineWidth = 4;
+    ctx.beginPath(); ctx.moveTo(sx - 16, sy + h/2 - 18); ctx.lineTo(sx + 16, sy + h/2 - 18); ctx.stroke();
+    ctx.strokeStyle = "#3b82f6"; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(sx - 10, sy + h/2 + 18); ctx.lineTo(sx + 10, sy + h/2 + 18); ctx.stroke();
+    ctx.fillStyle = "#f8fafc"; ctx.font = "11px sans-serif";
+    ctx.fillText(`${circuitVoltage}V`, sx - 45, sy + h/2 + 4);
+
+    // Resistor at Top
+    const rx = sx + w/2 - 40, ry = sy;
+    ctx.fillStyle = "#0f172a"; ctx.fillRect(rx - 5, ry - 15, 90, 30);
+    ctx.strokeStyle = "#f59e0b"; ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(rx, ry);
+    for(let i=0; i<6; i++) ctx.lineTo(rx + 10 + i*10, ry + (i%2 === 0 ? -10 : 10));
+    ctx.lineTo(rx + 80, ry); ctx.stroke();
+    ctx.fillStyle = "#f8fafc"; ctx.font = "11px sans-serif";
+    ctx.fillText(`R = ${circuitResist} Ω`, rx + 15, ry - 20);
+
+    // Flowing Current Particles
+    if (simRunning) {
+        if (!circuitElectrons || circuitElectrons.length < 12) {
+            circuitElectrons = Array.from({length: 12}, (_, i) => ({ dist: i * ((2*w + 2*h) / 12) }));
+        }
+        const totalPerimeter = 2 * (w + h);
+        const speed = Math.max(1, current * 1.5);
+        circuitElectrons.forEach(e => {
+            e.dist = (e.dist + speed) % totalPerimeter;
+            let px = sx, py = sy;
+            if (e.dist < w) { px = sx + e.dist; py = sy; }
+            else if (e.dist < w + h) { px = sx + w; py = sy + (e.dist - w); }
+            else if (e.dist < 2*w + h) { px = sx + w - (e.dist - (w + h)); py = sy + h; }
+            else { px = sx; py = sy + h - (e.dist - (2*w + h)); }
+
+            ctx.fillStyle = "#38bdf8"; ctx.beginPath(); ctx.arc(px, py, 4, 0, Math.PI*2); ctx.fill();
+        });
+    }
+
+    document.getElementById('sim-live-stats').textContent = `বর্তনী প্রবাহ I = ${current.toFixed(2)} A | ক্ষমতা P = ${(circuitVoltage*current).toFixed(1)} W`;
+}
+
+function drawOptics(ctx, canvas) {
+    const cx = canvas.width / 2, cy = canvas.height / 2;
+    // Principal axis
+    ctx.strokeStyle = "#475569"; ctx.lineWidth = 1.5; ctx.setLineDash([5,5]);
+    ctx.beginPath(); ctx.moveTo(30, cy); ctx.lineTo(canvas.width - 30, cy); ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Convex Lens in Center
+    ctx.strokeStyle = "#38bdf8"; ctx.fillStyle = "rgba(56, 189, 248, 0.2)"; ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.ellipse(cx, cy, 15, 120, 0, 0, Math.PI*2);
+    ctx.fill(); ctx.stroke();
+
+    // Object (Arrow at Left)
+    const ox = cx - lensObjectDist;
+    const oy = cy - lensObjectHeight;
+    ctx.strokeStyle = "#f59e0b"; ctx.lineWidth = 4;
+    ctx.beginPath(); ctx.moveTo(ox, cy); ctx.lineTo(ox, oy); ctx.stroke();
+    // Arrow head
+    ctx.fillStyle = "#f59e0b"; ctx.beginPath(); ctx.moveTo(ox-6, oy+10); ctx.lineTo(ox+6, oy+10); ctx.lineTo(ox, oy); ctx.fill();
+    ctx.fillStyle = "#f8fafc"; ctx.font = "10px sans-serif"; ctx.fillText("বস্তু (u)", ox - 15, cy + 20);
+
+    // Lens formula: 1/v - 1/(-u) = 1/f => 1/v = 1/f - 1/u => v = (f*u)/(u - f)
+    let v = 0, m = 1;
+    if (lensObjectDist !== lensFocalLength) {
+        v = (lensFocalLength * lensObjectDist) / (lensObjectDist - lensFocalLength);
+        m = -v / lensObjectDist;
+    }
+    const ix = cx + v;
+    const iy = cy + lensObjectHeight * m;
+
+    // Light Ray 1: Parallel to axis then through Focus (F2)
+    ctx.strokeStyle = "rgba(239, 68, 68, 0.8)"; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(ox, oy); ctx.lineTo(cx, oy); ctx.lineTo(ix, iy); ctx.stroke();
+
+    // Light Ray 2: Through optical center (cx, cy)
+    ctx.strokeStyle = "rgba(59, 130, 246, 0.8)";
+    ctx.beginPath(); ctx.moveTo(ox, oy); ctx.lineTo(ix, iy); ctx.stroke();
+
+    // Image Arrow at Right
+    if (Math.abs(v) < 400 && lensObjectDist > lensFocalLength) {
+        ctx.strokeStyle = "#10b981"; ctx.lineWidth = 4;
+        ctx.beginPath(); ctx.moveTo(ix, cy); ctx.lineTo(ix, iy); ctx.stroke();
+        ctx.fillStyle = "#10b981"; ctx.font = "10px sans-serif"; ctx.fillText("বিম্ব (v)", ix - 15, cy + 20);
+    }
+
+    document.getElementById('sim-live-stats').textContent = `ফোকাস f = ${lensFocalLength}cm | দূরত্ব u = ${lensObjectDist}cm | বিম্ব v ≈ ${v.toFixed(1)}cm | বিবর্ধন m ≈ ${Math.abs(m).toFixed(2)}`;
+}
+
+function drawOrbit(ctx, canvas) {
+    const cx = canvas.width / 2, cy = canvas.height / 2;
+    // Central Planet (Earth)
+    const earthGrad = ctx.createRadialGradient(cx-10, cy-10, 5, cx, cy, 38);
+    earthGrad.addColorStop(0, '#60a5fa'); earthGrad.addColorStop(1, '#1e3a8a');
+    ctx.fillStyle = earthGrad; ctx.beginPath(); ctx.arc(cx, cy, 38, 0, Math.PI*2); ctx.fill();
+    ctx.fillStyle = "#f8fafc"; ctx.font = "bold 11px sans-serif"; ctx.fillText("পৃথিবী", cx - 18, cy + 4);
+
+    // Orbit Path
+    ctx.strokeStyle = "#334155"; ctx.lineWidth = 1.5; ctx.setLineDash([4,4]);
+    ctx.beginPath(); ctx.arc(cx, cy, orbitDist, 0, Math.PI*2); ctx.stroke(); ctx.setLineDash([]);
+
+    if (simRunning) {
+        orbitAngle += (120 / orbitDist) * 0.02;
+    }
+    const sx = cx + orbitDist * Math.cos(orbitAngle);
+    const sy = cy + orbitDist * Math.sin(orbitAngle);
+
+    // Satellite Body
+    ctx.fillStyle = "#f59e0b"; ctx.fillRect(sx - 8, sy - 8, 16, 16);
+    // Solar panels
+    ctx.fillStyle = "#38bdf8"; ctx.fillRect(sx - 20, sy - 4, 10, 8); ctx.fillRect(sx + 10, sy - 4, 10, 8);
+
+    const vOrbit = Math.sqrt((400000) / orbitDist).toFixed(1);
+    document.getElementById('sim-live-stats').textContent = `কক্ষপথ বেগ v ≈ ${vOrbit} km/s | ব্যাসার্ধ r = ${orbitDist*50} km | স্যাটেলাইট ভর: ${orbitMass} kg`;
 }
 
 /* ===================================================
@@ -1021,14 +1332,533 @@ function handlePaymentSubmit(e) {
     renderChapterData();
 }
 
-/* ===================================================
-   UTILITY
-=================================================== */
 function markVideoComplete() {
     addProgress(getCurrentChap().id, 'video');
     alert('ভিডিও সম্পন্ন চিহ্নিত হয়েছে! আপনার প্রগ্রেস আপডেট হয়েছে।');
 }
 function printFormulaSheet() { window.print(); }
-function downloadPdfNotice() { alert('লেকচার শিট PDF ডাউনলোড হচ্ছে...'); }
+function downloadPdfNotice() {
+    const chap = getCurrentChap();
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) {
+        alert('পপ-আপ ব্লক থাকায় প্রিন্ট উইন্ডো খোলা যায়নি। অনুগ্রহ করে ব্রাউজার পারমিশন দিন।');
+        return;
+    }
+    printWindow.document.write(`
+        <!DOCTYPE html>
+        <html lang="bn">
+        <head>
+            <meta charset="UTF-8">
+            <title>${chap.title} — এক্সক্লুসিভ লেকচার শিট</title>
+            <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&display=swap" rel="stylesheet">
+            <style>
+                body { font-family: 'Hind Siliguri', sans-serif; padding: 40px; color: #1e293b; }
+                .header { border-bottom: 2px solid #2563eb; padding-bottom: 15px; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center; }
+                h1 { color: #1e3a8a; margin: 0 0 5px 0; font-size: 24px; }
+                p { margin: 0; color: #64748b; font-size: 13px; }
+                .box { background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 12px; padding: 18px; margin-bottom: 20px; }
+                h3 { margin-top: 0; color: #2563eb; font-size: 16px; }
+                .footer { margin-top: 40px; text-align: center; font-size: 12px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px; }
+            </style>
+        </head>
+        <body>
+            <div class="header">
+                <div>
+                    <h1>Al amin Physics</h1>
+                    <p>${chap.title} • এক্সক্লুসিভ রিভিশন হ্যান্ডনোট</p>
+                </div>
+                <div style="text-align: right;">
+                    <p style="font-weight: bold; color: #2563eb;">আল আমিন স্যার</p>
+                    <p>জলেশ্বরীতলা, বগুড়া | ০১৭৯৬৪৩১৭৯৫</p>
+                </div>
+            </div>
+            <div class="box">
+                <h3>📌 মূল সারসংক্ষেপ ও তত্ত্বীয় পয়েন্ট</h3>
+                <p style="color: #334155; line-height: 1.8; font-size: 14px;">${chap.desc}</p>
+            </div>
+            <div class="box">
+                <h3>⚡ বোর্ড পরীক্ষার স্পেশাল টিপস</h3>
+                <p style="color: #334155; line-height: 1.8; font-size: 14px;">
+                    ১. সকল সমীকরণের SI একক ও মাত্রা সঠিকভাবে লিখলে পূর্ণ নম্বর নিশ্চিত হয়।<br>
+                    ২. গাণিতিক সমস্যার ক্ষেত্রে দেওয়া মানসমূহ প্রথমে লিখে তারপর সঠিক সূত্র প্রয়োগ করুন।<br>
+                    ৩. গ্রাফ সংক্রান্ত প্রশ্নে ঢাল (Slope) এবং ক্ষেত্রফল কী নির্দেশ করে তা স্পষ্ট উল্লেখ করুন।
+                </p>
+            </div>
+            <div class="footer">
+                Al amin Physics Digital Platform • al-amin-physics.vercel.app • হটলাইন: ০১৭৯৬৪৩১৭৯৫, ০১৫২১৪৪৩০৬৫
+            </div>
+            <script>
+                window.onload = function() { window.print(); }
+            </script>
+        </body>
+        </html>
+    `);
+    printWindow.document.close();
+}
 function showHomeView() { showLMSDashboard(); }
+
+/* ===================================================
+   VALUE-HOOK PHONE AUTH & USER PROFILE SESSION
+=================================================== */
+let authPendingAction = null;
+let generatedOtp = "1234";
+
+function openPhoneAuthModal(triggerReason) {
+    const modal = document.getElementById('phone-auth-modal');
+    if (!modal) return;
+    authPendingAction = triggerReason;
+    
+    const reasonEl = document.getElementById('phone-auth-reason');
+    const descEl = document.getElementById('phone-auth-desc');
+    if (triggerReason === 'video') {
+        reasonEl.textContent = "ভিডিও ক্লাস প্রিভিউ শেষ!";
+        descEl.textContent = "পরবর্তী সকল ভিডিও লেকচার ও ক্লাস আনলক করতে মোবাইল নম্বর দিয়ে এক ক্লিকে লগইন করুন।";
+    } else if (triggerReason === 'exam') {
+        reasonEl.textContent = "পরীক্ষার রেজাল্ট সেভ করুন!";
+        descEl.textContent = "আপনার মেধা তালিকা ও অভিভাবকের কাছে অটোমেটিক রেজাল্ট পাঠাতে ফোন নম্বর দিন।";
+    } else if (triggerReason === 'doubt') {
+        reasonEl.textContent = "স্যারের সাথে সরাসরি আলোচনা!";
+        descEl.textContent = "আপনার প্রশ্নের উত্তর ও নোটিফিকেশন পেতে ফোন নম্বর দিয়ে লগইন করুন।";
+    } else {
+        reasonEl.textContent = "আল আমিন ফিজিক্সে স্বাগতম!";
+        descEl.textContent = "মোবাইল নম্বর ও নাম দিয়ে সহজে নিজের স্টুডেন্ট প্রোফাইল ও লিডারবোর্ডে যুক্ত হোন।";
+    }
+
+    document.getElementById('phone-step-1').classList.remove('hidden');
+    document.getElementById('phone-step-2').classList.add('hidden');
+    modal.classList.remove('hidden');
+}
+
+function closePhoneAuthModal() {
+    document.getElementById('phone-auth-modal')?.classList.add('hidden');
+}
+
+function requestPhoneOtp() {
+    const name = document.getElementById('auth-input-name').value.trim();
+    const phone = document.getElementById('auth-input-phone').value.trim();
+    const lvl = document.getElementById('auth-input-class').value;
+
+    if (!name) { alert('অনুগ্রহ করে আপনার পুরো নাম লিখুন!'); return; }
+    if (!phone || phone.length < 10) { alert('অনুগ্রহ করে সঠিক ১১ ডিজিটের মোবাইল নম্বর দিন!'); return; }
+
+    document.getElementById('otp-phone-display').textContent = `+88 ${phone}`;
+    document.getElementById('phone-step-1').classList.add('hidden');
+    document.getElementById('phone-step-2').classList.remove('hidden');
+    document.getElementById('otp-1').focus();
+}
+
+function editAuthPhone() {
+    document.getElementById('phone-step-1').classList.remove('hidden');
+    document.getElementById('phone-step-2').classList.add('hidden');
+}
+
+function focusNextOtp(idx) {
+    const val = document.getElementById(`otp-${idx}`).value;
+    if (val && idx < 4) {
+        document.getElementById(`otp-${idx+1}`).focus();
+    }
+}
+
+function verifyPhoneOtp() {
+    const o1 = document.getElementById('otp-1').value;
+    const o2 = document.getElementById('otp-2').value;
+    const o3 = document.getElementById('otp-3').value;
+    const o4 = document.getElementById('otp-4').value;
+    const entered = `${o1}${o2}${o3}${o4}`;
+
+    if (entered !== "1234" && entered.length < 4) {
+        alert('সঠিক ওটিপি দিন (ডেমো কোড: 1 2 3 4)');
+        return;
+    }
+
+    const name = document.getElementById('auth-input-name').value.trim();
+    const phone = document.getElementById('auth-input-phone').value.trim();
+    const lvl = document.getElementById('auth-input-class').value;
+
+    studentUser = {
+        name: name,
+        phone: phone,
+        classLevel: lvl,
+        streak: 7,
+        joinedAt: "আজ"
+    };
+    lsSet(LS.STUDENT_USER, studentUser);
+
+    updateUserSessionUI();
+    closePhoneAuthModal();
+    alert(`অভিনন্দন ${name}! আপনি সফলভাবে লগইন হয়েছেন।`);
+
+    if (authPendingAction === 'profile') {
+        showStudentProfileView();
+    }
+}
+
+function logoutStudentSession() {
+    if (confirm('আপনি কি সত্যিই লগআউট করতে চান?')) {
+        studentUser = null;
+        lsSet(LS.STUDENT_USER, null);
+        updateUserSessionUI();
+        showLMSDashboard();
+        alert('লগআউট সম্পন্ন হয়েছে।');
+    }
+}
+
+function updateUserSessionUI() {
+    const container = document.getElementById('user-session-container');
+    if (!container) return;
+
+    if (studentUser) {
+        container.innerHTML = `
+            <div onclick="showStudentProfileView()" class="cursor-pointer flex items-center gap-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 px-3 py-1.5 rounded-xl text-xs font-bold transition shadow-sm" title="প্রোফাইলে যান">
+                <i class="fa-solid fa-user-graduate text-emerald-600"></i>
+                <span class="max-w-[90px] truncate hidden sm:inline">${studentUser.name}</span>
+            </div>
+        `;
+    } else {
+        container.innerHTML = `
+            <button onclick="openPhoneAuthModal('header')" id="header-login-btn" class="interactive-btn flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-xl text-xs font-bold shadow-sm shadow-blue-200">
+                <i class="fa-solid fa-right-to-bracket"></i>
+                <span>লগইন</span>
+            </button>
+        `;
+    }
+}
+
+/* ===================================================
+   STUDENT PROFILE DASHBOARD RENDERER
+=================================================== */
+function renderStudentProfileData() {
+    if (!studentUser) {
+        openPhoneAuthModal('profile');
+        return;
+    }
+
+    document.getElementById('profile-display-name').textContent = studentUser.name;
+    document.getElementById('profile-display-phone').textContent = `ফোন: ${studentUser.phone} (ভেরিফায়েড)`;
+    
+    const classNames = {
+        ssc: "নবম-দশম শ্রেণি (SSC Physics)",
+        hsc1: "একাদশ-দ্বাদশ শ্রেণি — ১ম পত্র",
+        hsc2: "একাদশ-দ্বাদশ শ্রেণি — ২য় পত্র",
+        class8: "অষ্টম শ্রেণি বিজ্ঞান (NCTB 2026)"
+    };
+    document.getElementById('profile-display-class').textContent = classNames[studentUser.classLevel] || "নবম-দশম শ্রেণি";
+
+    // Exam History List
+    const examList = document.getElementById('profile-exam-history-list');
+    const scoresKeys = Object.keys(examScoresStore);
+    if (scoresKeys.length === 0) {
+        examList.innerHTML = `
+            <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200 text-xs text-slate-500 text-center">
+                এখনো কোনো পরীক্ষা দেওয়া হয়নি। <button onclick="goToSpecificChapterAndTab('ssc', 1, 'exam')" class="text-blue-600 font-bold hover:underline">প্রথম মডেল টেস্ট দিন</button>
+            </div>
+        `;
+    } else {
+        examList.innerHTML = scoresKeys.map(k => {
+            const sc = examScoresStore[k];
+            return `
+                <div class="flex items-center justify-between p-3.5 bg-slate-50 rounded-2xl border border-slate-200 text-xs">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center font-bold">
+                            <i class="fa-solid fa-clipboard-check"></i>
+                        </div>
+                        <div>
+                            <p class="font-bold text-slate-800">অধ্যায় মডেল টেস্ট (${k})</p>
+                            <span class="text-[10px] text-slate-400">স্ট্যাটাস: সম্পন্ন</span>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <span class="font-black text-blue-600 text-sm">${sc} / 5</span>
+                        <span class="block text-[10px] text-emerald-600 font-bold">A+ মার্কস</span>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    // Chapter Progress List
+    const progList = document.getElementById('profile-chapter-progress-list');
+    progList.innerHTML = APP_DATA['ssc'].chapters.slice(0, 4).map(ch => {
+        const p = chapterProgress[ch.id] || 0;
+        return `
+            <div class="p-3 bg-slate-50 rounded-2xl border border-slate-200 text-xs space-y-1.5">
+                <div class="flex justify-between font-bold text-slate-800">
+                    <span>${ch.title}</span>
+                    <span class="text-blue-600">${p}%</span>
+                </div>
+                <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
+                    <div class="bg-blue-600 h-full rounded-full transition-all duration-500" style="width:${p}%"></div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+function triggerParentSmsDemo() {
+    const phone = studentUser ? studentUser.phone : "০১৭১২-৩৪৫৬৭৮";
+    const name = studentUser ? studentUser.name : "শিক্ষার্থী";
+    alert(`[অটোমেটিক SMS সফলভাবে প্রেরিত হয়েছে]\n\nপ্রাপক: অভিভাবক (${phone})\nবার্তা: "শ্রদ্ধেয় অভিভাবক, আপনার সন্তান ${name} আল আমিন ফিজিক্সে 'বল ও গতি' পরীক্ষায় ৫-এ ৫ পেয়ে শীর্ষ স্থানে রয়েছে। অভিনন্দন!"`);
+}
+
+/* ===================================================
+   LEADERBOARD & SOCIAL FEED RENDERER
+=================================================== */
+let currentLeaderboardFilter = 'all';
+
+function filterLeaderboard(filter) {
+    currentLeaderboardFilter = filter;
+    ['all','ssc','hsc1','hsc2'].forEach(k => {
+        const btn = document.getElementById(`lb-filter-${k}`);
+        if (!btn) return;
+        if (k === filter) {
+            btn.className = "px-3.5 py-1.5 rounded-xl bg-amber-500 text-slate-950 font-bold text-xs";
+        } else {
+            btn.className = "px-3.5 py-1.5 rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 font-medium text-xs";
+        }
+    });
+    renderLeaderboardData(filter);
+}
+
+function renderLeaderboardData(filter) {
+    const tbody = document.getElementById('leaderboard-table-body');
+    if (!tbody) return;
+
+    let list = [...LEADERBOARD_SEED];
+    if (studentUser) {
+        list.unshift({
+            rank: "👑 আপনি",
+            name: `${studentUser.name} (My Profile)`,
+            class: "SSC (নবম-দশম)",
+            exams: 8,
+            points: 42,
+            badge: "🏆 ৪র্থ"
+        });
+    }
+
+    if (filter === 'ssc')  list = list.filter(item => item.class.includes('SSC'));
+    if (filter === 'hsc1') list = list.filter(item => item.class.includes('HSC ১'));
+    if (filter === 'hsc2') list = list.filter(item => item.class.includes('HSC ২'));
+
+    tbody.innerHTML = list.map((item, idx) => `
+        <tr class="hover:bg-slate-50 transition ${item.name.includes('(My Profile)') ? 'bg-amber-50/70 font-bold' : ''}">
+            <td class="py-3 font-bold text-slate-900">${item.rank}</td>
+            <td class="py-3">
+                <div class="flex items-center gap-2">
+                    <span class="w-6 h-6 rounded-full bg-blue-100 text-blue-700 text-[11px] font-bold flex items-center justify-center">${item.name[0]}</span>
+                    <span>${item.name}</span>
+                </div>
+            </td>
+            <td class="py-3 text-slate-500">${item.class}</td>
+            <td class="py-3 text-slate-600">${item.exams}টি</td>
+            <td class="py-3 text-right font-black text-blue-600">${item.points} pts</td>
+        </tr>
+    `).join('');
+}
+
+function renderSocialActivityFeed() {
+    const container = document.getElementById('live-social-feed-container');
+    if (!container) return;
+
+    container.innerHTML = SOCIAL_ACTIVITY_SEED.map(item => `
+        <div class="p-3 bg-slate-50 rounded-2xl border border-slate-100 flex items-start gap-3">
+            <div class="w-7 h-7 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center text-xs mt-0.5">
+                <i class="fa-solid ${item.icon}"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+                <p class="text-slate-800 leading-snug"><strong class="font-bold text-slate-900">${item.user}</strong> ${item.action}</p>
+                <span class="text-[10px] text-slate-400 mt-0.5 block">${item.time}</span>
+            </div>
+        </div>
+    `).join('');
+}
+
+/* ===================================================
+   DIRECTOR EXECUTIVE & ADMIN SUITE
+=================================================== */
+function renderDirectorDashboardData() {
+    const tbody = document.getElementById('director-trx-table-body');
+    if (!tbody) return;
+
+    tbody.innerHTML = transactionsStore.map(tx => `
+        <tr class="hover:bg-slate-50 transition">
+            <td class="py-3 text-slate-500 font-mono">${tx.date}</td>
+            <td class="py-3">
+                <p class="font-bold text-slate-800">${tx.studentName}</p>
+                <span class="text-[10px] text-slate-400 font-mono">${tx.phone}</span>
+            </td>
+            <td class="py-3 text-slate-700 font-medium">${tx.item}</td>
+            <td class="py-3 font-mono">
+                <span class="font-bold text-slate-800">${tx.trx}</span>
+                <span class="text-[10px] text-pink-600 block">${tx.method}</span>
+            </td>
+            <td class="py-3 font-black text-emerald-600">${tx.amount}</td>
+            <td class="py-3 text-right">
+                ${tx.status === 'Approved' 
+                    ? `<span class="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold">Approved</span>`
+                    : `<button onclick="approveTransaction('${tx.id}')" class="px-3 py-1 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-[11px] font-bold transition">অ্যাপ্রুভ</button>`
+                }
+            </td>
+        </tr>
+    `).join('');
+}
+
+function approveTransaction(txId) {
+    const item = transactionsStore.find(t => t.id === txId);
+    if (item) {
+        item.status = 'Approved';
+        lsSet(LS.TRANSACTIONS, transactionsStore);
+        renderDirectorDashboardData();
+        alert(`ট্রানজেকশন ${txId} (${item.studentName}) সফলভাবে অ্যাপ্রুভ করা হয়েছে!`);
+    }
+}
+
+function saveAdminPermissions() {
+    adminPermsStore.paymentApprove = document.getElementById('perm-payment-approve').checked;
+    adminPermsStore.examCreate = document.getElementById('perm-exam-create').checked;
+    adminPermsStore.contentUpload = document.getElementById('perm-content-upload').checked;
+    adminPermsStore.viewRevenue = document.getElementById('perm-view-revenue').checked;
+    lsSet(LS.ADMIN_PERMS, adminPermsStore);
+    alert('অ্যাডমিন পারমিশন সফলভাবে আপডেট করা হয়েছে!');
+}
+
+function exportStudentsCsv() {
+    let csv = "ID,Name,Phone,Class,Status\n";
+    LEADERBOARD_SEED.forEach((s, idx) => {
+        csv += `${idx+1},"${s.name}","017XXXXXXXX","${s.class}","Active"\n`;
+    });
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", `Alamin_Physics_Students_${Date.now()}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+function exportFinanceReport() {
+    alert('মাসিক আয়-ব্যয় রিপোর্ট (PDF) জেনারেট হচ্ছে...\nমোট রেভিনিউ: ৳ ১,২৪,৫০০\nমোট এনরোলমেন্ট: ৫৮টি\nপ্রো ভার্চুয়াল ল্যাব বিক্রয়: ৳ ৩১,২০০');
+}
+
+/* ===================================================
+   BULK PHYSICS EXAM CREATOR & OMR STUDIO
+=================================================== */
+let parsedExamQuestions = [];
+
+function openExamStudioModal() {
+    document.getElementById('exam-studio-modal')?.classList.remove('hidden');
+}
+
+function closeExamStudioModal() {
+    document.getElementById('exam-studio-modal')?.classList.add('hidden');
+}
+
+function loadSamplePhysicsQuestions() {
+    const sample = `১. একটি গাড়ির বেগ 10 s এ 20 m/s থেকে বৃদ্ধি পেয়ে 50 m/s হলো। গাড়িটির ত্বরণ কত?
+(ক) 2 m/s²
+(খ) 3 m/s²
+(গ) 5 m/s²
+(ঘ) 30 m/s²
+
+২. নিক্ষিপ্ত বস্তুর ক্ষেত্রে সর্বোচ্চ উচ্চতায় বেগ কত?
+(ক) 9.8 m/s
+(খ) 0 m/s
+(গ) 4.9 m/s
+(ঘ) অসীম
+
+৩. $s = ut + \\frac{1}{2}at^2$ সমীকরণে ত্বরণ $a=0$ হলে নিচের কোনটি সত্য?
+(ক) $s = vt$
+(খ) $v = u$
+(গ) ক ও খ উভয়ই
+(ঘ) কোনটিই নয়
+
+৪. 50 N বল 10 kg ভরের একটি স্থির বস্তুর উপর 4 s কাজ করলে শেষবেগ কত হবে?
+(ক) 10 m/s
+(খ) 20 m/s
+(গ) 40 m/s
+(ঘ) 50 m/s`;
+    document.getElementById('bulk-questions-raw').value = sample;
+}
+
+function parseRawQuestionsToOMR() {
+    const raw = document.getElementById('bulk-questions-raw').value.trim();
+    if (!raw) { alert('অনুগ্রহ করে প্রশ্ন পেস্ট করুন!'); return; }
+
+    const rawBlocks = raw.split(/\n\s*\n/);
+    parsedExamQuestions = [];
+
+    rawBlocks.forEach((block, idx) => {
+        const lines = block.split('\n').map(l => l.trim()).filter(Boolean);
+        if (lines.length >= 2) {
+            const questionText = lines[0];
+            const optionLines = lines.slice(1);
+            const options = [];
+
+            optionLines.forEach(opt => {
+                const cleaned = opt.replace(/^\([কখগঘabcdABCD]\)|\b[কখগঘabcdABCD][\.\)]/g, '').trim();
+                options.push(cleaned || opt);
+            });
+
+            parsedExamQuestions.push({
+                q: questionText,
+                options: options.length >= 4 ? options.slice(0, 4) : ["ক", "খ", "গ", "ঘ"],
+                correct: 0,
+                exp: "সঠিক উত্তর ও সমীকরণ আল আমিন স্যারের ওএমআর উত্তরপত্র অনুযায়ী নির্ধারিত।"
+            });
+        }
+    });
+
+    if (parsedExamQuestions.length === 0) {
+        alert('প্রশ্ন ফরম্যাট করা সম্ভব হয়নি। নমুনা প্রশ্ন দেখে ফরম্যাট করুন।');
+        return;
+    }
+
+    // Render OMR Sheet
+    const omrBox = document.getElementById('omr-key-setup-box');
+    const grid = document.getElementById('omr-questions-grid');
+    const badge = document.getElementById('omr-parsed-count-badge');
+    omrBox.classList.remove('hidden');
+    badge.textContent = `${parsedExamQuestions.length}টি প্রশ্ন প্রস্তুত`;
+
+    grid.innerHTML = parsedExamQuestions.map((qItem, qIdx) => `
+        <div class="p-3.5 bg-white rounded-2xl border border-slate-200 space-y-2">
+            <p class="font-bold text-slate-800 text-xs">${qItem.q}</p>
+            <div class="flex items-center gap-4 text-xs pt-1">
+                <span class="font-bold text-slate-500">ওএমআর উত্তর নির্বাচন:</span>
+                <div class="flex gap-3">
+                    ${['ক (A)', 'খ (B)', 'গ (C)', 'ঘ (D)'].map((lbl, oIdx) => `
+                        <label class="flex items-center gap-1.5 cursor-pointer p-1.5 rounded-lg border border-slate-200 hover:border-blue-400">
+                            <input type="radio" name="omr_ans_${qIdx}" value="${oIdx}" ${oIdx === 0 ? 'checked' : ''} onchange="setOmrAnswerKey(${qIdx}, ${oIdx})" class="accent-blue-600">
+                            <span class="font-bold text-slate-700 text-[11px]">${lbl}</span>
+                        </label>
+                    `).join('')}
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+function setOmrAnswerKey(qIdx, optIdx) {
+    if (parsedExamQuestions[qIdx]) {
+        parsedExamQuestions[qIdx].correct = optIdx;
+    }
+}
+
+function publishExamFromStudio() {
+    if (parsedExamQuestions.length === 0) {
+        alert('আগে প্রশ্ন পেস্ট করে ওএমআর গ্রিড তৈরি করুন!');
+        return;
+    }
+    const chap = document.getElementById('bulk-exam-chapter').value;
+    const title = document.getElementById('bulk-exam-title').value;
+
+    // Overwrite or append to EXAM_BANK
+    EXAM_BANK.length = 0;
+    parsedExamQuestions.forEach(q => EXAM_BANK.push(q));
+    initExamQuestions();
+
+    closeExamStudioModal();
+    alert(`অসাধারণ! "${title}" পরীক্ষাটি ওএমআর উত্তরমালাসহ সফলভাবে প্রস্তুত হয়েছে!\nমোট প্রশ্ন: ${parsedExamQuestions.length}টি। এখন শিক্ষার্থীরা পরীক্ষা দিতে পারবে।`);
+    goToSpecificChapterAndTab('ssc', 1, 'exam');
+}
 

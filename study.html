@@ -65,10 +65,16 @@
                 <button onclick="switchLevel('hsc1')"   id="nav-hsc1"   class="nav-btn px-3 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:text-blue-700 ripple-btn">HSC ১ম পত্র</button>
                 <button onclick="switchLevel('hsc2')"   id="nav-hsc2"   class="nav-btn px-3 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:text-blue-700 ripple-btn">HSC ২য় পত্র</button>
                 <button onclick="switchLevel('class8')" id="nav-class8" class="nav-btn px-3 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:text-blue-700 ripple-btn">অষ্টম বিজ্ঞান</button>
+                <button onclick="showLeaderboardView()" id="nav-leaderboard" class="nav-btn px-3 py-2 rounded-xl text-xs font-bold text-amber-700 bg-amber-50 hover:bg-amber-100 transition flex items-center gap-1.5 border border-amber-200" title="লাইভ লিডারবোর্ড">
+                    <i class="fa-solid fa-trophy text-amber-500"></i> লিডারবোর্ড
+                </button>
+                <button onclick="showStudentProfileView()" id="nav-profile-btn" class="nav-btn px-3 py-2 rounded-xl text-xs font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 transition flex items-center gap-1.5 border border-emerald-200" title="আমার গ্রোথ প্রোফাইল">
+                    <i class="fa-solid fa-chart-line text-emerald-600"></i> প্রোফাইল
+                </button>
             </nav>
 
             <!-- Right Actions: Dark Mode + Role -->
-            <div class="flex items-center gap-3">
+            <div class="flex items-center gap-2 sm:gap-3">
                 <!-- Dark Mode Toggle -->
                 <div id="dark-mode-toggle-wrap" class="flex items-center gap-1.5">
                     <span id="dark-icon" class="text-base select-none">🌙</span>
@@ -81,21 +87,23 @@
                 </div>
 
                 <!-- Role Status Pill -->
-                <div class="hidden sm:flex items-center gap-2 role-pill px-3 py-1.5 rounded-full border text-xs">
+                <div onclick="openAuthModal()" class="cursor-pointer hidden sm:flex items-center gap-2 role-pill px-3 py-1.5 rounded-full border text-xs hover:border-blue-400 transition" title="রোল পরিবর্তন করতে ক্লিক করুন">
                     <span class="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
                     <span id="current-user-role-label" class="font-semibold text-slate-700">স্টুডেন্ট মোড</span>
                 </div>
 
+                <!-- User Session Pill (Displays phone or Login button) -->
+                <div id="user-session-container">
+                    <button onclick="openPhoneAuthModal('header')" id="header-login-btn" class="interactive-btn flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-xl text-xs font-bold shadow-sm shadow-blue-200">
+                        <i class="fa-solid fa-right-to-bracket"></i>
+                        <span>লগইন</span>
+                    </button>
+                </div>
+
                 <!-- App Download Pill -->
-                <a href="https://github.com/alaminnazir99-jpg/al-amin-physics/releases/download/v1.0.0/al-amin-physics.apk" download class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold transition shadow-sm" title="অ্যান্ড্রয়েড অ্যাপ ডাউনলোড">
+                <a href="https://github.com/alaminnazir99-jpg/al-amin-physics/releases/download/v1.0.0/al-amin-physics.apk" download class="hidden lg:inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold transition shadow-sm" title="অ্যান্ড্রয়েড অ্যাপ ডাউনলোড">
                     <i class="fa-brands fa-android"></i> অ্যাপ
                 </a>
-
-                <!-- Auth Button -->
-                <button onclick="openAuthModal()" class="interactive-btn flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-3 sm:px-4 py-2 rounded-xl text-xs font-semibold shadow-md shadow-blue-200">
-                    <i class="fa-solid fa-user-shield"></i>
-                    <span class="hidden sm:inline">লগ ইন / রোল</span>
-                </button>
             </div>
         </div>
 
@@ -106,6 +114,12 @@
             </a>
             <button onclick="showLMSDashboard()" class="whitespace-nowrap px-3 py-1.5 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 transition font-bold flex items-center gap-1 border border-blue-200">
                 <i class="fa-solid fa-shapes text-[10px]"></i> ড্যাশবোর্ড
+            </button>
+            <button onclick="showLeaderboardView()" class="whitespace-nowrap px-3 py-1.5 rounded-lg bg-amber-50 text-amber-700 hover:bg-amber-100 transition font-bold flex items-center gap-1 border border-amber-200">
+                <i class="fa-solid fa-trophy text-[10px]"></i> লিডারবোর্ড
+            </button>
+            <button onclick="showStudentProfileView()" class="whitespace-nowrap px-3 py-1.5 rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-100 transition font-bold flex items-center gap-1 border border-emerald-200">
+                <i class="fa-solid fa-user-graduate text-[10px]"></i> প্রোফাইল
             </button>
             <button onclick="switchLevel('ssc')"    class="whitespace-nowrap px-3.5 py-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-blue-50 hover:text-blue-600 transition font-medium">নবম-দশম</button>
             <button onclick="switchLevel('hsc1')"   class="whitespace-nowrap px-3.5 py-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-blue-50 hover:text-blue-600 transition font-medium">HSC ১ম পত্র</button>
@@ -572,12 +586,13 @@
         <!-- 7. সিমুলেশন -->
         <div id="section-simulation" class="tab-pane hidden">
             <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
+                <!-- Experiment Selector Header -->
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4 pb-4 border-b border-slate-100">
                     <div>
                         <h3 class="text-xl font-bold text-slate-900 flex items-center gap-2">
-                            <i class="fa-solid fa-flask text-teal-600"></i> ভার্চুয়াল ফিজিক্স ল্যাব
+                            <i class="fa-solid fa-flask text-teal-600"></i> ভার্চুয়াল ফিজিক্স সিমুলেশন ল্যাব
                         </h3>
-                        <p class="text-xs sm:text-sm text-slate-500">স্লাইডার পরিবর্তন করে বাস্তব পদার্থবিজ্ঞান সরাসরি দেখুন!</p>
+                        <p class="text-xs sm:text-sm text-slate-500">প্র্যাকটিক্যাল ছাড়াই ল্যাব এক্সপেরিমেন্ট সরাসরি স্ক্রিনে টেস্ট করুন</p>
                     </div>
                     <div class="flex items-center gap-2">
                         <button onclick="toggleSimPlay()" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold transition flex items-center gap-2">
@@ -588,19 +603,67 @@
                         </button>
                     </div>
                 </div>
+
+                <!-- Simulation Experiment Selector Bar -->
+                <div class="flex overflow-x-auto pb-3 mb-4 space-x-2 text-xs scrollbar-hide">
+                    <!-- Free 1: Pendulum -->
+                    <button onclick="selectSimExperiment('pendulum')" id="sim-tab-pendulum" class="sim-exp-btn px-3 py-2 rounded-xl border border-blue-500 bg-blue-50 text-blue-700 font-bold flex items-center gap-1.5 whitespace-nowrap">
+                        <i class="fa-solid fa-clock"></i> সরল দোলক (Free)
+                    </button>
+                    <!-- Free 2: Projectile -->
+                    <button onclick="selectSimExperiment('projectile')" id="sim-tab-projectile" class="sim-exp-btn px-3 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-medium flex items-center gap-1.5 whitespace-nowrap">
+                        <i class="fa-solid fa-rocket"></i> প্রাস ও প্রক্ষেপক (Free)
+                    </button>
+                    <!-- Pro 1: Circuit Ohm's Law -->
+                    <button onclick="selectSimExperiment('circuit')" id="sim-tab-circuit" class="sim-exp-btn px-3 py-2 rounded-xl border border-amber-300 bg-amber-50/60 hover:bg-amber-100 text-amber-900 font-medium flex items-center gap-1.5 whitespace-nowrap">
+                        <i class="fa-solid fa-bolt text-amber-600"></i> চলতড়িৎ ও ওহম ল্যাব <span class="text-[10px] bg-amber-200 text-amber-900 px-1.5 py-0.5 rounded font-black">PRO</span>
+                    </button>
+                    <!-- Pro 2: Optics Lens & Reflection -->
+                    <button onclick="selectSimExperiment('optics')" id="sim-tab-optics" class="sim-exp-btn px-3 py-2 rounded-xl border border-amber-300 bg-amber-50/60 hover:bg-amber-100 text-amber-900 font-medium flex items-center gap-1.5 whitespace-nowrap">
+                        <i class="fa-solid fa-eye text-amber-600"></i> আলো ও লেন্স ল্যাব <span class="text-[10px] bg-amber-200 text-amber-900 px-1.5 py-0.5 rounded font-black">PRO</span>
+                    </button>
+                    <!-- Pro 3: Planetary Orbit -->
+                    <button onclick="selectSimExperiment('orbit')" id="sim-tab-orbit" class="sim-exp-btn px-3 py-2 rounded-xl border border-amber-300 bg-amber-50/60 hover:bg-amber-100 text-amber-900 font-medium flex items-center gap-1.5 whitespace-nowrap">
+                        <i class="fa-solid fa-earth-americas text-amber-600"></i> মহাকর্ষ ও কক্ষপথ <span class="text-[10px] bg-amber-200 text-amber-900 px-1.5 py-0.5 rounded font-black">PRO</span>
+                    </button>
+                </div>
                 <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
                     <div class="lg:col-span-3 bg-slate-950 rounded-3xl overflow-hidden border border-slate-800 shadow-2xl relative min-h-[380px]">
                         <canvas id="physics-canvas" width="700" height="380" class="w-full max-w-full block"></canvas>
                         <div class="absolute top-3 left-3 bg-slate-900/80 backdrop-blur border border-slate-700 text-blue-400 text-xs px-3 py-1 rounded-xl font-mono">
                             <span id="sim-live-stats">Status: Active</span>
                         </div>
+                        <!-- Pro Sim Lock Overlay -->
+                        <div id="sim-pro-lock-overlay" class="hidden absolute inset-0 bg-slate-950/85 backdrop-blur-md flex flex-col items-center justify-center text-center p-6 z-20">
+                            <div class="w-16 h-16 rounded-3xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-3xl mb-3 border border-amber-500/30">
+                                <i class="fa-solid fa-lock"></i>
+                            </div>
+                            <span class="text-xs font-bold text-amber-400 uppercase tracking-widest bg-amber-500/10 px-3 py-1 rounded-full border border-amber-500/30 mb-2">PRO LAB REQUIRED</span>
+                            <h4 id="sim-pro-lock-title" class="text-xl font-bold text-white mb-2">চলতড়িৎ ও ওহমের সূত্র ভার্চুয়াল ল্যাব</h4>
+                            <p class="text-xs text-slate-300 max-w-md mb-6 leading-relaxed">
+                                সকল অ্যাডভান্সড ভার্চুয়াল ল্যাব (সার্কিট, আলো ও লেন্স, মহাকর্ষীয় কক্ষপথ) আনলক করতে মাত্র ৳১০০ সাবস্ক্রিপশন ফি দিয়ে আজীবন এক্সেস নিন।
+                            </p>
+                            <button onclick="openProSimModal()" class="px-6 py-3 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-black rounded-2xl text-xs sm:text-sm shadow-xl shadow-amber-500/20 transition transform hover:scale-105 flex items-center gap-2">
+                                <i class="fa-solid fa-crown"></i> মাত্র ৳১০০-তে প্রো ল্যাব আনলক করুন
+                            </button>
+                        </div>
                     </div>
                     <div class="bg-slate-50 p-5 rounded-3xl border border-slate-200 space-y-4">
-                        <h4 class="font-bold text-slate-800 text-xs sm:text-sm border-b pb-2">সিমুলেশন প্যারামিটার</h4>
+                        <div class="flex items-center justify-between border-b pb-2">
+                            <h4 class="font-bold text-slate-800 text-xs sm:text-sm">ল্যাব কন্ট্রোল প্যানেল</h4>
+                            <span id="sim-lab-type-badge" class="text-[10px] bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full font-bold">Free Lab</span>
+                        </div>
                         <div id="simulation-controls" class="space-y-4 text-xs font-medium text-slate-700"></div>
-                        <div class="p-3 bg-amber-50 border border-amber-200 rounded-2xl text-amber-900 text-xs leading-relaxed">
-                            <i class="fa-solid fa-circle-info text-amber-600 mr-1"></i>
+                        <div id="sim-tip-box" class="p-3 bg-blue-50 border border-blue-200 rounded-2xl text-blue-900 text-xs leading-relaxed">
+                            <i class="fa-solid fa-circle-info text-blue-600 mr-1"></i>
                             <strong>টিপস:</strong> স্লাইডার পরিবর্তনে রিয়েল-টাইম ফলাফল দেখুন।
+                        </div>
+                        <div class="p-3 bg-amber-50/80 border border-amber-200 rounded-2xl text-xs text-amber-900 flex items-center justify-between">
+                            <div>
+                                <p class="font-bold">প্রো ল্যাব পাস: ৳১০০</p>
+                                <p class="text-[10px] text-amber-700">সকল প্রো সিমুলেশন আনলক</p>
+                            </div>
+                            <button onclick="openProSimModal()" id="btn-side-unlock-sim" class="px-2.5 py-1.5 bg-amber-500 text-slate-950 font-bold rounded-lg text-[10px] hover:bg-amber-400">আনলক</button>
                         </div>
                     </div>
                 </div>
@@ -742,6 +805,357 @@
         </div>
 
     </div><!-- /content-display-area -->
+
+    <!-- ====================================================
+         VIEW: STUDENT GROWTH PROFILE DASHBOARD
+    ==================================================== -->
+    <div id="student-profile-view" class="hidden space-y-6 mb-8">
+        <!-- Profile Banner -->
+        <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-slate-900 via-blue-950 to-slate-900 p-6 sm:p-8 text-white shadow-xl border border-blue-500/20">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 relative z-10">
+                <div class="flex items-center gap-4">
+                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-400 text-slate-950 flex items-center justify-center text-3xl font-black shadow-lg">
+                        <i class="fa-solid fa-user-graduate"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h2 id="profile-display-name" class="text-2xl font-black">শিক্ষার্থী প্রোফাইল</h2>
+                            <span class="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] font-bold border border-emerald-500/30">Active Student</span>
+                        </div>
+                        <p id="profile-display-phone" class="text-xs text-blue-200 mt-0.5">ফোন: ০১৭১২-৩৪৫৬৭৮ (ভেরিফায়েড)</p>
+                        <p class="text-[11px] text-slate-400 mt-1">শ্রেণি: <span id="profile-display-class">নবম-দশম শ্রেণি (SSC)</span></p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="showLMSDashboard()" class="px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-xl text-xs font-bold transition border border-white/10">
+                        <i class="fa-solid fa-shapes mr-1.5"></i> ক্লাসরুম
+                    </button>
+                    <button onclick="logoutStudentSession()" class="px-4 py-2 bg-red-500/20 hover:bg-red-500/30 text-red-200 rounded-xl text-xs font-bold transition border border-red-500/30">
+                        <i class="fa-solid fa-arrow-right-from-bracket mr-1.5"></i> লগআউট
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4 Metric Cards -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm flex items-center gap-4">
+                <div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl">
+                    <i class="fa-solid fa-fire"></i>
+                </div>
+                <div>
+                    <span class="text-2xl font-black text-slate-900" id="profile-study-streak">৭ দিন</span>
+                    <p class="text-xs text-slate-500 font-medium">ডেইলি স্টাডি স্ট্রিক</p>
+                </div>
+            </div>
+            <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm flex items-center gap-4">
+                <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl">
+                    <i class="fa-solid fa-chart-pie"></i>
+                </div>
+                <div>
+                    <span class="text-2xl font-black text-slate-900" id="profile-total-progress">৪৮%</span>
+                    <p class="text-xs text-slate-500 font-medium">সামগ্রিক সিলেবাস সম্পন্ন</p>
+                </div>
+            </div>
+            <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm flex items-center gap-4">
+                <div class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl">
+                    <i class="fa-solid fa-trophy"></i>
+                </div>
+                <div>
+                    <span class="text-2xl font-black text-slate-900" id="profile-avg-score">৮৮%</span>
+                    <p class="text-xs text-slate-500 font-medium">গড় পরীক্ষার মার্কস</p>
+                </div>
+            </div>
+            <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm flex items-center gap-4">
+                <div class="w-12 h-12 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center text-xl">
+                    <i class="fa-solid fa-medal"></i>
+                </div>
+                <div>
+                    <span class="text-2xl font-black text-slate-900" id="profile-badge-count">৪টি</span>
+                    <p class="text-xs text-slate-500 font-medium">অর্জিত মেডেল ও ব্যাজ</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2 Column Analytics & Activity -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Left: Exam Scores & History -->
+            <div class="lg:col-span-2 space-y-6">
+                <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                            <i class="fa-solid fa-square-poll-vertical text-blue-600"></i> সাম্প্রতিক পরীক্ষার পারফরম্যান্স
+                        </h3>
+                        <span class="text-xs text-slate-400">সর্বশেষ ৫টি পরীক্ষা</span>
+                    </div>
+                    <div id="profile-exam-history-list" class="space-y-3">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+                    <h3 class="text-base font-bold text-slate-900 mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-bars-progress text-emerald-600"></i> অধ্যায়ভিত্তিক পড়াশোনার প্রগ্রেস
+                    </h3>
+                    <div id="profile-chapter-progress-list" class="space-y-3">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Badges & Parent SMS Report Preview -->
+            <div class="space-y-6">
+                <!-- Badges Box -->
+                <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+                    <h3 class="text-base font-bold text-slate-900 mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-award text-amber-500"></i> অর্জিত ব্যাজসমূহ
+                    </h3>
+                    <div class="grid grid-cols-2 gap-3 text-center">
+                        <div class="p-3 bg-amber-50/70 border border-amber-200 rounded-2xl">
+                            <div class="text-2xl mb-1">⚡</div>
+                            <p class="text-xs font-bold text-amber-900">গতি মাস্টার</p>
+                            <span class="text-[10px] text-amber-700">গতি পরীক্ষায় ফুল মার্কস</span>
+                        </div>
+                        <div class="p-3 bg-blue-50/70 border border-blue-200 rounded-2xl">
+                            <div class="text-2xl mb-1">🧪</div>
+                            <p class="text-xs font-bold text-blue-900">ল্যাব এক্সপ্লোরার</p>
+                            <span class="text-[10px] text-blue-700">সিমুলেশন রান ২০+</span>
+                        </div>
+                        <div class="p-3 bg-emerald-50/70 border border-emerald-200 rounded-2xl">
+                            <div class="text-2xl mb-1">🎯</div>
+                            <p class="text-xs font-bold text-emerald-900">৭-ডে স্ট্রিক</p>
+                            <span class="text-[10px] text-emerald-700">টানা ৭ দিন পড়ালেখা</span>
+                        </div>
+                        <div class="p-3 bg-purple-50/70 border border-purple-200 rounded-2xl">
+                            <div class="text-2xl mb-1">📐</div>
+                            <p class="text-xs font-bold text-purple-900">ফর্মুলা গুরু</p>
+                            <span class="text-[10px] text-purple-700">সকল সূত্র কমপ্লিট</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Parental SMS Report Feature -->
+                <div class="bg-gradient-to-br from-blue-950 via-slate-900 to-slate-950 p-6 rounded-3xl text-white border border-blue-500/20 shadow-xl">
+                    <div class="flex items-center gap-2 mb-3">
+                        <i class="fa-solid fa-comment-sms text-cyan-400 text-lg"></i>
+                        <h4 class="font-bold text-sm text-cyan-200">অভিভাবক SMS রিপোর্ট</h4>
+                    </div>
+                    <p class="text-xs text-slate-300 leading-relaxed mb-4">
+                        প্রতিটি পরীক্ষার স্কোর ও মেধা স্থান স্বয়ংক্রিয়ভাবে অভিভাবকের নম্বরে SMS পাঠানো হয়।
+                    </p>
+                    <div class="p-3 bg-slate-900/90 rounded-2xl border border-slate-700 text-[11px] text-slate-300 font-mono space-y-1">
+                        <p class="text-emerald-400 font-bold">📩 লাস্ট SMS স্ট্যাটাস: Sent</p>
+                        <p>"শ্রদ্ধেয় অভিভাবক, আপনার সন্তান তানভীর আহমেদ আল আমিন ফিজিক্সে 'বল ও গতি' পরীক্ষায় ৫-এ ৫ পেয়েছে। বিস্তারিত: al-amin-physics.vercel.app"</p>
+                    </div>
+                    <button onclick="triggerParentSmsDemo()" class="w-full mt-4 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-paper-plane"></i> অভিভাবককে রিপোর্ট SMS পাঠান
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ====================================================
+         VIEW: LIVE LEADERBOARD & SOCIAL FEED
+    ==================================================== -->
+    <div id="leaderboard-view" class="hidden space-y-6 mb-8">
+        <div class="bg-gradient-to-r from-amber-950 via-slate-900 to-slate-950 p-6 sm:p-8 rounded-3xl text-white shadow-xl border border-amber-500/20">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 text-xs font-bold border border-amber-400/30 mb-2">
+                        <i class="fa-solid fa-trophy text-amber-400"></i> মেধা তালিকা ও সামাজিক অনুপ্রেরণা
+                    </div>
+                    <h2 class="text-2xl sm:text-3xl font-black">লাইভ ফিজিক্স লিডারবোর্ড</h2>
+                    <p class="text-xs sm:text-sm text-slate-300 mt-1">বগুড়া ও সারা দেশের সেরা শিক্ষার্থীদের সাথে নিজের প্রস্তুতি যাচাই করো।</p>
+                </div>
+                <!-- Filter Pills -->
+                <div class="flex items-center gap-2">
+                    <button onclick="filterLeaderboard('all')"  id="lb-filter-all"  class="px-3.5 py-1.5 rounded-xl bg-amber-500 text-slate-950 font-bold text-xs">সকল শ্রেণি</button>
+                    <button onclick="filterLeaderboard('ssc')"  id="lb-filter-ssc"  class="px-3.5 py-1.5 rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 font-medium text-xs">SSC</button>
+                    <button onclick="filterLeaderboard('hsc1')" id="lb-filter-hsc1" class="px-3.5 py-1.5 rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 font-medium text-xs">HSC ১</button>
+                    <button onclick="filterLeaderboard('hsc2')" id="lb-filter-hsc2" class="px-3.5 py-1.5 rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 font-medium text-xs">HSC ২</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2 Column: Leaderboard Table + Live Activity Feed -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Table: Top Ranked Students -->
+            <div class="lg:col-span-2 bg-white rounded-3xl p-6 border border-slate-200 shadow-sm">
+                <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
+                    <h3 class="font-bold text-slate-900 text-base flex items-center gap-2">
+                        <i class="fa-solid fa-ranking-star text-amber-500"></i> টপ পারফর্মারদের তালিকা
+                    </h3>
+                    <span class="text-xs text-slate-400">রিয়েল-টাইম আপডেট</span>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs">
+                        <thead>
+                            <tr class="text-slate-400 border-b border-slate-100 pb-2">
+                                <th class="py-2.5 font-bold">র‍্যাংক</th>
+                                <th class="py-2.5 font-bold">শিক্ষার্থীর নাম</th>
+                                <th class="py-2.5 font-bold">শ্রেণি / বিভাগ</th>
+                                <th class="py-2.5 font-bold">পরীক্ষা সংখ্যা</th>
+                                <th class="py-2.5 font-bold text-right">মোট স্কোর / পয়েন্ট</th>
+                            </tr>
+                        </thead>
+                        <tbody id="leaderboard-table-body" class="divide-y divide-slate-100 font-medium">
+                            <!-- Populated dynamically by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Social Proof / Recent Activity Feed -->
+            <div class="space-y-6">
+                <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm">
+                    <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
+                        <h4 class="font-bold text-slate-900 text-sm flex items-center gap-2">
+                            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping"></span>
+                            লাইভ স্টাডি ফিড
+                        </h4>
+                        <span class="text-[10px] text-slate-400 font-mono">Live Stream</span>
+                    </div>
+                    <div id="live-social-feed-container" class="space-y-3.5 text-xs">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <!-- Motivation Banner -->
+                <div class="bg-gradient-to-br from-blue-900 to-indigo-950 p-6 rounded-3xl text-white border border-blue-400/20 shadow-md">
+                    <div class="text-2xl mb-2 text-amber-400"><i class="fa-solid fa-lightbulb"></i></div>
+                    <h4 class="font-bold text-sm mb-1">পরবর্তী মেগা এক্সাম: আগামী শুক্রবার!</h4>
+                    <p class="text-xs text-slate-300 leading-relaxed mb-3">
+                        টপ ৩ জন শিক্ষার্থীকে আল আমিন স্যারের পক্ষ থেকে বিশেষ পুরস্কার ও ফুল স্কলারশিপ দেওয়া হবে।
+                    </p>
+                    <button onclick="goToSpecificChapterAndTab('ssc', 1, 'exam')" class="w-full py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-xl text-xs transition">
+                        এখনই প্রস্তুতি টেস্ট দিন
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ====================================================
+         VIEW: DIRECTOR EXECUTIVE & ADMIN ERP SUITE
+    ==================================================== -->
+    <div id="director-executive-view" class="hidden space-y-6 mb-8">
+        <div class="bg-gradient-to-r from-slate-950 via-slate-900 to-blue-950 p-6 sm:p-8 rounded-3xl text-white shadow-xl border border-blue-500/20">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/20 text-blue-300 text-xs font-bold border border-blue-400/30 mb-2">
+                        <i class="fa-solid fa-shield-halved"></i> ডিরেক্টর ও ম্যানেজমেন্ট এক্সেস
+                    </div>
+                    <h2 class="text-2xl sm:text-3xl font-black">ফাইন্যান্সিয়াল ও প্ল্যাটফর্ম কন্ট্রোল সেন্টার</h2>
+                    <p class="text-xs sm:text-sm text-slate-300 mt-1">আয়-ব্যয়, এনরোলমেন্ট, ট্রানজেকশন অ্যাপ্রুভাল ও শিক্ষক/অ্যাডমিন পারমিশন।</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="openExamStudioModal()" class="px-4 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold transition flex items-center gap-2 shadow-md">
+                        <i class="fa-solid fa-file-circle-plus"></i> অটো এক্সাম স্টুডিও
+                    </button>
+                    <button onclick="showLMSDashboard()" class="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-white rounded-xl text-xs font-bold transition">
+                        ক্লাসরুমে যান
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4 Financial Metrics -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm">
+                <span class="text-xs text-slate-400 font-semibold block mb-1">মোট সংগৃহীত রেভিনিউ</span>
+                <span class="text-2xl font-black text-emerald-600" id="dir-total-revenue">৳ ১,২৪,৫০০</span>
+                <p class="text-[11px] text-slate-500 mt-1"><i class="fa-solid fa-arrow-trend-up text-emerald-500 mr-1"></i>+১৮% এই মাসে</p>
+            </div>
+            <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm">
+                <span class="text-xs text-slate-400 font-semibold block mb-1">সক্রিয় মোট শিক্ষার্থী</span>
+                <span class="text-2xl font-black text-blue-600" id="dir-total-students">১,৮২০ জন</span>
+                <p class="text-[11px] text-slate-500 mt-1"><i class="fa-solid fa-users text-blue-500 mr-1"></i>বগুড়া + অনলাইন</p>
+            </div>
+            <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm">
+                <span class="text-xs text-slate-400 font-semibold block mb-1">পেন্ডিং TrxID ভেরিফিকেশন</span>
+                <span class="text-2xl font-black text-amber-600" id="dir-pending-count">৪টি পেমেন্ট</span>
+                <p class="text-[11px] text-slate-500 mt-1">অপেক্ষমাণ রিকোয়েস্ট</p>
+            </div>
+            <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm">
+                <span class="text-xs text-slate-400 font-semibold block mb-1">প্রো সিমুলেশন বিক্রয় (৳১০০)</span>
+                <span class="text-2xl font-black text-purple-600" id="dir-pro-sim-count">৩১২টি</span>
+                <p class="text-[11px] text-slate-500 mt-1">মোট: ৳ ৩১,২০০</p>
+            </div>
+        </div>
+
+        <!-- Transaction Approval Table & Role Delegation -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Approval Table -->
+            <div class="lg:col-span-2 bg-white rounded-3xl p-6 border border-slate-200 shadow-sm">
+                <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
+                    <h3 class="font-bold text-slate-900 text-base flex items-center gap-2">
+                        <i class="fa-solid fa-wallet text-pink-600"></i> সাম্প্রতিক পেমেন্ট ট্রানজেকশন ও অ্যাপ্রুভাল
+                    </h3>
+                    <span class="text-xs bg-pink-50 text-pink-700 px-2.5 py-1 rounded-full font-bold">bKash / Nagad</span>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs">
+                        <thead>
+                            <tr class="text-slate-400 border-b border-slate-100 pb-2">
+                                <th class="py-2.5 font-bold">তারিখ/সময়</th>
+                                <th class="py-2.5 font-bold">শিক্ষার্থী ও ফোন</th>
+                                <th class="py-2.5 font-bold">কোর্স / আইটেম</th>
+                                <th class="py-2.5 font-bold">TrxID ও মেথড</th>
+                                <th class="py-2.5 font-bold">পরিমাণ</th>
+                                <th class="py-2.5 font-bold text-right">অ্যাকশন</th>
+                            </tr>
+                        </thead>
+                        <tbody id="director-trx-table-body" class="divide-y divide-slate-100 font-medium">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Role Delegation & Permission Controls -->
+            <div class="space-y-6">
+                <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm">
+                    <h4 class="font-bold text-slate-900 text-sm mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-user-gear text-indigo-600"></i> অ্যাডমিন রোল ও পারমিশন কন্ট্রোল
+                    </h4>
+                    <p class="text-xs text-slate-500 mb-4">অ্যাডমিনকে কোন কোন নির্দিষ্ট পারমিশন দেবেন তা নির্বাচন করুন:</p>
+                    <div class="space-y-3 text-xs">
+                        <label class="flex items-center justify-between p-2.5 bg-slate-50 rounded-xl cursor-pointer hover:bg-slate-100">
+                            <span class="font-semibold text-slate-700">পেমেন্ট TrxID অ্যাপ্রুভ ক্ষমতা</span>
+                            <input type="checkbox" checked id="perm-payment-approve" class="rounded text-blue-600 focus:ring-blue-500">
+                        </label>
+                        <label class="flex items-center justify-between p-2.5 bg-slate-50 rounded-xl cursor-pointer hover:bg-slate-100">
+                            <span class="font-semibold text-slate-700">অনলাইন পরীক্ষা প্রকাশ ও এডিট</span>
+                            <input type="checkbox" checked id="perm-exam-create" class="rounded text-blue-600 focus:ring-blue-500">
+                        </label>
+                        <label class="flex items-center justify-between p-2.5 bg-slate-50 rounded-xl cursor-pointer hover:bg-slate-100">
+                            <span class="font-semibold text-slate-700">লেকচার ভিডিও ও হ্যান্ডনোট আপলোড</span>
+                            <input type="checkbox" checked id="perm-content-upload" class="rounded text-blue-600 focus:ring-blue-500">
+                        </label>
+                        <label class="flex items-center justify-between p-2.5 bg-slate-50 rounded-xl cursor-pointer hover:bg-slate-100">
+                            <span class="font-semibold text-slate-700">ফাইন্যান্সিয়াল রিপোর্ট ও আয় দেখা</span>
+                            <input type="checkbox" id="perm-view-revenue" class="rounded text-blue-600 focus:ring-blue-500">
+                        </label>
+                    </div>
+                    <button onclick="saveAdminPermissions()" class="w-full mt-4 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl text-xs transition">
+                        পারমিশন আপডেট করুন
+                    </button>
+                </div>
+
+                <!-- Quick Action Buttons -->
+                <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-3">
+                    <h4 class="font-bold text-slate-900 text-sm">ডাউনলোড ও ব্যাকআপ</h4>
+                    <button onclick="exportStudentsCsv()" class="w-full py-2.5 px-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 border border-slate-200">
+                        <i class="fa-solid fa-file-excel text-emerald-600"></i> শিক্ষার্থী ডেটা এক্সপোর্ট (Excel/CSV)
+                    </button>
+                    <button onclick="exportFinanceReport()" class="w-full py-2.5 px-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 border border-slate-200">
+                        <i class="fa-solid fa-file-invoice-dollar text-blue-600"></i> মাসিক আয়-ব্যয় রিপোর্ট (PDF)
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 </main>
 
 <!-- ====================================================
@@ -873,7 +1287,265 @@
             </div>
             <button type="submit" class="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl text-sm transition shadow-md">পোস্ট করুন</button>
         </form>
+</div>
+
+<!-- ====================================================
+     MODAL 4: VALUE-HOOK PHONE & OTP LOGIN
+==================================================== -->
+<div id="phone-auth-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-7 shadow-2xl border border-slate-100 transform transition-all">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
+            <div class="flex items-center gap-2.5">
+                <div class="w-10 h-10 rounded-2xl bg-blue-100 text-blue-600 flex items-center justify-center text-xl font-bold">
+                    <i class="fa-solid fa-mobile-screen"></i>
+                </div>
+                <div>
+                    <h4 class="font-bold text-slate-900 text-base" id="phone-modal-title">মোবাইল নম্বরে দ্রুত লগইন</h4>
+                    <p class="text-xs text-slate-500">আপনার অগ্রগতি ও রেজাল্ট সুরক্ষিত রাখতে</p>
+                </div>
+            </div>
+            <button onclick="closePhoneAuthModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+
+        <div id="phone-auth-value-banner" class="p-3.5 bg-blue-50/80 border border-blue-200/80 rounded-2xl text-xs text-blue-900 mb-4 flex items-start gap-2.5">
+            <i class="fa-solid fa-circle-check text-blue-600 text-base mt-0.5"></i>
+            <div>
+                <strong class="block font-bold mb-0.5" id="phone-auth-reason">ফ্রি প্রিভিউ শেষ!</strong>
+                <span id="phone-auth-desc">সম্পূর্ণ ভিডিও দেখা, মডেল টেস্ট সাবমিশন ও পার্সোনাল গ্রোথ ট্র্যাক করতে মাত্র ৩০ সেকেন্ডে নম্বর দিয়ে ফ্রি একাউন্ট খুলুন।</span>
+            </div>
+        </div>
+
+        <!-- Step 1: Input Phone & Name -->
+        <div id="phone-step-1" class="space-y-3.5">
+            <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">শিক্ষার্থীর পুরো নাম:</label>
+                <input type="text" id="auth-input-name" placeholder="যেমন: তানভীর আহমেদ" class="w-full p-3 rounded-xl border border-slate-300 text-sm outline-none focus:border-blue-500 font-medium">
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">১১ ডিজিটের মোবাইল নম্বর:</label>
+                <div class="relative">
+                    <span class="absolute left-3.5 top-3 text-slate-400 font-bold text-sm">+88</span>
+                    <input type="tel" id="auth-input-phone" placeholder="017XXXXXXXX" class="w-full pl-14 p-3 rounded-xl border border-slate-300 text-sm outline-none focus:border-blue-500 font-mono font-bold tracking-wider">
+                </div>
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">শ্রেণি / লেভেল:</label>
+                <select id="auth-input-class" class="w-full p-3 rounded-xl border border-slate-300 text-xs outline-none focus:border-blue-500 font-medium bg-slate-50">
+                    <option value="ssc">নবম-দশম শ্রেণি (SSC)</option>
+                    <option value="hsc1">একাদশ-দ্বাদশ (১ম পত্র)</option>
+                    <option value="hsc2">একাদশ-দ্বাদশ (২য় পত্র)</option>
+                    <option value="class8">অষ্টম শ্রেণি (বিজ্ঞান)</option>
+                </select>
+            </div>
+            <button onclick="requestPhoneOtp()" class="w-full py-3.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl text-sm transition shadow-lg shadow-blue-500/20 mt-2 flex items-center justify-center gap-2">
+                <span>OTP কোড পাঠান</span>
+                <i class="fa-solid fa-arrow-right"></i>
+            </button>
+        </div>
+
+        <!-- Step 2: OTP Verification -->
+        <div id="phone-step-2" class="hidden space-y-4">
+            <div class="text-center py-2">
+                <span class="text-xs text-slate-500">আমরা এই নম্বরে ৪ ডিজিটের ভেরিফিকেশন কোড পাঠিয়েছি:</span>
+                <p id="otp-phone-display" class="font-bold text-slate-800 text-sm mt-0.5">০১৭XXXXXXXX</p>
+                <button onclick="editAuthPhone()" class="text-[11px] text-blue-600 hover:underline mt-1">নম্বর পরিবর্তন করুন</button>
+            </div>
+
+            <div>
+                <label class="block text-xs font-semibold text-center text-slate-700 mb-2">৪ ডিজিট কোড লিখুন:</label>
+                <div class="flex justify-center gap-2">
+                    <input type="text" maxlength="1" class="otp-box w-12 h-14 text-center text-2xl font-black rounded-2xl border-2 border-slate-300 focus:border-blue-600 outline-none" id="otp-1" oninput="focusNextOtp(1)">
+                    <input type="text" maxlength="1" class="otp-box w-12 h-14 text-center text-2xl font-black rounded-2xl border-2 border-slate-300 focus:border-blue-600 outline-none" id="otp-2" oninput="focusNextOtp(2)">
+                    <input type="text" maxlength="1" class="otp-box w-12 h-14 text-center text-2xl font-black rounded-2xl border-2 border-slate-300 focus:border-blue-600 outline-none" id="otp-3" oninput="focusNextOtp(3)">
+                    <input type="text" maxlength="1" class="otp-box w-12 h-14 text-center text-2xl font-black rounded-2xl border-2 border-slate-300 focus:border-blue-600 outline-none" id="otp-4" oninput="focusNextOtp(4)">
+                </div>
+                <p class="text-center text-[11px] text-slate-400 mt-2">ডেমো ওটিপি: <strong class="text-blue-600 font-mono">1 2 3 4</strong></p>
+            </div>
+
+            <button onclick="verifyPhoneOtp()" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-sm transition shadow-lg shadow-emerald-500/20">
+                ভেরিফাই ও ক্লাসরুমে প্রবেশ করুন
+            </button>
+        </div>
     </div>
+</div>
+
+<!-- ====================================================
+     MODAL 5: ৳100 PRO SIMULATION LAB UNLOCK MODAL
+==================================================== -->
+<div id="pro-sim-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-7 shadow-2xl border border-slate-100">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
+            <div class="flex items-center gap-2">
+                <span class="w-9 h-9 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center font-bold text-lg"><i class="fa-solid fa-crown"></i></span>
+                <div>
+                    <h4 class="font-bold text-slate-900 text-base">প্রো ভার্চুয়াল ল্যাব পাস</h4>
+                    <p class="text-[11px] text-slate-400">সকল ফিজিক্স ল্যাব আনলক করুন</p>
+                </div>
+            </div>
+            <button onclick="closeProSimModal()" class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+
+        <div class="p-4 bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl border border-amber-200 mb-4 text-xs text-amber-950 space-y-2">
+            <div class="flex items-baseline justify-between">
+                <span class="font-bold text-sm">এককালীন লাইফটাইম এক্সেস ফি:</span>
+                <span class="text-2xl font-black text-amber-700">৳ ১০০</span>
+            </div>
+            <ul class="space-y-1 text-slate-700 pt-1 text-[11px]">
+                <li><i class="fa-solid fa-check text-emerald-600 mr-1.5"></i>চলতড়িৎ ও ওহমের সূত্র সার্কিট ল্যাব</li>
+                <li><i class="fa-solid fa-check text-emerald-600 mr-1.5"></i>আলোর প্রতিফলন ও অবতল/উত্তল লেন্স ল্যাব</li>
+                <li><i class="fa-solid fa-check text-emerald-600 mr-1.5"></i>মহাকর্ষ ও কৃত্রিম উপগ্রহ কক্ষপথ সিমুলেশন</li>
+            </ul>
+        </div>
+
+        <div class="space-y-2 mb-4 text-xs text-slate-600">
+            <p class="font-bold text-slate-800">bKash / Nagad Send Money করুন (৳১০০):</p>
+            <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200 flex justify-between items-center font-mono">
+                <span><strong>bKash:</strong> ০১৭৯৬৪৩১৭৯৫</span>
+                <button onclick="navigator.clipboard.writeText('01796431795'); alert('নম্বর কপি হয়েছে!');" class="text-blue-600 font-bold text-xs">কপি</button>
+            </div>
+            <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200 flex justify-between items-center font-mono">
+                <span><strong>Nagad:</strong> ০১৫২১৪৪৩০৬৫</span>
+                <button onclick="navigator.clipboard.writeText('01521443065'); alert('নম্বর কপি হয়েছে!');" class="text-blue-600 font-bold text-xs">কপি</button>
+            </div>
+        </div>
+
+        <form onsubmit="handleProSimPaymentSubmit(event)" class="space-y-3">
+            <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">আপনার প্রেরক ফোন নম্বর:</label>
+                <input type="text" required placeholder="01XXXXXXXXX" id="sim-pay-phone" class="w-full p-2.5 rounded-xl border border-slate-300 text-sm outline-none focus:border-amber-500 font-medium">
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Transaction ID (TrxID):</label>
+                <input type="text" required placeholder="যেমন: 8N7X2M9P" id="sim-pay-trxid" class="w-full p-2.5 rounded-xl border border-slate-300 text-sm uppercase outline-none focus:border-amber-500 font-mono font-bold">
+            </div>
+            <button type="submit" class="w-full py-3.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-black rounded-xl text-sm transition shadow-lg shadow-amber-500/20">
+                ৳১০০ সাবমিট করে ল্যাব আনলক করুন
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- ====================================================
+     MODAL 6: BULK PHYSICS EXAM CREATOR & OMR STUDIO
+==================================================== -->
+<div id="exam-studio-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 hidden">
+    <div class="bg-white rounded-3xl max-w-4xl w-full max-h-[92vh] flex flex-col shadow-2xl border border-slate-100 overflow-hidden">
+        <!-- Header -->
+        <div class="flex items-center justify-between p-5 border-b border-slate-100 bg-slate-50/50">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-2xl bg-blue-600 text-white flex items-center justify-center text-lg font-bold">
+                    <i class="fa-solid fa-bolt"></i>
+                </div>
+                <div>
+                    <h4 class="font-bold text-slate-900 text-base sm:text-lg">অটোমেটিক ফিজিক্স এক্সাম ক্রিয়েটর ও ওএমআর স্টুডিও</h4>
+                    <p class="text-xs text-slate-500">প্রশ্ন কপি-পেস্ট করুন, ওএমআর শিটে উত্তর দাগান — মুহূর্তেই পরীক্ষা রেডি!</p>
+                </div>
+            </div>
+            <button onclick="closeExamStudioModal()" class="w-8 h-8 rounded-full bg-slate-200/70 hover:bg-slate-300 text-slate-600 flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+
+        <!-- Body (Scrollable) -->
+        <div class="p-5 sm:p-6 overflow-y-auto space-y-6 flex-1 text-xs">
+            <!-- Target Selection -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 bg-slate-50 p-4 rounded-2xl border border-slate-200">
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">শ্রেণি নির্বাচন:</label>
+                    <select id="bulk-exam-level" class="w-full p-2 rounded-xl border border-slate-300 bg-white font-semibold">
+                        <option value="ssc">নবম-দশম (SSC)</option>
+                        <option value="hsc1">একাদশ-দ্বাদশ (১ম পত্র)</option>
+                        <option value="hsc2">একাদশ-দ্বাদশ (২য় পত্র)</option>
+                        <option value="class8">অষ্টম বিজ্ঞান</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">অধ্যায়:</label>
+                    <select id="bulk-exam-chapter" class="w-full p-2 rounded-xl border border-slate-300 bg-white font-semibold">
+                        <option value="ssc_c2">অধ্যায় ২: গতি</option>
+                        <option value="ssc_c3">অধ্যায় ৩: বল</option>
+                        <option value="ssc_c4">অধ্যায় ৪: কাজ, শক্তি ও ক্ষমতা</option>
+                        <option value="hsc1_c2">অধ্যায় ২: ভেক্টর</option>
+                        <option value="hsc1_c3">অধ্যায় ৩: গতিবিদ্যা</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">পরীক্ষার শিরোনাম:</label>
+                    <input type="text" id="bulk-exam-title" value="গতি ও সমীকরণ স্পেশাল MCQ টেস্ট" class="w-full p-2 rounded-xl border border-slate-300 bg-white font-semibold">
+                </div>
+            </div>
+
+            <!-- Copy-Paste Text Area -->
+            <div>
+                <div class="flex items-center justify-between mb-1.5">
+                    <label class="font-bold text-slate-800 flex items-center gap-1.5">
+                        <i class="fa-regular fa-paste text-blue-600"></i> আপনার প্রশ্ন কপি করে এখানে পেস্ট করুন:
+                    </label>
+                    <button onclick="loadSamplePhysicsQuestions()" class="text-blue-600 font-bold hover:underline text-[11px]">নমুনা প্রশ্ন পেস্ট করুন (Sample)</button>
+                </div>
+                <p class="text-[11px] text-slate-400 mb-2">
+                    ফরম্যাট: প্রশ্ন লিখুন এবং নিচে ক, খ, গ, ঘ অথবা A, B, C, D অপশন দিন। গণিতের জন্য $s=ut+\frac{1}{2}at^2$ ফর্মুলা সরাসরি কাজ করবে।
+                </p>
+                <textarea id="bulk-questions-raw" rows="7" placeholder="১. একটি গাড়ির বেগ 10 s এ 20 m/s থেকে বৃদ্ধি পেয়ে 50 m/s হলো। গাড়িটির ত্বরণ কত?
+(ক) 2 m/s²
+(খ) 3 m/s²
+(গ) 5 m/s²
+(ঘ) 30 m/s²
+
+২. নিক্ষিপ্ত বস্তুর ক্ষেত্রে সর্বোচ্চ উচ্চতায় বেগ কত?
+(ক) 9.8 m/s
+(খ) 0 m/s
+(গ) 4.9 m/s
+(ঘ) অসীম" class="w-full p-3 font-mono text-xs rounded-2xl border border-slate-300 outline-none focus:border-blue-500 leading-relaxed"></textarea>
+            </div>
+
+            <!-- Parse Button -->
+            <div class="flex justify-center">
+                <button onclick="parseRawQuestionsToOMR()" class="px-6 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl transition shadow-md flex items-center gap-2">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> প্রশ্ন সাজিয়ে ওএমআর গ্রিড তৈরি করুন
+                </button>
+            </div>
+
+            <!-- OMR Answer Key Setup Area -->
+            <div id="omr-key-setup-box" class="hidden bg-slate-50 p-5 rounded-3xl border border-slate-200 space-y-4">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 pb-3">
+                    <div>
+                        <h5 class="font-bold text-slate-900 text-sm flex items-center gap-2">
+                            <i class="fa-solid fa-list-check text-emerald-600"></i> ডিজিটাল ওএমআর শিট (OMR Answer Key)
+                        </h5>
+                        <p class="text-[11px] text-slate-500">প্রতিটি প্রশ্নের সঠিক বৃত্তটিতে টিক দিন। স্বয়ংক্রিয়ভাবে উত্তরপত্র তৈরি হবে।</p>
+                    </div>
+                    <span id="omr-parsed-count-badge" class="px-3 py-1 bg-emerald-100 text-emerald-800 font-bold rounded-lg text-xs self-start">০টি প্রশ্ন প্রস্তুত</span>
+                </div>
+
+                <div id="omr-questions-grid" class="space-y-4 max-h-[350px] overflow-y-auto pr-2">
+                    <!-- Dynamic OMR rows injected here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="p-4 bg-white border-t border-slate-100 flex items-center justify-between">
+            <span class="text-xs text-slate-400">পরীক্ষা সেভ করলে সকল শিক্ষার্থী তাৎক্ষণিকভাবে পরীক্ষা দিতে পারবে।</span>
+            <div class="flex items-center gap-2">
+                <button onclick="closeExamStudioModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs transition">বাতিল</button>
+                <button onclick="publishExamFromStudio()" id="btn-publish-exam" class="px-6 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs transition shadow-md flex items-center gap-1.5">
+                    <i class="fa-solid fa-cloud-arrow-up"></i> পরীক্ষা প্রকাশ করুন
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ====================================================
+     FLOATING 24/7 WHATSAPP INSTANT DOUBT BUTTON
+==================================================== -->
+<div class="fixed bottom-6 right-6 z-40 flex flex-col items-end gap-2 group">
+    <!-- Tooltip -->
+    <div class="hidden sm:block opacity-0 group-hover:opacity-100 transition-opacity bg-slate-900 text-white text-[11px] py-1 px-3 rounded-xl shadow-lg border border-slate-700 pointer-events-none whitespace-nowrap">
+        আল আমিন স্যারের সাথে সরাসরি হোয়াটসঅ্যাপে কথা বলুন 💬
+    </div>
+    <a href="https://wa.me/8801796431795?text=%E0%A6%86%E0%A6%B8%E0%A6%B8%E0%A6%BE%E0%A6%B2%E0%A6%BE%E0%A6%AE%E0%A7%81%20%E0%A6%86%E0%A6%B2%E0%A6%BE%E0%A6%87%E0%A6%95%E0%A7%81%E0%A6%AE%20%E0%A6%B8%E0%A7%8D%E0%A6%AF%E0%A6%BE%E0%A6%B0%2C%20%E0%A6%86%E0%A6%AE%E0%A6%BF%20Al%20amin%20Physics%20%E0%A6%AA%E0%A7%8D%E0%A6%B2%E0%A7%8D%E0%A6%AF%E0%A6%BE%E0%A6%9F%E0%A6%AB%E0%A6%B0%E0%A7%8D%E0%A6%AE%20%E0%A6%A5%E0%A7%87%E0%A6%95%E0%A7%87%20%E0%A6%AF%E0%A7%8B%E0%A6%97%E0%A6%BE%E0%A6%AF%E0%A7%8B%E0%A6%97%20%E0%A6%95%E0%A6%B0%E0%A6%9B%E0%A6%BF।" target="_blank" rel="noopener noreferrer" class="w-14 h-14 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white flex items-center justify-center text-3xl shadow-2xl shadow-emerald-500/40 hover:scale-110 transition-transform transform border-2 border-white" title="হোয়াটসঅ্যাপে প্রশ্ন করুন">
+        <i class="fa-brands fa-whatsapp"></i>
+    </a>
 </div>
 
 <!-- ====================================================
