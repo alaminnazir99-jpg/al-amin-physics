@@ -243,13 +243,16 @@ document.addEventListener('DOMContentLoaded', () => {
     updateUserSessionUI();
     initSimulation();
     runPhysicsCalculator();
-    showLMSDashboard();
+    try {
+        window.history.replaceState({ view: 'dashboard' }, '', '#dashboard');
+    } catch(e) {}
+    showLMSDashboard(true);
 });
 
 /* ===================================================
-   NAVIGATION & SUB-HOMEPAGE LOGIC
+   SPA NAVIGATION & BROWSER / HARDWARE BACK CONTROLLER
 =================================================== */
-let currentViewMode = 'dashboard'; // 'dashboard' | 'classroom' | 'aggregator'
+let currentViewMode = 'dashboard'; // 'dashboard' | 'classroom' | 'profile' | 'leaderboard' | 'director' | 'aggregator'
 
 function hideAllAppViews() {
     ['lms-subhomepage', 'global-aggregator-view', 'classroom-chapter-header', 'content-display-area', 'student-profile-view', 'leaderboard-view', 'director-executive-view'].forEach(id => {
@@ -259,7 +262,10 @@ function hideAllAppViews() {
     // Remove nav active styles
     ['ssc','hsc1','hsc2','class8'].forEach(k => {
         const btn = document.getElementById(`nav-${k}`);
-        if (btn) btn.classList.remove('nav-active', 'text-white', 'bg-blue-600');
+        if (btn) {
+            btn.classList.remove('nav-active', 'text-white', 'bg-blue-600');
+            btn.classList.add('text-slate-700');
+        }
     });
     const lmsHomeBtn = document.getElementById('nav-lms-home');
     if (lmsHomeBtn) lmsHomeBtn.classList.remove('bg-blue-600', 'text-white');
@@ -269,63 +275,131 @@ function hideAllAppViews() {
     if (pfBtn) pfBtn.classList.remove('bg-emerald-600', 'text-white');
 }
 
-function showLMSDashboard() {
-    currentViewMode = 'dashboard';
+function setAppView(viewMode, params = {}, isPop = false) {
+    currentViewMode = viewMode;
     hideAllAppViews();
-    const subhome = document.getElementById('lms-subhomepage');
-    if (subhome) subhome.classList.remove('hidden');
 
-    const lmsHomeBtn = document.getElementById('nav-lms-home');
-    if (lmsHomeBtn) lmsHomeBtn.classList.add('bg-blue-600', 'text-white');
+    if (!isPop) {
+        try {
+            window.history.pushState({ view: viewMode, params: params, level: currentLevel, chapter: currentChapterIndex }, '', '#' + viewMode);
+        } catch (e) {}
+    }
+
+    if (viewMode === 'dashboard') {
+        const subhome = document.getElementById('lms-subhomepage');
+        if (subhome) subhome.classList.remove('hidden');
+        const lmsHomeBtn = document.getElementById('nav-lms-home');
+        if (lmsHomeBtn) lmsHomeBtn.classList.add('bg-blue-600', 'text-white');
+    } else if (viewMode === 'classroom') {
+        const headerCard = document.getElementById('classroom-chapter-header');
+        const contentArea = document.getElementById('content-display-area');
+        if (headerCard) headerCard.classList.remove('hidden');
+        if (contentArea) contentArea.classList.remove('hidden');
+    } else if (viewMode === 'profile') {
+        const view = document.getElementById('student-profile-view');
+        if (view) view.classList.remove('hidden');
+        const pfBtn = document.getElementById('nav-profile-btn');
+        if (pfBtn) pfBtn.classList.add('bg-emerald-600', 'text-white');
+        renderStudentProfileData();
+    } else if (viewMode === 'leaderboard') {
+        const view = document.getElementById('leaderboard-view');
+        if (view) view.classList.remove('hidden');
+        const lbBtn = document.getElementById('nav-leaderboard');
+        if (lbBtn) lbBtn.classList.add('bg-amber-600', 'text-white');
+        renderLeaderboardData('all');
+        renderSocialActivityFeed();
+    } else if (viewMode === 'director') {
+        const view = document.getElementById('director-executive-view');
+        if (view) view.classList.remove('hidden');
+        renderDirectorDashboardData();
+    } else if (viewMode === 'aggregator') {
+        const aggView = document.getElementById('global-aggregator-view');
+        if (aggView) aggView.classList.remove('hidden');
+    }
+
     window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function showLMSDashboard(isPop = false) {
+    setAppView('dashboard', {}, isPop);
 }
 
 function selectLevelAndOpen(lvl) {
     switchLevel(lvl);
-    openClassroomView();
+    openClassroomView(false);
 }
 
-function openClassroomView() {
-    currentViewMode = 'classroom';
-    hideAllAppViews();
-    const headerCard = document.getElementById('classroom-chapter-header');
-    const contentArea = document.getElementById('content-display-area');
-    if (headerCard) headerCard.classList.remove('hidden');
-    if (contentArea) contentArea.classList.remove('hidden');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+function openClassroomView(isPop = false) {
+    setAppView('classroom', {}, isPop);
 }
 
-function showStudentProfileView() {
-    currentViewMode = 'profile';
-    hideAllAppViews();
-    const view = document.getElementById('student-profile-view');
-    if (view) view.classList.remove('hidden');
-    const pfBtn = document.getElementById('nav-profile-btn');
-    if (pfBtn) pfBtn.classList.add('bg-emerald-600', 'text-white');
-    renderStudentProfileData();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+function showStudentProfileView(isPop = false) {
+    setAppView('profile', {}, isPop);
 }
 
-function showLeaderboardView() {
-    currentViewMode = 'leaderboard';
-    hideAllAppViews();
-    const view = document.getElementById('leaderboard-view');
-    if (view) view.classList.remove('hidden');
-    const lbBtn = document.getElementById('nav-leaderboard');
-    if (lbBtn) lbBtn.classList.add('bg-amber-600', 'text-white');
-    renderLeaderboardData('all');
-    renderSocialActivityFeed();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+function showLeaderboardView(isPop = false) {
+    setAppView('leaderboard', {}, isPop);
 }
 
-function showDirectorExecutiveView() {
-    currentViewMode = 'director';
-    hideAllAppViews();
-    const view = document.getElementById('director-executive-view');
-    if (view) view.classList.remove('hidden');
-    renderDirectorDashboardData();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+function showDirectorExecutiveView(isPop = false) {
+    setAppView('director', {}, isPop);
 }
+
+// Reactive Popstate Listener for Browser & Android Back Button
+window.addEventListener('popstate', (e) => {
+    const state = e.state;
+    if (state && state.view) {
+        if (state.level) currentLevel = state.level;
+        if (state.chapter !== undefined) currentChapterIndex = state.chapter;
+        if (state.view === 'dashboard') {
+            showLMSDashboard(true);
+        } else if (state.view === 'classroom') {
+            openClassroomView(true);
+            renderChapterData();
+        } else if (state.view === 'profile') {
+            showStudentProfileView(true);
+        } else if (state.view === 'leaderboard') {
+            showLeaderboardView(true);
+        } else if (state.view === 'director') {
+            showDirectorExecutiveView(true);
+        } else if (state.view === 'aggregator') {
+            showGlobalAggregator(state.params?.type || 'formulas', true);
+        }
+    } else {
+        // Reached root of study.html without state
+        if (currentViewMode !== 'dashboard') {
+            showLMSDashboard(true);
+        } else {
+            // If already on dashboard and user presses back, go to marketing landing page
+            window.location.href = 'index.html';
+        }
+    }
+});
+
+// Hardware Back Button Handler called by Android Capacitor Bridge
+window.handleAppHardwareBack = function() {
+    // 1. Check if any modal is currently visible
+    const modalIds = ['phone-auth-modal', 'auth-modal', 'ask-modal', 'pro-sim-modal', 'exam-studio-modal', 'payment-modal'];
+    for (let id of modalIds) {
+        const el = document.getElementById(id);
+        if (el && !el.classList.contains('hidden') && el.style.display !== 'none') {
+            el.classList.add('hidden');
+            el.style.display = 'none';
+            return true; // Back consumed by closing modal
+        }
+    }
+    // 2. If inside a sub-view (classroom, profile, leaderboard, aggregator, director), step back to dashboard
+    if (currentViewMode !== 'dashboard') {
+        if (window.history.length > 1) {
+            window.history.back();
+        } else {
+            showLMSDashboard(false);
+        }
+        return true; // Back consumed by stepping back to dashboard
+    }
+    // 3. User is at root LMS dashboard: allow app minimize or index.html
+    return false;
+};
 
 function switchLevel(lvl) {
     currentLevel        = lvl;
@@ -1157,19 +1231,9 @@ function applyUserRole() {
 =================================================== */
 let currentAggregatorType = 'formulas';
 
-function showGlobalAggregator(type) {
+function showGlobalAggregator(type, isPop = false) {
     currentAggregatorType = type;
-    currentViewMode = 'aggregator';
-
-    const subhome = document.getElementById('lms-subhomepage');
-    const aggView = document.getElementById('global-aggregator-view');
-    const headerCard = document.getElementById('classroom-chapter-header');
-    const contentArea = document.getElementById('content-display-area');
-
-    if (subhome) subhome.classList.add('hidden');
-    if (aggView) aggView.classList.remove('hidden');
-    if (headerCard) headerCard.classList.add('hidden');
-    if (contentArea) contentArea.classList.add('hidden');
+    setAppView('aggregator', { type: type }, isPop);
 
     const titleEl = document.getElementById('global-agg-title');
     const subtitleEl = document.getElementById('global-agg-subtitle');
@@ -1182,13 +1246,12 @@ function showGlobalAggregator(type) {
         board:    { title: "বিগত বছরের বোর্ড প্রশ্ন ও সমাধান", sub: "বিভিন্ন শিক্ষা বোর্ডের সৃজনশীল ও বহুনির্বাচনী প্রশ্ন সংকলন।" }
     };
 
-    if (titles[type]) {
+    if (titles[type] && titleEl && subtitleEl) {
         titleEl.textContent = titles[type].title;
         subtitleEl.textContent = titles[type].sub;
     }
 
     renderGlobalAggregatorContent();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function renderGlobalAggregatorContent() {
@@ -1403,34 +1466,51 @@ function showHomeView() { showLMSDashboard(); }
 let authPendingAction = null;
 let generatedOtp = "1234";
 
-function openPhoneAuthModal(triggerReason) {
+function openPhoneAuthModal(triggerReason = 'header') {
     const modal = document.getElementById('phone-auth-modal');
-    if (!modal) return;
+    if (!modal) {
+        console.error('phone-auth-modal element not found!');
+        return;
+    }
     authPendingAction = triggerReason;
     
     const reasonEl = document.getElementById('phone-auth-reason');
     const descEl = document.getElementById('phone-auth-desc');
-    if (triggerReason === 'video') {
-        reasonEl.textContent = "ভিডিও ক্লাস প্রিভিউ শেষ!";
-        descEl.textContent = "পরবর্তী সকল ভিডিও লেকচার ও ক্লাস আনলক করতে মোবাইল নম্বর দিয়ে এক ক্লিকে লগইন করুন।";
-    } else if (triggerReason === 'exam') {
-        reasonEl.textContent = "পরীক্ষার রেজাল্ট সেভ করুন!";
-        descEl.textContent = "আপনার মেধা তালিকা ও অভিভাবকের কাছে অটোমেটিক রেজাল্ট পাঠাতে ফোন নম্বর দিন।";
-    } else if (triggerReason === 'doubt') {
-        reasonEl.textContent = "স্যারের সাথে সরাসরি আলোচনা!";
-        descEl.textContent = "আপনার প্রশ্নের উত্তর ও নোটিফিকেশন পেতে ফোন নম্বর দিয়ে লগইন করুন।";
-    } else {
-        reasonEl.textContent = "আল আমিন ফিজিক্সে স্বাগতম!";
-        descEl.textContent = "মোবাইল নম্বর ও নাম দিয়ে সহজে নিজের স্টুডেন্ট প্রোফাইল ও লিডারবোর্ডে যুক্ত হোন।";
+    if (reasonEl && descEl) {
+        if (triggerReason === 'video') {
+            reasonEl.textContent = "ভিডিও ক্লাস প্রিভিউ শেষ!";
+            descEl.textContent = "পরবর্তী সকল ভিডিও লেকচার ও ক্লাস আনলক করতে মোবাইল নম্বর দিয়ে এক ক্লিকে লগইন করুন।";
+        } else if (triggerReason === 'exam') {
+            reasonEl.textContent = "পরীক্ষার রেজাল্ট সেভ করুন!";
+            descEl.textContent = "আপনার মেধা তালিকা ও অভিভাবকের কাছে অটোমেটিক রেজাল্ট পাঠাতে ফোন নম্বর দিন।";
+        } else if (triggerReason === 'doubt') {
+            reasonEl.textContent = "স্যারের সাথে সরাসরি আলোচনা!";
+            descEl.textContent = "আপনার প্রশ্নের উত্তর ও নোটিফিকেশন পেতে ফোন নম্বর দিয়ে লগইন করুন।";
+        } else {
+            reasonEl.textContent = "আল আমিন ফিজিক্সে স্বাগতম!";
+            descEl.textContent = "মোবাইল নম্বর ও নাম দিয়ে সহজে নিজের স্টুডেন্ট প্রোফাইল ও লিডারবোর্ডে যুক্ত হোন।";
+        }
     }
 
-    document.getElementById('phone-step-1').classList.remove('hidden');
-    document.getElementById('phone-step-2').classList.add('hidden');
+    const step1 = document.getElementById('phone-step-1');
+    const step2 = document.getElementById('phone-step-2');
+    if (step1) step1.classList.remove('hidden');
+    if (step2) step2.classList.add('hidden');
+    
     modal.classList.remove('hidden');
+    modal.style.display = 'flex';
+
+    setTimeout(() => {
+        document.getElementById('auth-input-name')?.focus();
+    }, 100);
 }
 
 function closePhoneAuthModal() {
-    document.getElementById('phone-auth-modal')?.classList.add('hidden');
+    const modal = document.getElementById('phone-auth-modal');
+    if (modal) {
+        modal.classList.add('hidden');
+        modal.style.display = 'none';
+    }
 }
 
 function requestPhoneOtp() {

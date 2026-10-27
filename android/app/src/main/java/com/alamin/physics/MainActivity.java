@@ -10,22 +10,31 @@ public class MainActivity extends BridgeActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Hardware Back Button Handler: Navigate back in webview history instead of closing app
+        // Hardware Back Button Handler: Handle SPA sub-views & modals without hard-reloading index.html
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
                 WebView webView = getBridge().getWebView();
-                if (webView != null && webView.canGoBack()) {
-                    webView.goBack();
-                } else {
-                    // If no more history in current page, check if we can go to home index.html
-                    if (webView != null && webView.getUrl() != null && !webView.getUrl().endsWith("index.html") && !webView.getUrl().endsWith("/")) {
-                        webView.loadUrl("https://localhost/index.html");
+                if (webView == null) {
+                    moveTaskToBack(true);
+                    return;
+                }
+
+                // First evaluate in-app JS hardware back (closes modals or navigates to dashboard)
+                webView.evaluateJavascript("typeof handleAppHardwareBack === 'function' ? handleAppHardwareBack() : false", value -> {
+                    if ("true".equalsIgnoreCase(value)) {
+                        // Successfully handled in SPA without exiting or reloading
+                        return;
+                    }
+
+                    // Otherwise check standard WebView navigation stack
+                    if (webView.canGoBack()) {
+                        webView.goBack();
                     } else {
-                        // At root page: minimize app to background instead of destroying/crashing
+                        // At root page or no more history: minimize cleanly to background
                         moveTaskToBack(true);
                     }
-                }
+                });
             }
         });
     }
