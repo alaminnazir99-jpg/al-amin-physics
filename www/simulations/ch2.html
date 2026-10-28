@@ -1,0 +1,1427 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>গতিবিদ্যা ল্যাব (PhET Interactive Motion Lab) | আল-আমিন ফিজিক্স</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&family=JetBrains+Mono:wght@500;700&display=swap');
+    
+    * {
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    body {
+      font-family: 'Hind Siliguri', system-ui, sans-serif;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: #f8fafc;
+      color: #0f172a;
+    }
+    #phet-stage {
+      position: absolute;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      touch-action: none;
+      cursor: default;
+    }
+    /* PhET Floating Glass Header */
+    .phet-header {
+      position: absolute;
+      top: 12px;
+      left: 16px;
+      right: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 25;
+      pointer-events: none;
+    }
+    .phet-header * {
+      pointer-events: auto;
+    }
+    .phet-tab-pill {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(8px);
+      box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+      border: 1px solid rgba(226, 232, 240, 0.8);
+      border-radius: 9999px;
+      padding: 4px;
+      display: flex;
+      gap: 4px;
+    }
+    .phet-tab-btn {
+      padding: 6px 14px;
+      border-radius: 9999px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #475569;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .phet-tab-btn.active {
+      background: #2563eb;
+      color: #ffffff;
+      box-shadow: 0 2px 8px rgba(37, 99, 235, 0.35);
+    }
+    /* Floating Objects Tray (PhET Tool Rack) */
+    .phet-tray {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(12px);
+      border: 1.5px solid rgba(203, 213, 225, 0.8);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.12);
+      border-radius: 20px;
+      padding: 8px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      z-index: 25;
+    }
+    .tray-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      cursor: grab;
+      padding: 5px 10px;
+      border-radius: 12px;
+      transition: all 0.15s;
+    }
+    .tray-item:hover {
+      background: #f1f5f9;
+      transform: translateY(-2px);
+    }
+    .tray-item:active {
+      cursor: grabbing;
+    }
+    /* Floating Measurement Readout Card */
+    .phet-readout-card {
+      position: absolute;
+      top: 70px;
+      right: 20px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border: 1px solid #cbd5e1;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+      border-radius: 16px;
+      padding: 12px 16px;
+      min-width: 260px;
+      z-index: 25;
+      transition: all 0.2s;
+    }
+    .phet-hint-tag {
+      position: absolute;
+      top: 70px;
+      left: 20px;
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      color: #1e40af;
+      padding: 6px 14px;
+      border-radius: 14px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      z-index: 25;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.04);
+      max-width: calc(100vw - 320px);
+    }
+    /* Control Toolbar (Play, Step, Reset) */
+    .phet-playback-bar {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(8px);
+      border: 1px solid #cbd5e1;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+      border-radius: 9999px;
+      padding: 4px 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      z-index: 25;
+    }
+    .playback-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 9999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      color: #334155;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: all 0.15s;
+    }
+    .playback-btn:hover {
+      background: #e2e8f0;
+      color: #0f172a;
+    }
+    .playback-btn.primary {
+      background: #2563eb;
+      border-color: #1d4ed8;
+      color: white;
+    }
+    .playback-btn.primary:hover {
+      background: #1d4ed8;
+    }
+    .playback-btn.danger {
+      background: #ef4444;
+      border-color: #dc2626;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation Bar -->
+  <div class="phet-header">
+    <div class="flex items-center gap-2">
+      <a href="index.html" class="px-3 py-1.5 rounded-full bg-white border border-slate-200 text-slate-700 hover:text-blue-600 font-bold text-xs shadow-sm flex items-center gap-1.5 transition">
+        <i class="fa-solid fa-arrow-left"></i> ল্যাব তালিকা
+      </a>
+      <span class="text-xs font-bold text-slate-600 bg-white/80 px-3 py-1.5 rounded-full border border-slate-200 shadow-sm hidden sm:inline">
+        অধ্যায় ২: গতিবিদ্যা (Motion Lab)
+      </span>
+    </div>
+
+    <!-- PhET Experiment Switcher -->
+    <div class="phet-tab-pill">
+      <button onclick="setStation('projectile')" id="tab-projectile" class="phet-tab-btn active">
+        <i class="fa-solid fa-crosshairs mr-1"></i> প্রজেক্টাইল (কামান)
+      </button>
+      <button onclick="setStation('car')" id="tab-car" class="phet-tab-btn">
+        <i class="fa-solid fa-car-side mr-1"></i> গাড়ি ও ত্বরণ-মন্দন
+      </button>
+      <button onclick="setStation('bullet')" id="tab-bullet" class="phet-tab-btn">
+        <i class="fa-solid fa-cube mr-1"></i> বুলেট ও তক্তা
+      </button>
+    </div>
+
+    <!-- Right Controls: Audio & Readout Toggle -->
+    <div class="flex items-center gap-2">
+      <button onclick="toggleReadingCard()" id="btn-toggle-readout" class="px-3 py-1.5 rounded-full bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 font-bold text-xs shadow-sm flex items-center gap-1.5 transition">
+        <i class="fa-solid fa-eye text-blue-600" id="readout-icon"></i> <span id="readout-btn-text">পাঠ লুকান</span>
+      </button>
+      <button onclick="resetLab()" class="w-8 h-8 rounded-full bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 flex items-center justify-center text-xs shadow-sm transition" title="রিসেট">
+        <i class="fa-solid fa-rotate-right"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Instruction Hint -->
+  <div class="phet-hint-tag" id="hint-tag">
+    <i class="fa-solid fa-hand-pointer text-blue-600 animate-pulse"></i>
+    <span id="hint-text">কামানের নল হাত দিয়ে টেনে কোণ ঠিক করুন, গতিবেগ নির্ধারণ করুন এবং ফায়ার বাটনে চাপ দিন!</span>
+  </div>
+
+  <!-- Real-Time Floating Readout Card (PhET Sticky Note Style) -->
+  <div class="phet-readout-card" id="readout-card">
+    <div class="flex items-center justify-between pb-1.5 mb-1.5 border-b border-slate-200">
+      <span class="text-xs font-bold text-slate-700 flex items-center gap-1.5">
+        <i class="fa-solid fa-chart-line text-blue-600"></i> লাইভ গতিমিতি পাঠ
+      </span>
+      <span class="text-[10px] px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 font-bold font-mono" id="sim-badge">g = ৯.৮ m/s²</span>
+    </div>
+
+    <!-- Projectile Readout -->
+    <div id="readout-projectile" class="space-y-1 text-xs">
+      <div class="flex justify-between items-center">
+        <span class="text-slate-500">নিক্ষেপ কোণ (&theta;):</span>
+        <span class="font-bold font-mono text-blue-700 text-sm" id="readout-angle">৪৫.০°</span>
+      </div>
+      <div class="flex justify-between items-center">
+        <span class="text-slate-500">আদিবেগ (u):</span>
+        <span class="font-bold font-mono text-purple-700 text-sm" id="readout-u">২০.০ m/s</span>
+      </div>
+      <div class="flex justify-between items-center">
+        <span class="text-slate-500">সর্বোচ্চ উচ্চতা (H):</span>
+        <span class="font-bold font-mono text-amber-600" id="readout-h">১০.২ m</span>
+      </div>
+      <div class="flex justify-between items-center">
+        <span class="text-slate-500">বিচরণকাল (T):</span>
+        <span class="font-bold font-mono text-teal-600" id="readout-t">২.৮৮ s</span>
+      </div>
+      <div class="pt-1.5 mt-1 border-t border-dashed border-slate-200 flex justify-between items-center">
+        <span class="font-bold text-slate-800">আনুভূমিক পাল্লা (R):</span>
+        <span class="font-bold font-mono text-emerald-600 text-base" id="readout-r">৪০.৮ m</span>
+      </div>
+    </div>
+
+    <!-- Car Readout -->
+    <div id="readout-car" class="space-y-1 text-xs hidden">
+      <div class="flex justify-between items-center">
+        <span class="text-slate-500">আদিবেগ (u):</span>
+        <span class="font-bold font-mono text-blue-700 text-sm" id="readout-car-u">১৫.০ m/s</span>
+      </div>
+      <div class="flex justify-between items-center">
+        <span class="text-slate-500">ত্বরণ / মন্দন (a):</span>
+        <span class="font-bold font-mono text-purple-700 text-sm" id="readout-car-a">-২.৫ m/s²</span>
+      </div>
+      <div class="flex justify-between items-center">
+        <span class="text-slate-500">সময় (t):</span>
+        <span class="font-bold font-mono text-teal-600 text-sm" id="readout-car-t">০.০ s</span>
+      </div>
+      <div class="flex justify-between items-center">
+        <span class="text-slate-500">বর্তমান বেগ (v):</span>
+        <span class="font-bold font-mono text-amber-600 text-sm" id="readout-car-v">১৫.০ m/s</span>
+      </div>
+      <div class="pt-1.5 mt-1 border-t border-dashed border-slate-200 flex justify-between items-center">
+        <span class="font-bold text-slate-800">অতিক্রান্ত দূরত্ব (s):</span>
+        <span class="font-bold font-mono text-emerald-600 text-base" id="readout-car-s">০.০ m</span>
+      </div>
+    </div>
+
+    <!-- Bullet Readout -->
+    <div id="readout-bullet" class="space-y-1 text-xs hidden">
+      <div class="flex justify-between items-center">
+        <span class="text-slate-500">বুলেটের আদিবেগ (u):</span>
+        <span class="font-bold font-mono text-blue-700 text-sm" id="readout-bullet-u">৩০০ m/s</span>
+      </div>
+      <div class="flex justify-between items-center">
+        <span class="text-slate-500">প্রতি তক্তায় বাধা (মন্দন a):</span>
+        <span class="font-bold font-mono text-red-600" id="readout-bullet-a">৪.৫ × ১০⁴ m/s²</span>
+      </div>
+      <div class="flex justify-between items-center">
+        <span class="text-slate-500">মোট তক্তা ভেদ:</span>
+        <span class="font-bold font-mono text-amber-600 text-sm" id="readout-bullet-planks">৩ টি তক্তা</span>
+      </div>
+      <div class="pt-1.5 mt-1 border-t border-dashed border-slate-200 flex justify-between items-center">
+        <span class="font-bold text-slate-800">ভেদকৃত দূরত্ব (x):</span>
+        <span class="font-bold font-mono text-emerald-600 text-base" id="readout-bullet-x">৬.০ cm</span>
+      </div>
+    </div>
+
+    <!-- Live KaTeX formula line -->
+    <div class="mt-2 p-1.5 bg-slate-50 rounded-lg text-center text-xs overflow-x-auto" id="readout-math"></div>
+  </div>
+
+  <!-- Bottom Playback Controls Bar -->
+  <div class="phet-playback-bar">
+    <button onclick="triggerFireOrDrive()" id="btn-fire" class="playback-btn primary" title="ফায়ার / রান">
+      <i class="fa-solid fa-play" id="fire-icon"></i>
+    </button>
+    <button onclick="toggleSlowMo()" id="btn-slow" class="playback-btn" title="স্লো-মোশন (০.৫x)">
+      <i class="fa-solid fa-gauge-simple"></i>
+    </button>
+    <button onclick="resetLab()" class="playback-btn" title="রিসেট">
+      <i class="fa-solid fa-rotate-right"></i>
+    </button>
+  </div>
+
+  <!-- Bottom PhET Tool Rack (Draggable Tools & Controls) -->
+  <div class="phet-tray" id="phet-tray">
+    <!-- Populated dynamically based on station -->
+  </div>
+
+  <!-- Fullscreen Interactive Canvas -->
+  <canvas id="phet-stage"></canvas>
+
+  <script>
+    // -------------------------------------------------------------
+    // AUDIO ENGINE (Web Audio API Synthesizer)
+    // -------------------------------------------------------------
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    
+    function playCannonSound() {
+      try {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(120, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(30, audioCtx.currentTime + 0.35);
+        gain.gain.setValueAtTime(0.4, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.4);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.4);
+      } catch (e) {}
+    }
+
+    function playHitTargetSound() {
+      try {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(523.25, audioCtx.currentTime);
+        osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.08);
+        osc.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.16);
+        gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.35);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.35);
+      } catch (e) {}
+    }
+
+    function playCarEngineSound() {
+      try {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(90, audioCtx.currentTime);
+        osc.frequency.linearRampToValueAtTime(240, audioCtx.currentTime + 1.2);
+        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.001, audioCtx.currentTime + 1.4);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 1.4);
+      } catch (e) {}
+    }
+
+    function playGunshotSound() {
+      try {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(60, audioCtx.currentTime + 0.15);
+        gain.gain.setValueAtTime(0.35, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.18);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.18);
+      } catch (e) {}
+    }
+
+    function toBn(num, decimals = null) {
+      const bnDigits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+      const str = decimals !== null ? Number(num).toFixed(decimals) : String(num);
+      return str.replace(/\d/g, d => bnDigits[Number(d)]);
+    }
+
+    // -------------------------------------------------------------
+    // STATE MODEL
+    // -------------------------------------------------------------
+    const state = {
+      station: 'projectile',
+      showReadout: true,
+      slowMo: false,
+      g: 9.8,
+
+      projectile: {
+        angleDeg: 45,
+        speed: 20,
+        height: 0,
+        isDraggingCannon: false,
+        isFlying: false,
+        ballX: 0,
+        ballY: 0,
+        vx: 0,
+        vy: 0,
+        t: 0,
+        trajectory: [],
+        particles: [],
+        targetX: 40.8,
+        isDraggingTarget: false,
+        tape: {
+          active: true,
+          startX: 0,
+          startY: 0,
+          endX: 40.8,
+          endY: 0,
+          isDraggingStart: false,
+          isDraggingEnd: false
+        }
+      },
+
+      car: {
+        u: 15,
+        a: -2.5,
+        s: 0,
+        v: 15,
+        t: 0,
+        isRunning: false,
+        isBraking: true,
+        obstacleX: 45,
+        isDraggingObstacle: false,
+        isCarDragging: false,
+        skidMarks: []
+      },
+
+      bullet: {
+        u: 300,
+        planksCount: 4,
+        plankThicknessCm: 2.0,
+        lossPerPlankPercent: 25,
+        isFired: false,
+        bulletX: 0,
+        isFlying: false,
+        woodSplinters: [],
+        penetratedDistanceCm: 0,
+        stoppedAtPlank: 0
+      }
+    };
+
+    const canvas = document.getElementById('phet-stage');
+    const ctx = canvas.getContext('2d');
+
+    let viewWidth = window.innerWidth;
+    let viewHeight = window.innerHeight;
+
+    function resizeCanvas() {
+      viewWidth = window.innerWidth;
+      viewHeight = window.innerHeight;
+      canvas.width = viewWidth * window.devicePixelRatio;
+      canvas.height = viewHeight * window.devicePixelRatio;
+      ctx.resetTransform();
+      ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    // -------------------------------------------------------------
+    // STATION SWITCHING & UI SETUP
+    // -------------------------------------------------------------
+    function setStation(station) {
+      state.station = station;
+      ['projectile', 'car', 'bullet'].forEach(s => {
+        const btn = document.getElementById(`tab-${s}`);
+        const readout = document.getElementById(`readout-${s}`);
+        if (s === station) {
+          btn.classList.add('active');
+          readout.classList.remove('hidden');
+        } else {
+          btn.classList.remove('active');
+          readout.classList.add('hidden');
+        }
+      });
+
+      const hintText = document.getElementById('hint-text');
+      const tray = document.getElementById('phet-tray');
+
+      if (station === 'projectile') {
+        hintText.innerHTML = 'কামানের নল হাত দিয়ে টেনে কোণ ঠিক করুন, গতিবেগ নির্ধারণ করুন এবং ফায়ার বাটনে চাপ দিন!';
+        tray.innerHTML = `
+          <div class="flex items-center gap-3">
+            <span class="text-xs font-bold text-slate-500">কোণ (&theta;):</span>
+            <input type="range" min="10" max="85" value="${state.projectile.angleDeg}" 
+              oninput="setAngle(this.value)" class="w-24 sm:w-32 accent-blue-600 cursor-pointer">
+            <span class="text-xs font-bold text-blue-700 w-10 font-mono" id="tray-angle-val">${toBn(state.projectile.angleDeg)}°</span>
+          </div>
+          <div class="h-6 w-px bg-slate-300"></div>
+          <div class="flex items-center gap-3">
+            <span class="text-xs font-bold text-slate-500">বেগ (u):</span>
+            <input type="range" min="5" max="35" value="${state.projectile.speed}" 
+              oninput="setSpeed(this.value)" class="w-24 sm:w-32 accent-purple-600 cursor-pointer">
+            <span class="text-xs font-bold text-purple-700 w-14 font-mono" id="tray-speed-val">${toBn(state.projectile.speed)} m/s</span>
+          </div>
+          <div class="h-6 w-px bg-slate-300"></div>
+          <button onclick="clearTrajectory()" class="px-2.5 py-1 rounded-lg text-xs font-bold text-slate-600 hover:bg-slate-100 border border-slate-200">
+            <i class="fa-solid fa-eraser mr-1"></i> ট্রেইল মুছুন
+          </button>
+        `;
+        calculateProjectileTheoretical();
+      } else if (station === 'car') {
+        hintText.innerHTML = 'গাড়ি ও লাল বাধার অবস্থান ড্র্যাগ করুন। বেগ ও ত্বরণ নির্ধারণ করে রান চাপুন—বাধা এড়াতে পারবে কি?';
+        tray.innerHTML = `
+          <div class="flex items-center gap-3">
+            <span class="text-xs font-bold text-slate-500">আদিবেগ (u):</span>
+            <input type="range" min="5" max="35" value="${state.car.u}" 
+              oninput="setCarU(this.value)" class="w-20 sm:w-28 accent-blue-600 cursor-pointer">
+            <span class="text-xs font-bold text-blue-700 w-12 font-mono" id="tray-car-u">${toBn(state.car.u)} m/s</span>
+          </div>
+          <div class="h-6 w-px bg-slate-300"></div>
+          <div class="flex items-center gap-3">
+            <span class="text-xs font-bold text-slate-500">ত্বরণ (a):</span>
+            <input type="range" min="-6" max="4" step="0.5" value="${state.car.a}" 
+              oninput="setCarA(this.value)" class="w-20 sm:w-28 accent-amber-600 cursor-pointer">
+            <span class="text-xs font-bold text-amber-700 w-14 font-mono" id="tray-car-a">${toBn(state.car.a, 1)} m/s²</span>
+          </div>
+          <div class="h-6 w-px bg-slate-300"></div>
+          <div class="flex items-center gap-3">
+            <span class="text-xs font-bold text-slate-500">বাধার দূরত্ব:</span>
+            <span class="text-xs font-bold text-red-600 font-mono" id="tray-car-obs">${toBn(state.car.obstacleX, 1)} m</span>
+          </div>
+        `;
+        updateCarFormulas();
+      } else if (station === 'bullet') {
+        hintText.innerHTML = 'রাইফেলের গুলি ছুড়ে দেখুন কতগুলো কাঠের তক্তা ভেদ করতে পারে! (তক্তার সংখ্যা পরিবর্তন করুন)';
+        tray.innerHTML = `
+          <div class="flex items-center gap-3">
+            <span class="text-xs font-bold text-slate-500">গুলির বেগ (u):</span>
+            <input type="range" min="100" max="600" step="50" value="${state.bullet.u}" 
+              oninput="setBulletU(this.value)" class="w-24 sm:w-32 accent-blue-600 cursor-pointer">
+            <span class="text-xs font-bold text-blue-700 w-16 font-mono" id="tray-bullet-u">${toBn(state.bullet.u)} m/s</span>
+          </div>
+          <div class="h-6 w-px bg-slate-300"></div>
+          <div class="flex items-center gap-3">
+            <span class="text-xs font-bold text-slate-500">তক্তার সংখ্যা:</span>
+            <button onclick="changePlanks(-1)" class="w-6 h-6 rounded bg-slate-100 hover:bg-slate-200 text-xs font-bold">-</button>
+            <span class="text-xs font-bold text-amber-800 font-mono" id="tray-bullet-planks">${toBn(state.bullet.planksCount)} টি</span>
+            <button onclick="changePlanks(1)" class="w-6 h-6 rounded bg-slate-100 hover:bg-slate-200 text-xs font-bold">+</button>
+          </div>
+          <div class="h-6 w-px bg-slate-300"></div>
+          <button onclick="fireBullet()" class="px-3 py-1 rounded-lg text-xs font-bold bg-red-600 hover:bg-red-700 text-white shadow-sm">
+            <i class="fa-solid fa-crosshairs mr-1"></i> গুলি ছোঁড়ো
+          </button>
+        `;
+        updateBulletFormulas();
+      }
+    }
+
+    function toggleReadingCard() {
+      state.showReadout = !state.showReadout;
+      const card = document.getElementById('readout-card');
+      const icon = document.getElementById('readout-icon');
+      const text = document.getElementById('readout-btn-text');
+      if (state.showReadout) {
+        card.style.display = 'block';
+        icon.className = 'fa-solid fa-eye text-blue-600';
+        text.innerText = 'পাঠ লুকান';
+      } else {
+        card.style.display = 'none';
+        icon.className = 'fa-solid fa-eye-slash text-slate-400';
+        text.innerText = 'পাঠ দেখান';
+      }
+    }
+
+    function toggleSlowMo() {
+      state.slowMo = !state.slowMo;
+      const btn = document.getElementById('btn-slow');
+      if (state.slowMo) {
+        btn.classList.add('primary');
+        btn.title = 'স্বাভাবিক গতি (১x)';
+      } else {
+        btn.classList.remove('primary');
+        btn.title = 'স্লো-মোশন (০.৫x)';
+      }
+    }
+
+    function clearTrajectory() {
+      state.projectile.trajectory = [];
+    }
+
+    // -------------------------------------------------------------
+    // PROJECTILE LOGIC & RENDERER
+    // -------------------------------------------------------------
+    function setAngle(deg) {
+      state.projectile.angleDeg = parseFloat(deg);
+      const el = document.getElementById('tray-angle-val');
+      if (el) el.innerText = toBn(state.projectile.angleDeg) + '°';
+      calculateProjectileTheoretical();
+    }
+
+    function setSpeed(spd) {
+      state.projectile.speed = parseFloat(spd);
+      const el = document.getElementById('tray-speed-val');
+      if (el) el.innerText = toBn(state.projectile.speed) + ' m/s';
+      calculateProjectileTheoretical();
+    }
+
+    function calculateProjectileTheoretical() {
+      const theta = state.projectile.angleDeg * Math.PI / 180;
+      const u = state.projectile.speed;
+      const g = state.g;
+
+      const H = (u * u * Math.sin(theta) * Math.sin(theta)) / (2 * g);
+      const T = (2 * u * Math.sin(theta)) / g;
+      const R = (u * u * Math.sin(2 * theta)) / g;
+
+      document.getElementById('readout-angle').innerText = `${toBn(state.projectile.angleDeg)}°`;
+      document.getElementById('readout-u').innerText = `${toBn(state.projectile.speed)} m/s`;
+      document.getElementById('readout-h').innerText = `${toBn(H, 2)} m`;
+      document.getElementById('readout-t').innerText = `${toBn(T, 2)} s`;
+      document.getElementById('readout-r').innerText = `${toBn(R, 2)} m`;
+
+      if (window.katex) {
+        katex.render(
+          `R = \\frac{u^2 \\sin(2\\theta)}{g} = \\frac{(${u})^2 \\sin(${toBn(2*state.projectile.angleDeg)}^\\circ)}{9.8} = ${H > 0 ? toBn(R, 1) : 0}\\text{ m}`,
+          document.getElementById('readout-math'),
+          { throwOnError: false }
+        );
+      }
+    }
+
+    function triggerFireOrDrive() {
+      if (state.station === 'projectile') {
+        fireProjectile();
+      } else if (state.station === 'car') {
+        toggleCarRun();
+      } else if (state.station === 'bullet') {
+        fireBullet();
+      }
+    }
+
+    function fireProjectile() {
+      playCannonSound();
+      const p = state.projectile;
+      p.isFlying = true;
+      p.t = 0;
+      p.ballX = 0;
+      p.ballY = 0;
+      const rad = p.angleDeg * Math.PI / 180;
+      p.vx = p.speed * Math.cos(rad);
+      p.vy = p.speed * Math.sin(rad);
+
+      for (let i = 0; i < 15; i++) {
+        p.particles.push({
+          x: 20 + 70 * Math.cos(rad),
+          y: 70 * Math.sin(rad),
+          vx: (Math.random() - 0.5) * 4 + Math.cos(rad) * 6,
+          vy: (Math.random() - 0.5) * 4 + Math.sin(rad) * 6,
+          life: 1.0,
+          color: Math.random() > 0.4 ? '#f97316' : '#fbbf24'
+        });
+      }
+    }
+
+    // -------------------------------------------------------------
+    // CAR LOGIC
+    // -------------------------------------------------------------
+    function setCarU(val) {
+      state.car.u = parseFloat(val);
+      state.car.v = state.car.u;
+      const el = document.getElementById('tray-car-u');
+      if (el) el.innerText = toBn(state.car.u) + ' m/s';
+      updateCarFormulas();
+    }
+
+    function setCarA(val) {
+      state.car.a = parseFloat(val);
+      const el = document.getElementById('tray-car-a');
+      if (el) el.innerText = toBn(state.car.a, 1) + ' m/s²';
+      updateCarFormulas();
+    }
+
+    function toggleCarRun() {
+      state.car.isRunning = !state.car.isRunning;
+      const btn = document.getElementById('btn-fire');
+      const icon = document.getElementById('fire-icon');
+      if (state.car.isRunning) {
+        playCarEngineSound();
+        icon.className = 'fa-solid fa-pause';
+        btn.classList.add('danger');
+      } else {
+        icon.className = 'fa-solid fa-play';
+        btn.classList.remove('danger');
+      }
+    }
+
+    function updateCarFormulas() {
+      const c = state.car;
+      document.getElementById('readout-car-u').innerText = `${toBn(c.u)} m/s`;
+      document.getElementById('readout-car-a').innerText = `${toBn(c.a, 1)} m/s²`;
+      document.getElementById('readout-car-t').innerText = `${toBn(c.t, 2)} s`;
+      document.getElementById('readout-car-v').innerText = `${toBn(c.v, 1)} m/s`;
+      document.getElementById('readout-car-s').innerText = `${toBn(c.s, 1)} m`;
+
+      if (window.katex) {
+        katex.render(
+          `s = ut + \\frac{1}{2}at^2 \\quad | \\quad v = u + at`,
+          document.getElementById('readout-math'),
+          { throwOnError: false }
+        );
+      }
+    }
+
+    // -------------------------------------------------------------
+    // BULLET LOGIC
+    // -------------------------------------------------------------
+    function setBulletU(val) {
+      state.bullet.u = parseFloat(val);
+      const el = document.getElementById('tray-bullet-u');
+      if (el) el.innerText = toBn(state.bullet.u) + ' m/s';
+      updateBulletFormulas();
+    }
+
+    function changePlanks(delta) {
+      state.bullet.planksCount = Math.max(1, Math.min(10, state.bullet.planksCount + delta));
+      const el = document.getElementById('tray-bullet-planks');
+      if (el) el.innerText = toBn(state.bullet.planksCount) + ' টি';
+      updateBulletFormulas();
+    }
+
+    function fireBullet() {
+      playGunshotSound();
+      const b = state.bullet;
+      b.isFlying = true;
+      b.bulletX = 0;
+      b.woodSplinters = [];
+      
+      const maxPlanks = Math.floor((b.u / 170) * (b.u / 170));
+      b.stoppedAtPlank = Math.min(b.planksCount, maxPlanks);
+      b.penetratedDistanceCm = b.stoppedAtPlank * b.plankThicknessCm;
+    }
+
+    function updateBulletFormulas() {
+      const b = state.bullet;
+      document.getElementById('readout-bullet-u').innerText = `${toBn(b.u)} m/s`;
+      document.getElementById('readout-bullet-planks').innerText = `${toBn(b.planksCount)} টি তক্তা`;
+      document.getElementById('readout-bullet-x').innerText = `${toBn(b.penetratedDistanceCm, 1)} cm`;
+
+      if (window.katex) {
+        katex.render(
+          `v^2 = u^2 - 2as \\implies \\text{তক্তা সংখ্যা } n \\propto u^2`,
+          document.getElementById('readout-math'),
+          { throwOnError: false }
+        );
+      }
+    }
+
+    function resetLab() {
+      if (state.station === 'projectile') {
+        state.projectile.isFlying = false;
+        state.projectile.ballX = 0;
+        state.projectile.ballY = 0;
+        state.projectile.t = 0;
+        state.projectile.particles = [];
+        calculateProjectileTheoretical();
+      } else if (state.station === 'car') {
+        state.car.isRunning = false;
+        state.car.s = 0;
+        state.car.t = 0;
+        state.car.v = state.car.u;
+        state.car.skidMarks = [];
+        const btn = document.getElementById('btn-fire');
+        const icon = document.getElementById('fire-icon');
+        icon.className = 'fa-solid fa-play';
+        btn.classList.remove('danger');
+        updateCarFormulas();
+      } else if (state.station === 'bullet') {
+        state.bullet.isFlying = false;
+        state.bullet.bulletX = 0;
+        state.bullet.woodSplinters = [];
+        state.bullet.penetratedDistanceCm = 0;
+        updateBulletFormulas();
+      }
+    }
+
+    // -------------------------------------------------------------
+    // INTERACTIVE POINTER HANDLING (DIRECT DRAG & DROP)
+    // -------------------------------------------------------------
+    let pointer = {
+      isDown: false,
+      x: 0,
+      y: 0,
+      dragTarget: null
+    };
+
+    function getCanvasCoords(e) {
+      const rect = canvas.getBoundingClientRect();
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+      return {
+        x: clientX - rect.left,
+        y: clientY - rect.top
+      };
+    }
+
+    canvas.addEventListener('pointerdown', (e) => {
+      const pos = getCanvasCoords(e);
+      pointer.isDown = true;
+      pointer.x = pos.x;
+      pointer.y = pos.y;
+
+      if (state.station === 'projectile') {
+        const originX = 120;
+        const groundY = viewHeight - 120;
+        const meterScale = (viewWidth - 250) / 60;
+
+        // Check Target
+        const targetScreenX = originX + state.projectile.targetX * meterScale;
+        if (Math.abs(pos.x - targetScreenX) < 35 && Math.abs(pos.y - groundY) < 45) {
+          pointer.dragTarget = 'target';
+          return;
+        }
+
+        // Check Measuring Tape Start/End
+        const t = state.projectile.tape;
+        const tapeStartX = originX + t.startX * meterScale;
+        const tapeStartY = groundY - t.startY * meterScale;
+        const tapeEndX = originX + t.endX * meterScale;
+        const tapeEndY = groundY - t.endY * meterScale;
+
+        if (Math.hypot(pos.x - tapeEndX, pos.y - tapeEndY) < 25) {
+          pointer.dragTarget = 'tape_end';
+          return;
+        }
+        if (Math.hypot(pos.x - tapeStartX, pos.y - tapeStartY) < 25) {
+          pointer.dragTarget = 'tape_start';
+          return;
+        }
+
+        // Check Cannon Barrel Angle
+        if (Math.hypot(pos.x - originX, pos.y - groundY) < 90) {
+          pointer.dragTarget = 'cannon_angle';
+          return;
+        }
+      } else if (state.station === 'car') {
+        const originX = 100;
+        const groundY = viewHeight - 140;
+        const meterScale = (viewWidth - 200) / 65;
+
+        // Check Obstacle
+        const obsScreenX = originX + state.car.obstacleX * meterScale;
+        if (Math.abs(pos.x - obsScreenX) < 30 && Math.abs(pos.y - (groundY - 25)) < 35) {
+          pointer.dragTarget = 'obstacle';
+          return;
+        }
+
+        // Check Car
+        const carScreenX = originX + state.car.s * meterScale;
+        if (Math.abs(pos.x - carScreenX) < 45 && Math.abs(pos.y - (groundY - 20)) < 30) {
+          pointer.dragTarget = 'car';
+          return;
+        }
+      }
+    });
+
+    window.addEventListener('pointermove', (e) => {
+      if (!pointer.isDown) return;
+      const pos = getCanvasCoords(e);
+
+      if (state.station === 'projectile') {
+        const originX = 120;
+        const groundY = viewHeight - 120;
+        const meterScale = (viewWidth - 250) / 60;
+
+        if (pointer.dragTarget === 'cannon_angle') {
+          const dx = pos.x - originX;
+          const dy = groundY - pos.y;
+          let deg = Math.atan2(dy, dx) * 180 / Math.PI;
+          deg = Math.max(10, Math.min(85, Math.round(deg)));
+          setAngle(deg);
+          const rangeEl = document.querySelector('input[oninput*="setAngle"]');
+          if (rangeEl) rangeEl.value = deg;
+        } else if (pointer.dragTarget === 'target') {
+          let m = (pos.x - originX) / meterScale;
+          m = Math.max(5, Math.min(58, m));
+          state.projectile.targetX = m;
+        } else if (pointer.dragTarget === 'tape_end') {
+          let mX = (pos.x - originX) / meterScale;
+          let mY = (groundY - pos.y) / meterScale;
+          state.projectile.tape.endX = Math.max(0, mX);
+          state.projectile.tape.endY = Math.max(0, mY);
+        } else if (pointer.dragTarget === 'tape_start') {
+          let mX = (pos.x - originX) / meterScale;
+          let mY = (groundY - pos.y) / meterScale;
+          state.projectile.tape.startX = Math.max(0, mX);
+          state.projectile.tape.startY = Math.max(0, mY);
+        }
+      } else if (state.station === 'car') {
+        const originX = 100;
+        const meterScale = (viewWidth - 200) / 65;
+
+        if (pointer.dragTarget === 'obstacle') {
+          let m = (pos.x - originX) / meterScale;
+          state.car.obstacleX = Math.max(15, Math.min(62, m));
+          const el = document.getElementById('tray-car-obs');
+          if (el) el.innerText = toBn(state.car.obstacleX, 1) + ' m';
+        } else if (pointer.dragTarget === 'car' && !state.car.isRunning) {
+          let m = (pos.x - originX) / meterScale;
+          state.car.s = Math.max(0, Math.min(state.car.obstacleX - 5, m));
+          updateCarFormulas();
+        }
+      }
+    });
+
+    window.addEventListener('pointerup', () => {
+      pointer.isDown = false;
+      pointer.dragTarget = null;
+    });
+
+    // -------------------------------------------------------------
+    // MAIN ANIMATION LOOP
+    // -------------------------------------------------------------
+    let lastTime = performance.now();
+
+    function animate(currentTime) {
+      const dt = Math.min(0.05, (currentTime - lastTime) / 1000) * (state.slowMo ? 0.4 : 1.0);
+      lastTime = currentTime;
+
+      updatePhysics(dt);
+
+      ctx.clearRect(0, 0, viewWidth, viewHeight);
+
+      if (state.station === 'projectile') {
+        renderProjectileStage();
+      } else if (state.station === 'car') {
+        renderCarStage();
+      } else if (state.station === 'bullet') {
+        renderBulletStage();
+      }
+
+      requestAnimationFrame(animate);
+    }
+
+    function updatePhysics(dt) {
+      if (state.station === 'projectile' && state.projectile.isFlying) {
+        const p = state.projectile;
+        p.t += dt;
+        p.ballX += p.vx * dt;
+        p.vy -= state.g * dt;
+        p.ballY += p.vy * dt;
+
+        p.trajectory.push({ x: p.ballX, y: Math.max(0, p.ballY) });
+
+        if (p.ballY <= 0) {
+          p.ballY = 0;
+          p.isFlying = false;
+
+          const distToTarget = Math.abs(p.ballX - p.targetX);
+          if (distToTarget < 2.0) {
+            playHitTargetSound();
+            confetti({
+              particleCount: 50,
+              spread: 60,
+              origin: { x: (120 + p.targetX * ((viewWidth - 250) / 60)) / viewWidth, y: (viewHeight - 120) / viewHeight }
+            });
+          }
+        }
+
+        p.particles.forEach(pt => {
+          pt.x += pt.vx;
+          pt.y += pt.vy;
+          pt.life -= dt * 2.5;
+        });
+        p.particles = p.particles.filter(pt => pt.life > 0);
+      } else if (state.station === 'car' && state.car.isRunning) {
+        const c = state.car;
+        c.t += dt;
+        const newV = c.v + c.a * dt;
+        
+        if (c.a < 0 && newV <= 0) {
+          c.v = 0;
+          c.isRunning = false;
+          const btn = document.getElementById('btn-fire');
+          const icon = document.getElementById('fire-icon');
+          icon.className = 'fa-solid fa-play';
+          btn.classList.remove('danger');
+        } else {
+          c.v = newV;
+          c.s += c.v * dt;
+        }
+
+        if (c.a < -1.5 && c.v > 2) {
+          c.skidMarks.push(c.s);
+        }
+
+        if (c.s >= c.obstacleX - 3.5) {
+          c.s = c.obstacleX - 3.5;
+          c.v = 0;
+          c.isRunning = false;
+          playHitTargetSound();
+          const btn = document.getElementById('btn-fire');
+          const icon = document.getElementById('fire-icon');
+          icon.className = 'fa-solid fa-play';
+          btn.classList.remove('danger');
+        }
+
+        updateCarFormulas();
+      } else if (state.station === 'bullet' && state.bullet.isFlying) {
+        const b = state.bullet;
+        b.bulletX += 35 * dt;
+        const maxDist = b.stoppedAtPlank * 40;
+
+        if (b.bulletX >= maxDist) {
+          b.bulletX = maxDist;
+          b.isFlying = false;
+
+          for (let i = 0; i < 20; i++) {
+            b.woodSplinters.push({
+              x: 220 + b.bulletX,
+              y: viewHeight / 2 + (Math.random() - 0.5) * 30,
+              vx: (Math.random() - 0.5) * 5,
+              vy: (Math.random() - 0.5) * 5,
+              color: '#b45309'
+            });
+          }
+        }
+      }
+    }
+
+    // -------------------------------------------------------------
+    // RENDERERS
+    // -------------------------------------------------------------
+    function renderProjectileStage() {
+      const originX = 120;
+      const groundY = viewHeight - 120;
+      const meterScale = (viewWidth - 250) / 60;
+
+      const skyGrad = ctx.createLinearGradient(0, 0, 0, groundY);
+      skyGrad.addColorStop(0, '#e0f2fe');
+      skyGrad.addColorStop(1, '#ffffff');
+      ctx.fillStyle = skyGrad;
+      ctx.fillRect(0, 0, viewWidth, groundY);
+
+      const groundGrad = ctx.createLinearGradient(0, groundY, 0, viewHeight);
+      groundGrad.addColorStop(0, '#15803d');
+      groundGrad.addColorStop(0.1, '#166534');
+      groundGrad.addColorStop(1, '#14532d');
+      ctx.fillStyle = groundGrad;
+      ctx.fillRect(0, groundY, viewWidth, viewHeight - groundY);
+
+      ctx.strokeStyle = '#ffffffaa';
+      ctx.fillStyle = '#ffffffcc';
+      ctx.font = '10px JetBrains Mono';
+      for (let m = 0; m <= 60; m += 5) {
+        const x = originX + m * meterScale;
+        ctx.beginPath();
+        ctx.moveTo(x, groundY);
+        ctx.lineTo(x, groundY + (m % 10 === 0 ? 14 : 7));
+        ctx.stroke();
+        if (m % 10 === 0) {
+          ctx.fillText(toBn(m) + 'm', x - 8, groundY + 28);
+        }
+      }
+
+      const p = state.projectile;
+      if (p.trajectory.length > 1) {
+        ctx.beginPath();
+        ctx.setLineDash([4, 4]);
+        ctx.strokeStyle = '#2563eb88';
+        ctx.lineWidth = 2.5;
+        p.trajectory.forEach((pt, idx) => {
+          const sx = originX + pt.x * meterScale;
+          const sy = groundY - pt.y * meterScale;
+          if (idx === 0) ctx.moveTo(sx, sy);
+          else ctx.lineTo(sx, sy);
+        });
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+
+      p.particles.forEach(pt => {
+        ctx.fillStyle = pt.color;
+        ctx.beginPath();
+        ctx.arc(originX + pt.x, groundY - pt.y, 4 * pt.life, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      const targetScreenX = originX + p.targetX * meterScale;
+      ctx.save();
+      ctx.translate(targetScreenX, groundY);
+      ctx.fillStyle = '#475569';
+      ctx.fillRect(-20, -5, 40, 5);
+      ctx.beginPath();
+      ctx.ellipse(0, -3, 24, 6, 0, 0, Math.PI * 2);
+      ctx.fillStyle = '#ef4444';
+      ctx.fill();
+      ctx.beginPath();
+      ctx.ellipse(0, -3, 16, 4, 0, 0, Math.PI * 2);
+      ctx.fillStyle = '#ffffff';
+      ctx.fill();
+      ctx.beginPath();
+      ctx.ellipse(0, -3, 8, 2, 0, 0, Math.PI * 2);
+      ctx.fillStyle = '#ef4444';
+      ctx.fill();
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 11px Hind Siliguri';
+      ctx.fillText(`টার্গেট (${toBn(p.targetX, 1)}m)`, -30, 20);
+      ctx.restore();
+
+      const rad = p.angleDeg * Math.PI / 180;
+      ctx.save();
+      ctx.translate(originX, groundY);
+
+      ctx.fillStyle = '#78350f';
+      ctx.beginPath();
+      ctx.arc(0, -10, 22, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.lineWidth = 3;
+      ctx.strokeStyle = '#451a03';
+      ctx.stroke();
+      ctx.fillStyle = '#d97706';
+      ctx.beginPath();
+      ctx.arc(0, -10, 8, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.save();
+      ctx.translate(0, -12);
+      ctx.rotate(-rad);
+      const barrelGrad = ctx.createLinearGradient(0, -12, 0, 12);
+      barrelGrad.addColorStop(0, '#64748b');
+      barrelGrad.addColorStop(0.5, '#334155');
+      barrelGrad.addColorStop(1, '#1e293b');
+      ctx.fillStyle = barrelGrad;
+      ctx.fillRect(0, -11, 65, 22);
+      ctx.fillStyle = '#0f172a';
+      ctx.fillRect(60, -13, 7, 26);
+      ctx.restore();
+
+      ctx.restore();
+
+      if (p.isFlying || p.ballX > 0) {
+        const bx = originX + p.ballX * meterScale;
+        const by = groundY - p.ballY * meterScale;
+        ctx.beginPath();
+        ctx.arc(bx, by, 7, 0, Math.PI * 2);
+        const ballGrad = ctx.createRadialGradient(bx - 2, by - 2, 1, bx, by, 7);
+        ballGrad.addColorStop(0, '#f8fafc');
+        ballGrad.addColorStop(0.4, '#0284c7');
+        ballGrad.addColorStop(1, '#0369a1');
+        ctx.fillStyle = ballGrad;
+        ctx.fill();
+        ctx.strokeStyle = '#075985';
+        ctx.stroke();
+      }
+
+      renderTapeTool(originX, groundY, meterScale);
+    }
+
+    function renderTapeTool(originX, groundY, meterScale) {
+      const t = state.projectile.tape;
+      const startX = originX + t.startX * meterScale;
+      const startY = groundY - t.startY * meterScale;
+      const endX = originX + t.endX * meterScale;
+      const endY = groundY - t.endY * meterScale;
+
+      ctx.beginPath();
+      ctx.moveTo(startX, startY);
+      ctx.lineTo(endX, endY);
+      ctx.strokeStyle = '#f59e0b';
+      ctx.lineWidth = 4;
+      ctx.stroke();
+
+      ctx.setLineDash([3, 3]);
+      ctx.strokeStyle = '#78350f';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      ctx.fillStyle = '#d97706';
+      ctx.fillRect(startX - 12, startY - 12, 24, 24);
+      ctx.strokeStyle = '#78350f';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(startX - 12, startY - 12, 24, 24);
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 9px JetBrains Mono';
+      ctx.fillText('০', startX - 3, startY + 4);
+
+      ctx.beginPath();
+      ctx.arc(endX, endY, 9, 0, Math.PI * 2);
+      ctx.fillStyle = '#ef4444';
+      ctx.fill();
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      const midX = (startX + endX) / 2;
+      const midY = (startY + endY) / 2 - 15;
+      const distM = Math.hypot(t.endX - t.startX, t.endY - t.startY);
+
+      ctx.fillStyle = 'rgba(15, 23, 42, 0.85)';
+      ctx.beginPath();
+      ctx.roundRect(midX - 35, midY - 12, 70, 22, 6);
+      ctx.fill();
+      ctx.fillStyle = '#38bdf8';
+      ctx.font = 'bold 11px JetBrains Mono';
+      ctx.fillText(`${toBn(distM, 2)} m`, midX - 25, midY + 3);
+    }
+
+    function renderCarStage() {
+      const originX = 100;
+      const groundY = viewHeight - 140;
+      const meterScale = (viewWidth - 200) / 65;
+
+      ctx.fillStyle = '#f1f5f9';
+      ctx.fillRect(0, 0, viewWidth, groundY - 40);
+
+      ctx.fillStyle = '#1e293b';
+      ctx.fillRect(0, groundY - 40, viewWidth, 100);
+
+      ctx.setLineDash([20, 20]);
+      ctx.strokeStyle = '#fbbf24';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(0, groundY + 10);
+      ctx.lineTo(viewWidth, groundY + 10);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      ctx.strokeStyle = '#94a3b8';
+      ctx.fillStyle = '#64748b';
+      ctx.font = '10px JetBrains Mono';
+      for (let m = 0; m <= 65; m += 5) {
+        const x = originX + m * meterScale;
+        ctx.beginPath();
+        ctx.moveTo(x, groundY + 60);
+        ctx.lineTo(x, groundY + (m % 10 === 0 ? 75 : 68));
+        ctx.stroke();
+        if (m % 10 === 0) {
+          ctx.fillText(toBn(m) + 'm', x - 8, groundY + 90);
+        }
+      }
+
+      state.car.skidMarks.forEach(sm => {
+        const x = originX + sm * meterScale;
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.4)';
+        ctx.fillRect(x - 5, groundY - 10, 10, 4);
+        ctx.fillRect(x - 5, groundY + 15, 10, 4);
+      });
+
+      const obsX = originX + state.car.obstacleX * meterScale;
+      ctx.save();
+      ctx.translate(obsX, groundY);
+      ctx.fillStyle = '#475569';
+      ctx.fillRect(-15, -2, 30, 4);
+      ctx.fillStyle = '#ef4444';
+      ctx.fillRect(-12, -45, 24, 45);
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(-12, -35, 24, 7);
+      ctx.fillRect(-12, -18, 24, 7);
+      ctx.fillStyle = '#dc2626';
+      ctx.font = 'bold 11px Hind Siliguri';
+      ctx.fillText(`বাধা (${toBn(state.car.obstacleX, 1)}m)`, -25, -55);
+      ctx.restore();
+
+      const carX = originX + state.car.s * meterScale;
+      ctx.save();
+      ctx.translate(carX, groundY);
+
+      const carGrad = ctx.createLinearGradient(0, -35, 0, 0);
+      carGrad.addColorStop(0, '#3b82f6');
+      carGrad.addColorStop(0.5, '#2563eb');
+      carGrad.addColorStop(1, '#1d4ed8');
+      ctx.fillStyle = carGrad;
+      ctx.beginPath();
+      ctx.roundRect(-45, -30, 90, 24, [6, 12, 4, 4]);
+      ctx.fill();
+
+      ctx.fillStyle = '#0f172a';
+      ctx.beginPath();
+      ctx.roundRect(-25, -45, 50, 16, [8, 8, 0, 0]);
+      ctx.fill();
+
+      ctx.fillStyle = '#93c5fd';
+      ctx.fillRect(-22, -42, 20, 12);
+      ctx.fillRect(2, -42, 20, 12);
+
+      ctx.fillStyle = '#fef08a';
+      ctx.fillRect(40, -22, 6, 8);
+
+      ctx.fillStyle = '#0f172a';
+      ctx.beginPath();
+      ctx.arc(-26, -4, 10, 0, Math.PI * 2);
+      ctx.arc(26, -4, 10, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#94a3b8';
+      ctx.beginPath();
+      ctx.arc(-26, -4, 4, 0, Math.PI * 2);
+      ctx.arc(26, -4, 4, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.restore();
+    }
+
+    function renderBulletStage() {
+      const centerY = viewHeight / 2;
+      const b = state.bullet;
+
+      ctx.fillStyle = '#f8fafc';
+      ctx.fillRect(0, 0, viewWidth, viewHeight);
+
+      ctx.fillStyle = '#e2e8f0';
+      ctx.fillRect(60, centerY + 80, viewWidth - 120, 15);
+      ctx.fillStyle = '#cbd5e1';
+      ctx.fillRect(100, centerY + 95, 20, 120);
+      ctx.fillRect(viewWidth - 120, centerY + 95, 20, 120);
+
+      ctx.save();
+      ctx.translate(140, centerY);
+      ctx.fillStyle = '#334155';
+      ctx.fillRect(-40, -8, 80, 16);
+      ctx.fillStyle = '#0f172a';
+      ctx.fillRect(35, -10, 10, 20);
+      ctx.fillStyle = '#78350f';
+      ctx.fillRect(-70, -12, 35, 28);
+      ctx.fillRect(-60, 14, 18, 30);
+      ctx.restore();
+
+      const plankStartX = 340;
+      const plankW = 35;
+      const plankGap = 12;
+      const plankH = 140;
+
+      for (let i = 0; i < b.planksCount; i++) {
+        const px = plankStartX + i * (plankW + plankGap);
+        const py = centerY - plankH / 2;
+
+        const woodGrad = ctx.createLinearGradient(px, py, px + plankW, py);
+        woodGrad.addColorStop(0, '#b45309');
+        woodGrad.addColorStop(0.5, '#d97706');
+        woodGrad.addColorStop(1, '#92400e');
+        ctx.fillStyle = woodGrad;
+        ctx.fillRect(px, py, plankW, plankH);
+
+        ctx.strokeStyle = '#78350f';
+        ctx.lineWidth = 1.5;
+        ctx.strokeRect(px, py, plankW, plankH);
+
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 12px JetBrains Mono';
+        ctx.fillText(toBn(i + 1), px + 12, py + plankH - 12);
+
+        if (b.isFlying || b.bulletX > 0) {
+          const bulletPenetratedPlank = Math.floor(b.bulletX / 40);
+          if (i < bulletPenetratedPlank) {
+            ctx.fillStyle = '#1c1917';
+            ctx.beginPath();
+            ctx.arc(px + plankW / 2, centerY, 5, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        }
+      }
+
+      const bulletBaseX = 185;
+      const currBulletX = Math.min(bulletBaseX + b.bulletX, plankStartX + b.stoppedAtPlank * (plankW + plankGap) - 5);
+
+      ctx.save();
+      ctx.translate(currBulletX, centerY);
+      ctx.fillStyle = '#eab308';
+      ctx.beginPath();
+      ctx.moveTo(-15, -4);
+      ctx.lineTo(0, -4);
+      ctx.arc(0, 0, 4, -Math.PI / 2, Math.PI / 2);
+      ctx.lineTo(-15, 4);
+      ctx.closePath();
+      ctx.fill();
+      ctx.strokeStyle = '#ca8a04';
+      ctx.stroke();
+      ctx.restore();
+
+      b.woodSplinters.forEach(sp => {
+        ctx.fillStyle = sp.color;
+        ctx.fillRect(sp.x, sp.y, 3, 3);
+      });
+    }
+
+    // -------------------------------------------------------------
+    // INIT
+    // -------------------------------------------------------------
+    setStation('projectile');
+    requestAnimationFrame(animate);
+
+  </script>
+</body>
+</html>

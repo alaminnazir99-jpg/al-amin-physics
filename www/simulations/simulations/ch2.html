@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>অধ্যায় ২: গতি — Al Amin Physics ল্যাব</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <!-- Google Fonts Bangla (Hind Siliguri) -->
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- KaTeX Math -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <!-- Chart.js for Scientific Motion Graphs -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Canvas Confetti for Challenges -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+  <!-- Lab Core Styles -->
+  <link rel="stylesheet" href="shared/lab-core.css">
+
+  <style>
+    body { font-family: 'Hind Siliguri', sans-serif; }
+    .station-btn.active {
+      background: #0284c7;
+      color: #ffffff;
+      border-color: #38bdf8;
+      box-shadow: 0 0 15px rgba(2, 132, 199, 0.4);
+    }
+  </style>
+</head>
+<body class="lab-page bg-slate-950 text-slate-100 min-h-screen flex flex-col">
+
+  <!-- Header -->
+  <header class="lab-glass sticky top-0 z-50 border-b border-slate-800/80 px-4 py-2.5">
+    <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <a href="index.html" class="w-9 h-9 rounded-xl bg-slate-900 border border-slate-700 hover:border-blue-500 text-slate-300 hover:text-white flex items-center justify-center transition" title="সকল অধ্যায়ের তালিকা">
+          <i class="fa-solid fa-arrow-left text-xs"></i>
+        </a>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="text-[10px] px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-400 font-mono font-bold border border-cyan-500/20">অধ্যায় ০২</span>
+            <h1 class="text-sm sm:text-base font-bold text-white">গতি (Motion Lab)</h1>
+          </div>
+          <span class="text-[11px] text-slate-400 block" id="current-sim-title">M01 — গতির সমীকরণ ও লেখচিত্র ল্যাব (S12 + S14)</span>
+        </div>
+      </div>
+
+      <!-- Station / Lab Selector for Chapter 2 -->
+      <div class="flex items-center gap-1.5 overflow-x-auto scrollbar-hide py-1">
+        <button onclick="switchLab('M01', 'eq')" id="nav-M01-eq" class="station-btn px-3 py-1.5 rounded-xl border border-slate-700 bg-slate-900 text-xs font-semibold whitespace-nowrap active transition flex items-center gap-1.5">
+          <i class="fa-solid fa-calculator text-cyan-400"></i> সমীকরণ প্লেগ্রাউন্ড (S12)
+        </button>
+        <button onclick="switchLab('M01', 'graph')" id="nav-M01-graph" class="station-btn px-3 py-1.5 rounded-xl border border-slate-700 bg-slate-900 text-xs font-semibold whitespace-nowrap text-slate-300 hover:text-white transition flex items-center gap-1.5">
+          <i class="fa-solid fa-chart-line text-emerald-400"></i> s-t ও v-t লেখচিত্র (S14)
+        </button>
+        <button onclick="switchLab('S10')" id="nav-S10" class="station-btn px-3 py-1.5 rounded-xl border border-slate-700 bg-slate-900 text-xs font-semibold whitespace-nowrap text-slate-400 hover:text-white transition flex items-center gap-1.5">
+          <i class="fa-solid fa-arrows-split-up-and-left text-amber-400"></i> ভেক্টর ল্যাব (S10)
+        </button>
+        <button onclick="switchLab('S13')" id="nav-S13" class="station-btn px-3 py-1.5 rounded-xl border border-slate-700 bg-slate-900 text-xs font-semibold whitespace-nowrap text-slate-400 hover:text-white transition flex items-center gap-1.5">
+          <i class="fa-solid fa-arrow-down text-rose-400"></i> পড়ন্ত বস্তু (S13)
+        </button>
+      </div>
+
+      <!-- Audio Mute -->
+      <div class="flex items-center gap-2">
+        <button onclick="LabCore.Audio.toggleMute(); updateMuteBtn();" id="mute-btn" class="w-8 h-8 rounded-xl bg-slate-900 border border-slate-700 text-slate-300 hover:text-white flex items-center justify-center text-xs transition">
+          <i class="fa-solid fa-volume-high" id="mute-icon"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Work Area -->
+  <main class="max-w-7xl mx-auto px-4 py-4 w-full flex-1 flex flex-col gap-4">
+
+    <!-- 3-Tier Learning Mode Selector -->
+    <div class="flex items-center justify-between flex-wrap gap-2 pb-1 border-b border-slate-800">
+      <div class="flex items-center gap-2">
+        <button onclick="setMode('explore')" id="mode-explore" class="lab-mode-pill active">
+          <i class="fa-solid fa-flask"></i> এক্সপ্লোর মোড (Free Lab)
+        </button>
+        <button onclick="setMode('challenge')" id="mode-challenge" class="lab-mode-pill">
+          <i class="fa-solid fa-bullseye text-amber-400"></i> গাইডেড চ্যালেঞ্জ (Mission)
+        </button>
+        <button onclick="setMode('data')" id="mode-data" class="lab-mode-pill">
+          <i class="fa-solid fa-table-list text-emerald-400"></i> ডেটা টেবিল ও রিপোর্ট
+        </button>
+      </div>
+
+      <!-- Quick Preset Buttons -->
+      <div class="flex items-center gap-1.5 text-xs">
+        <span class="text-slate-400 mr-1 text-[11px]">প্রিসেট:</span>
+        <button onclick="loadPreset('brake')" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition">
+          কার ব্রেকিং (NCTB)
+        </button>
+        <button onclick="loadPreset('bullet')" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition">
+          বুলেটের মন্দন
+        </button>
+        <button onclick="loadPreset('freefall')" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition">
+          সমত্বরণ যাত্রা
+        </button>
+      </div>
+    </div>
+
+    <!-- Active Lab Body Grid: Canvas (Left 65%) + Control/Theory Panel (Right 35%) -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 flex-1">
+
+      <!-- LEFT: Canvas & Graph Container (col-span-8) -->
+      <div class="lg:col-span-8 flex flex-col gap-4">
+
+        <!-- Physical Canvas Viewport -->
+        <div class="lab-canvas-container relative h-[360px] sm:h-[400px] flex items-center justify-center" id="motion-viewport">
+          <div class="lab-overlay-tag">
+            <i class="fa-solid fa-car-side"></i> <span id="canvas-status-tag">গতিশীল ট্র্যাক ও গাড়ি</span>
+          </div>
+
+          <!-- Direct Manipulation Canvas -->
+          <canvas id="motionCanvas" class="w-full h-full"></canvas>
+
+          <!-- Action Buttons Overlay -->
+          <div class="lab-canvas-actions">
+            <button onclick="toggleProtractor()" class="lab-action-btn" title="চাঁদা টুল (Protractor)"><i class="fa-solid fa-compass-drafting"></i></button>
+            <button onclick="toggleRuler()" class="lab-action-btn" title="মিটার স্কেল (Ruler)"><i class="fa-solid fa-ruler"></i></button>
+            <button onclick="toggleSimPlay()" class="lab-action-btn" id="play-pause-btn" title="চালু / বিরতি"><i class="fa-solid fa-play"></i></button>
+            <button onclick="stepSim()" class="lab-action-btn" title="এক-ধাপ এগিয়ে নাও (Step)"><i class="fa-solid fa-forward-step"></i></button>
+            <button onclick="resetSim()" class="lab-action-btn" title="পুনরায় শুরু (Reset)"><i class="fa-solid fa-rotate-right"></i></button>
+          </div>
+        </div>
+
+        <!-- Dynamic Graph View (Visible in Graphs Station or split) -->
+        <div class="lab-glass-card rounded-2xl p-4" id="graph-panel">
+          <div class="flex items-center justify-between mb-3">
+            <div class="flex items-center gap-2">
+              <i class="fa-solid fa-chart-area text-emerald-400"></i>
+              <h4 class="text-xs sm:text-sm font-bold text-white">লাইভ লেখচিত্র (s-t এবং v-t Graphs)</h4>
+            </div>
+            <div class="flex items-center gap-2 text-xs">
+              <span class="text-[10px] text-slate-400">ঢাল = ত্বরণ (a), ক্ষেত্রফল = সরণ (s)</span>
+              <button onclick="clearGraphData()" class="text-slate-400 hover:text-rose-400 text-[11px]"><i class="fa-solid fa-trash-can mr-1"></i>ক্লিয়ার</button>
+            </div>
+          </div>
+          <div class="h-[180px] w-full">
+            <canvas id="liveMotionChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Live Output Strip -->
+        <div class="lab-result-strip">
+          <div class="lab-stat-box">
+            <span class="stat-label">বর্তমান সময় (t)</span>
+            <span class="stat-val" id="stat-t">০.০ s</span>
+          </div>
+          <div class="lab-stat-box">
+            <span class="stat-label">বর্তমান বেগ (v)</span>
+            <span class="stat-val" id="stat-v">০.০ m/s</span>
+          </div>
+          <div class="lab-stat-box">
+            <span class="stat-label">অতিক্রান্ত দূরত্ব (s)</span>
+            <span class="stat-val text-emerald-400" id="stat-s">০.০ m</span>
+          </div>
+          <div class="lab-stat-box">
+            <span class="stat-label">ত্বরণ / মন্দন (a)</span>
+            <span class="stat-val text-amber-400" id="stat-a">০.০ m/s²</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT: Interactive Controls, KaTeX Math & Guided Learning (col-span-4) -->
+      <div class="lg:col-span-4 flex flex-col gap-4">
+
+        <!-- Controls Box -->
+        <div class="lab-glass-card rounded-2xl p-5 flex flex-col gap-4">
+          <div class="flex items-center justify-between pb-2 border-b border-slate-700/60">
+            <h4 class="text-xs sm:text-sm font-bold text-white flex items-center gap-2">
+              <i class="fa-solid fa-sliders text-blue-400"></i> নিয়ন্ত্রণ ও পরামিতি (Controls)
+            </h4>
+            <span class="text-[10px] px-2 py-0.5 rounded bg-blue-500/20 text-blue-300 font-mono">ড্র্যাগ ও স্লাইডার সিঙ্ক</span>
+          </div>
+
+          <!-- Slider 1: Initial Velocity (u) -->
+          <div>
+            <div class="flex items-center justify-between text-xs mb-1.5">
+              <span class="text-slate-300 font-semibold">আদিবেগ (u):</span>
+              <span class="text-cyan-400 font-bold font-mono" id="val-u">১৫.০ m/s (৫৪ km/h)</span>
+            </div>
+            <input type="range" id="slider-u" min="0" max="40" step="0.5" value="15" class="lab-slider-track">
+            <div class="flex justify-between text-[10px] text-slate-500 mt-1">
+              <span>০ m/s</span>
+              <span>২০ m/s</span>
+              <span>৪০ m/s</span>
+            </div>
+          </div>
+
+          <!-- Slider 2: Acceleration / Deceleration (a) -->
+          <div>
+            <div class="flex items-center justify-between text-xs mb-1.5">
+              <span class="text-slate-300 font-semibold">ত্বরণ / মন্দন (a):</span>
+              <span class="text-amber-400 font-bold font-mono" id="val-a">-২.৫ m/s²</span>
+            </div>
+            <input type="range" id="slider-a" min="-10" max="10" step="0.25" value="-2.5" class="lab-slider-track">
+            <div class="flex justify-between text-[10px] text-slate-500 mt-1">
+              <span>-১০ m/s² (মন্দন)</span>
+              <span>০ (সমবেগ)</span>
+              <span>+১০ m/s² (ত্বরণ)</span>
+            </div>
+          </div>
+
+          <!-- Slider 3: Simulation Speed (Slow Motion) -->
+          <div>
+            <div class="flex items-center justify-between text-xs mb-1.5">
+              <span class="text-slate-300 font-semibold">সিমুলেশন গতি:</span>
+              <span class="text-purple-400 font-bold font-mono" id="val-speed">১.০x</span>
+            </div>
+            <input type="range" id="slider-speed" min="0.2" max="2.0" step="0.1" value="1.0" class="lab-slider-track">
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="grid grid-cols-2 gap-2 pt-2">
+            <button onclick="toggleSimPlay()" class="py-2.5 px-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-lg shadow-blue-600/30 transition" id="ctrl-run-btn">
+              <i class="fa-solid fa-play"></i> যাত্রা শুরু
+            </button>
+            <button onclick="recordCurrentData()" class="py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-slate-700 font-bold text-xs flex items-center justify-center gap-1.5 transition">
+              <i class="fa-solid fa-plus"></i> মান টেবিলে যোগ
+            </button>
+          </div>
+        </div>
+
+        <!-- Live KaTeX Mathematical Formula Card -->
+        <div id="formula-container"></div>
+
+        <!-- Underlying Mechanism & Think About It Box -->
+        <div class="lab-glass-card rounded-2xl p-4 border-l-4 border-amber-500">
+          <div class="flex items-center gap-2 mb-1.5">
+            <i class="fa-regular fa-lightbulb text-amber-400 text-sm"></i>
+            <h5 class="text-xs font-bold text-amber-300 uppercase tracking-wider">ভেতরের মেকানিজম ও ভাবো তো!</h5>
+          </div>
+          <p class="text-xs text-slate-300 leading-relaxed mb-3" id="mechanism-text">
+            তিন সমীকরণের সম্পর্ক: $v-t$ লেখের ঢাল হলো ত্বরণ ($a$), আর লেখের নিচের ক্ষেত্রফল হলো মোট সরণ ($s$)। গাড়ি ব্রেক করলে বেগ কমতে কমতে শূন্যে পৌঁছায়।
+          </p>
+          <div class="bg-amber-950/40 border border-amber-900/50 p-2.5 rounded-xl text-xs text-amber-200/90">
+            <span class="font-bold block mb-1">🤔 ভাবো তো প্রশ্ন:</span>
+            <span id="think-question">ব্রেকের দূরত্ব বেগ দ্বিগুণ হলে দ্বিগুণ হয় না, চারগুণ হয় — কেন?</span>
+            <button onclick="toggleAnswer()" class="mt-2 text-[11px] text-amber-400 hover:underline block font-semibold">উত্তর দেখতে ট্যাপ করো</button>
+            <p id="think-answer" class="hidden mt-1.5 pt-1.5 border-t border-amber-800/60 text-[11px] text-amber-100">
+              কারণ $v^2 = u^2 + 2as$ থেকে পাই, থামার দূরত্ব $s = \frac{u^2}{2a}$। অর্থাৎ সরণ আদিবেগের বর্গের সমানুপাতিক ($s \propto u^2$)। বেগ দ্বিগুণ ($2u$) হলে দূরত্ব $(2)^2 = 4$ গুণ বেড়ে যাবে!
+            </p>
+          </div>
+        </div>
+
+        <!-- Challenge Goal Display (Visible when mode === challenge) -->
+        <div class="lab-glass-card rounded-2xl p-4 border-l-4 border-emerald-500 hidden" id="challenge-box">
+          <div class="flex items-center gap-2 mb-1">
+            <i class="fa-solid fa-bullseye text-emerald-400"></i>
+            <h5 class="text-xs font-bold text-emerald-300">বর্তমান মিশন: ব্রেক চ্যালেঞ্জ</h5>
+          </div>
+          <p class="text-xs text-slate-300 leading-relaxed" id="challenge-desc">
+            আদিবেগ ২০ m/s রেখে এমনভাবে মন্দন সেট করো যেন গাড়িটি ঠিক ৪০ মিটারের মধ্যে গিয়ে থেমে যায়!
+          </p>
+          <div class="mt-2 text-xs font-mono text-cyan-300" id="challenge-status">
+            লক্ষ্য সরণ: ৪০.০ m | বর্তমান সরণ: ০.০ m
+          </div>
+        </div>
+
+        <!-- Data Table Container (Visible when mode === data) -->
+        <div class="lab-glass-card rounded-2xl p-4 hidden" id="datatable-box">
+          <div class="flex items-center justify-between mb-2">
+            <h5 class="text-xs font-bold text-white flex items-center gap-1.5">
+              <i class="fa-solid fa-table text-cyan-400"></i> পরীক্ষার ডেটা রেকর্ড
+            </h5>
+            <div class="flex gap-2">
+              <button onclick="labDataTable.exportCSV()" class="text-[11px] text-cyan-400 hover:underline"><i class="fa-solid fa-download mr-1"></i>CSV</button>
+              <button onclick="labDataTable.clear()" class="text-[11px] text-rose-400 hover:underline"><i class="fa-solid fa-trash mr-1"></i>মুছে ফেলুন</button>
+            </div>
+          </div>
+          <div class="overflow-x-auto max-h-48 scrollbar-thin">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-900/80 text-slate-400 border-b border-slate-700">
+                <tr>
+                  <th class="py-1 px-2">নং</th>
+                  <th class="py-1 px-2">u (m/s)</th>
+                  <th class="py-1 px-2">a (m/s²)</th>
+                  <th class="py-1 px-2">t (s)</th>
+                  <th class="py-1 px-2">s (m)</th>
+                  <th class="py-1 px-2">v (m/s)</th>
+                </tr>
+              </thead>
+              <tbody id="trial-tbody">
+                <!-- dynamic rows -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Lab Core JavaScript -->
+  <script src="shared/lab-core.js"></script>
+
+  <script>
+    // -------------------------------------------------------------------
+    // PHYSICS SIMULATION STATE MODEL (M01: Equations of Motion & Graphs)
+    // -------------------------------------------------------------------
+    const state = {
+      u: 15.0,           // Initial velocity (m/s)
+      a: -2.5,          // Acceleration (m/s^2)
+      t: 0.0,            // Elapsed time (s)
+      v: 15.0,           // Current velocity (m/s)
+      s: 0.0,            // Total displacement (m)
+      isRunning: false,
+      speedMultiplier: 1.0,
+      mode: 'explore',   // 'explore' | 'challenge' | 'data'
+      carX: 50,          // Canvas pixel position for car
+      roadLengthMeters: 100, // Visual track represents 100 meters
+      lastTimestamp: null
+    };
+
+    let chartInstance = null;
+    let floatingTools = null;
+    let labDataTable = null;
+
+    // Canvas Setup
+    const canvas = document.getElementById('motionCanvas');
+    const ctx = canvas.getContext('2d');
+
+    function resizeCanvas() {
+      const rect = canvas.parentElement.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      ctx.resetTransform ? ctx.resetTransform() : ctx.setTransform(1,0,0,1,0,0);
+      ctx.scale(dpr, dpr);
+      renderScene();
+    }
+    window.addEventListener('resize', resizeCanvas);
+
+    // -------------------------------------------------------------------
+    // CHART.JS INITIALIZATION (Scientific s-t and v-t graph)
+    // -------------------------------------------------------------------
+    function initChart() {
+      const chartCtx = document.getElementById('liveMotionChart').getContext('2d');
+      chartInstance = new Chart(chartCtx, {
+        type: 'line',
+        data: {
+          labels: [0],
+          datasets: [
+            {
+              label: 'বেগ v (m/s)',
+              data: [state.u],
+              borderColor: '#38bdf8',
+              backgroundColor: 'rgba(56, 189, 248, 0.15)',
+              borderWidth: 2.5,
+              tension: 0.1,
+              fill: true,
+              yAxisID: 'y'
+            },
+            {
+              label: 'সরণ s (m)',
+              data: [0],
+              borderColor: '#10b981',
+              backgroundColor: 'transparent',
+              borderWidth: 2,
+              borderDash: [5, 5],
+              tension: 0.1,
+              yAxisID: 'y1'
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: false,
+          scales: {
+            x: {
+              title: { display: true, text: 'সময় t (সেকেন্ড)', color: '#94a3b8', font: { size: 10 } },
+              grid: { color: 'rgba(148, 163, 184, 0.1)' },
+              ticks: { color: '#94a3b8', font: { size: 10 } }
+            },
+            y: {
+              type: 'linear',
+              display: true,
+              position: 'left',
+              title: { display: true, text: 'বেগ (m/s)', color: '#38bdf8', font: { size: 10 } },
+              grid: { color: 'rgba(148, 163, 184, 0.1)' },
+              ticks: { color: '#38bdf8', font: { size: 10 } }
+            },
+            y1: {
+              type: 'linear',
+              display: true,
+              position: 'right',
+              title: { display: true, text: 'সরণ (m)', color: '#10b981', font: { size: 10 } },
+              grid: { drawOnChartArea: false },
+              ticks: { color: '#10b981', font: { size: 10 } }
+            }
+          },
+          plugins: {
+            legend: {
+              labels: { color: '#cbd5e1', font: { size: 11 } }
+            }
+          }
+        }
+      });
+    }
+
+    // -------------------------------------------------------------------
+    // CANVAS RENDERING (Realistic Car, Track, Markers & Smoke)
+    // -------------------------------------------------------------------
+    function renderScene() {
+      const rect = canvas.getBoundingClientRect();
+      const w = rect.width;
+      const h = rect.height;
+
+      // Clear background
+      ctx.clearRect(0, 0, w, h);
+
+      // Sky gradient
+      const skyGrad = ctx.createLinearGradient(0, 0, 0, h * 0.6);
+      skyGrad.addColorStop(0, '#0f172a');
+      skyGrad.addColorStop(1, '#1e293b');
+      ctx.fillStyle = skyGrad;
+      ctx.fillRect(0, 0, w, h * 0.65);
+
+      // Distance Markers on Background Wall
+      ctx.fillStyle = 'rgba(148, 163, 184, 0.15)';
+      for (let m = 0; m <= 100; m += 10) {
+        const xPos = 40 + (m / state.roadLengthMeters) * (w - 100);
+        ctx.fillRect(xPos, h * 0.45, 1.5, h * 0.2);
+        ctx.fillStyle = 'rgba(148, 163, 184, 0.4)';
+        ctx.font = '10px Hind Siliguri, monospace';
+        ctx.fillText(LabCore.toBn(m) + ' m', xPos - 10, h * 0.43);
+      }
+
+      // Asphalt Road
+      const roadY = h * 0.65;
+      const roadH = h * 0.35;
+      const roadGrad = ctx.createLinearGradient(0, roadY, 0, h);
+      roadGrad.addColorStop(0, '#1e293b');
+      roadGrad.addColorStop(0.2, '#0f172a');
+      roadGrad.addColorStop(1, '#020617');
+      ctx.fillStyle = roadGrad;
+      ctx.fillRect(0, roadY, w, roadH);
+
+      // Road curbs & Lane markings
+      ctx.strokeStyle = '#38bdf8';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(0, roadY);
+      ctx.lineTo(w, roadY);
+      ctx.stroke();
+
+      // Dashed lane line
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+      ctx.lineWidth = 2;
+      ctx.setLineDash([15, 15]);
+      ctx.beginPath();
+      ctx.moveTo(0, roadY + roadH * 0.5);
+      ctx.lineTo(w, roadY + roadH * 0.5);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Calculate Car Position
+      const trackStartX = 40;
+      const trackEndX = w - 80;
+      const currentProgress = Math.min(Math.max(state.s / state.roadLengthMeters, 0), 1.05);
+      const carScreenX = trackStartX + currentProgress * (trackEndX - trackStartX);
+      const carScreenY = roadY + 15;
+
+      // Draw Realistic Car
+      drawRealisticCar(carScreenX, carScreenY);
+
+      // Velocity Arrow Vector
+      if (Math.abs(state.v) > 0.1) {
+        const arrowLength = state.v * 3;
+        ctx.strokeStyle = '#38bdf8';
+        ctx.fillStyle = '#38bdf8';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(carScreenX + 35, carScreenY - 12);
+        ctx.lineTo(carScreenX + 35 + arrowLength, carScreenY - 12);
+        ctx.stroke();
+
+        // Arrow head
+        ctx.beginPath();
+        ctx.moveTo(carScreenX + 35 + arrowLength, carScreenY - 17);
+        ctx.lineTo(carScreenX + 45 + arrowLength, carScreenY - 12);
+        ctx.lineTo(carScreenX + 35 + arrowLength, carScreenY - 7);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.font = '11px Hind Siliguri, sans-serif';
+        ctx.fillText(`v = ${LabCore.toBn(state.v.toFixed(1))} m/s`, carScreenX + 35 + arrowLength / 2 - 15, carScreenY - 20);
+      }
+    }
+
+    function drawRealisticCar(x, y) {
+      ctx.save();
+      ctx.translate(x, y);
+
+      // Car Shadow
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+      ctx.beginPath();
+      ctx.ellipse(35, 38, 45, 8, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Car Body Main Gradient (Sports Blue / Cyan)
+      const bodyGrad = ctx.createLinearGradient(0, 0, 70, 0);
+      bodyGrad.addColorStop(0, '#0284c7');
+      bodyGrad.addColorStop(0.5, '#38bdf8');
+      bodyGrad.addColorStop(1, '#0369a1');
+
+      // Lower Chassis
+      ctx.fillStyle = bodyGrad;
+      ctx.beginPath();
+      ctx.roundRect(0, 15, 75, 20, [4, 12, 4, 4]);
+      ctx.fill();
+
+      // Cabin Roof
+      ctx.fillStyle = '#0f172a';
+      ctx.beginPath();
+      ctx.moveTo(15, 15);
+      ctx.lineTo(25, 2);
+      ctx.lineTo(55, 2);
+      ctx.lineTo(65, 15);
+      ctx.closePath();
+      ctx.fill();
+
+      // Windshield Glass with highlight
+      ctx.fillStyle = 'rgba(186, 230, 253, 0.65)';
+      ctx.beginPath();
+      ctx.moveTo(27, 4);
+      ctx.lineTo(53, 4);
+      ctx.lineTo(61, 14);
+      ctx.lineTo(19, 14);
+      ctx.closePath();
+      ctx.fill();
+
+      // Headlight
+      ctx.fillStyle = state.v > 0.1 ? '#fef08a' : '#94a3b8';
+      ctx.beginPath();
+      ctx.arc(74, 23, 4, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Taillight
+      ctx.fillStyle = state.a < 0 ? '#ef4444' : '#991b1b';
+      ctx.fillRect(0, 20, 3, 7);
+
+      // Wheels
+      ctx.fillStyle = '#1e293b';
+      ctx.strokeStyle = '#94a3b8';
+      ctx.lineWidth = 2;
+
+      // Wheel 1
+      ctx.beginPath();
+      ctx.arc(18, 35, 10, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+
+      // Wheel 2
+      ctx.beginPath();
+      ctx.arc(58, 35, 10, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.restore();
+    }
+
+    // -------------------------------------------------------------------
+    // PHYSICS SIMULATION ENGINE & LOOP
+    // -------------------------------------------------------------------
+    function updatePhysics(dt) {
+      if (!state.isRunning) return;
+
+      const effectiveDt = dt * state.speedMultiplier;
+      state.t += effectiveDt;
+
+      // New velocity: v = u + at
+      state.v = state.u + state.a * state.t;
+
+      // When braking to stop (velocity reaches zero or reverses while decelerating)
+      if (state.u > 0 && state.a < 0 && state.v <= 0) {
+        state.v = 0;
+        state.isRunning = false;
+        // Total distance s = u^2 / (2 * |a|)
+        state.s = (state.u * state.u) / (2 * Math.abs(state.a));
+        LabCore.Audio.playSnap();
+        updateUI();
+        checkChallengeTarget();
+        return;
+      }
+
+      // Displacement: s = ut + 0.5 * a * t^2
+      state.s = state.u * state.t + 0.5 * state.a * state.t * state.t;
+
+      // Update Chart Every 0.2s or frame
+      if (chartInstance && state.t % 0.15 < effectiveDt) {
+        chartInstance.data.labels.push(state.t.toFixed(1));
+        chartInstance.data.datasets[0].data.push(state.v);
+        chartInstance.data.datasets[1].data.push(state.s);
+        if (chartInstance.data.labels.length > 35) {
+          chartInstance.data.labels.shift();
+          chartInstance.data.datasets[0].data.shift();
+          chartInstance.data.datasets[1].data.shift();
+        }
+        chartInstance.update();
+      }
+
+      updateUI();
+    }
+
+    function simLoop(timestamp) {
+      if (!state.lastTimestamp) state.lastTimestamp = timestamp;
+      const dt = Math.min((timestamp - state.lastTimestamp) / 1000, 0.05);
+      state.lastTimestamp = timestamp;
+
+      if (state.isRunning) {
+        updatePhysics(dt);
+      }
+      renderScene();
+      requestAnimationFrame(simLoop);
+    }
+
+    // -------------------------------------------------------------------
+    // UI BINDING & LIVE KATEX FORMULA UPDATE
+    // -------------------------------------------------------------------
+    function updateUI() {
+      // Numerical Stats
+      document.getElementById('stat-t').textContent = LabCore.toBn(state.t.toFixed(1)) + ' s';
+      document.getElementById('stat-v').textContent = LabCore.toBn(state.v.toFixed(1)) + ' m/s';
+      document.getElementById('stat-s').textContent = LabCore.toBn(state.s.toFixed(1)) + ' m';
+      document.getElementById('stat-a').textContent = LabCore.toBn(state.a.toFixed(2)) + ' m/s²';
+
+      // Slider Values
+      document.getElementById('val-u').textContent = `${LabCore.toBn(state.u.toFixed(1))} m/s (${LabCore.toBn((state.u * 3.6).toFixed(0))} km/h)`;
+      document.getElementById('val-a').textContent = `${LabCore.toBn(state.a.toFixed(2))} m/s²`;
+      document.getElementById('val-speed').textContent = `${LabCore.toBn(state.speedMultiplier.toFixed(1))}x`;
+
+      // Live KaTeX Formula Card
+      const uStr = state.u.toFixed(1);
+      const aStr = state.a.toFixed(2);
+      const tStr = state.t.toFixed(1);
+      const vStr = state.v.toFixed(1);
+      const sStr = state.s.toFixed(1);
+
+      LabCore.renderFormulaCard('formula-container', {
+        title: 'গতির প্রধান সমীকরণসমূহ',
+        code: 'NCTB Ch 2',
+        latex: `v = u + at \\implies ${vStr} = ${uStr} + (${aStr})(${tStr}) \\\\ s = ut + \\frac{1}{2}at^2 \\implies ${sStr}\\text{ m}`,
+        explanation: `সরণ s = ${LabCore.toBn(sStr)} m | শেষবেগ v = ${LabCore.toBn(vStr)} m/s`,
+        liveResult: `v = ${LabCore.toBn(vStr)} m/s`
+      });
+
+      // Update Play Button Icon
+      const playIcon = document.querySelector('#play-pause-btn i');
+      if (playIcon) playIcon.className = state.isRunning ? 'fa-solid fa-pause' : 'fa-solid fa-play';
+      const runBtn = document.getElementById('ctrl-run-btn');
+      if (runBtn) runBtn.innerHTML = state.isRunning ? '<i class="fa-solid fa-pause"></i> বিরতি (Pause)' : '<i class="fa-solid fa-play"></i> যাত্রা শুরু';
+    }
+
+    // Controls
+    function toggleSimPlay() {
+      state.isRunning = !state.isRunning;
+      LabCore.Audio.playClick();
+      updateUI();
+    }
+
+    function stepSim() {
+      state.isRunning = false;
+      updatePhysics(0.1);
+      renderScene();
+      LabCore.Audio.playClick();
+    }
+
+    function resetSim() {
+      state.isRunning = false;
+      state.t = 0.0;
+      state.v = state.u;
+      state.s = 0.0;
+      state.lastTimestamp = null;
+      if (chartInstance) {
+        chartInstance.data.labels = [0];
+        chartInstance.data.datasets[0].data = [state.u];
+        chartInstance.data.datasets[1].data = [0];
+        chartInstance.update();
+      }
+      LabCore.Audio.playClick();
+      updateUI();
+      renderScene();
+    }
+
+    function clearGraphData() {
+      if (chartInstance) {
+        chartInstance.data.labels = [];
+        chartInstance.data.datasets[0].data = [];
+        chartInstance.data.datasets[1].data = [];
+        chartInstance.update();
+      }
+    }
+
+    // Sliders
+    document.getElementById('slider-u').addEventListener('input', (e) => {
+      state.u = parseFloat(e.target.value);
+      if (!state.isRunning) state.v = state.u;
+      updateUI();
+      renderScene();
+    });
+
+    document.getElementById('slider-a').addEventListener('input', (e) => {
+      state.a = parseFloat(e.target.value);
+      updateUI();
+    });
+
+    document.getElementById('slider-speed').addEventListener('input', (e) => {
+      state.speedMultiplier = parseFloat(e.target.value);
+      updateUI();
+    });
+
+    // -------------------------------------------------------------------
+    // PRESETS (NCTB Textbook Examples)
+    // -------------------------------------------------------------------
+    function loadPreset(type) {
+      resetSim();
+      if (type === 'brake') {
+        // 54 km/h = 15 m/s, stop in 45 m -> a = -2.5 m/s^2, t = 6s
+        state.u = 15.0;
+        state.a = -2.5;
+        document.getElementById('slider-u').value = 15;
+        document.getElementById('slider-a').value = -2.5;
+        document.getElementById('mechanism-text').textContent = 'ব্রেকিং ল্যাব: ৫৪ km/h (১৫ m/s) বেগের গাড়িকে ৪৫ মিটারে থামাতে মন্দন a = -২.৫ m/s² এবং সময় t = ৬ সেকেন্ড প্রয়োজন।';
+      } else if (type === 'bullet') {
+        state.u = 30.0;
+        state.a = -6.0;
+        document.getElementById('slider-u').value = 30;
+        document.getElementById('slider-a').value = -6;
+        document.getElementById('mechanism-text').textContent = 'বুলেট মন্দন ল্যাব: উচ্চ আদিবেগে দেয়ালে প্রবেশের সাথে সাথে তীব্র মন্দন কাজ করে।';
+      } else if (type === 'freefall') {
+        state.u = 0.0;
+        state.a = 4.0;
+        document.getElementById('slider-u').value = 0;
+        document.getElementById('slider-a').value = 4.0;
+        document.getElementById('mechanism-text').textContent = 'সমত্বরণ যাত্রা: স্থির অবস্থান (u=0) থেকে প্রতি সেকেন্ডে গাড়ির বেগ ৪ m/s হারে বৃদ্ধি পায়।';
+      }
+      LabCore.Audio.playSnap();
+      updateUI();
+      renderScene();
+    }
+
+    // -------------------------------------------------------------------
+    // MODE SWITCHER (Explore, Challenge, Data Table)
+    // -------------------------------------------------------------------
+    function setMode(mode) {
+      state.mode = mode;
+      document.querySelectorAll('.lab-mode-pill').forEach(btn => btn.classList.remove('active'));
+      document.getElementById(`mode-${mode}`).classList.add('active');
+
+      document.getElementById('challenge-box').classList.toggle('hidden', mode !== 'challenge');
+      document.getElementById('datatable-box').classList.toggle('hidden', mode !== 'data');
+
+      LabCore.Audio.playClick();
+    }
+
+    function checkChallengeTarget() {
+      if (state.mode !== 'challenge') return;
+      // Target: u = 20 m/s, s = 40 m (which requires a = -5 m/s^2)
+      if (Math.abs(state.s - 40.0) <= 2.0 && Math.abs(state.v) <= 0.5) {
+        LabCore.triggerCelebration('মিশন সফল!', `তুমি গাড়িটিকে লক্ষ্য দূরত্ব ৪০ মিটারের কাছাকাছি (${state.s.toFixed(1)} m) নির্ভুলভাবে থামাতে পেরেছ!`);
+      }
+    }
+
+    function recordCurrentData() {
+      if (!labDataTable) return;
+      labDataTable.recordTrial({
+        input1: LabCore.toBn(state.u.toFixed(1)),
+        input2: LabCore.toBn(state.a.toFixed(2)),
+        output: LabCore.toBn(state.t.toFixed(1)),
+        calculated: LabCore.toBn(state.s.toFixed(1)),
+        error: LabCore.toBn(state.v.toFixed(1))
+      });
+      setMode('data');
+    }
+
+    // Toggle think answer
+    function toggleAnswer() {
+      const ans = document.getElementById('think-answer');
+      ans.classList.toggle('hidden');
+    }
+
+    // Floating Tools toggle
+    function toggleProtractor() {
+      if (floatingTools) floatingTools.protractor.toggle();
+    }
+    function toggleRuler() {
+      if (floatingTools) floatingTools.ruler.toggle();
+    }
+
+    function updateMuteBtn() {
+      const icon = document.getElementById('mute-icon');
+      if (icon) icon.className = LabCore.Audio.isMuted ? 'fa-solid fa-volume-xmark text-rose-400' : 'fa-solid fa-volume-high text-slate-300';
+    }
+
+    // -------------------------------------------------------------------
+    // ROUTER & INITIALIZATION
+    // -------------------------------------------------------------------
+    window.addEventListener('DOMContentLoaded', () => {
+      resizeCanvas();
+      initChart();
+      updateMuteBtn();
+
+      // Init Floating Tools & Data Table
+      const viewport = document.getElementById('motion-viewport');
+      floatingTools = LabCore.initTools(viewport);
+      labDataTable = new LabCore.DataTable('trial-tbody');
+
+      // Deep link router check (?id=S12 or ?id=S14)
+      const targetId = LabCore.getUrlParam('id');
+      if (targetId === 'S14') {
+        switchLab('M01', 'graph');
+      } else {
+        switchLab('M01', 'eq');
+      }
+
+      updateUI();
+      requestAnimationFrame(simLoop);
+    });
+
+    function switchLab(moduleId, station) {
+      document.querySelectorAll('.station-btn').forEach(btn => btn.classList.remove('active'));
+      const activeBtn = document.getElementById(`nav-${moduleId}-${station}`) || document.getElementById(`nav-${moduleId}`);
+      if (activeBtn) activeBtn.classList.add('active');
+
+      if (moduleId === 'M01') {
+        if (station === 'graph') {
+          document.getElementById('current-sim-title').textContent = 'M01 — লেখচিত্র ল্যাব (S14): s-t ও v-t গ্রাফের ঢাল ও ক্ষেত্রফল বিশ্লেষণ';
+          document.getElementById('graph-panel').scrollIntoView({ behavior: 'smooth' });
+        } else {
+          document.getElementById('current-sim-title').textContent = 'M01 — গতির সমীকরণ প্লেগ্রাউন্ড (S12): u, a, t ও v-এর সম্পর্ক';
+        }
+      } else if (moduleId === 'S10') {
+        alert('ভেক্টর ল্যাব (S10) লোড হচ্ছে...');
+      } else if (moduleId === 'S13') {
+        alert('পড়ন্ত বস্তু ল্যাব (S13) লোড হচ্ছে...');
+      }
+      LabCore.Audio.playClick();
+    }
+  </script>
+</body>
+</html>

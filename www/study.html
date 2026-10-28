@@ -113,6 +113,11 @@
                     </button>
                 </div>
 
+                <!-- QR Code Pill -->
+                <button onclick="openQrModal()" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition border border-slate-200 shadow-sm" title="মোবাইল QR কোড দেখুন">
+                    <i class="fa-solid fa-qrcode text-blue-600"></i> QR
+                </button>
+
                 <!-- App Download Pill -->
                 <a href="https://github.com/alaminnazir99-jpg/al-amin-physics/releases/download/v1.0.0/al-amin-physics.apk" download class="hidden lg:inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold transition shadow-sm" title="অ্যান্ড্রয়েড অ্যাপ ডাউনলোড">
                     <i class="fa-brands fa-android"></i> অ্যাপ
@@ -1572,6 +1577,69 @@
                 <button onclick="publishExamFromStudio()" id="btn-publish-exam" class="px-6 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs transition shadow-md flex items-center gap-1.5">
                     <i class="fa-solid fa-cloud-arrow-up"></i> পরীক্ষা প্রকাশ করুন
                 </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ====================================================
+     MODAL 7: QR CODE FOR MOBILE APP & WEBSITE
+==================================================== -->
+<div id="qr-code-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-[100] flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-7 shadow-2xl border border-slate-100 relative">
+        <button onclick="closeQrModal()" class="absolute top-5 right-5 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center transition">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+
+        <div class="flex items-center gap-3 mb-5 pb-3 border-b border-slate-100">
+            <div class="w-10 h-10 rounded-2xl bg-blue-100 text-blue-600 flex items-center justify-center text-xl font-bold">
+                <i class="fa-solid fa-qrcode"></i>
+            </div>
+            <div>
+                <h3 class="font-bold text-slate-900 text-base sm:text-lg">মোবাইলে স্ক্যান করুন</h3>
+                <p class="text-xs text-slate-500">ফোনের ক্যামেরা দিয়ে স্ক্যান করলেই তাৎক্ষণিক চালু হবে</p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <!-- Website QR -->
+            <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200 text-center flex flex-col items-center justify-between group hover:border-blue-400 transition">
+                <div>
+                    <span class="text-[11px] font-extrabold uppercase text-blue-600 bg-blue-100 px-2.5 py-0.5 rounded-full">ওয়েবসাইট লিঙ্ক</span>
+                    <h4 class="font-bold text-slate-900 text-sm mt-1.5 mb-2">অনলাইন ক্লাসরুম</h4>
+                    <div class="p-2 bg-white rounded-xl shadow-sm border border-slate-200 mb-3 inline-block">
+                        <img src="qr-website.png" alt="Website QR Code" class="w-36 h-36 object-contain">
+                    </div>
+                    <p class="text-[10px] text-slate-500 font-mono mb-3 break-all">al-amin-physics.vercel.app</p>
+                </div>
+                <div class="w-full space-y-1.5">
+                    <a href="https://al-amin-physics.vercel.app" target="_blank" class="w-full py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5">
+                        <i class="fa-solid fa-arrow-up-right-from-square"></i> সাইট ওপেন করুন
+                    </a>
+                    <a href="qr-website.png" download="al-amin-physics-web-qr.png" class="w-full py-1.5 bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 rounded-xl text-[11px] font-bold transition flex items-center justify-center gap-1">
+                        <i class="fa-solid fa-download"></i> QR সেভ করুন
+                    </a>
+                </div>
+            </div>
+
+            <!-- APK Download QR -->
+            <div class="p-4 bg-emerald-50/50 rounded-2xl border border-emerald-200 text-center flex flex-col items-center justify-between group hover:border-emerald-400 transition">
+                <div>
+                    <span class="text-[11px] font-extrabold uppercase text-emerald-700 bg-emerald-100 px-2.5 py-0.5 rounded-full">অ্যান্ড্রয়েড অ্যাপ</span>
+                    <h4 class="font-bold text-slate-900 text-sm mt-1.5 mb-2">সরাসরি APK ইনস্টল</h4>
+                    <div class="p-2 bg-white rounded-xl shadow-sm border border-emerald-200 mb-3 inline-block">
+                        <img src="qr-apk-download.png" alt="Android APK Download QR Code" class="w-36 h-36 object-contain">
+                    </div>
+                    <p class="text-[10px] text-slate-500 font-mono mb-3 break-all">al-amin-physics.apk</p>
+                </div>
+                <div class="w-full space-y-1.5">
+                    <a href="https://github.com/alaminnazir99-jpg/al-amin-physics/releases/download/v1.0.0/al-amin-physics.apk" download class="w-full py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5">
+                        <i class="fa-brands fa-android"></i> অ্যাপ ডাউনলোড
+                    </a>
+                    <a href="qr-apk-download.png" download="al-amin-physics-apk-qr.png" class="w-full py-1.5 bg-white hover:bg-slate-100 border border-emerald-200 text-emerald-800 rounded-xl text-[11px] font-bold transition flex items-center justify-center gap-1">
+                        <i class="fa-solid fa-download"></i> QR সেভ করুন
+                    </a>
+                </div>
             </div>
         </div>
     </div>

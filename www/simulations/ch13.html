@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>আধুনিক পদার্থবিজ্ঞান ল্যাব (PhET Interactive Modern Physics Lab) | আল-আমিন ফিজিক্স</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&family=JetBrains+Mono:wght@500;700&display=swap');
+    
+    * {
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    body {
+      font-family: 'Hind Siliguri', system-ui, sans-serif;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: #090d16;
+      color: #f8fafc;
+    }
+    #phet-stage {
+      position: absolute;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      touch-action: none;
+      cursor: default;
+    }
+    .phet-header {
+      position: absolute;
+      top: 12px;
+      left: 16px;
+      right: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 25;
+      pointer-events: none;
+    }
+    .phet-header * {
+      pointer-events: auto;
+    }
+    .phet-tab-pill {
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(8px);
+      box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+      border: 1px solid rgba(51, 65, 85, 0.8);
+      border-radius: 9999px;
+      padding: 4px;
+      display: flex;
+      gap: 4px;
+    }
+    .phet-tab-btn {
+      padding: 6px 14px;
+      border-radius: 9999px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #94a3b8;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .phet-tab-btn.active {
+      background: #d946ef;
+      color: #ffffff;
+      box-shadow: 0 2px 8px rgba(217, 70, 239, 0.35);
+    }
+    .phet-tray {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(12px);
+      border: 1.5px solid rgba(51, 65, 85, 0.8);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+      border-radius: 20px;
+      padding: 8px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      z-index: 25;
+    }
+    .phet-readout-card {
+      position: absolute;
+      top: 70px;
+      right: 20px;
+      background: rgba(15, 23, 42, 0.9);
+      backdrop-filter: blur(10px);
+      border: 1px solid #334155;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+      border-radius: 16px;
+      padding: 12px 16px;
+      min-width: 270px;
+      z-index: 25;
+      transition: all 0.2s;
+    }
+    .phet-hint-tag {
+      position: absolute;
+      top: 70px;
+      left: 20px;
+      background: rgba(30, 41, 59, 0.9);
+      border: 1px solid #475569;
+      color: #f0abfc;
+      padding: 6px 14px;
+      border-radius: 14px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      z-index: 25;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      max-width: calc(100vw - 330px);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation Bar -->
+  <div class="phet-header">
+    <div class="flex items-center gap-2">
+      <a href="index.html" class="px-3 py-1.5 rounded-full bg-slate-900 border border-slate-700 text-slate-200 hover:text-fuchsia-400 font-bold text-xs shadow-sm flex items-center gap-1.5 transition">
+        <i class="fa-solid fa-arrow-left"></i> ল্যাব তালিকা
+      </a>
+      <span class="text-xs font-bold text-slate-300 bg-slate-900/80 px-3 py-1.5 rounded-full border border-slate-700 shadow-sm hidden sm:inline">
+        অধ্যায় ১৩: আধুনিক পদার্থবিজ্ঞান ও ইলেকট্রনিক্স (Modern Physics Lab)
+      </span>
+    </div>
+
+    <!-- PhET Experiment Switcher -->
+    <div class="phet-tab-pill">
+      <button onclick="setStation('decay')" id="tab-decay" class="phet-tab-btn active">
+        <i class="fa-solid fa-hourglass-half mr-1"></i> তেজস্ক্রিয় অর্ধায়ু (Half-Life)
+      </button>
+      <button onclick="setStation('radiation')" id="tab-radiation" class="phet-tab-btn">
+        <i class="fa-solid fa-radiation mr-1"></i> &alpha;, &beta;, &gamma; রশ্মি ভেদন
+      </button>
+      <button onclick="setStation('diode')" id="tab-diode" class="phet-tab-btn">
+        <i class="fa-solid fa-microchip mr-1"></i> পি-এন জাংশন ডায়োড
+      </button>
+    </div>
+
+    <!-- Right Controls: Readout Toggle & Reset -->
+    <div class="flex items-center gap-2">
+      <button onclick="toggleReadingCard()" id="btn-toggle-readout" class="px-3 py-1.5 rounded-full bg-slate-900 border border-slate-700 text-slate-200 hover:bg-slate-800 font-bold text-xs shadow-sm flex items-center gap-1.5 transition">
+        <i class="fa-solid fa-eye text-fuchsia-400" id="readout-icon"></i> <span id="readout-btn-text">পাঠ লুকান</span>
+      </button>
+      <button onclick="resetLab()" class="w-8 h-8 rounded-full bg-slate-900 border border-slate-700 text-slate-200 hover:bg-slate-800 flex items-center justify-center text-xs shadow-sm transition" title="রিসেট">
+        <i class="fa-solid fa-rotate-right"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Instruction Hint -->
+  <div class="phet-hint-tag" id="hint-tag">
+    <i class="fa-solid fa-hand-pointer text-fuchsia-400 animate-pulse"></i>
+    <span id="hint-text">অর্ধায়ু ক্ষয় শুরু করুন এবং পরমাণুগুলো কীভাবে স্বতঃস্ফূর্তভাবে ক্ষয়প্রাপ্ত হয় তা দেখুন!</span>
+  </div>
+
+  <!-- Real-Time Floating Readout Card -->
+  <div class="phet-readout-card" id="readout-card">
+    <div class="flex items-center justify-between pb-1.5 mb-1.5 border-b border-slate-700">
+      <span class="text-xs font-bold text-slate-200 flex items-center gap-1.5">
+        <i class="fa-solid fa-atom text-fuchsia-400"></i> পারমাণবিক পরিমিতি পাঠ
+      </span>
+      <span class="text-[10px] px-2 py-0.5 rounded-full bg-fuchsia-400/20 text-fuchsia-400 font-bold font-mono" id="decay-badge">N = N₀(½)^(t/T)</span>
+    </div>
+
+    <!-- Decay Readout -->
+    <div id="readout-decay" class="space-y-1 text-xs">
+      <div class="flex justify-between items-center">
+        <span class="text-slate-400">আদি পরমাণু সংখ্যা (N₀):</span>
+        <span class="font-bold font-mono text-blue-400 text-sm">১০০ টি</span>
+      </div>
+      <div class="flex justify-between items-center">
+        <span class="text-slate-400">মৌলের অর্ধায়ু (T_½):</span>
+        <span class="font-bold font-mono text-fuchsia-400 text-sm" id="readout-thalf">৫.০ সেকেন্ড</span>
+      </div>
+      <div class="flex justify-between items-center">
+        <span class="text-slate-400">অতিক্রান্ত সময় (t):</span>
+        <span class="font-bold font-mono text-cyan-400 text-sm" id="readout-time">০.০ s</span>
+      </div>
+      <div class="pt-1.5 mt-1 border-t border-dashed border-slate-700 flex justify-between items-center">
+        <span class="font-bold text-slate-200">অবশিষ্ট অক্ষত পরমাণু (N):</span>
+        <span class="font-bold font-mono text-emerald-400 text-base" id="readout-n-rem">১০০ টি</span>
+      </div>
+    </div>
+
+    <!-- Radiation Readout -->
+    <div id="readout-radiation" class="space-y-1 text-xs hidden">
+      <div class="flex justify-between items-center">
+        <span class="text-slate-400">&alpha; কণা (হিলিয়াম নিউক্লিয়াস):</span>
+        <span class="font-bold font-mono text-amber-400 text-sm">কাগজেই বাধা পায়</span>
+      </div>
+      <div class="flex justify-between items-center">
+        <span class="text-slate-400">&beta; কণা (ইলেকট্রন):</span>
+        <span class="font-bold font-mono text-blue-400 text-sm">অ্যালুমিনিয়ামে থামে</span>
+      </div>
+      <div class="pt-1.5 mt-1 border-t border-dashed border-slate-700 flex justify-between items-center">
+        <span class="font-bold text-slate-200">&gamma; রশ্মি (তড়িৎচৌম্বক):</span>
+        <span class="font-bold font-mono text-red-400 text-xs">ভারি সীসা (Lead) ছাড়া আটকানো যায় না</span>
+      </div>
+    </div>
+
+    <!-- Diode Readout -->
+    <div id="readout-diode" class="space-y-1 text-xs hidden">
+      <div class="flex justify-between items-center">
+        <span class="text-slate-400">বায়াস ধরন:</span>
+        <span class="font-bold font-mono text-emerald-400 text-sm" id="readout-bias-mode">সম্মুখবর্তী (Forward Bias)</span>
+      </div>
+      <div class="flex justify-between items-center">
+        <span class="text-slate-400">নিঃশেষিত স্তর (Depletion Layer):</span>
+        <span class="font-bold font-mono text-cyan-400 text-sm" id="readout-depletion">সংকীর্ণ (Narrow)</span>
+      </div>
+      <div class="pt-1.5 mt-1 border-t border-dashed border-slate-700 flex justify-between items-center">
+        <span class="font-bold text-slate-200">বিদ্যুৎ প্রবাহ:</span>
+        <span class="font-bold font-mono text-emerald-400 text-sm" id="readout-diode-curr">অবাধে প্রবাহিত হচ্ছে</span>
+      </div>
+    </div>
+
+    <!-- Live KaTeX formula line -->
+    <div class="mt-2 p-1.5 bg-slate-950 rounded-lg text-center text-xs overflow-x-auto text-fuchsia-300" id="readout-math"></div>
+  </div>
+
+  <!-- Bottom PhET Tool Rack -->
+  <div class="phet-tray" id="phet-tray"></div>
+
+  <!-- Fullscreen Canvas -->
+  <canvas id="phet-stage"></canvas>
+
+  <script>
+    function toBn(num, decimals = null) {
+      const bnDigits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+      const str = decimals !== null ? Number(num).toFixed(decimals) : String(num);
+      return str.replace(/\d/g, d => bnDigits[Number(d)]);
+    }
+
+    const state = {
+      station: 'decay',
+      showReadout: true,
+
+      // Half-life Decay
+      decay: {
+        tHalf: 5.0, // seconds
+        elapsedTime: 0,
+        isRunning: false,
+        atoms: [] // array of 100 atoms { x, y, decayed: bool }
+      },
+
+      // Diode
+      diode: {
+        forwardBias: true
+      }
+    };
+
+    // Initialize 100 atoms in a grid
+    for (let r = 0; r < 10; r++) {
+      for (let c = 0; c < 10; c++) {
+        state.decay.atoms.push({
+          row: r,
+          col: c,
+          decayed: false
+        });
+      }
+    }
+
+    const canvas = document.getElementById('phet-stage');
+    const ctx = canvas.getContext('2d');
+
+    let viewWidth = window.innerWidth;
+    let viewHeight = window.innerHeight;
+
+    function resizeCanvas() {
+      viewWidth = window.innerWidth;
+      viewHeight = window.innerHeight;
+      canvas.width = viewWidth * window.devicePixelRatio;
+      canvas.height = viewHeight * window.devicePixelRatio;
+      ctx.resetTransform();
+      ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    function setStation(station) {
+      state.station = station;
+      ['decay', 'radiation', 'diode'].forEach(s => {
+        const btn = document.getElementById(`tab-${s}`);
+        const readout = document.getElementById(`readout-${s}`);
+        if (s === station) {
+          btn.classList.add('active');
+          readout.classList.remove('hidden');
+        } else {
+          btn.classList.remove('active');
+          readout.classList.add('hidden');
+        }
+      });
+
+      const hintText = document.getElementById('hint-text');
+      const tray = document.getElementById('phet-tray');
+
+      if (station === 'decay') {
+        hintText.innerHTML = 'অর্ধায়ু ক্ষয় শুরু করুন এবং পরমাণুগুলো কীভাবে স্বতঃস্ফূর্তভাবে ক্ষয়প্রাপ্ত হয় তা দেখুন!';
+        tray.innerHTML = `
+          <button onclick="toggleDecayPlay()" id="btn-decay-play" class="px-3 py-1 rounded-lg text-xs font-bold bg-fuchsia-600 hover:bg-fuchsia-500 text-white">
+            <i class="fa-solid fa-play mr-1"></i> ক্ষয় চালু করো
+          </button>
+          <div class="h-6 w-px bg-slate-700"></div>
+          <div class="flex items-center gap-3">
+            <span class="text-xs font-bold text-slate-400">অর্ধায়ু (T_½):</span>
+            <input type="range" min="2" max="10" step="1" value="${state.decay.tHalf}" 
+              oninput="setDecayTHalf(this.value)" class="w-20 sm:w-28 accent-fuchsia-400 cursor-pointer">
+            <span class="text-xs font-bold text-fuchsia-400 w-12 font-mono" id="tray-thalf">${toBn(state.decay.tHalf)} s</span>
+          </div>
+        `;
+        updateDecayMath();
+      } else if (station === 'radiation') {
+        hintText.innerHTML = 'তেজস্ক্রিয় উৎস থেকে নির্গত আলফা, বিটা ও গামা রশ্মির ভেদন ক্ষমতার পার্থক্য দেখুন!';
+        tray.innerHTML = `<span class="text-xs font-bold text-amber-400">&alpha; কণা (কাগজ) &lt; &beta; কণা (অ্যালুমিনিয়াম) &lt; &gamma; রশ্মি (ভারি সীসা)</span>`;
+      } else if (station === 'diode') {
+        hintText.innerHTML = 'ডায়োডকে ফরোয়ার্ড ও রিভার্স বায়াসে সংযুক্ত করে তড়িৎ প্রবাহ পরীক্ষা করুন!';
+        tray.innerHTML = `
+          <button onclick="toggleDiodeBias()" class="px-3 py-1 rounded-lg text-xs font-bold ${state.diode.forwardBias ? 'bg-emerald-600' : 'bg-red-600'} text-white">
+            ${state.diode.forwardBias ? 'সম্মুখবর্তী বায়াস (Forward Bias)' : 'বিমুখী বায়াস (Reverse Bias)'}
+          </button>
+        `;
+        updateDiodeMath();
+      }
+    }
+
+    function toggleReadingCard() {
+      state.showReadout = !state.showReadout;
+      const card = document.getElementById('readout-card');
+      const icon = document.getElementById('readout-icon');
+      const text = document.getElementById('readout-btn-text');
+      if (state.showReadout) {
+        card.style.display = 'block';
+        icon.className = 'fa-solid fa-eye text-fuchsia-400';
+        text.innerText = 'পাঠ লুকান';
+      } else {
+        card.style.display = 'none';
+        icon.className = 'fa-solid fa-eye-slash text-slate-500';
+        text.innerText = 'পাঠ দেখান';
+      }
+    }
+
+    function toggleDecayPlay() {
+      state.decay.isRunning = !state.decay.isRunning;
+      const btn = document.getElementById('btn-decay-play');
+      if (state.decay.isRunning) {
+        btn.innerHTML = '<i class="fa-solid fa-pause mr-1"></i> ক্ষয় থামাও';
+      } else {
+        btn.innerHTML = '<i class="fa-solid fa-play mr-1"></i> ক্ষয় চালু করো';
+      }
+    }
+
+    function resetLab() {
+      state.decay.elapsedTime = 0;
+      state.decay.isRunning = false;
+      state.decay.atoms.forEach(a => a.decayed = false);
+      const btn = document.getElementById('btn-decay-play');
+      if (btn) btn.innerHTML = '<i class="fa-solid fa-play mr-1"></i> ক্ষয় চালু করো';
+      updateDecayMath();
+    }
+
+    function setDecayTHalf(val) {
+      state.decay.tHalf = parseFloat(val);
+      const el = document.getElementById('tray-thalf');
+      if (el) el.innerText = toBn(state.decay.tHalf) + ' s';
+      updateDecayMath();
+    }
+
+    function updateDecayMath() {
+      const d = state.decay;
+      const remainingCount = d.atoms.filter(a => !a.decayed).length;
+
+      document.getElementById('readout-thalf').innerText = `${toBn(d.tHalf, 1)} সেকেন্ড`;
+      document.getElementById('readout-time').innerText = `${toBn(d.elapsedTime, 1)} s`;
+      document.getElementById('readout-n-rem').innerText = `${toBn(remainingCount)} টি`;
+
+      if (window.katex) {
+        katex.render(
+          `N(t) = N_0 \\left(\\frac{1}{2}\\right)^{\\frac{t}{T_{1/2}}} = 100 \\times \\left(\\frac{1}{2}\\right)^{\\frac{${toBn(d.elapsedTime, 1)}}{${toBn(d.tHalf)}}} = ${toBn(remainingCount)}\\text{ টি}`,
+          document.getElementById('readout-math'),
+          { throwOnError: false }
+        );
+      }
+    }
+
+    function toggleDiodeBias() {
+      state.diode.forwardBias = !state.diode.forwardBias;
+      setStation('diode');
+    }
+
+    function updateDiodeMath() {
+      const fwd = state.diode.forwardBias;
+      document.getElementById('readout-bias-mode').innerText = fwd ? 'সম্মুখবর্তী (Forward Bias)' : 'বিমুখী (Reverse Bias)';
+      document.getElementById('readout-bias-mode').className = fwd ? 'font-bold font-mono text-emerald-400 text-sm' : 'font-bold font-mono text-red-400 text-sm';
+      document.getElementById('readout-depletion').innerText = fwd ? 'সংকীর্ণ (Narrow)' : 'অত্যন্ত প্রশস্ত (Very Wide)';
+      document.getElementById('readout-diode-curr').innerText = fwd ? 'অবাধে প্রবাহিত হচ্ছে' : 'প্রবাহ বন্ধ (শূন্য)';
+
+      if (window.katex) {
+        katex.render(
+          fwd ? `V > V_\\gamma \\implies \\text{Forward Current Flows}` : `V < 0 \\implies I \\approx 0\\text{ (Depletion layer blocks)}`,
+          document.getElementById('readout-math'),
+          { throwOnError: false }
+        );
+      }
+    }
+
+    // -------------------------------------------------------------
+    // ANIMATION & RENDER
+    // -------------------------------------------------------------
+    let lastTime = performance.now();
+
+    function animate(currentTime) {
+      const dt = Math.min(0.05, (currentTime - lastTime) / 1000);
+      lastTime = currentTime;
+
+      // Update Decay
+      if (state.station === 'decay' && state.decay.isRunning) {
+        state.decay.elapsedTime += dt;
+        const decayConstant = Math.LN2 / state.decay.tHalf;
+        const decayProb = 1 - Math.exp(-decayConstant * dt);
+
+        state.decay.atoms.forEach(a => {
+          if (!a.decayed && Math.random() < decayProb) {
+            a.decayed = true;
+          }
+        });
+        updateDecayMath();
+      }
+
+      ctx.clearRect(0, 0, viewWidth, viewHeight);
+
+      if (state.station === 'decay') {
+        renderDecayStage();
+      } else if (state.station === 'radiation') {
+        renderRadiationStage(currentTime);
+      } else if (state.station === 'diode') {
+        renderDiodeStage();
+      }
+
+      requestAnimationFrame(animate);
+    }
+
+    function renderDecayStage() {
+      const centerX = viewWidth / 2 - 120;
+      const centerY = viewHeight / 2;
+      const spacing = 24;
+
+      // Grid of 100 radioactive nuclei
+      state.decay.atoms.forEach(a => {
+        const x = centerX - 120 + a.col * spacing;
+        const y = centerY - 120 + a.row * spacing;
+
+        ctx.beginPath();
+        ctx.arc(x, y, 8, 0, Math.PI * 2);
+        if (a.decayed) {
+          ctx.fillStyle = '#475569'; // decayed lead/daughter
+        } else {
+          ctx.fillStyle = '#d946ef'; // active radioactive
+        }
+        ctx.fill();
+        ctx.strokeStyle = a.decayed ? '#334155' : '#f0abfc';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+      });
+
+      // Exponential Decay Curve preview on right
+      const graphX = viewWidth / 2 + 150;
+      const graphY = centerY + 80;
+      const graphW = 200;
+      const graphH = 160;
+
+      ctx.strokeStyle = '#475569';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(graphX, graphY - graphH);
+      ctx.lineTo(graphX, graphY);
+      ctx.lineTo(graphX + graphW, graphY);
+      ctx.stroke();
+
+      // Theoretical curve
+      ctx.strokeStyle = '#d946ef';
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      for (let px = 0; px <= graphW; px += 4) {
+        const tVal = (px / graphW) * (state.decay.tHalf * 3);
+        const nFrac = Math.pow(0.5, tVal / state.decay.tHalf);
+        const py = graphY - nFrac * graphH;
+        if (px === 0) ctx.moveTo(graphX + px, py);
+        else ctx.lineTo(graphX + px, py);
+      }
+      ctx.stroke();
+    }
+
+    function renderRadiationStage(time) {
+      const centerY = viewHeight / 2;
+      const sourceX = 140;
+
+      // Radioactive Source
+      ctx.fillStyle = '#f59e0b';
+      ctx.beginPath();
+      ctx.arc(sourceX, centerY, 24, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#0f172a';
+      ctx.font = 'bold 12px JetBrains Mono';
+      ctx.fillText('☢', sourceX - 6, centerY + 5);
+
+      // Barriers
+      // 1. Paper (কাগজ)
+      const paperX = sourceX + 160;
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(paperX, centerY - 100, 8, 200);
+      ctx.fillStyle = '#94a3b8';
+      ctx.font = 'bold 11px Hind Siliguri';
+      ctx.fillText('কাগজ', paperX - 10, centerY + 125);
+
+      // 2. Aluminum (অ্যালুমিনিয়াম)
+      const aluX = paperX + 160;
+      ctx.fillStyle = '#94a3b8';
+      ctx.fillRect(aluX, centerY - 100, 16, 200);
+      ctx.fillText('অ্যালুমিনিয়াম', aluX - 16, centerY + 125);
+
+      // 3. Lead (সীসা)
+      const leadX = aluX + 160;
+      ctx.fillStyle = '#334155';
+      ctx.fillRect(leadX, centerY - 100, 35, 200);
+      ctx.fillText('ভারি সীসা (Lead)', leadX - 20, centerY + 125);
+
+      // Alpha Particle Beam (Red - stops at paper)
+      ctx.strokeStyle = '#ef4444';
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.moveTo(sourceX + 24, centerY - 40);
+      ctx.lineTo(paperX, centerY - 40);
+      ctx.stroke();
+      ctx.fillStyle = '#ef4444';
+      ctx.fillText('α (হিলিয়াম)', sourceX + 50, centerY - 48);
+
+      // Beta Particle Beam (Blue - passes paper, stops at Al)
+      ctx.strokeStyle = '#3b82f6';
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.moveTo(sourceX + 24, centerY);
+      ctx.lineTo(aluX, centerY);
+      ctx.stroke();
+      ctx.fillStyle = '#3b82f6';
+      ctx.fillText('β (ইলেকট্রন)', sourceX + 50, centerY - 8);
+
+      // Gamma Ray Beam (Purple dashed - penetrates Al, stops in Lead)
+      ctx.strokeStyle = '#d946ef';
+      ctx.lineWidth = 2;
+      ctx.setLineDash([4, 4]);
+      ctx.beginPath();
+      ctx.moveTo(sourceX + 24, centerY + 40);
+      ctx.lineTo(leadX + 20, centerY + 40);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = '#d946ef';
+      ctx.fillText('γ (ফোটন)', sourceX + 50, centerY + 32);
+    }
+
+    function renderDiodeStage() {
+      const centerX = viewWidth / 2;
+      const centerY = viewHeight / 2;
+      const fwd = state.diode.forwardBias;
+
+      // P-N Junction Block
+      const blockW = 280;
+      const blockH = 120;
+      const leftX = centerX - blockW / 2;
+
+      // P-Type (Blue/Purple)
+      ctx.fillStyle = '#3b82f6';
+      ctx.fillRect(leftX, centerY - blockH / 2, blockW / 2, blockH);
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 16px Hind Siliguri';
+      ctx.fillText('p-টাইপ (হোল ⊕)', leftX + 25, centerY + 6);
+
+      // N-Type (Orange/Amber)
+      ctx.fillStyle = '#f97316';
+      ctx.fillRect(centerX, centerY - blockH / 2, blockW / 2, blockH);
+      ctx.fillStyle = '#ffffff';
+      ctx.fillText('n-টাইপ (ইলেকট্রন ⊖)', centerX + 18, centerY + 6);
+
+      // Depletion Layer in Center
+      const depW = fwd ? 12 : 60;
+      ctx.fillStyle = 'rgba(15, 23, 42, 0.85)';
+      ctx.fillRect(centerX - depW / 2, centerY - blockH / 2, depW, blockH);
+      ctx.strokeStyle = '#cbd5e1';
+      ctx.lineWidth = 1.5;
+      ctx.strokeRect(centerX - depW / 2, centerY - blockH / 2, depW, blockH);
+
+      // Bias Wire Loop & Battery
+      ctx.strokeStyle = fwd ? '#10b981' : '#ef4444';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(leftX, centerY);
+      ctx.lineTo(leftX - 40, centerY);
+      ctx.lineTo(leftX - 40, centerY + 120);
+      ctx.lineTo(centerX + blockW / 2 + 40, centerY + 120);
+      ctx.lineTo(centerX + blockW / 2 + 40, centerY);
+      ctx.lineTo(centerX + blockW / 2, centerY);
+      ctx.stroke();
+
+      // Battery
+      ctx.fillStyle = '#0f172a';
+      ctx.fillRect(centerX - 25, centerY + 105, 50, 30);
+      ctx.fillStyle = fwd ? '#3b82f6' : '#f97316';
+      ctx.font = 'bold 12px JetBrains Mono';
+      ctx.fillText(fwd ? '+  |  −' : '−  |  +', centerX - 18, centerY + 125);
+    }
+
+    setStation('decay');
+    requestAnimationFrame(animate);
+
+  </script>
+</body>
+</html>

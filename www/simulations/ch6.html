@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>তাপ ও প্রসারণ ল্যাব (PhET Interactive Thermal Lab) | আল-আমিন ফিজিক্স</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&family=JetBrains+Mono:wght@500;700&display=swap');
+    
+    * {
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    body {
+      font-family: 'Hind Siliguri', system-ui, sans-serif;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: #f8fafc;
+      color: #0f172a;
+    }
+    #phet-stage {
+      position: absolute;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      touch-action: none;
+      cursor: default;
+    }
+    .phet-header {
+      position: absolute;
+      top: 12px;
+      left: 16px;
+      right: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 25;
+      pointer-events: none;
+    }
+    .phet-header * {
+      pointer-events: auto;
+    }
+    .phet-tab-pill {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(8px);
+      box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+      border: 1px solid rgba(226, 232, 240, 0.8);
+      border-radius: 9999px;
+      padding: 4px;
+      display: flex;
+      gap: 4px;
+    }
+    .phet-tab-btn {
+      padding: 6px 14px;
+      border-radius: 9999px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #475569;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .phet-tab-btn.active {
+      background: #ea580c;
+      color: #ffffff;
+      box-shadow: 0 2px 8px rgba(234, 88, 12, 0.35);
+    }
+    .phet-tray {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(12px);
+      border: 1.5px solid rgba(203, 213, 225, 0.8);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.12);
+      border-radius: 20px;
+      padding: 8px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      z-index: 25;
+    }
+    .phet-readout-card {
+      position: absolute;
+      top: 70px;
+      right: 20px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border: 1px solid #cbd5e1;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+      border-radius: 16px;
+      padding: 12px 16px;
+      min-width: 270px;
+      z-index: 25;
+      transition: all 0.2s;
+    }
+    .phet-hint-tag {
+      position: absolute;
+      top: 70px;
+      left: 20px;
+      background: #fff7ed;
+      border: 1px solid #ffedd5;
+      color: #9a3412;
+      padding: 6px 14px;
+      border-radius: 14px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      z-index: 25;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.04);
+      max-width: calc(100vw - 330px);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation Bar -->
+  <div class="phet-header">
+    <div class="flex items-center gap-2">
+      <a href="index.html" class="px-3 py-1.5 rounded-full bg-white border border-slate-200 text-slate-700 hover:text-orange-600 font-bold text-xs shadow-sm flex items-center gap-1.5 transition">
+        <i class="fa-solid fa-arrow-left"></i> ল্যাব তালিকা
+      </a>
+      <span class="text-xs font-bold text-slate-600 bg-white/80 px-3 py-1.5 rounded-full border border-slate-200 shadow-sm hidden sm:inline">
+        অধ্যায় ৬: বস্তুর ওপর তাপের প্রভাব (Thermal Lab)
+      </span>
+    </div>
+
+    <!-- PhET Experiment Switcher -->
+    <div class="phet-tab-pill">
+      <button onclick="setStation('calorimeter')" id="tab-calorimeter" class="phet-tab-btn active">
+        <i class="fa-solid fa-mug-hot mr-1"></i> ক্যালরিমেট্রি (তাপ মিশ্রণ)
+      </button>
+      <button onclick="setStation('expansion')" id="tab-expansion" class="phet-tab-btn">
+        <i class="fa-solid fa-arrows-left-right mr-1"></i> দৈর্ঘ্য প্রসারণ (&Delta;L = L&alpha;&Delta;&theta;)
+      </button>
+      <button onclick="setStation('heating')" id="tab-heating" class="phet-tab-btn">
+        <i class="fa-solid fa-fire mr-1"></i> গলন ও স্ফুটন (হিটিং কার্ভ)
+      </button>
+    </div>
+
+    <!-- Right Controls: Readout Toggle & Reset -->
+    <div class="flex items-center gap-2">
+      <button onclick="toggleReadingCard()" id="btn-toggle-readout" class="px-3 py-1.5 rounded-full bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 font-bold text-xs shadow-sm flex items-center gap-1.5 transition">
+        <i class="fa-solid fa-eye text-orange-600" id="readout-icon"></i> <span id="readout-btn-text">পাঠ লুকান</span>
+      </button>
+      <button onclick="resetLab()" class="w-8 h-8 rounded-full bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 flex items-center justify-center text-xs shadow-sm transition" title="রিসেট">
+        <i class="fa-solid fa-rotate-right"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Instruction Hint -->
+  <div class="phet-hint-tag" id="hint-tag">
+    <i class="fa-solid fa-hand-pointer text-orange-600 animate-pulse"></i>
+    <span id="hint-text">গরম ধাতব খণ্ডকে পানিতে ছেড়ে দিন এবং চূড়ান্ত সাম্যাবস্থা তাপমাত্রা পর্যবেক্ষণ করুন!</span>
+  </div>
+
+  <!-- Real-Time Floating Readout Card -->
+  <div class="phet-readout-card" id="readout-card">
+    <div class="flex items-center justify-between pb-1.5 mb-1.5 border-b border-slate-200">
+      <span class="text-xs font-bold text-slate-700 flex items-center gap-1.5">
+        <i class="fa-solid fa-temperature-half text-orange-600"></i> তাপগতিবিদ্যা পাঠ
+      </span>
+      <span class="text-[10px] px-2 py-0.5 rounded-full bg-orange-50 text-orange-700 font-bold font-mono" id="thermal-badge">ক্যালরিমিতির মূলনীতি</span>
+    </div>
+
+    <!-- Calorimeter Readout -->
+    <div id="readout-calorimeter" class="space-y-1 text-xs">
+      <div class="flex justify-between items-center">
+        <span class="text-slate-500">ধাতুর প্রাথমিক তাপমাত্রা (T₁):</span>
+        <span class="font-bold font-mono text-red-600 text-sm" id="readout-t1">১০০.০ °C</span>
+      </div>
+      <div class="flex justify-between items-center">
+        <span class="text-slate-500">পানির তাপমাত্রা (T₂):</span>
+        <span class="font-bold font-mono text-blue-600 text-sm" id="readout-t2">২৫.০ °C</span>
+      </div>
+      <div class="flex justify-between items-center">
+        <span class="text-slate-500">বর্জিত তাপ (Q_lost):</span>
+        <span class="font-bold font-mono text-amber-700 text-sm" id="readout-qlost">১৫,১২০ J</span>
+      </div>
+      <div class="pt-1.5 mt-1 border-t border-dashed border-slate-200 flex justify-between items-center">
+        <span class="font-bold text-slate-800">মিশ্রণের চূড়ান্ত তাপমাত্রা (T_f):</span>
+        <span class="font-bold font-mono text-emerald-600 text-base" id="readout-tf">৩১.৮ °C</span>
+      </div>
+    </div>
+
+    <!-- Expansion Readout -->
+    <div id="readout-expansion" class="space-y-1 text-xs hidden">
+      <div class="flex justify-between items-center">
+        <span class="text-slate-500">আদি দৈর্ঘ্য (L₁):</span>
+        <span class="font-bold font-mono text-slate-700 text-sm" id="readout-l1">১.০০ m</span>
+      </div>
+      <div class="flex justify-between items-center">
+        <span class="text-slate-500">তাপমাত্রা বৃদ্ধি (&Delta;&theta;):</span>
+        <span class="font-bold font-mono text-red-600 text-sm" id="readout-dtheta">৮০.০ °C</span>
+      </div>
+      <div class="flex justify-between items-center">
+        <span class="text-slate-500">দৈর্ঘ্য প্রসারণ সহগ (&alpha;):</span>
+        <span class="font-bold font-mono text-purple-700 text-sm" id="readout-alpha">১৬.৭ × ১০⁻⁶ K⁻¹</span>
+      </div>
+      <div class="pt-1.5 mt-1 border-t border-dashed border-slate-200 flex justify-between items-center">
+        <span class="font-bold text-slate-800">দৈর্ঘ্য বৃদ্ধি (&Delta;L):</span>
+        <span class="font-bold font-mono text-emerald-600 text-base" id="readout-dl">১.৩৪ mm</span>
+      </div>
+    </div>
+
+    <!-- Heating Readout -->
+    <div id="readout-heating" class="space-y-1 text-xs hidden">
+      <div class="flex justify-between items-center">
+        <span class="text-slate-500">পদার্থের বর্তমান দশা:</span>
+        <span class="font-bold text-blue-600 text-sm" id="readout-phase">পানি (তরল)</span>
+      </div>
+      <div class="flex justify-between items-center">
+        <span class="text-slate-500">গলনের সুপ্ততাপ (L_f):</span>
+        <span class="font-bold font-mono text-slate-700 text-sm">৩.৩৬ × ১০⁵ J/kg</span>
+      </div>
+      <div class="pt-1.5 mt-1 border-t border-dashed border-slate-200 flex justify-between items-center">
+        <span class="font-bold text-slate-800">বর্তমান তাপমাত্রা:</span>
+        <span class="font-bold font-mono text-emerald-600 text-base" id="readout-curr-temp">৫০ °C</span>
+      </div>
+    </div>
+
+    <!-- Live KaTeX formula line -->
+    <div class="mt-2 p-1.5 bg-slate-50 rounded-lg text-center text-xs overflow-x-auto" id="readout-math"></div>
+  </div>
+
+  <!-- Bottom PhET Tool Rack -->
+  <div class="phet-tray" id="phet-tray"></div>
+
+  <!-- Fullscreen Canvas -->
+  <canvas id="phet-stage"></canvas>
+
+  <script>
+    function toBn(num, decimals = null) {
+      const bnDigits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+      const str = decimals !== null ? Number(num).toFixed(decimals) : String(num);
+      return str.replace(/\d/g, d => bnDigits[Number(d)]);
+    }
+
+    const state = {
+      station: 'calorimeter',
+      showReadout: true,
+
+      // Calorimeter
+      calorimeter: {
+        metalMass: 0.5, // kg
+        metalTemp: 100, // C
+        metalSpecificHeat: 380, // Copper J/(kg K)
+        waterMass: 0.5, // kg
+        waterTemp: 25, // C
+        waterSpecificHeat: 4200
+      },
+
+      // Expansion
+      expansion: {
+        l1: 1.0, // m
+        dTheta: 80, // C
+        alpha: 16.7e-6, // Copper
+        material: 'copper'
+      },
+
+      // Heating
+      heating: {
+        temp: 50, // C
+        isHeating: false
+      }
+    };
+
+    const canvas = document.getElementById('phet-stage');
+    const ctx = canvas.getContext('2d');
+
+    let viewWidth = window.innerWidth;
+    let viewHeight = window.innerHeight;
+
+    function resizeCanvas() {
+      viewWidth = window.innerWidth;
+      viewHeight = window.innerHeight;
+      canvas.width = viewWidth * window.devicePixelRatio;
+      canvas.height = viewHeight * window.devicePixelRatio;
+      ctx.resetTransform();
+      ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    function setStation(station) {
+      state.station = station;
+      ['calorimeter', 'expansion', 'heating'].forEach(s => {
+        const btn = document.getElementById(`tab-${s}`);
+        const readout = document.getElementById(`readout-${s}`);
+        if (s === station) {
+          btn.classList.add('active');
+          readout.classList.remove('hidden');
+        } else {
+          btn.classList.remove('active');
+          readout.classList.add('hidden');
+        }
+      });
+
+      const hintText = document.getElementById('hint-text');
+      const tray = document.getElementById('phet-tray');
+
+      if (station === 'calorimeter') {
+        hintText.innerHTML = 'ধাতুর তাপমাত্রা ও পানি নিয়ন্ত্রণ করে মিশ্রণের চূড়ান্ত সাম্যাবস্থা হিসাব করুন!';
+        tray.innerHTML = `
+          <div class="flex items-center gap-3">
+            <span class="text-xs font-bold text-red-600">ধাতুর তাপমাত্রা:</span>
+            <input type="range" min="40" max="150" value="${state.calorimeter.metalTemp}" 
+              oninput="setMetalTemp(this.value)" class="w-24 sm:w-32 accent-red-600 cursor-pointer">
+            <span class="text-xs font-bold text-red-700 w-12 font-mono" id="tray-metal-t">${toBn(state.calorimeter.metalTemp)}°C</span>
+          </div>
+          <div class="h-6 w-px bg-slate-300"></div>
+          <div class="flex items-center gap-3">
+            <span class="text-xs font-bold text-blue-600">পানির তাপমাত্রা:</span>
+            <input type="range" min="5" max="40" value="${state.calorimeter.waterTemp}" 
+              oninput="setWaterTemp(this.value)" class="w-20 sm:w-28 accent-blue-600 cursor-pointer">
+            <span class="text-xs font-bold text-blue-700 w-12 font-mono" id="tray-water-t">${toBn(state.calorimeter.waterTemp)}°C</span>
+          </div>
+        `;
+        updateCalorimeterReadout();
+      } else if (station === 'expansion') {
+        hintText.innerHTML = 'হিটার দিয়ে দণ্ডকে উত্তপ্ত করুন—মাইক্রোমিটার কাঁটা দিয়ে দৈর্ঘ্য প্রসারণ মেপে দেখুন!';
+        tray.innerHTML = `
+          <div class="flex items-center gap-3">
+            <span class="text-xs font-bold text-slate-500">তাপমাত্রা বৃদ্ধি (&Delta;&theta;):</span>
+            <input type="range" min="10" max="150" value="${state.expansion.dTheta}" 
+              oninput="setDTheta(this.value)" class="w-24 sm:w-32 accent-orange-600 cursor-pointer">
+            <span class="text-xs font-bold text-orange-700 w-12 font-mono" id="tray-dtheta">${toBn(state.expansion.dTheta)}°C</span>
+          </div>
+          <div class="h-6 w-px bg-slate-300"></div>
+          <button onclick="setMetalAlpha('iron')" class="px-2.5 py-1 rounded bg-slate-100 hover:bg-slate-200 text-xs font-bold">লোহা</button>
+          <button onclick="setMetalAlpha('copper')" class="px-2.5 py-1 rounded bg-amber-100 hover:bg-amber-200 text-xs font-bold text-amber-800">তামা</button>
+          <button onclick="setMetalAlpha('aluminum')" class="px-2.5 py-1 rounded bg-slate-200 hover:bg-slate-300 text-xs font-bold">অ্যালুমিনিয়াম</button>
+        `;
+        updateExpansionReadout();
+      } else if (station === 'heating') {
+        hintText.innerHTML = 'তাপ প্রয়োগ করে বরফ (০°C) গলিয়ে পানি এবং ১০০°C এ বাষ্পে রূপান্তর দেখুন!';
+        tray.innerHTML = `
+          <div class="flex items-center gap-3">
+            <span class="text-xs font-bold text-slate-500">তাপমাত্রা:</span>
+            <input type="range" min="-10" max="120" value="${state.heating.temp}" 
+              oninput="setHeatingTemp(this.value)" class="w-32 sm:w-48 accent-orange-600 cursor-pointer">
+            <span class="text-xs font-bold text-orange-700 w-14 font-mono" id="tray-heating-t">${toBn(state.heating.temp)}°C</span>
+          </div>
+        `;
+        updateHeatingReadout();
+      }
+    }
+
+    function toggleReadingCard() {
+      state.showReadout = !state.showReadout;
+      const card = document.getElementById('readout-card');
+      const icon = document.getElementById('readout-icon');
+      const text = document.getElementById('readout-btn-text');
+      if (state.showReadout) {
+        card.style.display = 'block';
+        icon.className = 'fa-solid fa-eye text-orange-600';
+        text.innerText = 'পাঠ লুকান';
+      } else {
+        card.style.display = 'none';
+        icon.className = 'fa-solid fa-eye-slash text-slate-400';
+        text.innerText = 'পাঠ দেখান';
+      }
+    }
+
+    function resetLab() {
+      updateCalorimeterReadout();
+      updateExpansionReadout();
+      updateHeatingReadout();
+    }
+
+    function setMetalTemp(val) {
+      state.calorimeter.metalTemp = parseFloat(val);
+      const el = document.getElementById('tray-metal-t');
+      if (el) el.innerText = toBn(state.calorimeter.metalTemp) + '°C';
+      updateCalorimeterReadout();
+    }
+
+    function setWaterTemp(val) {
+      state.calorimeter.waterTemp = parseFloat(val);
+      const el = document.getElementById('tray-water-t');
+      if (el) el.innerText = toBn(state.calorimeter.waterTemp) + '°C';
+      updateCalorimeterReadout();
+    }
+
+    function updateCalorimeterReadout() {
+      const c = state.calorimeter;
+      const m1 = c.metalMass, s1 = c.metalSpecificHeat, t1 = c.metalTemp;
+      const m2 = c.waterMass, s2 = c.waterSpecificHeat, t2 = c.waterTemp;
+
+      const tf = (m1 * s1 * t1 + m2 * s2 * t2) / (m1 * s1 + m2 * s2);
+      const qLost = m1 * s1 * (t1 - tf);
+
+      document.getElementById('readout-t1').innerText = `${toBn(t1)} °C`;
+      document.getElementById('readout-t2').innerText = `${toBn(t2)} °C`;
+      document.getElementById('readout-qlost').innerText = `${toBn(Math.round(qLost))} J`;
+      document.getElementById('readout-tf').innerText = `${toBn(tf, 1)} °C`;
+
+      if (window.katex) {
+        katex.render(
+          `m_1 s_1 (T_1 - T_f) = m_2 s_2 (T_f - T_2) \\implies T_f = ${toBn(tf, 1)}^\\circ\\text{C}`,
+          document.getElementById('readout-math'),
+          { throwOnError: false }
+        );
+      }
+    }
+
+    function setDTheta(val) {
+      state.expansion.dTheta = parseFloat(val);
+      const el = document.getElementById('tray-dtheta');
+      if (el) el.innerText = toBn(state.expansion.dTheta) + '°C';
+      updateExpansionReadout();
+    }
+
+    function setMetalAlpha(mat) {
+      if (mat === 'iron') state.expansion.alpha = 11.5e-6;
+      if (mat === 'copper') state.expansion.alpha = 16.7e-6;
+      if (mat === 'aluminum') state.expansion.alpha = 23.1e-6;
+      updateExpansionReadout();
+    }
+
+    function updateExpansionReadout() {
+      const ex = state.expansion;
+      const dlMm = ex.l1 * ex.alpha * ex.dTheta * 1000;
+
+      document.getElementById('readout-l1').innerText = `${toBn(ex.l1, 2)} m`;
+      document.getElementById('readout-dtheta').innerText = `${toBn(ex.dTheta)} °C`;
+      document.getElementById('readout-dl').innerText = `${toBn(dlMm, 2)} mm`;
+
+      if (window.katex) {
+        katex.render(
+          `\\Delta L = L_1 \\alpha \\Delta\\theta = 1.00 \\times (${toBn(ex.alpha * 1e6, 1)} \\times 10^{-6}) \\times ${toBn(ex.dTheta)} = ${toBn(dlMm, 2)}\\text{ mm}`,
+          document.getElementById('readout-math'),
+          { throwOnError: false }
+        );
+      }
+    }
+
+    function setHeatingTemp(t) {
+      state.heating.temp = parseFloat(t);
+      const el = document.getElementById('tray-heating-t');
+      if (el) el.innerText = toBn(state.heating.temp) + '°C';
+      updateHeatingReadout();
+    }
+
+    function updateHeatingReadout() {
+      const t = state.heating.temp;
+      const phaseEl = document.getElementById('readout-phase');
+      const tempEl = document.getElementById('readout-curr-temp');
+      tempEl.innerText = `${toBn(t)} °C`;
+
+      if (t < 0) {
+        phaseEl.innerText = 'কঠিন (বরফ)';
+        phaseEl.className = 'font-bold text-sky-600 text-sm';
+      } else if (t === 0) {
+        phaseEl.innerText = 'গলন সাম্যাবস্থা (বরফ ও পানি)';
+        phaseEl.className = 'font-bold text-blue-600 text-sm';
+      } else if (t < 100) {
+        phaseEl.innerText = 'তরল (পানি)';
+        phaseEl.className = 'font-bold text-teal-600 text-sm';
+      } else if (t === 100) {
+        phaseEl.innerText = 'স্ফুটন সাম্যাবস্থা (পানি ও বাষ্প)';
+        phaseEl.className = 'font-bold text-amber-600 text-sm';
+      } else {
+        phaseEl.innerText = 'গ্যাসীয় (জলীয় বাষ্প)';
+        phaseEl.className = 'font-bold text-purple-600 text-sm';
+      }
+
+      if (window.katex) {
+        katex.render(
+          `Q_{total} = mc\\Delta\\theta + mL_f + mL_v`,
+          document.getElementById('readout-math'),
+          { throwOnError: false }
+        );
+      }
+    }
+
+    // -------------------------------------------------------------
+    // RENDERERS
+    // -------------------------------------------------------------
+    function animate() {
+      ctx.clearRect(0, 0, viewWidth, viewHeight);
+
+      const centerX = viewWidth / 2;
+      const groundY = viewHeight - 140;
+
+      // Lab Bench
+      ctx.fillStyle = '#f8fafc';
+      ctx.fillRect(0, 0, viewWidth, groundY);
+      ctx.fillStyle = '#475569';
+      ctx.fillRect(0, groundY, viewWidth, 16);
+
+      if (state.station === 'calorimeter') {
+        // Calorimeter Vessel
+        ctx.fillStyle = '#e2e8f0';
+        ctx.fillRect(centerX - 100, groundY - 180, 200, 180);
+        ctx.strokeStyle = '#94a3b8';
+        ctx.lineWidth = 4;
+        ctx.strokeRect(centerX - 100, groundY - 180, 200, 180);
+
+        // Water
+        ctx.fillStyle = 'rgba(56, 189, 248, 0.6)';
+        ctx.fillRect(centerX - 96, groundY - 140, 192, 138);
+
+        // Hot Metal Block inside water
+        ctx.fillStyle = '#ea580c';
+        ctx.fillRect(centerX - 35, groundY - 80, 70, 70);
+        ctx.strokeStyle = '#9a3412';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(centerX - 35, groundY - 80, 70, 70);
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 11px Hind Siliguri';
+        ctx.fillText('ধাতব খণ্ড', centerX - 24, groundY - 42);
+
+        // Thermometer
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(centerX + 50, groundY - 240, 14, 180);
+        ctx.fillStyle = '#ef4444';
+        ctx.fillRect(centerX + 53, groundY - 140, 8, 80);
+        ctx.beginPath();
+        ctx.arc(centerX + 57, groundY - 55, 10, 0, Math.PI * 2);
+        ctx.fill();
+      } else if (state.station === 'expansion') {
+        // Metallic Rod
+        const rodX = centerX - 200;
+        const rodY = groundY - 90;
+        const rodW = 380;
+        const rodH = 20;
+
+        ctx.fillStyle = '#b45309';
+        ctx.fillRect(rodX, rodY, rodW, rodH);
+        ctx.strokeStyle = '#78350f';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(rodX, rodY, rodW, rodH);
+
+        // Burner Flames beneath
+        for (let i = 0; i < 4; i++) {
+          const fx = rodX + 60 + i * 80;
+          ctx.fillStyle = '#f97316';
+          ctx.beginPath();
+          ctx.moveTo(fx, rodY + 45);
+          ctx.lineTo(fx + 10, rodY + 15);
+          ctx.lineTo(fx + 20, rodY + 45);
+          ctx.closePath();
+          ctx.fill();
+        }
+
+        // Dial Gauge on the right
+        ctx.beginPath();
+        ctx.arc(rodX + rodW + 35, rodY + 10, 30, 0, Math.PI * 2);
+        ctx.fillStyle = '#ffffff';
+        ctx.fill();
+        ctx.strokeStyle = '#0f172a';
+        ctx.lineWidth = 3;
+        ctx.stroke();
+
+        // Dial Needle
+        const rot = (state.expansion.dTheta / 150) * Math.PI * 1.5 - Math.PI * 0.75;
+        ctx.save();
+        ctx.translate(rodX + rodW + 35, rodY + 10);
+        ctx.rotate(rot);
+        ctx.strokeStyle = '#dc2626';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.lineTo(0, -22);
+        ctx.stroke();
+        ctx.restore();
+      } else if (state.station === 'heating') {
+        // Beaker with Bunsen Burner
+        const t = state.heating.temp;
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+        ctx.fillRect(centerX - 80, groundY - 170, 160, 170);
+        ctx.strokeStyle = '#64748b';
+        ctx.lineWidth = 3;
+        ctx.strokeRect(centerX - 80, groundY - 170, 160, 170);
+
+        if (t <= 0) {
+          // Ice cubes
+          ctx.fillStyle = '#e0f2fe';
+          ctx.fillRect(centerX - 50, groundY - 70, 45, 45);
+          ctx.fillRect(centerX + 5, groundY - 60, 40, 40);
+        } else {
+          // Water
+          ctx.fillStyle = 'rgba(56, 189, 248, 0.7)';
+          ctx.fillRect(centerX - 76, groundY - 120, 152, 118);
+        }
+
+        // Steam if t >= 100
+        if (t >= 100) {
+          ctx.fillStyle = 'rgba(226, 232, 240, 0.5)';
+          for (let i = 0; i < 5; i++) {
+            ctx.beginPath();
+            ctx.arc(centerX - 40 + i * 20, groundY - 200 - (i % 2) * 15, 12, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        }
+      }
+
+      requestAnimationFrame(animate);
+    }
+
+    setStation('calorimeter');
+    requestAnimationFrame(animate);
+
+  </script>
+</body>
+</html>

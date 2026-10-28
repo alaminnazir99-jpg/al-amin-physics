@@ -376,10 +376,14 @@ window.addEventListener('popstate', (e) => {
     }
 });
 
+// QR Code Modal
+function openQrModal()  { document.getElementById('qr-code-modal')?.classList.remove('hidden'); }
+function closeQrModal() { document.getElementById('qr-code-modal')?.classList.add('hidden'); }
+
 // Hardware Back Button Handler called by Android Capacitor Bridge
 window.handleAppHardwareBack = function() {
     // 1. Check if any modal is currently visible
-    const modalIds = ['phone-auth-modal', 'auth-modal', 'ask-modal', 'pro-sim-modal', 'exam-studio-modal', 'payment-modal'];
+    const modalIds = ['qr-code-modal', 'phone-auth-modal', 'auth-modal', 'ask-modal', 'pro-sim-modal', 'exam-studio-modal', 'payment-modal'];
     for (let id of modalIds) {
         const el = document.getElementById(id);
         if (el && !el.classList.contains('hidden') && el.style.display !== 'none') {
@@ -1373,9 +1377,12 @@ function goToSpecificChapterAndTab(lvl, chapIdx, tabKey) {
     switchTab(tabKey);
 }
 
-function openSimulationDirectly() {
-    selectLevelAndOpen('ssc');
-    switchTab('simulation');
+function openSimulationDirectly(simId) {
+    if (simId) {
+        window.location.href = `simulations/index.html?id=${simId}`;
+    } else {
+        window.location.href = 'simulations/index.html';
+    }
 }
 
 /* ===================================================

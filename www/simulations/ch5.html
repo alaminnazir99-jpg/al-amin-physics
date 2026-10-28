@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>পদার্থের অবস্থা ও চাপ (PhET Interactive Pressure Lab) | আল-আমিন ফিজিক্স</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&family=JetBrains+Mono:wght@500;700&display=swap');
+    
+    * {
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    body {
+      font-family: 'Hind Siliguri', system-ui, sans-serif;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: #f8fafc;
+      color: #0f172a;
+    }
+    #phet-stage {
+      position: absolute;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      touch-action: none;
+      cursor: default;
+    }
+    .phet-header {
+      position: absolute;
+      top: 12px;
+      left: 16px;
+      right: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 25;
+      pointer-events: none;
+    }
+    .phet-header * {
+      pointer-events: auto;
+    }
+    .phet-tab-pill {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(8px);
+      box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+      border: 1px solid rgba(226, 232, 240, 0.8);
+      border-radius: 9999px;
+      padding: 4px;
+      display: flex;
+      gap: 4px;
+    }
+    .phet-tab-btn {
+      padding: 6px 14px;
+      border-radius: 9999px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #475569;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .phet-tab-btn.active {
+      background: #0284c7;
+      color: #ffffff;
+      box-shadow: 0 2px 8px rgba(2, 132, 199, 0.35);
+    }
+    .phet-tray {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(12px);
+      border: 1.5px solid rgba(203, 213, 225, 0.8);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.12);
+      border-radius: 20px;
+      padding: 8px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      z-index: 25;
+    }
+    .phet-readout-card {
+      position: absolute;
+      top: 70px;
+      right: 20px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border: 1px solid #cbd5e1;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+      border-radius: 16px;
+      padding: 12px 16px;
+      min-width: 270px;
+      z-index: 25;
+      transition: all 0.2s;
+    }
+    .phet-hint-tag {
+      position: absolute;
+      top: 70px;
+      left: 20px;
+      background: #e0f2fe;
+      border: 1px solid #bae6fd;
+      color: #0369a1;
+      padding: 6px 14px;
+      border-radius: 14px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      z-index: 25;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.04);
+      max-width: calc(100vw - 330px);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation Bar -->
+  <div class="phet-header">
+    <div class="flex items-center gap-2">
+      <a href="index.html" class="px-3 py-1.5 rounded-full bg-white border border-slate-200 text-slate-700 hover:text-sky-600 font-bold text-xs shadow-sm flex items-center gap-1.5 transition">
+        <i class="fa-solid fa-arrow-left"></i> ল্যাব তালিকা
+      </a>
+      <span class="text-xs font-bold text-slate-600 bg-white/80 px-3 py-1.5 rounded-full border border-slate-200 shadow-sm hidden sm:inline">
+        অধ্যায় ৫: পদার্থের অবস্থা ও চাপ (Pressure Lab)
+      </span>
+    </div>
+
+    <!-- PhET Experiment Switcher -->
+    <div class="phet-tab-pill">
+      <button onclick="setStation('buoyancy')" id="tab-buoyancy" class="phet-tab-btn active">
+        <i class="fa-solid fa-water mr-1"></i> আর্কিমিডিসের নীতি ও প্লবতা
+      </button>
+      <button onclick="setStation('pascal')" id="tab-pascal" class="phet-tab-btn">
+        <i class="fa-solid fa-arrows-up-down mr-1"></i> প্যাসকেলের হাইড্রোলিক প্রেস
+      </button>
+      <button onclick="setStation('depth')" id="tab-depth" class="phet-tab-btn">
+        <i class="fa-solid fa-gauge mr-1"></i> তরলের অভ্যন্তরে চাপ (P = h&rho;g)
+      </button>
+    </div>
+
+    <!-- Right Controls: Readout Toggle & Reset -->
+    <div class="flex items-center gap-2">
+      <button onclick="toggleReadingCard()" id="btn-toggle-readout" class="px-3 py-1.5 rounded-full bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 font-bold text-xs shadow-sm flex items-center gap-1.5 transition">
+        <i class="fa-solid fa-eye text-sky-600" id="readout-icon"></i> <span id="readout-btn-text">পাঠ লুকান</span>
+      </button>
+      <button onclick="resetLab()" class="w-8 h-8 rounded-full bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 flex items-center justify-center text-xs shadow-sm transition" title="রিসেট">
+        <i class="fa-solid fa-rotate-right"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Instruction Hint -->
+  <div class="phet-hint-tag" id="hint-tag">
+    <i class="fa-solid fa-hand-pointer text-sky-600 animate-pulse"></i>
+    <span id="hint-text">বস্তুটি হাত দিয়ে টেনে পানিতে ফেলুন—দেখুন এটি ভাসে নাকি ডোবে এবং প্লবতা বলের মান কত!</span>
+  </div>
+
+  <!-- Real-Time Floating Readout Card -->
+  <div class="phet-readout-card" id="readout-card">
+    <div class="flex items-center justify-between pb-1.5 mb-1.5 border-b border-slate-200">
+      <span class="text-xs font-bold text-slate-700 flex items-center gap-1.5">
+        <i class="fa-solid fa-flask-vial text-sky-600"></i> লাইভ প্রবাহী মেকানিক্স
+      </span>
+      <span class="text-[10px] px-2 py-0.5 rounded-full bg-sky-50 text-sky-700 font-bold font-mono" id="pressure-badge">&rho; = ১০০০ kg/m³</span>
+    </div>
+
+    <!-- Buoyancy Readout -->
+    <div id="readout-buoyancy" class="space-y-1 text-xs">
+      <div class="flex justify-between items-center">
+        <span class="text-slate-500">বস্তুর বাতাসে ওজন (W):</span>
+        <span class="font-bold font-mono text-slate-700 text-sm" id="readout-w">১৯.৬ N</span>
+      </div>
+      <div class="flex justify-between items-center">
+        <span class="text-slate-500">উর্ধমুখী প্লবতা বল (F_B = V&rho;g):</span>
+        <span class="font-bold font-mono text-sky-600 text-sm" id="readout-fb">১৯.৬ N</span>
+      </div>
+      <div class="flex justify-between items-center">
+        <span class="text-slate-500">বস্তুর ঘনত্ব (&rho;_obj):</span>
+        <span class="font-bold font-mono text-amber-700 text-sm" id="readout-rho">৭০০ kg/m³</span>
+      </div>
+      <div class="flex justify-between items-center">
+        <span class="text-slate-500">নিমজ্জিত অংশ:</span>
+        <span class="font-bold font-mono text-emerald-600 text-sm" id="readout-sub">৭০% (ভাসমান)</span>
+      </div>
+      <div class="pt-1.5 mt-1 border-t border-dashed border-slate-200 flex justify-between items-center">
+        <span class="font-bold text-slate-800">আপাত ওজন (W'):</span>
+        <span class="font-bold font-mono text-indigo-700 text-base" id="readout-wprime">০.০ N</span>
+      </div>
+    </div>
+
+    <!-- Pascal Readout -->
+    <div id="readout-pascal" class="space-y-1 text-xs hidden">
+      <div class="flex justify-between items-center">
+        <span class="text-slate-500">ছোট পিস্টন বল (F₁):</span>
+        <span class="font-bold font-mono text-blue-700 text-sm" id="readout-pascal-f1">১০০ N</span>
+      </div>
+      <div class="flex justify-between items-center">
+        <span class="text-slate-500">ক্ষেত্রফল অনুপাত (A₂ / A₁):</span>
+        <span class="font-bold font-mono text-purple-700 text-sm" id="readout-pascal-ratio">৫০ গুণ</span>
+      </div>
+      <div class="flex justify-between items-center">
+        <span class="text-slate-500">প্রবাহী চাপ (P = F₁/A₁):</span>
+        <span class="font-bold font-mono text-amber-700 text-sm" id="readout-pascal-p">১০ kPa</span>
+      </div>
+      <div class="pt-1.5 mt-1 border-t border-dashed border-slate-200 flex justify-between items-center">
+        <span class="font-bold text-slate-800">বড় পিস্টন বল (F₂):</span>
+        <span class="font-bold font-mono text-emerald-600 text-base" id="readout-pascal-f2">৫০০০ N</span>
+      </div>
+    </div>
+
+    <!-- Depth Readout -->
+    <div id="readout-depth" class="space-y-1 text-xs hidden">
+      <div class="flex justify-between items-center">
+        <span class="text-slate-500">সেন্সরের গভীরতা (h):</span>
+        <span class="font-bold font-mono text-blue-700 text-sm" id="readout-depth-h">২.৫০ m</span>
+      </div>
+      <div class="flex justify-between items-center">
+        <span class="text-slate-500">তরলের ঘনত্ব (&rho;):</span>
+        <span class="font-bold font-mono text-slate-700 text-sm" id="readout-depth-rho">১০০০ kg/m³</span>
+      </div>
+      <div class="pt-1.5 mt-1 border-t border-dashed border-slate-200 flex justify-between items-center">
+        <span class="font-bold text-slate-800">মোট তরলের চাপ (P = h&rho;g):</span>
+        <span class="font-bold font-mono text-emerald-600 text-base" id="readout-depth-p">২৪.৫ kPa</span>
+      </div>
+    </div>
+
+    <!-- Live KaTeX formula line -->
+    <div class="mt-2 p-1.5 bg-slate-50 rounded-lg text-center text-xs overflow-x-auto" id="readout-math"></div>
+  </div>
+
+  <!-- Bottom PhET Tool Rack -->
+  <div class="phet-tray" id="phet-tray"></div>
+
+  <!-- Fullscreen Canvas -->
+  <canvas id="phet-stage"></canvas>
+
+  <script>
+    // -------------------------------------------------------------
+    // AUDIO ENGINE
+    // -------------------------------------------------------------
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function playSplashSound() {
+      try {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(450, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(120, audioCtx.currentTime + 0.2);
+        gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.2);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.2);
+      } catch (e) {}
+    }
+
+    function toBn(num, decimals = null) {
+      const bnDigits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+      const str = decimals !== null ? Number(num).toFixed(decimals) : String(num);
+      return str.replace(/\d/g, d => bnDigits[Number(d)]);
+    }
+
+    // -------------------------------------------------------------
+    // STATE MODEL
+    // -------------------------------------------------------------
+    const MATERIALS = {
+      wood:  { name: 'কাঠ', rho: 700, color: '#b45309', stroke: '#78350f' },
+      ice:   { name: 'বরফ', rho: 920, color: '#e0f2fe', stroke: '#7dd3fc' },
+      alu:   { name: 'অ্যালুমিনিয়াম', rho: 2700, color: '#94a3b8', stroke: '#64748b' },
+      iron:  { name: 'লোহা', rho: 7800, color: '#475569', stroke: '#334155' },
+      gold:  { name: 'সোনা', rho: 19300, color: '#f59e0b', stroke: '#b45309' }
+    };
+
+    const state = {
+      station: 'buoyancy',
+      showReadout: true,
+      g: 9.8,
+      rhoLiquid: 1000, // Water
+
+      // Buoyancy Station
+      buoyancy: {
+        currentMat: 'wood',
+        volumeM3: 0.002, // 2 liters
+        blockY: 0.3, // 0 = at bottom, 1 = floating high
+        isDragging: false
+      },
+
+      // Pascal Station
+      pascal: {
+        f1: 100,
+        a1: 0.01,
+        a2: 0.50,
+        y1: 0,
+        y2: 0
+      },
+
+      // Depth Station
+      depth: {
+        sensorH: 2.5, // meters
+        isDraggingSensor: false
+      }
+    };
+
+    const canvas = document.getElementById('phet-stage');
+    const ctx = canvas.getContext('2d');
+
+    let viewWidth = window.innerWidth;
+    let viewHeight = window.innerHeight;
+
+    function resizeCanvas() {
+      viewWidth = window.innerWidth;
+      viewHeight = window.innerHeight;
+      canvas.width = viewWidth * window.devicePixelRatio;
+      canvas.height = viewHeight * window.devicePixelRatio;
+      ctx.resetTransform();
+      ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    // -------------------------------------------------------------
+    // STATION SWITCHING
+    // -------------------------------------------------------------
+    function setStation(station) {
+      state.station = station;
+      ['buoyancy', 'pascal', 'depth'].forEach(s => {
+        const btn = document.getElementById(`tab-${s}`);
+        const readout = document.getElementById(`readout-${s}`);
+        if (s === station) {
+          btn.classList.add('active');
+          readout.classList.remove('hidden');
+        } else {
+          btn.classList.remove('active');
+          readout.classList.add('hidden');
+        }
+      });
+
+      const hintText = document.getElementById('hint-text');
+      const tray = document.getElementById('phet-tray');
+
+      if (station === 'buoyancy') {
+        hintText.innerHTML = 'নিচের ট্রে থেকে বিভিন্ন পদার্থ (কাঠ, বরফ, অ্যালুমিনিয়াম, লোহা) নির্বাচন করে পানিতে ভাসিয়ে দেখুন!';
+        tray.innerHTML = `
+          <span class="text-xs font-bold text-slate-500 mr-1">পদার্থ নির্বাচন:</span>
+          <button onclick="setMaterial('wood')" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-amber-100 hover:bg-amber-200 text-amber-900">কাঠ (৭০০)</button>
+          <button onclick="setMaterial('ice')" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-sky-100 hover:bg-sky-200 text-sky-900">বরফ (৯২০)</button>
+          <button onclick="setMaterial('alu')" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-200 hover:bg-slate-300 text-slate-800">অ্যালুমিনিয়াম (২৭০০)</button>
+          <button onclick="setMaterial('iron')" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-800 hover:bg-slate-700 text-white">লোহা (৭৮০০)</button>
+        `;
+        updateBuoyancyReadout();
+      } else if (station === 'pascal') {
+        hintText.innerHTML = 'ছোট পিস্টনে সামান্য বল প্রয়োগ করে বড় পিস্টনে ভারি গাড়ি বা ওজন তুলুন!';
+        tray.innerHTML = `
+          <div class="flex items-center gap-3">
+            <span class="text-xs font-bold text-slate-500">ছোট পিস্টনে বল (F₁):</span>
+            <input type="range" min="10" max="300" step="10" value="${state.pascal.f1}" 
+              oninput="setPascalF1(this.value)" class="w-24 sm:w-32 accent-sky-600 cursor-pointer">
+            <span class="text-xs font-bold text-sky-700 w-14 font-mono" id="tray-pascal-f1">${toBn(state.pascal.f1)} N</span>
+          </div>
+          <div class="h-6 w-px bg-slate-300"></div>
+          <div class="flex items-center gap-3">
+            <span class="text-xs font-bold text-slate-500">ক্ষেত্রফল অনুপাত:</span>
+            <span class="text-xs font-bold text-purple-700 font-mono">৫০ গুণ (A₂ = ৫০ × A₁)</span>
+          </div>
+        `;
+        updatePascalReadout();
+      } else if (station === 'depth') {
+        hintText.innerHTML = 'প্রেসার গেজ সেন্সরটি টেনে পানির গভীরে নামিয়ে তরলের অভ্যন্তরে চাপ পর্যবেক্ষণ করুন!';
+        tray.innerHTML = `
+          <div class="flex items-center gap-3">
+            <span class="text-xs font-bold text-slate-500">গভীরতা (h):</span>
+            <input type="range" min="0.2" max="5.0" step="0.1" value="${state.depth.sensorH}" 
+              oninput="setDepthH(this.value)" class="w-28 sm:w-36 accent-sky-600 cursor-pointer">
+            <span class="text-xs font-bold text-sky-700 w-14 font-mono" id="tray-depth-h">${toBn(state.depth.sensorH, 1)} m</span>
+          </div>
+        `;
+        updateDepthReadout();
+      }
+    }
+
+    function toggleReadingCard() {
+      state.showReadout = !state.showReadout;
+      const card = document.getElementById('readout-card');
+      const icon = document.getElementById('readout-icon');
+      const text = document.getElementById('readout-btn-text');
+      if (state.showReadout) {
+        card.style.display = 'block';
+        icon.className = 'fa-solid fa-eye text-sky-600';
+        text.innerText = 'পাঠ লুকান';
+      } else {
+        card.style.display = 'none';
+        icon.className = 'fa-solid fa-eye-slash text-slate-400';
+        text.innerText = 'পাঠ দেখান';
+      }
+    }
+
+    function resetLab() {
+      state.buoyancy.blockY = 0.3;
+      updateBuoyancyReadout();
+      updatePascalReadout();
+      updateDepthReadout();
+    }
+
+    // -------------------------------------------------------------
+    // LOGIC & FORMULAS
+    // -------------------------------------------------------------
+    function setMaterial(matKey) {
+      state.buoyancy.currentMat = matKey;
+      playSplashSound();
+      updateBuoyancyReadout();
+    }
+
+    function updateBuoyancyReadout() {
+      const b = state.buoyancy;
+      const mat = MATERIALS[b.currentMat];
+      const mass = mat.rho * b.volumeM3;
+      const weightAir = mass * state.g;
+
+      // Will it float or sink?
+      const willFloat = mat.rho <= state.rhoLiquid;
+      let fb = 0;
+      let apparentWeight = 0;
+      let submergedPercent = 0;
+
+      if (willFloat) {
+        submergedPercent = (mat.rho / state.rhoLiquid) * 100;
+        fb = weightAir; // Buoyant force equals weight when floating
+        apparentWeight = 0;
+      } else {
+        submergedPercent = 100;
+        fb = b.volumeM3 * state.rhoLiquid * state.g; // fully submerged
+        apparentWeight = weightAir - fb;
+      }
+
+      document.getElementById('readout-w').innerText = `${toBn(weightAir, 1)} N`;
+      document.getElementById('readout-fb').innerText = `${toBn(fb, 1)} N`;
+      document.getElementById('readout-rho').innerText = `${toBn(mat.rho)} kg/m³`;
+      document.getElementById('readout-sub').innerText = willFloat ? `${toBn(Math.round(submergedPercent))}% (ভাসমান)` : '১০০% (নিমজ্জিত/ডুবন্ত)';
+      document.getElementById('readout-wprime').innerText = `${toBn(apparentWeight, 1)} N`;
+
+      if (window.katex) {
+        katex.render(
+          `F_B = V_{sub} \\rho g = ${toBn(fb, 1)}\\text{ N} \\quad | \\quad W' = W - F_B = ${toBn(apparentWeight, 1)}\\text{ N}`,
+          document.getElementById('readout-math'),
+          { throwOnError: false }
+        );
+      }
+    }
+
+    function setPascalF1(val) {
+      state.pascal.f1 = parseFloat(val);
+      const el = document.getElementById('tray-pascal-f1');
+      if (el) el.innerText = toBn(state.pascal.f1) + ' N';
+      updatePascalReadout();
+    }
+
+    function updatePascalReadout() {
+      const p = state.pascal;
+      const pressurePa = p.f1 / p.a1;
+      const f2 = pressurePa * p.a2;
+
+      document.getElementById('readout-pascal-f1').innerText = `${toBn(p.f1)} N`;
+      document.getElementById('readout-pascal-p').innerText = `${toBn(pressurePa / 1000, 1)} kPa`;
+      document.getElementById('readout-pascal-f2').innerText = `${toBn(f2)} N`;
+
+      if (window.katex) {
+        katex.render(
+          `\\frac{F_1}{A_1} = \\frac{F_2}{A_2} \\implies F_2 = F_1 \\left(\\frac{A_2}{A_1}\\right) = ${toBn(p.f1)} \\times 50 = ${toBn(f2)}\\text{ N}`,
+          document.getElementById('readout-math'),
+          { throwOnError: false }
+        );
+      }
+    }
+
+    function setDepthH(val) {
+      state.depth.sensorH = parseFloat(val);
+      const el = document.getElementById('tray-depth-h');
+      if (el) el.innerText = toBn(state.depth.sensorH, 1) + ' m';
+      updateDepthReadout();
+    }
+
+    function updateDepthReadout() {
+      const d = state.depth;
+      const pPa = d.sensorH * state.rhoLiquid * state.g;
+      const pKpa = pPa / 1000;
+
+      document.getElementById('readout-depth-h').innerText = `${toBn(d.sensorH, 2)} m`;
+      document.getElementById('readout-depth-p').innerText = `${toBn(pKpa, 1)} kPa`;
+
+      if (window.katex) {
+        katex.render(
+          `P = h \\rho g = ${toBn(d.sensorH, 1)} \\times 1000 \\times 9.8 = ${toBn(pKpa, 1)}\\text{ kPa}`,
+          document.getElementById('readout-math'),
+          { throwOnError: false }
+        );
+      }
+    }
+
+    // -------------------------------------------------------------
+    // RENDERERS
+    // -------------------------------------------------------------
+    function animate() {
+      ctx.clearRect(0, 0, viewWidth, viewHeight);
+
+      if (state.station === 'buoyancy') {
+        renderBuoyancyStage();
+      } else if (state.station === 'pascal') {
+        renderPascalStage();
+      } else if (state.station === 'depth') {
+        renderDepthStage();
+      }
+
+      requestAnimationFrame(animate);
+    }
+
+    function renderBuoyancyStage() {
+      const centerX = viewWidth / 2;
+      const groundY = viewHeight - 140;
+
+      // Lab Table
+      ctx.fillStyle = '#f8fafc';
+      ctx.fillRect(0, 0, viewWidth, groundY);
+      ctx.fillStyle = '#475569';
+      ctx.fillRect(centerX - 180, groundY, 360, 15);
+
+      // Glass Beaker
+      const beakerW = 240;
+      const beakerH = 260;
+      const beakerX = centerX - beakerW / 2;
+      const beakerY = groundY - beakerH;
+
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+      ctx.fillRect(beakerX, beakerY, beakerW, beakerH);
+      ctx.strokeStyle = '#94a3b8';
+      ctx.lineWidth = 4;
+      ctx.strokeRect(beakerX, beakerY, beakerW, beakerH);
+
+      // Water inside Beaker
+      const waterH = 190;
+      const waterY = groundY - waterH;
+      const waterGrad = ctx.createLinearGradient(0, waterY, 0, groundY);
+      waterGrad.addColorStop(0, 'rgba(56, 189, 248, 0.55)');
+      waterGrad.addColorStop(1, 'rgba(2, 132, 199, 0.75)');
+      ctx.fillStyle = waterGrad;
+      ctx.fillRect(beakerX + 2, waterY, beakerW - 4, waterH);
+
+      // Material Block
+      const mat = MATERIALS[state.buoyancy.currentMat];
+      const willFloat = mat.rho <= state.rhoLiquid;
+      const blockW = 75;
+      const blockH = 75;
+      const subRatio = Math.min(1.0, mat.rho / state.rhoLiquid);
+
+      let blockX = centerX - blockW / 2;
+      let blockY = willFloat ? (waterY - blockH * (1 - subRatio)) : (groundY - blockH);
+
+      ctx.fillStyle = mat.color;
+      ctx.fillRect(blockX, blockY, blockW, blockH);
+      ctx.strokeStyle = mat.stroke;
+      ctx.lineWidth = 2.5;
+      ctx.strokeRect(blockX, blockY, blockW, blockH);
+
+      // Material Label on Block
+      ctx.fillStyle = (b => b === '#e0f2fe' ? '#0f172a' : '#ffffff')(mat.color);
+      ctx.font = 'bold 12px Hind Siliguri';
+      ctx.fillText(mat.name, blockX + 16, blockY + 34);
+      ctx.font = 'bold 10px JetBrains Mono';
+      ctx.fillText(`${toBn(mat.rho)}`, blockX + 20, blockY + 52);
+    }
+
+    function renderPascalStage() {
+      const centerX = viewWidth / 2;
+      const groundY = viewHeight - 160;
+
+      ctx.fillStyle = '#f8fafc';
+      ctx.fillRect(0, 0, viewWidth, viewHeight);
+
+      // U-tube Hydraulic Cylinder
+      ctx.fillStyle = '#e2e8f0';
+      // Small Cylinder Left
+      ctx.fillRect(centerX - 180, groundY - 140, 60, 140);
+      // Large Cylinder Right
+      ctx.fillRect(centerX + 40, groundY - 140, 160, 140);
+      // Base connecting pipe
+      ctx.fillRect(centerX - 180, groundY - 30, 380, 45);
+
+      // Hydraulic Oil (Fluid)
+      ctx.fillStyle = '#fbbf24';
+      ctx.fillRect(centerX - 176, groundY - 90, 52, 90);
+      ctx.fillRect(centerX + 44, groundY - 90, 152, 90);
+      ctx.fillRect(centerX - 176, groundY - 26, 372, 37);
+
+      // Small Piston Left
+      ctx.fillStyle = '#3b82f6';
+      ctx.fillRect(centerX - 176, groundY - 100, 52, 16);
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 10px JetBrains Mono';
+      ctx.fillText('A₁', centerX - 156, groundY - 88);
+
+      // Large Piston Right
+      ctx.fillStyle = '#10b981';
+      ctx.fillRect(centerX + 44, groundY - 100, 152, 16);
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 11px JetBrains Mono';
+      ctx.fillText('A₂ (৫০ গুণ)', centerX + 90, groundY - 88);
+
+      // Heavy Car on Large Piston
+      ctx.fillStyle = '#ef4444';
+      ctx.fillRect(centerX + 70, groundY - 135, 100, 35);
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 11px Hind Siliguri';
+      ctx.fillText('ভারি বস্তু / গাড়ি', centerX + 82, groundY - 114);
+    }
+
+    function renderDepthStage() {
+      const centerX = viewWidth / 2;
+      const groundY = viewHeight - 130;
+
+      ctx.fillStyle = '#f8fafc';
+      ctx.fillRect(0, 0, viewWidth, groundY);
+
+      // Water Tank
+      const tankW = 320;
+      const tankH = 260;
+      const tankX = centerX - tankW / 2;
+      const tankY = groundY - tankH;
+
+      ctx.fillStyle = '#e0f2fe';
+      ctx.fillRect(tankX, tankY, tankW, tankH);
+      ctx.strokeStyle = '#0284c7';
+      ctx.lineWidth = 3;
+      ctx.strokeRect(tankX, tankY, tankW, tankH);
+
+      // Depth ticks along tank
+      ctx.fillStyle = '#0369a1';
+      ctx.font = 'bold 10px JetBrains Mono';
+      for (let m = 0; m <= 5; m++) {
+        const y = tankY + (m / 5) * tankH;
+        ctx.beginPath();
+        ctx.moveTo(tankX, y);
+        ctx.lineTo(tankX + 15, y);
+        ctx.stroke();
+        ctx.fillText(`${toBn(m)}m`, tankX + 20, y + 4);
+      }
+
+      // Pressure Gauge Sensor
+      const d = state.depth;
+      const sensorPixelY = tankY + (d.sensorH / 5) * tankH;
+
+      // Sensor Wire
+      ctx.beginPath();
+      ctx.moveTo(centerX + 40, tankY - 30);
+      ctx.lineTo(centerX + 40, sensorPixelY);
+      ctx.strokeStyle = '#0f172a';
+      ctx.lineWidth = 2.5;
+      ctx.stroke();
+
+      // Sensor Bulb
+      ctx.beginPath();
+      ctx.arc(centerX + 40, sensorPixelY, 14, 0, Math.PI * 2);
+      ctx.fillStyle = '#ef4444';
+      ctx.fill();
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // Pressure Readout tag next to sensor
+      const pKpa = (d.sensorH * state.rhoLiquid * state.g) / 1000;
+      ctx.fillStyle = 'rgba(15, 23, 42, 0.85)';
+      ctx.beginPath();
+      ctx.roundRect(centerX + 65, sensorPixelY - 14, 90, 28, 6);
+      ctx.fill();
+      ctx.fillStyle = '#38bdf8';
+      ctx.font = 'bold 11px JetBrains Mono';
+      ctx.fillText(`${toBn(pKpa, 1)} kPa`, centerX + 75, sensorPixelY + 5);
+    }
+
+    // -------------------------------------------------------------
+    // INIT
+    // -------------------------------------------------------------
+    setStation('buoyancy');
+    requestAnimationFrame(animate);
+
+  </script>
+</body>
+</html>

@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>তরঙ্গ ও শব্দ ল্যাব (PhET Interactive Wave Lab) | আল-আমিন ফিজিক্স</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&family=JetBrains+Mono:wght@500;700&display=swap');
+    
+    * {
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    body {
+      font-family: 'Hind Siliguri', system-ui, sans-serif;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: #f8fafc;
+      color: #0f172a;
+    }
+    #phet-stage {
+      position: absolute;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      touch-action: none;
+      cursor: default;
+    }
+    .phet-header {
+      position: absolute;
+      top: 12px;
+      left: 16px;
+      right: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 25;
+      pointer-events: none;
+    }
+    .phet-header * {
+      pointer-events: auto;
+    }
+    .phet-tab-pill {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(8px);
+      box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+      border: 1px solid rgba(226, 232, 240, 0.8);
+      border-radius: 9999px;
+      padding: 4px;
+      display: flex;
+      gap: 4px;
+    }
+    .phet-tab-btn {
+      padding: 6px 14px;
+      border-radius: 9999px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #475569;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .phet-tab-btn.active {
+      background: #8b5cf6;
+      color: #ffffff;
+      box-shadow: 0 2px 8px rgba(139, 92, 246, 0.35);
+    }
+    .phet-tray {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(12px);
+      border: 1.5px solid rgba(203, 213, 225, 0.8);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.12);
+      border-radius: 20px;
+      padding: 8px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      z-index: 25;
+    }
+    .phet-readout-card {
+      position: absolute;
+      top: 70px;
+      right: 20px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border: 1px solid #cbd5e1;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+      border-radius: 16px;
+      padding: 12px 16px;
+      min-width: 270px;
+      z-index: 25;
+      transition: all 0.2s;
+    }
+    .phet-hint-tag {
+      position: absolute;
+      top: 70px;
+      left: 20px;
+      background: #f5f3ff;
+      border: 1px solid #ddd6fe;
+      color: #5b21b6;
+      padding: 6px 14px;
+      border-radius: 14px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      z-index: 25;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.04);
+      max-width: calc(100vw - 330px);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation Bar -->
+  <div class="phet-header">
+    <div class="flex items-center gap-2">
+      <a href="index.html" class="px-3 py-1.5 rounded-full bg-white border border-slate-200 text-slate-700 hover:text-purple-600 font-bold text-xs shadow-sm flex items-center gap-1.5 transition">
+        <i class="fa-solid fa-arrow-left"></i> ল্যাব তালিকা
+      </a>
+      <span class="text-xs font-bold text-slate-600 bg-white/80 px-3 py-1.5 rounded-full border border-slate-200 shadow-sm hidden sm:inline">
+        অধ্যায় ৭: তরঙ্গ ও শব্দ (Wave & Sound Lab)
+      </span>
+    </div>
+
+    <!-- PhET Experiment Switcher -->
+    <div class="phet-tab-pill">
+      <button onclick="setStation('string')" id="tab-string" class="phet-tab-btn active">
+        <i class="fa-solid fa-water mr-1"></i> তারে তরঙ্গ (Wave on a String)
+      </button>
+      <button onclick="setStation('pendulum')" id="tab-pendulum" class="phet-tab-btn">
+        <i class="fa-solid fa-clock mr-1"></i> সরল দোলক (Pendulum)
+      </button>
+      <button onclick="setStation('echo')" id="tab-echo" class="phet-tab-btn">
+        <i class="fa-solid fa-volume-high mr-1"></i> শব্দ ও প্রতিধ্বনি (Echo)
+      </button>
+    </div>
+
+    <!-- Right Controls: Readout Toggle & Reset -->
+    <div class="flex items-center gap-2">
+      <button onclick="toggleReadingCard()" id="btn-toggle-readout" class="px-3 py-1.5 rounded-full bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 font-bold text-xs shadow-sm flex items-center gap-1.5 transition">
+        <i class="fa-solid fa-eye text-purple-600" id="readout-icon"></i> <span id="readout-btn-text">পাঠ লুকান</span>
+      </button>
+      <button onclick="resetLab()" class="w-8 h-8 rounded-full bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 flex items-center justify-center text-xs shadow-sm transition" title="রিসেট">
+        <i class="fa-solid fa-rotate-right"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Instruction Hint -->
+  <div class="phet-hint-tag" id="hint-tag">
+    <i class="fa-solid fa-hand-pointer text-purple-600 animate-pulse"></i>
+    <span id="hint-text">বামপাশের হাতলটি হাত দিয়ে উপরে নিচে নাড়ান বা কম্পাঙ্ক বাড়িয়ে সাইন তরঙ্গ তৈরি করুন!</span>
+  </div>
+
+  <!-- Real-Time Floating Readout Card -->
+  <div class="phet-readout-card" id="readout-card">
+    <div class="flex items-center justify-between pb-1.5 mb-1.5 border-b border-slate-200">
+      <span class="text-xs font-bold text-slate-700 flex items-center gap-1.5">
+        <i class="fa-solid fa-wave-square text-purple-600"></i> তরঙ্গ গতিবিদ্যা পাঠ
+      </span>
+      <span class="text-[10px] px-2 py-0.5 rounded-full bg-purple-50 text-purple-700 font-bold font-mono" id="wave-badge">v = f&lambda;</span>
+    </div>
+
+    <!-- String Wave Readout -->
+    <div id="readout-string" class="space-y-1 text-xs">
+      <div class="flex justify-between items-center">
+        <span class="text-slate-500">বিস্তার (Amplitude A):</span>
+        <span class="font-bold font-mono text-blue-700 text-sm" id="readout-a">০.৭৫ cm</span>
+      </div>
+      <div class="flex justify-between items-center">
+        <span class="text-slate-500">কম্পাঙ্ক (Frequency f):</span>
+        <span class="font-bold font-mono text-purple-700 text-sm" id="readout-f">১.৫০ Hz</span>
+      </div>
+      <div class="flex justify-between items-center">
+        <span class="text-slate-500">তরঙ্গদৈর্ঘ্য (&lambda;):</span>
+        <span class="font-bold font-mono text-amber-700 text-sm" id="readout-lambda">২.৬৭ m</span>
+      </div>
+      <div class="pt-1.5 mt-1 border-t border-dashed border-slate-200 flex justify-between items-center">
+        <span class="font-bold text-slate-800">তরঙ্গবেগ (v = f&lambda;):</span>
+        <span class="font-bold font-mono text-emerald-600 text-base" id="readout-v">৪.০০ m/s</span>
+      </div>
+    </div>
+
+    <!-- Pendulum Readout -->
+    <div id="readout-pendulum" class="space-y-1 text-xs hidden">
+      <div class="flex justify-between items-center">
+        <span class="text-slate-500">কার্যকরী দৈর্ঘ্য (L):</span>
+        <span class="font-bold font-mono text-blue-700 text-sm" id="readout-pen-l">১.০০ m</span>
+      </div>
+      <div class="flex justify-between items-center">
+        <span class="text-slate-500">অভিকর্ষজ ত্বরণ (g):</span>
+        <span class="font-bold font-mono text-slate-700 text-sm">৯.৮ m/s²</span>
+      </div>
+      <div class="pt-1.5 mt-1 border-t border-dashed border-slate-200 flex justify-between items-center">
+        <span class="font-bold text-slate-800">দোলনকাল (T = 2&pi;&radic;(L/g)):</span>
+        <span class="font-bold font-mono text-emerald-600 text-base" id="readout-pen-t">২.০১ s</span>
+      </div>
+    </div>
+
+    <!-- Echo Readout -->
+    <div id="readout-echo" class="space-y-1 text-xs hidden">
+      <div class="flex justify-between items-center">
+        <span class="text-slate-500">বাতাসের তাপমাত্রা (&theta;):</span>
+        <span class="font-bold font-mono text-red-600 text-sm" id="readout-echo-temp">২৫ °C</span>
+      </div>
+      <div class="flex justify-between items-center">
+        <span class="text-slate-500">শব্দের বেগ (v):</span>
+        <span class="font-bold font-mono text-blue-700 text-sm" id="readout-echo-v">৩৪৭ m/s</span>
+      </div>
+      <div class="flex justify-between items-center">
+        <span class="text-slate-500">প্রতিফলক দেয়ালের দূরত্ব (d):</span>
+        <span class="font-bold font-mono text-amber-700 text-sm" id="readout-echo-d">৩৪.৭ m</span>
+      </div>
+      <div class="pt-1.5 mt-1 border-t border-dashed border-slate-200 flex justify-between items-center">
+        <span class="font-bold text-slate-800">প্রতিধ্বনি শোনার সময় (t):</span>
+        <span class="font-bold font-mono text-emerald-600 text-base" id="readout-echo-t">০.২০ s (শোনা যাবে)</span>
+      </div>
+    </div>
+
+    <!-- Live KaTeX formula line -->
+    <div class="mt-2 p-1.5 bg-slate-50 rounded-lg text-center text-xs overflow-x-auto" id="readout-math"></div>
+  </div>
+
+  <!-- Bottom PhET Tool Rack -->
+  <div class="phet-tray" id="phet-tray"></div>
+
+  <!-- Fullscreen Canvas -->
+  <canvas id="phet-stage"></canvas>
+
+  <script>
+    function toBn(num, decimals = null) {
+      const bnDigits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+      const str = decimals !== null ? Number(num).toFixed(decimals) : String(num);
+      return str.replace(/\d/g, d => bnDigits[Number(d)]);
+    }
+
+    const state = {
+      station: 'string',
+      showReadout: true,
+
+      // String Wave
+      string: {
+        amplitude: 0.75, // 0.1 to 1.5 cm
+        freq: 1.5, // 0.2 to 3.0 Hz
+        speed: 4.0, // m/s
+        damping: 0.0,
+        mode: 'oscillate', // 'oscillate' | 'manual'
+        manualY: 0
+      },
+
+      // Pendulum
+      pendulum: {
+        lengthM: 1.0,
+        angleRad: 0.4,
+        angularVelocity: 0,
+        isDraggingBob: false
+      },
+
+      // Echo
+      echo: {
+        tempC: 25,
+        distM: 34.7,
+        isFiringSound: false,
+        soundWaveX: 0
+      }
+    };
+
+    const canvas = document.getElementById('phet-stage');
+    const ctx = canvas.getContext('2d');
+
+    let viewWidth = window.innerWidth;
+    let viewHeight = window.innerHeight;
+
+    function resizeCanvas() {
+      viewWidth = window.innerWidth;
+      viewHeight = window.innerHeight;
+      canvas.width = viewWidth * window.devicePixelRatio;
+      canvas.height = viewHeight * window.devicePixelRatio;
+      ctx.resetTransform();
+      ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    function setStation(station) {
+      state.station = station;
+      ['string', 'pendulum', 'echo'].forEach(s => {
+        const btn = document.getElementById(`tab-${s}`);
+        const readout = document.getElementById(`readout-${s}`);
+        if (s === station) {
+          btn.classList.add('active');
+          readout.classList.remove('hidden');
+        } else {
+          btn.classList.remove('active');
+          readout.classList.add('hidden');
+        }
+      });
+
+      const hintText = document.getElementById('hint-text');
+      const tray = document.getElementById('phet-tray');
+
+      if (station === 'string') {
+        hintText.innerHTML = 'বিস্তার ও কম্পাঙ্ক পরিবর্তন করে সাইন তরঙ্গ ও তরঙ্গদৈর্ঘ্য পর্যবেক্ষণ করুন!';
+        tray.innerHTML = `
+          <div class="flex items-center gap-3">
+            <span class="text-xs font-bold text-slate-500">বিস্তার (A):</span>
+            <input type="range" min="0.2" max="1.5" step="0.05" value="${state.string.amplitude}" 
+              oninput="setStringAmp(this.value)" class="w-20 sm:w-28 accent-blue-600 cursor-pointer">
+            <span class="text-xs font-bold text-blue-700 w-12 font-mono" id="tray-amp">${toBn(state.string.amplitude, 2)} cm</span>
+          </div>
+          <div class="h-6 w-px bg-slate-300"></div>
+          <div class="flex items-center gap-3">
+            <span class="text-xs font-bold text-slate-500">কম্পাঙ্ক (f):</span>
+            <input type="range" min="0.5" max="3.0" step="0.1" value="${state.string.freq}" 
+              oninput="setStringFreq(this.value)" class="w-20 sm:w-28 accent-purple-600 cursor-pointer">
+            <span class="text-xs font-bold text-purple-700 w-12 font-mono" id="tray-freq">${toBn(state.string.freq, 1)} Hz</span>
+          </div>
+        `;
+        updateStringReadout();
+      } else if (station === 'pendulum') {
+        hintText.innerHTML = 'ববটিকে হাত দিয়ে টেনে ছেড়ে দিন—দোলনকাল কীভাবে সুতার দৈর্ঘ্যের ওপর নির্ভর করে দেখুন!';
+        tray.innerHTML = `
+          <div class="flex items-center gap-3">
+            <span class="text-xs font-bold text-slate-500">সুতার দৈর্ঘ্য (L):</span>
+            <input type="range" min="0.4" max="2.0" step="0.1" value="${state.pendulum.lengthM}" 
+              oninput="setPenLength(this.value)" class="w-24 sm:w-36 accent-purple-600 cursor-pointer">
+            <span class="text-xs font-bold text-purple-700 w-12 font-mono" id="tray-pen-l">${toBn(state.pendulum.lengthM, 1)} m</span>
+          </div>
+        `;
+        updatePendulumReadout();
+      } else if (station === 'echo') {
+        hintText.innerHTML = 'দেয়ালের দূরত্ব ও তাপমাত্রা পরিবর্তন করে শব্দের প্রতিধ্বনি পরীক্ষা করুন!';
+        tray.innerHTML = `
+          <div class="flex items-center gap-3">
+            <span class="text-xs font-bold text-slate-500">দূরত্ব (d):</span>
+            <input type="range" min="10" max="60" step="1" value="${state.echo.distM}" 
+              oninput="setEchoDist(this.value)" class="w-24 sm:w-32 accent-amber-600 cursor-pointer">
+            <span class="text-xs font-bold text-amber-700 w-14 font-mono" id="tray-echo-d">${toBn(state.echo.distM, 1)} m</span>
+          </div>
+          <div class="h-6 w-px bg-slate-300"></div>
+          <button onclick="fireSoundPulse()" class="px-3 py-1 rounded-lg text-xs font-bold bg-purple-600 hover:bg-purple-700 text-white shadow-sm">
+            <i class="fa-solid fa-bell mr-1"></i> শব্দ সৃষ্টি করো
+          </button>
+        `;
+        updateEchoReadout();
+      }
+    }
+
+    function toggleReadingCard() {
+      state.showReadout = !state.showReadout;
+      const card = document.getElementById('readout-card');
+      const icon = document.getElementById('readout-icon');
+      const text = document.getElementById('readout-btn-text');
+      if (state.showReadout) {
+        card.style.display = 'block';
+        icon.className = 'fa-solid fa-eye text-purple-600';
+        text.innerText = 'পাঠ লুকান';
+      } else {
+        card.style.display = 'none';
+        icon.className = 'fa-solid fa-eye-slash text-slate-400';
+        text.innerText = 'পাঠ দেখান';
+      }
+    }
+
+    function resetLab() {
+      state.pendulum.angleRad = 0.4;
+      state.pendulum.angularVelocity = 0;
+      updateStringReadout();
+      updatePendulumReadout();
+      updateEchoReadout();
+    }
+
+    function setStringAmp(a) {
+      state.string.amplitude = parseFloat(a);
+      const el = document.getElementById('tray-amp');
+      if (el) el.innerText = toBn(state.string.amplitude, 2) + ' cm';
+      updateStringReadout();
+    }
+
+    function setStringFreq(f) {
+      state.string.freq = parseFloat(f);
+      const el = document.getElementById('tray-freq');
+      if (el) el.innerText = toBn(state.string.freq, 1) + ' Hz';
+      updateStringReadout();
+    }
+
+    function updateStringReadout() {
+      const s = state.string;
+      const lambda = s.speed / s.freq;
+
+      document.getElementById('readout-a').innerText = `${toBn(s.amplitude, 2)} cm`;
+      document.getElementById('readout-f').innerText = `${toBn(s.freq, 1)} Hz`;
+      document.getElementById('readout-lambda').innerText = `${toBn(lambda, 2)} m`;
+      document.getElementById('readout-v').innerText = `${toBn(s.speed, 2)} m/s`;
+
+      if (window.katex) {
+        katex.render(
+          `v = f \\lambda \\implies \\lambda = \\frac{v}{f} = \\frac{${toBn(s.speed, 1)}}{${toBn(s.freq, 1)}} = ${toBn(lambda, 2)}\\text{ m}`,
+          document.getElementById('readout-math'),
+          { throwOnError: false }
+        );
+      }
+    }
+
+    function setPenLength(l) {
+      state.pendulum.lengthM = parseFloat(l);
+      const el = document.getElementById('tray-pen-l');
+      if (el) el.innerText = toBn(state.pendulum.lengthM, 1) + ' m';
+      updatePendulumReadout();
+    }
+
+    function updatePendulumReadout() {
+      const p = state.pendulum;
+      const t = 2 * Math.PI * Math.sqrt(p.lengthM / 9.8);
+
+      document.getElementById('readout-pen-l').innerText = `${toBn(p.lengthM, 1)} m`;
+      document.getElementById('readout-pen-t').innerText = `${toBn(t, 2)} s`;
+
+      if (window.katex) {
+        katex.render(
+          `T = 2\\pi\\sqrt{\\frac{L}{g}} = 2\\pi\\sqrt{\\frac{${toBn(p.lengthM, 1)}}{9.8}} = ${toBn(t, 2)}\\text{ s}`,
+          document.getElementById('readout-math'),
+          { throwOnError: false }
+        );
+      }
+    }
+
+    function setEchoDist(d) {
+      state.echo.distM = parseFloat(d);
+      const el = document.getElementById('tray-echo-d');
+      if (el) el.innerText = toBn(state.echo.distM, 1) + ' m';
+      updateEchoReadout();
+    }
+
+    function fireSoundPulse() {
+      state.echo.isFiringSound = true;
+      state.echo.soundWaveX = 0;
+    }
+
+    function updateEchoReadout() {
+      const e = state.echo;
+      const v = 332 + 0.6 * e.tempC;
+      const t = (2 * e.distM) / v;
+      const audible = t >= 0.1;
+
+      document.getElementById('readout-echo-temp').innerText = `${toBn(e.tempC)} °C`;
+      document.getElementById('readout-echo-v').innerText = `${toBn(Math.round(v))} m/s`;
+      document.getElementById('readout-echo-d').innerText = `${toBn(e.distM, 1)} m`;
+      document.getElementById('readout-echo-t').innerText = audible ? `${toBn(t, 2)} s (শোনা যাবে)` : `${toBn(t, 2)} s (শব্দানুভূতির স্থায়িত্বকালের চেয়ে কম)`;
+
+      if (window.katex) {
+        katex.render(
+          `t = \\frac{2d}{v} = \\frac{2 \\times ${toBn(e.distM, 1)}}{${toBn(Math.round(v))}} = ${toBn(t, 2)}\\text{ s}`,
+          document.getElementById('readout-math'),
+          { throwOnError: false }
+        );
+      }
+    }
+
+    // -------------------------------------------------------------
+    // POINTER (PENDULUM DRAGGING)
+    // -------------------------------------------------------------
+    let pointer = { isDown: false, dragBob: false };
+
+    canvas.addEventListener('pointerdown', (e) => {
+      if (state.station === 'pendulum') {
+        const originX = viewWidth / 2;
+        const originY = 120;
+        const penPixels = state.pendulum.lengthM * 160;
+        const bobX = originX + penPixels * Math.sin(state.pendulum.angleRad);
+        const bobY = originY + penPixels * Math.cos(state.pendulum.angleRad);
+
+        const rect = canvas.getBoundingClientRect();
+        const px = e.clientX - rect.left;
+        const py = e.clientY - rect.top;
+
+        if (Math.hypot(px - bobX, py - bobY) < 35) {
+          pointer.isDown = true;
+          pointer.dragBob = true;
+          state.pendulum.angularVelocity = 0;
+        }
+      }
+    });
+
+    window.addEventListener('pointermove', (e) => {
+      if (!pointer.isDown || !pointer.dragBob) return;
+      const rect = canvas.getBoundingClientRect();
+      const px = e.clientX - rect.left;
+      const py = e.clientY - rect.top;
+      const originX = viewWidth / 2;
+      const originY = 120;
+
+      const angle = Math.atan2(px - originX, py - originY);
+      state.pendulum.angleRad = Math.max(-1.0, Math.min(1.0, angle));
+    });
+
+    window.addEventListener('pointerup', () => {
+      pointer.isDown = false;
+      pointer.dragBob = false;
+    });
+
+    // -------------------------------------------------------------
+    // ANIMATION & RENDER
+    // -------------------------------------------------------------
+    let lastTime = performance.now();
+
+    function animate(currentTime) {
+      const dt = Math.min(0.05, (currentTime - lastTime) / 1000);
+      lastTime = currentTime;
+
+      // Update Pendulum Physics
+      if (state.station === 'pendulum' && !pointer.dragBob) {
+        const p = state.pendulum;
+        const angAccel = -(9.8 / p.lengthM) * Math.sin(p.angleRad);
+        p.angularVelocity += angAccel * dt;
+        p.angularVelocity *= 0.999;
+        p.angleRad += p.angularVelocity * dt;
+      }
+
+      ctx.clearRect(0, 0, viewWidth, viewHeight);
+
+      if (state.station === 'string') {
+        renderStringStage(currentTime / 1000);
+      } else if (state.station === 'pendulum') {
+        renderPendulumStage();
+      } else if (state.station === 'echo') {
+        renderEchoStage(dt);
+      }
+
+      requestAnimationFrame(animate);
+    }
+
+    function renderStringStage(timeSec) {
+      const centerY = viewHeight / 2;
+      const startX = 140;
+      const endX = viewWidth - 100;
+      const s = state.string;
+      const k = (2 * Math.PI * s.freq) / s.speed;
+      const omega = 2 * Math.PI * s.freq;
+      const ampPx = s.amplitude * 55;
+
+      // Oscillator motor on left
+      ctx.fillStyle = '#334155';
+      ctx.fillRect(startX - 50, centerY - 60, 45, 120);
+      // Piston
+      const pistonY = centerY + Math.sin(omega * timeSec) * ampPx;
+      ctx.fillStyle = '#8b5cf6';
+      ctx.beginPath();
+      ctx.arc(startX - 5, pistonY, 10, 0, Math.PI * 2);
+      ctx.fill();
+
+      // String of connected beads (PhET style!)
+      const beadCount = 65;
+      const dx = (endX - startX) / beadCount;
+
+      ctx.beginPath();
+      for (let i = 0; i <= beadCount; i++) {
+        const x = startX + i * dx;
+        const y = centerY + Math.sin(k * (x - startX) - omega * timeSec) * ampPx;
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.strokeStyle = '#a855f7';
+      ctx.lineWidth = 4;
+      ctx.stroke();
+
+      // Beads
+      for (let i = 0; i <= beadCount; i += 2) {
+        const x = startX + i * dx;
+        const y = centerY + Math.sin(k * (x - startX) - omega * timeSec) * ampPx;
+        ctx.beginPath();
+        ctx.arc(x, y, 4, 0, Math.PI * 2);
+        ctx.fillStyle = i % 4 === 0 ? '#ef4444' : '#3b82f6';
+        ctx.fill();
+      }
+
+      // Clamp post on right
+      ctx.fillStyle = '#475569';
+      ctx.fillRect(endX - 2, centerY - 80, 16, 160);
+      ctx.fillStyle = '#f59e0b';
+      ctx.beginPath();
+      ctx.arc(endX + 6, centerY, 8, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    function renderPendulumStage() {
+      const originX = viewWidth / 2;
+      const originY = 120;
+      const p = state.pendulum;
+      const penPixels = p.lengthM * 160;
+
+      const bobX = originX + penPixels * Math.sin(p.angleRad);
+      const bobY = originY + penPixels * Math.cos(p.angleRad);
+
+      // Support Pivot Bar
+      ctx.fillStyle = '#334155';
+      ctx.fillRect(originX - 70, originY - 12, 140, 12);
+      ctx.fillStyle = '#0f172a';
+      ctx.beginPath();
+      ctx.arc(originX, originY, 6, 0, Math.PI * 2);
+      ctx.fill();
+
+      // String
+      ctx.beginPath();
+      ctx.moveTo(originX, originY);
+      ctx.lineTo(bobX, bobY);
+      ctx.strokeStyle = '#64748b';
+      ctx.lineWidth = 2.5;
+      ctx.stroke();
+
+      // Pendulum Bob
+      ctx.beginPath();
+      ctx.arc(bobX, bobY, 18, 0, Math.PI * 2);
+      const bobGrad = ctx.createRadialGradient(bobX - 4, bobY - 4, 2, bobX, bobY, 18);
+      bobGrad.addColorStop(0, '#f8fafc');
+      bobGrad.addColorStop(0.4, '#a855f7');
+      bobGrad.addColorStop(1, '#6b21a8');
+      ctx.fillStyle = bobGrad;
+      ctx.fill();
+      ctx.strokeStyle = '#581c87';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // Center reference dashed line
+      ctx.setLineDash([4, 4]);
+      ctx.strokeStyle = '#cbd5e1';
+      ctx.beginPath();
+      ctx.moveTo(originX, originY);
+      ctx.lineTo(originX, originY + penPixels + 25);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+
+    function renderEchoStage(dt) {
+      const centerY = viewHeight / 2;
+      const speakerX = 140;
+      const meterScale = (viewWidth - 320) / 60;
+      const wallX = speakerX + state.echo.distM * meterScale;
+
+      // Sound Speaker Left
+      ctx.fillStyle = '#334155';
+      ctx.beginPath();
+      ctx.moveTo(speakerX - 30, centerY - 25);
+      ctx.lineTo(speakerX, centerY - 45);
+      ctx.lineTo(speakerX, centerY + 45);
+      ctx.lineTo(speakerX - 30, centerY + 25);
+      ctx.closePath();
+      ctx.fill();
+
+      // Reflector Wall Right
+      ctx.fillStyle = '#64748b';
+      ctx.fillRect(wallX, centerY - 120, 25, 240);
+      ctx.fillStyle = '#334155';
+      ctx.font = 'bold 12px Hind Siliguri';
+      ctx.fillText('প্রতিফলক পাহাড় / দেয়াল', wallX - 35, centerY + 145);
+
+      // Sound Wave Arcs animation
+      if (state.echo.isFiringSound) {
+        state.echo.soundWaveX += 280 * dt;
+        if (state.echo.soundWaveX > state.echo.distM * 2 * meterScale) {
+          state.echo.isFiringSound = false;
+        }
+
+        const isGoingRight = state.echo.soundWaveX <= (wallX - speakerX);
+        const arcX = isGoingRight ? (speakerX + state.echo.soundWaveX) : (wallX - (state.echo.soundWaveX - (wallX - speakerX)));
+
+        ctx.strokeStyle = isGoingRight ? '#8b5cf6' : '#ef4444';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.arc(arcX, centerY, 35, -Math.PI / 3, Math.PI / 3, !isGoingRight);
+        ctx.stroke();
+      }
+    }
+
+    setStation('string');
+    requestAnimationFrame(animate);
+
+  </script>
+</body>
+</html>

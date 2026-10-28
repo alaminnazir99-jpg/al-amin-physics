@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>বিদ্যুতের চৌম্বক ক্রিয়া ল্যাব (PhET Interactive Magnetism Lab) | আল-আমিন ফিজিক্স</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&family=JetBrains+Mono:wght@500;700&display=swap');
+    
+    * {
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    body {
+      font-family: 'Hind Siliguri', system-ui, sans-serif;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: #090d16;
+      color: #f8fafc;
+    }
+    #phet-stage {
+      position: absolute;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      touch-action: none;
+      cursor: default;
+    }
+    .phet-header {
+      position: absolute;
+      top: 12px;
+      left: 16px;
+      right: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 25;
+      pointer-events: none;
+    }
+    .phet-header * {
+      pointer-events: auto;
+    }
+    .phet-tab-pill {
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(8px);
+      box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+      border: 1px solid rgba(51, 65, 85, 0.8);
+      border-radius: 9999px;
+      padding: 4px;
+      display: flex;
+      gap: 4px;
+    }
+    .phet-tab-btn {
+      padding: 6px 14px;
+      border-radius: 9999px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #94a3b8;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .phet-tab-btn.active {
+      background: #ef4444;
+      color: #ffffff;
+      box-shadow: 0 2px 8px rgba(239, 68, 68, 0.35);
+    }
+    .phet-tray {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(12px);
+      border: 1.5px solid rgba(51, 65, 85, 0.8);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+      border-radius: 20px;
+      padding: 8px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      z-index: 25;
+    }
+    .phet-readout-card {
+      position: absolute;
+      top: 70px;
+      right: 20px;
+      background: rgba(15, 23, 42, 0.9);
+      backdrop-filter: blur(10px);
+      border: 1px solid #334155;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+      border-radius: 16px;
+      padding: 12px 16px;
+      min-width: 270px;
+      z-index: 25;
+      transition: all 0.2s;
+    }
+    .phet-hint-tag {
+      position: absolute;
+      top: 70px;
+      left: 20px;
+      background: rgba(30, 41, 59, 0.9);
+      border: 1px solid #475569;
+      color: #fca5a5;
+      padding: 6px 14px;
+      border-radius: 14px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      z-index: 25;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      max-width: calc(100vw - 330px);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation Bar -->
+  <div class="phet-header">
+    <div class="flex items-center gap-2">
+      <a href="index.html" class="px-3 py-1.5 rounded-full bg-slate-900 border border-slate-700 text-slate-200 hover:text-red-400 font-bold text-xs shadow-sm flex items-center gap-1.5 transition">
+        <i class="fa-solid fa-arrow-left"></i> ল্যাব তালিকা
+      </a>
+      <span class="text-xs font-bold text-slate-300 bg-slate-900/80 px-3 py-1.5 rounded-full border border-slate-700 shadow-sm hidden sm:inline">
+        অধ্যায় ১২: বিদ্যুতের চৌম্বক ক্রিয়া (Electromagnetism Lab)
+      </span>
+    </div>
+
+    <!-- PhET Experiment Switcher -->
+    <div class="phet-tab-pill">
+      <button onclick="setStation('faraday')" id="tab-faraday" class="phet-tab-btn active">
+        <i class="fa-solid fa-magnet mr-1"></i> ফ্যারাডের আবেশ (Faraday's Law)
+      </button>
+      <button onclick="setStation('transformer')" id="tab-transformer" class="phet-tab-btn">
+        <i class="fa-solid fa-arrows-split-up-and-left mr-1"></i> ট্রান্সফরমার
+      </button>
+      <button onclick="setStation('motor')" id="tab-motor" class="phet-tab-btn">
+        <i class="fa-solid fa-fan mr-1"></i> ডিসি মোটর
+      </button>
+    </div>
+
+    <!-- Right Controls: Readout Toggle & Reset -->
+    <div class="flex items-center gap-2">
+      <button onclick="toggleReadingCard()" id="btn-toggle-readout" class="px-3 py-1.5 rounded-full bg-slate-900 border border-slate-700 text-slate-200 hover:bg-slate-800 font-bold text-xs shadow-sm flex items-center gap-1.5 transition">
+        <i class="fa-solid fa-eye text-red-400" id="readout-icon"></i> <span id="readout-btn-text">পাঠ লুকান</span>
+      </button>
+      <button onclick="resetLab()" class="w-8 h-8 rounded-full bg-slate-900 border border-slate-700 text-slate-200 hover:bg-slate-800 flex items-center justify-center text-xs shadow-sm transition" title="রিসেট">
+        <i class="fa-solid fa-rotate-right"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Instruction Hint -->
+  <div class="phet-hint-tag" id="hint-tag">
+    <i class="fa-solid fa-hand-pointer text-red-400 animate-pulse"></i>
+    <span id="hint-text">দণ্ড চুম্বকটি মাউস দিয়ে ধরে কুণ্ডলীর ভেতরে-বাইরে দ্রুত নাড়াচাড়া করুন এবং গ্যালভানোমিটারের কাঁটার বিক্ষেপ দেখুন!</span>
+  </div>
+
+  <!-- Real-Time Floating Readout Card -->
+  <div class="phet-readout-card" id="readout-card">
+    <div class="flex items-center justify-between pb-1.5 mb-1.5 border-b border-slate-700">
+      <span class="text-xs font-bold text-slate-200 flex items-center gap-1.5">
+        <i class="fa-solid fa-gauge-high text-red-400"></i> তড়িৎচৌম্বক পরিমিতি পাঠ
+      </span>
+      <span class="text-[10px] px-2 py-0.5 rounded-full bg-red-400/20 text-red-400 font-bold font-mono" id="mag-badge">&Epsilon; = -N(&Delta;&Phi;/&Delta;t)</span>
+    </div>
+
+    <!-- Faraday Readout -->
+    <div id="readout-faraday" class="space-y-1 text-xs">
+      <div class="flex justify-between items-center">
+        <span class="text-slate-400">কুণ্ডলীর পাকসংখ্যা (N):</span>
+        <span class="font-bold font-mono text-blue-400 text-sm" id="readout-n">৪ টি পাক</span>
+      </div>
+      <div class="flex justify-between items-center">
+        <span class="text-slate-400">চুম্বকের বেগ (v):</span>
+        <span class="font-bold font-mono text-purple-400 text-sm" id="readout-v">০.০ cm/s</span>
+      </div>
+      <div class="flex justify-between items-center">
+        <span class="text-slate-400">গ্যালভানোমিটার বিক্ষেপ:</span>
+        <span class="font-bold font-mono text-amber-400 text-sm" id="readout-deflection">০.০°</span>
+      </div>
+      <div class="pt-1.5 mt-1 border-t border-dashed border-slate-700 flex justify-between items-center">
+        <span class="font-bold text-slate-200">আবিষ্ট তড়িৎচালক শক্তি (&Epsilon;):</span>
+        <span class="font-bold font-mono text-emerald-400 text-base" id="readout-emf">০.০০ V</span>
+      </div>
+    </div>
+
+    <!-- Transformer Readout -->
+    <div id="readout-transformer" class="space-y-1 text-xs hidden">
+      <div class="flex justify-between items-center">
+        <span class="text-slate-400">মুখ্য কুণ্ডলী (Np, Vp):</span>
+        <span class="font-bold font-mono text-blue-400 text-sm" id="readout-trans-p">১০০ পাক, ২২০ V</span>
+      </div>
+      <div class="flex justify-between items-center">
+        <span class="text-slate-400">গৌণ কুণ্ডলী (Ns):</span>
+        <span class="font-bold font-mono text-purple-400 text-sm" id="readout-trans-s">৫০০ পাক</span>
+      </div>
+      <div class="flex justify-between items-center">
+        <span class="text-slate-400">ট্রান্সফরমার ধরন:</span>
+        <span class="font-bold text-amber-400 text-xs" id="readout-trans-type">স্টেপ-আপ (Step-Up)</span>
+      </div>
+      <div class="pt-1.5 mt-1 border-t border-dashed border-slate-700 flex justify-between items-center">
+        <span class="font-bold text-slate-200">আউটপুট ভোল্টেজ (Vs):</span>
+        <span class="font-bold font-mono text-emerald-400 text-base" id="readout-trans-vs">১১০০ V</span>
+      </div>
+    </div>
+
+    <!-- Motor Readout -->
+    <div id="readout-motor" class="space-y-1 text-xs hidden">
+      <div class="flex justify-between items-center">
+        <span class="text-slate-400">চৌম্বক ক্ষেত্র (B):</span>
+        <span class="font-bold font-mono text-blue-400 text-sm">০.৫০ Tesla</span>
+      </div>
+      <div class="flex justify-between items-center">
+        <span class="text-slate-400">ঘূর্ণন গতি (RPM):</span>
+        <span class="font-bold font-mono text-emerald-400 text-sm">৬০০ RPM</span>
+      </div>
+      <div class="pt-1.5 mt-1 border-t border-dashed border-slate-700 flex justify-between items-center">
+        <span class="font-bold text-slate-200">নীতি:</span>
+        <span class="font-bold text-amber-400 text-xs">ফ্লেমিংয়ের বাম হস্ত নিয়ম (F = ILB)</span>
+      </div>
+    </div>
+
+    <!-- Live KaTeX formula line -->
+    <div class="mt-2 p-1.5 bg-slate-950 rounded-lg text-center text-xs overflow-x-auto text-red-300" id="readout-math"></div>
+  </div>
+
+  <!-- Bottom PhET Tool Rack -->
+  <div class="phet-tray" id="phet-tray"></div>
+
+  <!-- Fullscreen Canvas -->
+  <canvas id="phet-stage"></canvas>
+
+  <script>
+    function toBn(num, decimals = null) {
+      const bnDigits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+      const str = decimals !== null ? Number(num).toFixed(decimals) : String(num);
+      return str.replace(/\d/g, d => bnDigits[Number(d)]);
+    }
+
+    const state = {
+      station: 'faraday',
+      showReadout: true,
+
+      // Faraday
+      faraday: {
+        turns: 4,
+        magnetX: 200,
+        magnetY: 0,
+        magnetVx: 0,
+        isDraggingMagnet: false,
+        lastX: 200,
+        lastTime: performance.now()
+      },
+
+      // Transformer
+      transformer: {
+        np: 100,
+        ns: 500,
+        vp: 220
+      }
+    };
+
+    const canvas = document.getElementById('phet-stage');
+    const ctx = canvas.getContext('2d');
+
+    let viewWidth = window.innerWidth;
+    let viewHeight = window.innerHeight;
+
+    function resizeCanvas() {
+      viewWidth = window.innerWidth;
+      viewHeight = window.innerHeight;
+      canvas.width = viewWidth * window.devicePixelRatio;
+      canvas.height = viewHeight * window.devicePixelRatio;
+      ctx.resetTransform();
+      ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    function setStation(station) {
+      state.station = station;
+      ['faraday', 'transformer', 'motor'].forEach(s => {
+        const btn = document.getElementById(`tab-${s}`);
+        const readout = document.getElementById(`readout-${s}`);
+        if (s === station) {
+          btn.classList.add('active');
+          readout.classList.remove('hidden');
+        } else {
+          btn.classList.remove('active');
+          readout.classList.add('hidden');
+        }
+      });
+
+      const hintText = document.getElementById('hint-text');
+      const tray = document.getElementById('phet-tray');
+
+      if (station === 'faraday') {
+        hintText.innerHTML = 'দণ্ড চুম্বকটি কুণ্ডলীর ভেতর দ্রুত নাড়ান—দেখুন গ্যালভানোমিটারের কাঁটা ও বাল্ব কীভাবে জ্বলে ওঠে!';
+        tray.innerHTML = `
+          <div class="flex items-center gap-3">
+            <span class="text-xs font-bold text-slate-400">কুণ্ডলীর পাকসংখ্যা (N):</span>
+            <button onclick="setFaradayTurns(2)" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-xs font-bold text-slate-300">২ পাক</button>
+            <button onclick="setFaradayTurns(4)" class="px-2.5 py-1 rounded bg-red-600 text-xs font-bold text-white">৪ পাক</button>
+          </div>
+        `;
+        updateFaradayMath();
+      } else if (station === 'transformer') {
+        hintText.innerHTML = 'মুখ্য ও গৌণ কুণ্ডলীর পাকসংখ্যা পরিবর্তন করে স্টেপ-আপ ও স্টেপ-ডাউন ভোল্টেজ হিসাব করুন!';
+        tray.innerHTML = `
+          <div class="flex items-center gap-3">
+            <span class="text-xs font-bold text-purple-400">গৌণ পাকসংখ্যা (Ns):</span>
+            <input type="range" min="50" max="1000" step="50" value="${state.transformer.ns}" 
+              oninput="setTransformerNs(this.value)" class="w-28 sm:w-40 accent-purple-400 cursor-pointer">
+            <span class="text-xs font-bold text-purple-400 w-16 font-mono" id="tray-trans-ns">${toBn(state.transformer.ns)} পাক</span>
+          </div>
+        `;
+        updateTransformerMath();
+      } else if (station === 'motor') {
+        hintText.innerHTML = 'চৌম্বক ক্ষেত্রে বিদ্যুৎবাহী তারের ওপর প্রযুক্ত বল মোটরকে অবিরত ঘোরায়!';
+        tray.innerHTML = `<span class="text-xs font-bold text-red-400">তড়িৎ শক্তি &rarr; যান্ত্রিক শক্তিতে রূপান্তর</span>`;
+      }
+    }
+
+    function toggleReadingCard() {
+      state.showReadout = !state.showReadout;
+      const card = document.getElementById('readout-card');
+      const icon = document.getElementById('readout-icon');
+      const text = document.getElementById('readout-btn-text');
+      if (state.showReadout) {
+        card.style.display = 'block';
+        icon.className = 'fa-solid fa-eye text-red-400';
+        text.innerText = 'পাঠ লুকান';
+      } else {
+        card.style.display = 'none';
+        icon.className = 'fa-solid fa-eye-slash text-slate-500';
+        text.innerText = 'পাঠ দেখান';
+      }
+    }
+
+    function resetLab() {
+      state.faraday.magnetX = 200;
+      updateFaradayMath();
+    }
+
+    function setFaradayTurns(n) {
+      state.faraday.turns = n;
+      document.getElementById('readout-n').innerText = `${toBn(n)} টি পাক`;
+      updateFaradayMath();
+    }
+
+    function updateFaradayMath() {
+      const f = state.faraday;
+      const speed = Math.abs(f.magnetVx);
+      const coilCenterX = viewWidth * 0.6;
+      const distToCoil = Math.abs(f.magnetX - coilCenterX);
+      const inCoil = distToCoil < 80;
+
+      const emf = inCoil ? (f.turns * speed * 0.04) : 0;
+      const defl = (f.magnetVx > 0 ? 1 : -1) * Math.min(45, emf * 15);
+
+      document.getElementById('readout-v').innerText = `${toBn(speed, 1)} cm/s`;
+      document.getElementById('readout-deflection').innerText = `${toBn(Math.abs(defl), 1)}° (${defl >= 0 ? 'ডানে' : 'বামে'})`;
+      document.getElementById('readout-emf').innerText = `${toBn(emf, 2)} V`;
+
+      if (window.katex) {
+        katex.render(
+          `\\mathcal{E} = -N \\frac{\\Delta \\Phi}{\\Delta t} = -${toBn(f.turns)} \\times \\left(\\frac{\\Delta \\Phi}{\\Delta t}\\right) = ${toBn(emf, 2)}\\text{ V}`,
+          document.getElementById('readout-math'),
+          { throwOnError: false }
+        );
+      }
+    }
+
+    function setTransformerNs(val) {
+      state.transformer.ns = parseInt(val);
+      const el = document.getElementById('tray-trans-ns');
+      if (el) el.innerText = toBn(state.transformer.ns) + ' পাক';
+      updateTransformerMath();
+    }
+
+    function updateTransformerMath() {
+      const t = state.transformer;
+      const vs = (t.ns / t.np) * t.vp;
+      const isStepUp = t.ns > t.np;
+
+      document.getElementById('readout-trans-p').innerText = `${toBn(t.np)} পাক, ${toBn(t.vp)} V`;
+      document.getElementById('readout-trans-s').innerText = `${toBn(t.ns)} পাক`;
+      document.getElementById('readout-trans-type').innerText = isStepUp ? 'স্টেপ-আপ (ভোল্টেজ বৃদ্ধিকারী)' : 'স্টেপ-ডাউন (ভোল্টেজ হ্রাসকারী)';
+      document.getElementById('readout-trans-vs').innerText = `${toBn(Math.round(vs))} V`;
+
+      if (window.katex) {
+        katex.render(
+          `\\frac{V_p}{V_s} = \\frac{N_p}{N_s} \\implies V_s = V_p \\left(\\frac{N_s}{N_p}\\right) = 220 \\times \\frac{${toBn(t.ns)}}{100} = ${toBn(Math.round(vs))}\\text{ V}`,
+          document.getElementById('readout-math'),
+          { throwOnError: false }
+        );
+      }
+    }
+
+    // -------------------------------------------------------------
+    // POINTER INTERACTIONS (DRAG BAR MAGNET)
+    // -------------------------------------------------------------
+    canvas.addEventListener('pointerdown', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const px = e.clientX - rect.left;
+      const py = e.clientY - rect.top;
+      const centerY = viewHeight / 2;
+
+      if (state.station === 'faraday') {
+        if (Math.abs(px - state.faraday.magnetX) < 70 && Math.abs(py - centerY) < 40) {
+          state.faraday.isDraggingMagnet = true;
+          state.faraday.lastX = px;
+          state.faraday.lastTime = performance.now();
+        }
+      }
+    });
+
+    window.addEventListener('pointermove', (e) => {
+      if (!state.faraday.isDraggingMagnet) return;
+      const rect = canvas.getBoundingClientRect();
+      const px = e.clientX - rect.left;
+      const now = performance.now();
+      const dt = Math.max(0.001, (now - state.faraday.lastTime) / 1000);
+
+      state.faraday.magnetVx = (px - state.faraday.lastX) / dt / 10;
+      state.faraday.magnetX = Math.max(80, Math.min(viewWidth - 100, px));
+      state.faraday.lastX = px;
+      state.faraday.lastTime = now;
+
+      updateFaradayMath();
+    });
+
+    window.addEventListener('pointerup', () => {
+      state.faraday.isDraggingMagnet = false;
+      state.faraday.magnetVx = 0;
+      updateFaradayMath();
+    });
+
+    // -------------------------------------------------------------
+    // RENDERERS
+    // -------------------------------------------------------------
+    function animate() {
+      ctx.clearRect(0, 0, viewWidth, viewHeight);
+
+      if (state.station === 'faraday') {
+        renderFaradayStage();
+      } else if (state.station === 'transformer') {
+        renderTransformerStage();
+      } else if (state.station === 'motor') {
+        renderMotorStage();
+      }
+
+      requestAnimationFrame(animate);
+    }
+
+    function renderFaradayStage() {
+      const centerY = viewHeight / 2;
+      const coilCenterX = viewWidth * 0.6;
+      const f = state.faraday;
+
+      // Solenoid Copper Coil Loops
+      ctx.strokeStyle = '#d97706';
+      ctx.lineWidth = 5;
+      const numLoops = f.turns;
+      for (let i = 0; i < numLoops; i++) {
+        const lx = coilCenterX - 40 + i * 25;
+        ctx.beginPath();
+        ctx.ellipse(lx, centerY, 14, 55, 0, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+
+      // Connecting wires to Galvanometer / Bulb
+      ctx.strokeStyle = '#94a3b8';
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.moveTo(coilCenterX - 40, centerY + 55);
+      ctx.lineTo(coilCenterX - 40, centerY + 130);
+      ctx.lineTo(coilCenterX + 80, centerY + 130);
+      ctx.lineTo(coilCenterX + 80, centerY + 55);
+      ctx.stroke();
+
+      // Galvanometer Center-Zero Meter
+      const meterX = coilCenterX + 20;
+      const meterY = centerY + 130;
+
+      ctx.beginPath();
+      ctx.arc(meterX, meterY, 32, 0, Math.PI * 2);
+      ctx.fillStyle = '#ffffff';
+      ctx.fill();
+      ctx.strokeStyle = '#334155';
+      ctx.lineWidth = 3;
+      ctx.stroke();
+
+      // Meter Needle
+      const speed = Math.abs(f.magnetVx);
+      const inCoil = Math.abs(f.magnetX - coilCenterX) < 80;
+      const defl = inCoil ? (f.magnetVx > 0 ? 1 : -1) * Math.min(0.8, speed * 0.03) : 0;
+
+      ctx.save();
+      ctx.translate(meterX, meterY);
+      ctx.rotate(defl);
+      ctx.strokeStyle = '#ef4444';
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.moveTo(0, 5);
+      ctx.lineTo(0, -26);
+      ctx.stroke();
+      ctx.restore();
+
+      ctx.fillStyle = '#0f172a';
+      ctx.font = 'bold 9px JetBrains Mono';
+      ctx.fillText('G', meterX - 4, meterY + 18);
+
+      // Bar Magnet (Draggable: North Red, South Blue)
+      const mx = f.magnetX;
+      ctx.save();
+      ctx.translate(mx, centerY);
+
+      // North Pole (Red)
+      ctx.fillStyle = '#ef4444';
+      ctx.fillRect(-60, -22, 60, 44);
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 16px JetBrains Mono';
+      ctx.fillText('N', -42, 6);
+
+      // South Pole (Blue)
+      ctx.fillStyle = '#3b82f6';
+      ctx.fillRect(0, -22, 60, 44);
+      ctx.fillStyle = '#ffffff';
+      ctx.fillText('S', 22, 6);
+
+      // Border
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(-60, -22, 120, 44);
+
+      ctx.restore();
+    }
+
+    function renderTransformerStage() {
+      const centerX = viewWidth / 2;
+      const centerY = viewHeight / 2;
+
+      // Iron Core (Laminated)
+      ctx.fillStyle = '#475569';
+      ctx.fillRect(centerX - 140, centerY - 100, 280, 200);
+      ctx.fillStyle = '#090d16';
+      ctx.fillRect(centerX - 80, centerY - 60, 160, 120);
+
+      // Primary Coil (Left)
+      ctx.strokeStyle = '#3b82f6';
+      ctx.lineWidth = 6;
+      for (let i = 0; i < 5; i++) {
+        ctx.strokeRect(centerX - 150, centerY - 50 + i * 22, 20, 12);
+      }
+      ctx.fillStyle = '#3b82f6';
+      ctx.font = 'bold 12px Hind Siliguri';
+      ctx.fillText(`মুখ্য কুণ্ডলী (Np = ${toBn(state.transformer.np)})`, centerX - 240, centerY - 70);
+
+      // Secondary Coil (Right)
+      ctx.strokeStyle = '#a855f7';
+      ctx.lineWidth = 6;
+      for (let i = 0; i < 8; i++) {
+        ctx.strokeRect(centerX + 130, centerY - 60 + i * 16, 20, 10);
+      }
+      ctx.fillStyle = '#a855f7';
+      ctx.fillText(`গৌণ কুণ্ডলী (Ns = ${toBn(state.transformer.ns)})`, centerX + 110, centerY - 70);
+    }
+
+    function renderMotorStage() {
+      const centerX = viewWidth / 2;
+      const centerY = viewHeight / 2;
+      const angle = (performance.now() / 300) % (Math.PI * 2);
+
+      // Left Magnet North (Red)
+      ctx.fillStyle = '#ef4444';
+      ctx.fillRect(centerX - 180, centerY - 60, 70, 120);
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 20px JetBrains Mono';
+      ctx.fillText('N', centerX - 145, centerY + 8);
+
+      // Right Magnet South (Blue)
+      ctx.fillStyle = '#3b82f6';
+      ctx.fillRect(centerX + 110, centerY - 60, 70, 120);
+      ctx.fillStyle = '#ffffff';
+      ctx.fillText('S', centerX + 140, centerY + 8);
+
+      // Rotating Armature Coil in Middle
+      ctx.save();
+      ctx.translate(centerX, centerY);
+      ctx.rotate(angle);
+      ctx.strokeStyle = '#f59e0b';
+      ctx.lineWidth = 5;
+      ctx.strokeRect(-40, -30, 80, 60);
+      ctx.restore();
+    }
+
+    setStation('faraday');
+    requestAnimationFrame(animate);
+
+  </script>
+</body>
+</html>

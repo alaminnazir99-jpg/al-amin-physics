@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>পরিমাপের যন্ত্রপাতি (PhET Interactive Lab) | আল-আমিন ফিজিক্স</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&family=JetBrains+Mono:wght@500;700&display=swap');
+    
+    * {
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    body {
+      font-family: 'Hind Siliguri', system-ui, sans-serif;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: #f1f5f9;
+      color: #0f172a;
+    }
+    #phet-stage {
+      position: absolute;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      touch-action: none;
+      cursor: default;
+    }
+    /* PhET Floating Glass Header */
+    .phet-header {
+      position: absolute;
+      top: 12px;
+      left: 16px;
+      right: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 20;
+      pointer-events: none;
+    }
+    .phet-header * {
+      pointer-events: auto;
+    }
+    .phet-tab-pill {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(8px);
+      box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+      border: 1px solid rgba(226, 232, 240, 0.8);
+      border-radius: 9999px;
+      padding: 4px;
+      display: flex;
+      gap: 4px;
+    }
+    .phet-tab-btn {
+      padding: 6px 14px;
+      border-radius: 9999px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #475569;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .phet-tab-btn.active {
+      background: #2563eb;
+      color: #ffffff;
+      box-shadow: 0 2px 8px rgba(37, 99, 235, 0.35);
+    }
+    /* Floating Objects Shelf (PhET Item Tray) */
+    .phet-tray {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(12px);
+      border: 1.5px solid rgba(203, 213, 225, 0.8);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.12);
+      border-radius: 20px;
+      padding: 8px 16px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      z-index: 20;
+    }
+    .tray-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      cursor: grab;
+      padding: 6px 10px;
+      border-radius: 12px;
+      transition: all 0.15s;
+    }
+    .tray-item:hover {
+      background: #f8fafc;
+      transform: translateY(-2px);
+    }
+    .tray-item:active {
+      cursor: grabbing;
+    }
+    /* Floating Measurement Readout Card */
+    .phet-readout-card {
+      position: absolute;
+      top: 70px;
+      right: 20px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border: 1px solid #cbd5e1;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+      border-radius: 16px;
+      padding: 12px 16px;
+      min-width: 260px;
+      z-index: 20;
+      transition: all 0.2s;
+    }
+    .phet-hint-tag {
+      position: absolute;
+      top: 70px;
+      left: 20px;
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      color: #1e40af;
+      padding: 6px 12px;
+      border-radius: 12px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      z-index: 20;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.04);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation Bar -->
+  <div class="phet-header">
+    <div class="flex items-center gap-2">
+      <a href="index.html" class="px-3 py-1.5 rounded-full bg-white border border-slate-200 text-slate-700 hover:text-blue-600 font-bold text-xs shadow-sm flex items-center gap-1.5 transition">
+        <i class="fa-solid fa-arrow-left"></i> ল্যাব তালিকা
+      </a>
+      <span class="text-xs font-bold text-slate-600 bg-white/80 px-3 py-1.5 rounded-full border border-slate-200 shadow-sm hidden sm:inline">
+        অধ্যায় ১: ভৌত রাশি ও পরিমাপ
+      </span>
+    </div>
+
+    <!-- PhET Experiment Switcher -->
+    <div class="phet-tab-pill">
+      <button onclick="setInstrument('caliper')" id="tab-caliper" class="phet-tab-btn active">
+        <i class="fa-solid fa-ruler-combined mr-1"></i> স্লাইড ক্যালিপার্স
+      </button>
+      <button onclick="setInstrument('screw')" id="tab-screw" class="phet-tab-btn">
+        <i class="fa-solid fa-screwdriver-wrench mr-1"></i> স্ক্রু গজ
+      </button>
+    </div>
+
+    <!-- Audio & Reset -->
+    <div class="flex items-center gap-2">
+      <button onclick="toggleReadingCard()" id="btn-toggle-readout" class="px-3 py-1.5 rounded-full bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 font-bold text-xs shadow-sm flex items-center gap-1.5 transition">
+        <i class="fa-solid fa-eye text-blue-600" id="readout-icon"></i> <span id="readout-btn-text">পাঠ লুকান</span>
+      </button>
+      <button onclick="resetLab()" class="w-8 h-8 rounded-full bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 flex items-center justify-center text-xs shadow-sm transition" title="রিসেট">
+        <i class="fa-solid fa-rotate-right"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Instruction Hint -->
+  <div class="phet-hint-tag">
+    <i class="fa-solid fa-hand-pointer text-blue-600 animate-pulse"></i>
+    <span id="hint-text">মাউস বা আঙুল দিয়ে যেকোনো বস্তু টেনে চোয়ালের মাঝে রাখুন এবং ক্যালিপার্সের চোয়াল টেনে বস্তুটি আঁটকে ধরুন!</span>
+  </div>
+
+  <!-- Real-Time Measurement Floating Card (PhET Sticky Note Style) -->
+  <div class="phet-readout-card" id="readout-card">
+    <div class="flex items-center justify-between pb-1.5 mb-1.5 border-b border-slate-200">
+      <span class="text-xs font-bold text-slate-700 flex items-center gap-1.5">
+        <i class="fa-solid fa-compass-drafting text-blue-600"></i> লাইভ পরিমাপ পাঠ
+      </span>
+      <span class="text-[10px] px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 font-bold font-mono" id="instrument-badge">VC = ০.১ mm</span>
+    </div>
+
+    <div class="space-y-1 text-xs">
+      <div class="flex justify-between items-center">
+        <span class="text-slate-500" id="readout-m-label">প্রধান স্কেল পাঠ (M):</span>
+        <span class="font-bold font-mono text-blue-700 text-sm" id="readout-m">০.০ mm</span>
+      </div>
+      <div class="flex justify-between items-center">
+        <span class="text-slate-500" id="readout-v-label">ভার্নিয়ার সমপাতন (V):</span>
+        <span class="font-bold font-mono text-amber-600 text-sm" id="readout-v">০</span>
+      </div>
+      <div class="flex justify-between items-center">
+        <span class="text-slate-500">যন্ত্রের ধ্রুবক (VC / LC):</span>
+        <span class="font-bold font-mono text-slate-600" id="readout-vc">০.১ mm</span>
+      </div>
+      <div class="pt-1.5 mt-1 border-t border-dashed border-slate-200 flex justify-between items-center">
+        <span class="font-bold text-slate-800">মোট পরিমাপ (L):</span>
+        <span class="font-bold font-mono text-emerald-600 text-base" id="readout-total">০.০ mm</span>
+      </div>
+    </div>
+
+    <!-- Live KaTeX formula line -->
+    <div class="mt-2 p-1.5 bg-slate-50 rounded-lg text-center text-xs overflow-x-auto" id="readout-math"></div>
+  </div>
+
+  <!-- Bottom PhET Objects Tray (Drag & Drop Items!) -->
+  <div class="phet-tray">
+    <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mr-1 hidden sm:inline">পরিমাপ্য বস্তু:</span>
+    
+    <div class="tray-item" onpointerdown="startDragObject(event, 'coin')">
+      <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-amber-500 to-yellow-300 border-2 border-amber-600 shadow-md flex items-center justify-center text-[10px] font-bold text-amber-900">৳</div>
+      <span class="text-[10px] font-bold text-slate-600">মুদ্রা</span>
+    </div>
+
+    <div class="tray-item" onpointerdown="startDragObject(event, 'ball')">
+      <div class="w-7 h-7 rounded-full bg-gradient-to-tr from-slate-400 to-slate-200 border-2 border-slate-500 shadow-md"></div>
+      <span class="text-[10px] font-bold text-slate-600">মার্বেল</span>
+    </div>
+
+    <div class="tray-item" onpointerdown="startDragObject(event, 'cylinder')">
+      <div class="w-6 h-9 rounded-sm bg-gradient-to-r from-orange-400 via-amber-200 to-orange-400 border border-amber-600 shadow-md"></div>
+      <span class="text-[10px] font-bold text-slate-600">সিলিন্ডার</span>
+    </div>
+
+    <div class="tray-item" onpointerdown="startDragObject(event, 'wire')">
+      <div class="w-2 h-9 bg-amber-600 rounded-full border border-amber-700 shadow-sm"></div>
+      <span class="text-[10px] font-bold text-slate-600">তামার তার</span>
+    </div>
+
+    <div class="tray-item" onpointerdown="startDragObject(event, 'egg')">
+      <div class="w-7 h-9 rounded-full bg-gradient-to-b from-amber-100 to-amber-200 border border-amber-300 shadow-md"></div>
+      <span class="text-[10px] font-bold text-slate-600">ডিম</span>
+    </div>
+  </div>
+
+  <!-- Fullscreen Interactive HTML5 Canvas (Stage) -->
+  <canvas id="phet-stage"></canvas>
+
+  <script>
+    // -------------------------------------------------------------
+    // AUDIO ENGINE (Web Audio API Synthesizer)
+    // -------------------------------------------------------------
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function playSlideSound() {
+      try {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(180, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.015, audioCtx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.001, audioCtx.currentTime + 0.04);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.04);
+      } catch (e) {}
+    }
+
+    function playSnapSound() {
+      try {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(950, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.05);
+      } catch (e) {}
+    }
+
+    function toBn(num, decimals = null) {
+      const bnDigits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+      const str = decimals !== null ? Number(num).toFixed(decimals) : String(num);
+      return str.replace(/\d/g, d => bnDigits[Number(d)]);
+    }
+
+    // -------------------------------------------------------------
+    // STATE MODEL & OBJECT SIZES
+    // -------------------------------------------------------------
+    const OBJECT_SPECS = {
+      coin:     { name: 'সোনার মুদ্রা', diameterMm: 22.4, color: '#f59e0b', stroke: '#b45309', type: 'circle' },
+      ball:     { name: 'কাচের মার্বেল', diameterMm: 16.0, color: '#94a3b8', stroke: '#64748b', type: 'circle' },
+      cylinder: { name: 'ধাতব সিলিন্ডার', diameterMm: 28.5, heightMm: 35, color: '#d97706', stroke: '#92400e', type: 'rect' },
+      wire:     { name: 'তামার তার', diameterMm: 2.35, heightMm: 35, color: '#b45309', stroke: '#78350f', type: 'rect' },
+      egg:      { name: 'ছোট ডিম', diameterMm: 32.8, color: '#fef3c7', stroke: '#fde68a', type: 'ellipse' }
+    };
+
+    const labState = {
+      instrument: 'caliper', // 'caliper' | 'screw'
+      showReadout: true,
+      
+      // Caliper State
+      caliper: {
+        jawMm: 30.0,
+        vc: 0.1, // 0.1 mm
+        isDraggingJaw: false,
+        dragStartX: 0,
+        dragStartJawMm: 0
+      },
+
+      // Screw Gauge State
+      screw: {
+        gapMm: 6.0,
+        pitch: 1.0,
+        divisions: 100,
+        lc: 0.01,
+        isDraggingThimble: false,
+        dragStartX: 0,
+        dragStartGapMm: 0
+      },
+
+      // Draggable Object in World
+      clampedObject: null, // null or spec
+      floatingObject: null, // currently dragged item { spec, x, y }
+      isObjectClamped: false
+    };
+
+    const canvas = document.getElementById('phet-stage');
+    const ctx = canvas.getContext('2d');
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth * window.devicePixelRatio;
+      canvas.height = window.innerHeight * window.devicePixelRatio;
+      ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    }
+
+    // -------------------------------------------------------------
+    // DIRECT TOUCH & MOUSE INTERACTION (DRAGGABLE JAW & OBJECTS)
+    // -------------------------------------------------------------
+    let pointerState = {
+      isDown: false,
+      x: 0,
+      y: 0,
+      draggingType: null // 'caliper-jaw' | 'screw-thimble' | 'object'
+    };
+
+    function getCanvasCoords(e) {
+      const rect = canvas.getBoundingClientRect();
+      return {
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top
+      };
+    }
+
+    canvas.addEventListener('pointerdown', (e) => {
+      const pos = getCanvasCoords(e);
+      pointerState.isDown = true;
+      pointerState.x = pos.x;
+      pointerState.y = pos.y;
+
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+
+      if (labState.instrument === 'caliper') {
+        const mmPixel = 6.0;
+        const mainBarX = w * 0.15;
+        const mainBarY = h * 0.42;
+        const zeroX = mainBarX + 40;
+        const vernierX = zeroX + labState.caliper.jawMm * mmPixel;
+
+        // Check if clicked movable vernier jaw or its thumb grip
+        if (pos.x >= vernierX - 10 && pos.x <= vernierX + 90 && pos.y >= mainBarY - 40 && pos.y <= mainBarY + 160) {
+          pointerState.draggingType = 'caliper-jaw';
+          labState.caliper.dragStartX = pos.x;
+          labState.caliper.dragStartJawMm = labState.caliper.jawMm;
+          playSlideSound();
+        }
+        // Check if clicked the clamped object to pick it up
+        else if (labState.clampedObject) {
+          const objW = labState.clampedObject.diameterMm * mmPixel;
+          const objX = zeroX + objW / 2;
+          const objY = mainBarY + 70;
+          if (Math.hypot(pos.x - objX, pos.y - objY) <= 30) {
+            labState.floatingObject = {
+              spec: labState.clampedObject,
+              x: pos.x,
+              y: pos.y
+            };
+            labState.clampedObject = null;
+            labState.isObjectClamped = false;
+            pointerState.draggingType = 'object';
+            playSnapSound();
+          }
+        }
+      } else {
+        // Screw Gauge Check
+        const mmPixel = 14.0;
+        const anvilX = w * 0.22;
+        const midY = h * 0.45;
+        const thimbleX = anvilX + 160 + (labState.screw.gapMm * mmPixel);
+
+        if (pos.x >= thimbleX && pos.x <= thimbleX + 110 && pos.y >= midY - 40 && pos.y <= midY + 40) {
+          pointerState.draggingType = 'screw-thimble';
+          labState.screw.dragStartX = pos.x;
+          labState.screw.dragStartGapMm = labState.screw.gapMm;
+          playSlideSound();
+        }
+        // Clamped object in screw gauge
+        else if (labState.clampedObject) {
+          const objW = labState.clampedObject.diameterMm * mmPixel;
+          const objX = anvilX + 15 + objW / 2;
+          if (Math.hypot(pos.x - objX, pos.y - midY) <= 25) {
+            labState.floatingObject = {
+              spec: labState.clampedObject,
+              x: pos.x,
+              y: pos.y
+            };
+            labState.clampedObject = null;
+            labState.isObjectClamped = false;
+            pointerState.draggingType = 'object';
+            playSnapSound();
+          }
+        }
+      }
+    });
+
+    window.addEventListener('pointermove', (e) => {
+      const pos = getCanvasCoords(e);
+      pointerState.x = pos.x;
+      pointerState.y = pos.y;
+
+      const mmPixel = labState.instrument === 'caliper' ? 6.0 : 14.0;
+
+      // 1. Dragging Caliper Jaw
+      if (pointerState.draggingType === 'caliper-jaw') {
+        const deltaX = pos.x - labState.caliper.dragStartX;
+        let newMm = labState.caliper.dragStartJawMm + deltaX / mmPixel;
+
+        // Physical Collision: Cannot compress past clamped object!
+        const minLimit = labState.clampedObject ? labState.clampedObject.diameterMm : 0;
+        if (newMm <= minLimit) {
+          if (labState.caliper.jawMm > minLimit) playSnapSound();
+          newMm = minLimit;
+          labState.isObjectClamped = true;
+        } else {
+          labState.isObjectClamped = false;
+        }
+
+        labState.caliper.jawMm = Math.max(0, Math.min(65, newMm));
+        playSlideSound();
+        updateReadout();
+      }
+
+      // 2. Dragging Screw Gauge Thimble
+      else if (pointerState.draggingType === 'screw-thimble') {
+        const deltaX = pos.x - labState.screw.dragStartX;
+        let newMm = labState.screw.dragStartGapMm + deltaX / mmPixel;
+
+        const minLimit = labState.clampedObject ? labState.clampedObject.diameterMm : 0;
+        if (newMm <= minLimit) {
+          if (labState.screw.gapMm > minLimit) playSnapSound();
+          newMm = minLimit;
+          labState.isObjectClamped = true;
+        } else {
+          labState.isObjectClamped = false;
+        }
+
+        labState.screw.gapMm = Math.max(0, Math.min(25, newMm));
+        playSlideSound();
+        updateReadout();
+      }
+
+      // 3. Dragging Floating Object
+      else if (pointerState.draggingType === 'object' && labState.floatingObject) {
+        labState.floatingObject.x = pos.x;
+        labState.floatingObject.y = pos.y;
+      }
+    });
+
+    window.addEventListener('pointerup', () => {
+      if (pointerState.draggingType === 'object' && labState.floatingObject) {
+        // Test if dropped between jaws!
+        const w = window.innerWidth;
+        const h = window.innerHeight;
+
+        if (labState.instrument === 'caliper') {
+          const mainBarX = w * 0.15;
+          const mainBarY = h * 0.42;
+          const zeroX = mainBarX + 40;
+          const jawX = zeroX + labState.caliper.jawMm * 6.0;
+
+          // Drop target zone between left fixed jaw and right sliding jaw
+          if (pointerState.x >= zeroX - 30 && pointerState.x <= jawX + 40 && pointerState.y >= mainBarY && pointerState.y <= mainBarY + 140) {
+            labState.clampedObject = labState.floatingObject.spec;
+            // Snap jaw to object if jaw was smaller than object
+            if (labState.caliper.jawMm < labState.clampedObject.diameterMm) {
+              labState.caliper.jawMm = labState.clampedObject.diameterMm;
+            }
+            playSnapSound();
+            confetti({ particleCount: 30, spread: 60, origin: { x: pointerState.x / w, y: pointerState.y / h } });
+          }
+        } else {
+          // Screw gauge drop zone
+          const anvilX = w * 0.22;
+          const midY = h * 0.45;
+          const spindleX = anvilX + 15 + labState.screw.gapMm * 14.0;
+
+          if (pointerState.x >= anvilX - 10 && pointerState.x <= spindleX + 30 && pointerState.y >= midY - 50 && pointerState.y <= midY + 50) {
+            labState.clampedObject = labState.floatingObject.spec;
+            if (labState.screw.gapMm < labState.clampedObject.diameterMm) {
+              labState.screw.gapMm = labState.clampedObject.diameterMm;
+            }
+            playSnapSound();
+            confetti({ particleCount: 30, spread: 60, origin: { x: pointerState.x / w, y: pointerState.y / h } });
+          }
+        }
+
+        labState.floatingObject = null;
+      }
+
+      pointerState.draggingType = null;
+      pointerState.isDown = false;
+      updateReadout();
+    });
+
+    function startDragObject(e, objKey) {
+      e.stopPropagation();
+      const spec = OBJECT_SPECS[objKey];
+      labState.floatingObject = {
+        spec: spec,
+        x: e.clientX,
+        y: e.clientY
+      };
+      pointerState.draggingType = 'object';
+      playSnapSound();
+    }
+
+    // -------------------------------------------------------------
+    // REALISTIC METALLIC CANVAS RENDERING
+    // -------------------------------------------------------------
+    function render() {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+
+      ctx.clearRect(0, 0, w, h);
+
+      // Clean, bright scientific lab workbench background
+      renderLabWorkbench(w, h);
+
+      if (labState.instrument === 'caliper') {
+        renderPhETCaliper(w, h);
+      } else {
+        renderPhETScrewGauge(w, h);
+      }
+
+      // Draw floating object being dragged
+      if (labState.floatingObject) {
+        renderDraggableObject(ctx, labState.floatingObject.spec, labState.floatingObject.x, labState.floatingObject.y);
+      }
+
+      requestAnimationFrame(render);
+    }
+
+    function renderLabWorkbench(w, h) {
+      // Subtle laboratory grid lines
+      ctx.strokeStyle = 'rgba(203, 213, 225, 0.4)';
+      ctx.lineWidth = 1;
+      const gridSize = 40;
+      for (let x = 0; x < w; x += gridSize) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, h);
+        ctx.stroke();
+      }
+      for (let y = 0; y < h; y += gridSize) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(w, y);
+        ctx.stroke();
+      }
+    }
+
+    // 1. PhET-STANDARD INTERACTIVE SLIDE CALIPERS
+    function renderPhETCaliper(w, h) {
+      const mmPixel = 6.0;
+      const mainBarX = w * 0.15;
+      const mainBarY = h * 0.42;
+      const mainBarW = Math.min(w * 0.70, 750);
+      const mainBarH = 46;
+      const zeroX = mainBarX + 40;
+
+      // --- Realistic Stainless Steel Main Beam ---
+      const beamGrad = ctx.createLinearGradient(0, mainBarY, 0, mainBarY + mainBarH);
+      beamGrad.addColorStop(0, '#f8fafc');
+      beamGrad.addColorStop(0.2, '#e2e8f0');
+      beamGrad.addColorStop(0.5, '#cbd5e1');
+      beamGrad.addColorStop(0.8, '#94a3b8');
+      beamGrad.addColorStop(1, '#64748b');
+
+      ctx.save();
+      // Drop Shadow for the entire calipers
+      ctx.shadowColor = 'rgba(15, 23, 42, 0.15)';
+      ctx.shadowBlur = 20;
+      ctx.shadowOffsetY = 12;
+
+      ctx.fillStyle = beamGrad;
+      ctx.fillRect(mainBarX, mainBarY, mainBarW, mainBarH);
+      ctx.strokeStyle = '#94a3b8';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(mainBarX, mainBarY, mainBarW, mainBarH);
+
+      // Fixed Main Jaw on Left (Solid Steel)
+      ctx.beginPath();
+      ctx.moveTo(mainBarX, mainBarY - 45); // Upper internal jaw
+      ctx.lineTo(mainBarX + 35, mainBarY);
+      ctx.lineTo(mainBarX + 35, mainBarY + mainBarH);
+      ctx.lineTo(zeroX, mainBarY + mainBarH);
+      ctx.lineTo(mainBarX + 10, mainBarY + 160); // Lower external measuring jaw
+      ctx.lineTo(mainBarX - 5, mainBarY + 160);
+      ctx.lineTo(mainBarX - 5, mainBarY);
+      ctx.closePath();
+      ctx.fillStyle = beamGrad;
+      ctx.fill();
+      ctx.stroke();
+      ctx.restore();
+
+      // Main Scale Millimeter Engravings (Black Laser Ticks)
+      ctx.fillStyle = '#1e293b';
+      ctx.strokeStyle = '#1e293b';
+      ctx.lineWidth = 1.2;
+      ctx.font = 'bold 9px monospace';
+
+      const maxMm = Math.floor((mainBarW - 60) / mmPixel);
+      for (let mm = 0; mm <= maxMm; mm++) {
+        const x = zeroX + mm * mmPixel;
+        const tickH = mm % 10 === 0 ? 18 : mm % 5 === 0 ? 12 : 7;
+
+        ctx.beginPath();
+        ctx.moveTo(x, mainBarY + mainBarH);
+        ctx.lineTo(x, mainBarY + mainBarH - tickH);
+        ctx.stroke();
+
+        if (mm % 10 === 0) {
+          ctx.fillText(mm / 10, x - 4, mainBarY + mainBarH - tickH - 4);
+        }
+      }
+
+      // Clamped Object between Jaws
+      const currentJawW = labState.caliper.jawMm * mmPixel;
+      if (labState.clampedObject) {
+        const objD = labState.clampedObject.diameterMm * mmPixel;
+        const objCenterX = zeroX + objD / 2;
+        const objCenterY = mainBarY + 80;
+        renderDraggableObject(ctx, labState.clampedObject, objCenterX, objCenterY);
+      }
+
+      // --- Sliding Vernier Jaw Assembly (Interactive Drag target) ---
+      const vernierX = zeroX + currentJawW;
+      const vernierW = 95;
+      const vernierH = 65;
+
+      ctx.save();
+      ctx.shadowColor = 'rgba(0, 0, 0, 0.2)';
+      ctx.shadowBlur = 15;
+      ctx.shadowOffsetX = 4;
+      ctx.shadowOffsetY = 8;
+
+      const vernierGrad = ctx.createLinearGradient(0, mainBarY - 10, 0, mainBarY + vernierH);
+      vernierGrad.addColorStop(0, '#ffffff');
+      vernierGrad.addColorStop(0.3, '#e2e8f0');
+      vernierGrad.addColorStop(0.7, '#cbd5e1');
+      vernierGrad.addColorStop(1, '#94a3b8');
+      ctx.fillStyle = vernierGrad;
+
+      // Vernier Main Window Body
+      ctx.fillRect(vernierX, mainBarY - 10, vernierW, vernierH);
+      ctx.strokeStyle = '#64748b';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(vernierX, mainBarY - 10, vernierW, vernierH);
+
+      // Movable Lower Measuring Jaw
+      ctx.beginPath();
+      ctx.moveTo(vernierX, mainBarY + mainBarH);
+      ctx.lineTo(vernierX, mainBarY + 160);
+      ctx.lineTo(vernierX + 22, mainBarY + 160);
+      ctx.lineTo(vernierX + 22, mainBarY + vernierH);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+
+      // Ergonomic Thumb-Push Wheel / Grip Ridges
+      const thumbX = vernierX + vernierW - 18;
+      const thumbY = mainBarY + mainBarH + 8;
+      ctx.fillStyle = '#475569';
+      ctx.fillRect(thumbX, thumbY, 14, 22);
+      ctx.fillStyle = '#cbd5e1';
+      for (let r = 0; r < 5; r++) {
+        ctx.fillRect(thumbX + 2, thumbY + 3 + r * 4, 10, 1.5);
+      }
+
+      // "DRAG ME" Hand Icon Tag on Vernier Jaw
+      ctx.fillStyle = '#2563eb';
+      ctx.font = 'bold 9px sans-serif';
+      ctx.fillText('হাত দিয়ে টানুন ⇄', vernierX + 16, mainBarY + 80);
+
+      // Vernier Beveled Scale Window
+      ctx.fillStyle = '#f8fafc';
+      ctx.fillRect(vernierX + 6, mainBarY - 4, 60, 18);
+      ctx.strokeStyle = '#94a3b8';
+      ctx.strokeRect(vernierX + 6, mainBarY - 4, 60, 18);
+
+      // Vernier 10 Divisions (0.9mm spacing for 0.1mm accuracy)
+      ctx.strokeStyle = '#0284c7';
+      ctx.fillStyle = '#0284c7';
+      ctx.lineWidth = 1.2;
+      ctx.font = 'bold 8px monospace';
+
+      const vernierStep = mmPixel * 0.9;
+      for (let v = 0; v <= 10; v++) {
+        const vx = vernierX + 6 + v * vernierStep;
+        const vh = v === 0 || v === 5 || v === 10 ? 10 : 6;
+        ctx.beginPath();
+        ctx.moveTo(vx, mainBarY - 4);
+        ctx.lineTo(vx, mainBarY - 4 + vh);
+        ctx.stroke();
+        if (v === 0 || v === 10) {
+          ctx.fillText(v === 10 ? '১০' : '০', vx - 3, mainBarY + 12);
+        }
+      }
+      ctx.restore();
+
+      // Zero Arrow Marker pointing to coincidence line
+      const M = Math.floor(labState.caliper.jawMm);
+      const frac = labState.caliper.jawMm - M;
+      const bestV = Math.round(frac / 0.1);
+
+      // Real-time Loupe / Magnifier Ring over vernier coincidence
+      const loupeX = vernierX + 6 + bestV * vernierStep;
+      const loupeY = mainBarY + 30;
+
+      ctx.save();
+      ctx.strokeStyle = '#ef4444';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(loupeX, mainBarY - 4, 8, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.fillStyle = '#ef4444';
+      ctx.font = 'bold 9px sans-serif';
+      ctx.fillText(`সমপাতন V = ${toBn(bestV)}`, loupeX - 25, mainBarY - 14);
+      ctx.restore();
+    }
+
+    // 2. PhET-STANDARD INTERACTIVE MICROMETER SCREW GAUGE
+    function renderPhETScrewGauge(w, h) {
+      const mmPixel = 14.0;
+      const anvilX = w * 0.22;
+      const midY = h * 0.45;
+      const gapPixels = labState.screw.gapMm * mmPixel;
+
+      // Heavy Cast Iron C-Frame
+      ctx.save();
+      ctx.strokeStyle = '#1e293b';
+      ctx.lineWidth = 24;
+      ctx.beginPath();
+      ctx.arc(anvilX + 80, midY, 80, Math.PI * 0.5, Math.PI * 1.5);
+      ctx.stroke();
+
+      // Chrome Accent Line on Frame
+      ctx.strokeStyle = '#38bdf8';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      ctx.restore();
+
+      // Fixed Anvil Stud on Left
+      ctx.fillStyle = '#cbd5e1';
+      ctx.fillRect(anvilX, midY - 12, 16, 24);
+      ctx.strokeStyle = '#64748b';
+      ctx.strokeRect(anvilX, midY - 12, 16, 24);
+
+      // Clamped Object in Screw Gauge
+      if (labState.clampedObject) {
+        const objCenterX = anvilX + 16 + gapPixels / 2;
+        renderDraggableObject(ctx, labState.clampedObject, objCenterX, midY);
+      }
+
+      // Moving Spindle Rod
+      const spindleX = anvilX + 16 + gapPixels;
+      ctx.fillStyle = '#e2e8f0';
+      ctx.fillRect(spindleX, midY - 12, 90, 24);
+      ctx.strokeStyle = '#94a3b8';
+      ctx.strokeRect(spindleX, midY - 12, 90, 24);
+
+      // Main Sleeve Barrel (Graduated in mm)
+      const barrelX = anvilX + 160;
+      const barrelW = 90;
+      const barrelH = 38;
+
+      ctx.fillStyle = '#94a3b8';
+      ctx.fillRect(barrelX, midY - barrelH / 2, barrelW, barrelH);
+      ctx.strokeStyle = '#475569';
+      ctx.strokeRect(barrelX, midY - barrelH / 2, barrelW, barrelH);
+
+      // Datum / Baseline
+      ctx.strokeStyle = '#0f172a';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(barrelX, midY);
+      ctx.lineTo(barrelX + barrelW, midY);
+      ctx.stroke();
+
+      // Millimetre Ticks on Sleeve
+      for (let m = 0; m <= 15; m++) {
+        const mx = barrelX + m * (mmPixel / 2);
+        if (mx > barrelX + barrelW - 5) break;
+        const isHalf = m % 2 !== 0;
+        ctx.beginPath();
+        ctx.moveTo(mx, midY);
+        ctx.lineTo(mx, isHalf ? midY + 8 : midY - 10);
+        ctx.stroke();
+      }
+
+      // Rotating Beveled Thimble (Draggable Target)
+      const thimbleX = barrelX + (labState.screw.gapMm * (mmPixel / 2));
+      const thimbleW = 90;
+      const thimbleH = 50;
+
+      ctx.save();
+      ctx.shadowColor = 'rgba(0, 0, 0, 0.2)';
+      ctx.shadowBlur = 12;
+
+      ctx.fillStyle = '#475569';
+      ctx.beginPath();
+      ctx.moveTo(thimbleX, midY - thimbleH / 2);
+      ctx.lineTo(thimbleX + 16, midY - 20);
+      ctx.lineTo(thimbleX + thimbleW, midY - 20);
+      ctx.lineTo(thimbleX + thimbleW, midY + 20);
+      ctx.lineTo(thimbleX + 16, midY + 20);
+      ctx.lineTo(thimbleX, midY + thimbleH / 2);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+
+      // Thimble Knurling Grip
+      ctx.fillStyle = '#334155';
+      ctx.fillRect(thimbleX + 25, midY - 19, 50, 38);
+
+      // Ratchet Stop Knob
+      ctx.fillStyle = '#1e293b';
+      ctx.fillRect(thimbleX + thimbleW, midY - 12, 30, 24);
+      ctx.restore();
+
+      // Drag tag for Thimble
+      ctx.fillStyle = '#f8fafc';
+      ctx.font = 'bold 9px sans-serif';
+      ctx.fillText('থিম্বল ঘোরান ⇄', thimbleX + 22, midY + 34);
+    }
+
+    // Helper to draw objects (Gold Coin, Ball, Cylinder, Wire, Egg)
+    function renderDraggableObject(c, spec, cx, cy) {
+      c.save();
+      c.shadowColor = 'rgba(0, 0, 0, 0.25)';
+      c.shadowBlur = 8;
+      c.shadowOffsetY = 4;
+
+      const pxRadius = (spec.diameterMm * (labState.instrument === 'caliper' ? 6.0 : 14.0)) / 2;
+
+      if (spec.type === 'circle') {
+        const grad = c.createRadialGradient(cx - pxRadius * 0.3, cy - pxRadius * 0.3, 2, cx, cy, pxRadius);
+        grad.addColorStop(0, '#fef08a');
+        grad.addColorStop(0.5, spec.color);
+        grad.addColorStop(1, spec.stroke);
+        c.fillStyle = grad;
+        c.beginPath();
+        c.arc(cx, cy, pxRadius, 0, Math.PI * 2);
+        c.fill();
+        c.strokeStyle = spec.stroke;
+        c.lineWidth = 1.5;
+        c.stroke();
+
+        // Details
+        c.fillStyle = spec.stroke;
+        c.font = `bold ${Math.max(8, pxRadius * 0.5)}px sans-serif`;
+        c.textAlign = 'center';
+        c.fillText(spec.name.substring(0, 4), cx, cy + 3);
+      } else if (spec.type === 'ellipse') {
+        c.fillStyle = spec.color;
+        c.beginPath();
+        c.ellipse(cx, cy, pxRadius, pxRadius * 1.3, 0, 0, Math.PI * 2);
+        c.fill();
+        c.strokeStyle = spec.stroke;
+        c.stroke();
+      } else {
+        // Rectangle / Wire / Cylinder
+        const w = pxRadius * 2;
+        const h = 50;
+        c.fillStyle = spec.color;
+        c.fillRect(cx - w / 2, cy - h / 2, w, h);
+        c.strokeStyle = spec.stroke;
+        c.strokeRect(cx - w / 2, cy - h / 2, w, h);
+      }
+      c.restore();
+    }
+
+    // -------------------------------------------------------------
+    // LIVE READOUT & KATEX FORMULA UPDATE
+    // -------------------------------------------------------------
+    function updateReadout() {
+      if (labState.instrument === 'caliper') {
+        const d = labState.caliper.jawMm;
+        const M = Math.floor(d);
+        const frac = d - M;
+        const V = Math.round(frac / 0.1);
+        const L = (M + V * 0.1).toFixed(1);
+
+        document.getElementById('instrument-badge').textContent = 'VC = ০.১ mm';
+        document.getElementById('readout-m-label').textContent = 'প্রধান স্কেল পাঠ (M):';
+        document.getElementById('readout-m').textContent = `${toBn(M)} mm`;
+        document.getElementById('readout-v-label').textContent = 'ভার্নিয়ার সমপাতন (V):';
+        document.getElementById('readout-v').textContent = `${toBn(V)}`;
+        document.getElementById('readout-vc').textContent = '০.১ mm';
+        document.getElementById('readout-total').textContent = `${toBn(L)} mm`;
+
+        const mathEl = document.getElementById('readout-math');
+        if (typeof katex !== 'undefined' && mathEl) {
+          katex.render(`L = M + (V \\times VC) = ${M} + (${V} \\times 0.1) = ${L}\\text{ mm}`, mathEl, { throwOnError: false });
+        }
+      } else {
+        const d = labState.screw.gapMm;
+        const M = Math.floor(d);
+        const frac = d - M;
+        const C = Math.round(frac / 0.01);
+        const L = (M + C * 0.01).toFixed(2);
+
+        document.getElementById('instrument-badge').textContent = 'LC = ০.০১ mm';
+        document.getElementById('readout-m-label').textContent = 'রৈখিক স্কেল পাঠ (M):';
+        document.getElementById('readout-m').textContent = `${toBn(M)} mm`;
+        document.getElementById('readout-v-label').textContent = 'বৃত্তাকার স্কেল ভাগ (C):';
+        document.getElementById('readout-v').textContent = `${toBn(C)}`;
+        document.getElementById('readout-vc').textContent = '০.০১ mm';
+        document.getElementById('readout-total').textContent = `${toBn(L)} mm`;
+
+        const mathEl = document.getElementById('readout-math');
+        if (typeof katex !== 'undefined' && mathEl) {
+          katex.render(`L = M + (C \\times LC) = ${M} + (${C} \\times 0.01) = ${L}\\text{ mm}`, mathEl, { throwOnError: false });
+        }
+      }
+    }
+
+    function setInstrument(inst) {
+      labState.instrument = inst;
+      document.getElementById('tab-caliper').className = inst === 'caliper' ? 'phet-tab-btn active' : 'phet-tab-btn';
+      document.getElementById('tab-screw').className = inst === 'screw' ? 'phet-tab-btn active' : 'phet-tab-btn';
+      
+      document.getElementById('hint-text').textContent = inst === 'caliper'
+        ? 'মাউস বা আঙুল দিয়ে বস্তু টেনে চোয়ালে রাখুন এবং স্লাইডার টেনে মাপ নিন!'
+        : 'মাউস দিয়ে তার বা মার্বেল টেনে স্ক্রু গজে রাখুন এবং থিম্বল ঘুরিয়ে আটকান!';
+
+      playSnapSound();
+      updateReadout();
+    }
+
+    function toggleReadingCard() {
+      labState.showReadout = !labState.showReadout;
+      const card = document.getElementById('readout-card');
+      const icon = document.getElementById('readout-icon');
+      const text = document.getElementById('readout-btn-text');
+
+      if (labState.showReadout) {
+        card.style.display = 'block';
+        icon.className = 'fa-solid fa-eye text-blue-600';
+        text.textContent = 'পাঠ লুকান';
+      } else {
+        card.style.display = 'none';
+        icon.className = 'fa-solid fa-eye-slash text-slate-400';
+        text.textContent = 'পাঠ দেখুন';
+      }
+      playSnapSound();
+    }
+
+    function resetLab() {
+      labState.caliper.jawMm = 30.0;
+      labState.screw.gapMm = 6.0;
+      labState.clampedObject = null;
+      labState.floatingObject = null;
+      playSnapSound();
+      updateReadout();
+    }
+
+    // Init
+    window.addEventListener('DOMContentLoaded', () => {
+      resizeCanvas();
+      window.addEventListener('resize', resizeCanvas);
+      updateReadout();
+      render();
+    });
+  </script>
+</body>
+</html>

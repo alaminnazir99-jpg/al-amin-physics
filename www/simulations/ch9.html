@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>আলোর প্রতিসরণ ল্যাব (PhET Interactive Refraction Lab) | আল-আমিন ফিজিক্স</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&family=JetBrains+Mono:wght@500;700&display=swap');
+    
+    * {
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    body {
+      font-family: 'Hind Siliguri', system-ui, sans-serif;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: #0f172a;
+      color: #f8fafc;
+    }
+    #phet-stage {
+      position: absolute;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      touch-action: none;
+      cursor: default;
+    }
+    .phet-header {
+      position: absolute;
+      top: 12px;
+      left: 16px;
+      right: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 25;
+      pointer-events: none;
+    }
+    .phet-header * {
+      pointer-events: auto;
+    }
+    .phet-tab-pill {
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(8px);
+      box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+      border: 1px solid rgba(51, 65, 85, 0.8);
+      border-radius: 9999px;
+      padding: 4px;
+      display: flex;
+      gap: 4px;
+    }
+    .phet-tab-btn {
+      padding: 6px 14px;
+      border-radius: 9999px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #94a3b8;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .phet-tab-btn.active {
+      background: #06b6d4;
+      color: #0f172a;
+      box-shadow: 0 2px 8px rgba(6, 182, 212, 0.35);
+    }
+    .phet-tray {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(12px);
+      border: 1.5px solid rgba(51, 65, 85, 0.8);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+      border-radius: 20px;
+      padding: 8px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      z-index: 25;
+    }
+    .phet-readout-card {
+      position: absolute;
+      top: 70px;
+      right: 20px;
+      background: rgba(15, 23, 42, 0.9);
+      backdrop-filter: blur(10px);
+      border: 1px solid #334155;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+      border-radius: 16px;
+      padding: 12px 16px;
+      min-width: 270px;
+      z-index: 25;
+      transition: all 0.2s;
+    }
+    .phet-hint-tag {
+      position: absolute;
+      top: 70px;
+      left: 20px;
+      background: rgba(30, 41, 59, 0.9);
+      border: 1px solid #475569;
+      color: #67e8f9;
+      padding: 6px 14px;
+      border-radius: 14px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      z-index: 25;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      max-width: calc(100vw - 330px);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation Bar -->
+  <div class="phet-header">
+    <div class="flex items-center gap-2">
+      <a href="index.html" class="px-3 py-1.5 rounded-full bg-slate-900 border border-slate-700 text-slate-200 hover:text-cyan-400 font-bold text-xs shadow-sm flex items-center gap-1.5 transition">
+        <i class="fa-solid fa-arrow-left"></i> ল্যাব তালিকা
+      </a>
+      <span class="text-xs font-bold text-slate-300 bg-slate-900/80 px-3 py-1.5 rounded-full border border-slate-700 shadow-sm hidden sm:inline">
+        অধ্যায় ৯: আলোর প্রতিসরণ (Refraction Lab)
+      </span>
+    </div>
+
+    <!-- PhET Experiment Switcher -->
+    <div class="phet-tab-pill">
+      <button onclick="setStation('snell')" id="tab-snell" class="phet-tab-btn active">
+        <i class="fa-solid fa-water mr-1"></i> স্নেলের সূত্র (Bending Light)
+      </button>
+      <button onclick="setStation('tir')" id="tab-tir" class="phet-tab-btn">
+        <i class="fa-solid fa-gem mr-1"></i> ক্রান্তি কোণ ও পূর্ণ অভ্যন্তরীণ প্রতিফলন
+      </button>
+      <button onclick="setStation('lens')" id="tab-lens" class="phet-tab-btn">
+        <i class="fa-solid fa-glasses mr-1"></i> লেন্স ও দৃষ্টিত্রুটি
+      </button>
+    </div>
+
+    <!-- Right Controls: Readout Toggle & Reset -->
+    <div class="flex items-center gap-2">
+      <button onclick="toggleReadingCard()" id="btn-toggle-readout" class="px-3 py-1.5 rounded-full bg-slate-900 border border-slate-700 text-slate-200 hover:bg-slate-800 font-bold text-xs shadow-sm flex items-center gap-1.5 transition">
+        <i class="fa-solid fa-eye text-cyan-400" id="readout-icon"></i> <span id="readout-btn-text">পাঠ লুকান</span>
+      </button>
+      <button onclick="resetLab()" class="w-8 h-8 rounded-full bg-slate-900 border border-slate-700 text-slate-200 hover:bg-slate-800 flex items-center justify-center text-xs shadow-sm transition" title="রিসেট">
+        <i class="fa-solid fa-rotate-right"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Instruction Hint -->
+  <div class="phet-hint-tag" id="hint-tag">
+    <i class="fa-solid fa-hand-pointer text-cyan-400 animate-pulse"></i>
+    <span id="hint-text">লেজার টর্চটি মাউস দিয়ে ঘুরিয়ে আপতন কোণ পরিবর্তন করুন এবং প্রতিসরণ কোণ মেপে দেখুন!</span>
+  </div>
+
+  <!-- Real-Time Floating Readout Card -->
+  <div class="phet-readout-card" id="readout-card">
+    <div class="flex items-center justify-between pb-1.5 mb-1.5 border-b border-slate-700">
+      <span class="text-xs font-bold text-slate-200 flex items-center gap-1.5">
+        <i class="fa-solid fa-wand-magic-sparkles text-cyan-400"></i> প্রতিসরণ পরিমিতি পাঠ
+      </span>
+      <span class="text-[10px] px-2 py-0.5 rounded-full bg-cyan-400/20 text-cyan-400 font-bold font-mono" id="snell-badge">n₁ sin&theta;₁ = n₂ sin&theta;₂</span>
+    </div>
+
+    <!-- Snell Readout -->
+    <div id="readout-snell" class="space-y-1 text-xs">
+      <div class="flex justify-between items-center">
+        <span class="text-slate-400">১ম মাধ্যম (n₁):</span>
+        <span class="font-bold font-mono text-cyan-400 text-sm" id="readout-n1">১.০০ (বায়ু)</span>
+      </div>
+      <div class="flex justify-between items-center">
+        <span class="text-slate-400">২য় মাধ্যম (n₂):</span>
+        <span class="font-bold font-mono text-blue-400 text-sm" id="readout-n2">১.৩৩ (পানি)</span>
+      </div>
+      <div class="flex justify-between items-center">
+        <span class="text-slate-400">আপতন কোণ (&theta;₁):</span>
+        <span class="font-bold font-mono text-yellow-400 text-sm" id="readout-theta1">৪৫.০°</span>
+      </div>
+      <div class="flex justify-between items-center">
+        <span class="text-slate-400">প্রতিসরণ কোণ (&theta;₂):</span>
+        <span class="font-bold font-mono text-emerald-400 text-sm" id="readout-theta2">৩২.১°</span>
+      </div>
+      <div class="pt-1.5 mt-1 border-t border-dashed border-slate-700 flex justify-between items-center">
+        <span class="font-bold text-slate-200">আলোর গতিপ্রকৃতি:</span>
+        <span class="font-bold text-emerald-400 text-xs" id="readout-state">অভিলম্বের দিকে বেঁকে যায়</span>
+      </div>
+    </div>
+
+    <!-- TIR Readout -->
+    <div id="readout-tir" class="space-y-1 text-xs hidden">
+      <div class="flex justify-between items-center">
+        <span class="text-slate-400">ঘন মাধ্যম (কাচ):</span>
+        <span class="font-bold font-mono text-blue-400 text-sm">n = ১.৫০</span>
+      </div>
+      <div class="flex justify-between items-center">
+        <span class="text-slate-400">ক্রান্তি কোণ (&theta;_c):</span>
+        <span class="font-bold font-mono text-purple-400 text-sm" id="readout-tc">৪১.৮°</span>
+      </div>
+      <div class="flex justify-between items-center">
+        <span class="text-slate-400">আপতন কোণ (&theta;₁):</span>
+        <span class="font-bold font-mono text-yellow-400 text-sm" id="readout-tir-theta1">৫০.০°</span>
+      </div>
+      <div class="pt-1.5 mt-1 border-t border-dashed border-slate-700 flex justify-between items-center">
+        <span class="font-bold text-slate-200">ঘটনাবলী:</span>
+        <span class="font-bold text-red-400 text-xs" id="readout-tir-state">পূর্ণ অভ্যন্তরীণ প্রতিফলন!</span>
+      </div>
+    </div>
+
+    <!-- Lens Readout -->
+    <div id="readout-lens" class="space-y-1 text-xs hidden">
+      <div class="flex justify-between items-center">
+        <span class="text-slate-400">লেন্সের ক্ষমতা (P = 1/f):</span>
+        <span class="font-bold font-mono text-cyan-400 text-sm" id="readout-power">+৫.০০ D</span>
+      </div>
+      <div class="flex justify-between items-center">
+        <span class="text-slate-400">ফোকাস দূরত্ব (f):</span>
+        <span class="font-bold font-mono text-sky-400 text-sm">২০.০ cm</span>
+      </div>
+      <div class="pt-1.5 mt-1 border-t border-dashed border-slate-700 flex justify-between items-center">
+        <span class="font-bold text-slate-200">দৃষ্টিত্রুটি প্রতিকার:</span>
+        <span class="font-bold text-emerald-400 text-xs">দূরদৃষ্টি (Hypermetropia)</span>
+      </div>
+    </div>
+
+    <!-- Live KaTeX formula line -->
+    <div class="mt-2 p-1.5 bg-slate-950 rounded-lg text-center text-xs overflow-x-auto text-cyan-300" id="readout-math"></div>
+  </div>
+
+  <!-- Bottom PhET Tool Rack -->
+  <div class="phet-tray" id="phet-tray"></div>
+
+  <!-- Fullscreen Canvas -->
+  <canvas id="phet-stage"></canvas>
+
+  <script>
+    function toBn(num, decimals = null) {
+      const bnDigits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+      const str = decimals !== null ? Number(num).toFixed(decimals) : String(num);
+      return str.replace(/\d/g, d => bnDigits[Number(d)]);
+    }
+
+    const state = {
+      station: 'snell', // 'snell' | 'tir' | 'lens'
+      showReadout: true,
+
+      // Snell
+      snell: {
+        n1: 1.00, // Air
+        n2: 1.33, // Water
+        theta1Deg: 45,
+        isDraggingLaser: false
+      },
+
+      // TIR
+      tir: {
+        n1: 1.50, // Glass
+        n2: 1.00, // Air
+        theta1Deg: 48
+      },
+
+      // Lens
+      lens: {
+        fCm: 20,
+        uCm: 35,
+        type: 'convex'
+      }
+    };
+
+    const canvas = document.getElementById('phet-stage');
+    const ctx = canvas.getContext('2d');
+
+    let viewWidth = window.innerWidth;
+    let viewHeight = window.innerHeight;
+
+    function resizeCanvas() {
+      viewWidth = window.innerWidth;
+      viewHeight = window.innerHeight;
+      canvas.width = viewWidth * window.devicePixelRatio;
+      canvas.height = viewHeight * window.devicePixelRatio;
+      ctx.resetTransform();
+      ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    function setStation(station) {
+      state.station = station;
+      ['snell', 'tir', 'lens'].forEach(s => {
+        const btn = document.getElementById(`tab-${s}`);
+        const readout = document.getElementById(`readout-${s}`);
+        if (s === station) {
+          btn.classList.add('active');
+          readout.classList.remove('hidden');
+        } else {
+          btn.classList.remove('active');
+          readout.classList.add('hidden');
+        }
+      });
+
+      const hintText = document.getElementById('hint-text');
+      const tray = document.getElementById('phet-tray');
+
+      if (station === 'snell') {
+        hintText.innerHTML = 'লেজার টর্চটি ঘুরিয়ে আপতন কোণ পরিবর্তন করুন এবং আলো কীভাবে বেঁকে যায় তা দেখুন!';
+        tray.innerHTML = `
+          <div class="flex items-center gap-3">
+            <span class="text-xs font-bold text-slate-400">আপতন কোণ (&theta;₁):</span>
+            <input type="range" min="5" max="85" value="${state.snell.theta1Deg}" 
+              oninput="setSnellTheta(this.value)" class="w-24 sm:w-36 accent-cyan-400 cursor-pointer">
+            <span class="text-xs font-bold text-cyan-400 w-12 font-mono" id="tray-snell-t">${toBn(state.snell.theta1Deg)}°</span>
+          </div>
+          <div class="h-6 w-px bg-slate-700"></div>
+          <button onclick="setMedium2(1.33)" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-xs font-bold text-sky-400">পানি (১.৩৩)</button>
+          <button onclick="setMedium2(1.50)" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-xs font-bold text-blue-400">কাচ (১.৫০)</button>
+          <button onclick="setMedium2(2.42)" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-xs font-bold text-purple-400">হীরা (২.৪২)</button>
+        `;
+        updateSnellMath();
+      } else if (station === 'tir') {
+        hintText.innerHTML = 'ঘন মাধ্যম থেকে হালকা মাধ্যমে আলো ফেলার সময় ক্রান্তি কোণ অতিক্রম করলে ১০০% পূর্ণ অভ্যন্তরীণ প্রতিফলন ঘটে!';
+        tray.innerHTML = `
+          <div class="flex items-center gap-3">
+            <span class="text-xs font-bold text-slate-400">আপতন কোণ (&theta;₁):</span>
+            <input type="range" min="15" max="75" value="${state.tir.theta1Deg}" 
+              oninput="setTirTheta(this.value)" class="w-28 sm:w-40 accent-purple-400 cursor-pointer">
+            <span class="text-xs font-bold text-purple-400 w-12 font-mono" id="tray-tir-t">${toBn(state.tir.theta1Deg)}°</span>
+          </div>
+          <div class="h-6 w-px bg-slate-700"></div>
+          <button onclick="setTirTheta(41.8)" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-xs font-bold text-purple-300">ক্রান্তি কোণ (&theta;_c = ৪১.৮°)</button>
+          <button onclick="setTirTheta(55)" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-xs font-bold text-red-400">পূর্ণ প্রতিফলন (&theta;₁ > &theta;_c)</button>
+        `;
+        updateTirMath();
+      } else if (station === 'lens') {
+        hintText.innerHTML = 'উত্তল লেন্সের ক্ষমতা P = 1/f ডায়প্টার (D)। এটি চোখের দৃষ্টিত্রুটি প্রতিকারে চশমায় ব্যবহৃত হয়!';
+        tray.innerHTML = `
+          <div class="flex items-center gap-3">
+            <span class="text-xs font-bold text-slate-400">লেন্সের ফোকাস দূরত্ব (f):</span>
+            <input type="range" min="10" max="50" step="5" value="${state.lens.fCm}" 
+              oninput="setLensF(this.value)" class="w-24 sm:w-36 accent-cyan-400 cursor-pointer">
+            <span class="text-xs font-bold text-cyan-400 w-14 font-mono" id="tray-lens-f">${toBn(state.lens.fCm)} cm</span>
+          </div>
+        `;
+        updateLensMath();
+      }
+    }
+
+    function toggleReadingCard() {
+      state.showReadout = !state.showReadout;
+      const card = document.getElementById('readout-card');
+      const icon = document.getElementById('readout-icon');
+      const text = document.getElementById('readout-btn-text');
+      if (state.showReadout) {
+        card.style.display = 'block';
+        icon.className = 'fa-solid fa-eye text-cyan-400';
+        text.innerText = 'পাঠ লুকান';
+      } else {
+        card.style.display = 'none';
+        icon.className = 'fa-solid fa-eye-slash text-slate-500';
+        text.innerText = 'পাঠ দেখান';
+      }
+    }
+
+    function resetLab() {
+      state.snell.theta1Deg = 45;
+      updateSnellMath();
+    }
+
+    function setSnellTheta(deg) {
+      state.snell.theta1Deg = parseFloat(deg);
+      const el = document.getElementById('tray-snell-t');
+      if (el) el.innerText = toBn(state.snell.theta1Deg) + '°';
+      updateSnellMath();
+    }
+
+    function setMedium2(n) {
+      state.snell.n2 = n;
+      const label = n === 1.33 ? '১.৩৩ (পানি)' : n === 1.50 ? '১.৫০ (কাচ)' : '২.৪২ (হীরা)';
+      document.getElementById('readout-n2').innerText = label;
+      updateSnellMath();
+    }
+
+    function updateSnellMath() {
+      const s = state.snell;
+      const rad1 = s.theta1Deg * Math.PI / 180;
+      const sinTheta2 = (s.n1 * Math.sin(rad1)) / s.n2;
+      const theta2Deg = Math.asin(sinTheta2) * 180 / Math.PI;
+
+      document.getElementById('readout-theta1').innerText = `${toBn(s.theta1Deg)}°`;
+      document.getElementById('readout-theta2').innerText = `${toBn(theta2Deg, 1)}°`;
+
+      if (window.katex) {
+        katex.render(
+          `n_1 \\sin\\theta_1 = n_2 \\sin\\theta_2 \\implies \\theta_2 = \\arcsin\\left(\\frac{${toBn(s.n1)}\\sin(${toBn(s.theta1Deg)}^\\circ)}{${toBn(s.n2)}}\\right) = ${toBn(theta2Deg, 1)}^\\circ`,
+          document.getElementById('readout-math'),
+          { throwOnError: false }
+        );
+      }
+    }
+
+    function setTirTheta(deg) {
+      state.tir.theta1Deg = parseFloat(deg);
+      const el = document.getElementById('tray-tir-t');
+      if (el) el.innerText = toBn(state.tir.theta1Deg, 1) + '°';
+      updateTirMath();
+    }
+
+    function updateTirMath() {
+      const t = state.tir;
+      const tcDeg = Math.asin(t.n2 / t.n1) * 180 / Math.PI;
+      const isTir = t.theta1Deg > tcDeg;
+
+      document.getElementById('readout-tc').innerText = `${toBn(tcDeg, 1)}°`;
+      document.getElementById('readout-tir-theta1').innerText = `${toBn(t.theta1Deg, 1)}°`;
+
+      const stateEl = document.getElementById('readout-tir-state');
+      if (isTir) {
+        stateEl.innerText = 'পূর্ণ অভ্যন্তরীণ প্রতিফলন!';
+        stateEl.className = 'font-bold text-red-400 text-xs';
+      } else {
+        stateEl.innerText = 'স্বাভাবিক প্রতিসরণ (আলো বাতাসে প্রবেশ করে)';
+        stateEl.className = 'font-bold text-emerald-400 text-xs';
+      }
+
+      if (window.katex) {
+        katex.render(
+          `\\sin\\theta_c = \\frac{n_2}{n_1} = \\frac{1.00}{1.50} \\implies \\theta_c = 41.8^\\circ`,
+          document.getElementById('readout-math'),
+          { throwOnError: false }
+        );
+      }
+    }
+
+    function setLensF(f) {
+      state.lens.fCm = parseFloat(f);
+      const el = document.getElementById('tray-lens-f');
+      if (el) el.innerText = toBn(state.lens.fCm) + ' cm';
+      updateLensMath();
+    }
+
+    function updateLensMath() {
+      const fM = state.lens.fCm / 100;
+      const p = 1 / fM;
+      document.getElementById('readout-power').innerText = `+${toBn(p, 2)} D`;
+
+      if (window.katex) {
+        katex.render(
+          `P = \\frac{1}{f\\text{ (মিটারে)}} = \\frac{1}{${toBn(fM, 2)}} = +${toBn(p, 2)}\\text{ D}`,
+          document.getElementById('readout-math'),
+          { throwOnError: false }
+        );
+      }
+    }
+
+    // -------------------------------------------------------------
+    // RENDERERS
+    // -------------------------------------------------------------
+    function animate() {
+      ctx.clearRect(0, 0, viewWidth, viewHeight);
+
+      if (state.station === 'snell') {
+        renderSnellStage();
+      } else if (state.station === 'tir') {
+        renderTirStage();
+      } else if (state.station === 'lens') {
+        renderLensStage();
+      }
+
+      requestAnimationFrame(animate);
+    }
+
+    function renderSnellStage() {
+      const centerX = viewWidth / 2;
+      const interfaceY = viewHeight / 2;
+
+      // Top Medium (Air)
+      ctx.fillStyle = '#0f172a';
+      ctx.fillRect(0, 0, viewWidth, interfaceY);
+      ctx.fillStyle = '#94a3b8';
+      ctx.font = 'bold 12px Hind Siliguri';
+      ctx.fillText('বায়ু মাধ্যম (n₁ = ১.০০)', 40, interfaceY - 20);
+
+      // Bottom Medium (Water / Glass)
+      const grad = ctx.createLinearGradient(0, interfaceY, 0, viewHeight);
+      grad.addColorStop(0, 'rgba(14, 116, 144, 0.45)');
+      grad.addColorStop(1, 'rgba(8, 51, 68, 0.7)');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, interfaceY, viewWidth, viewHeight - interfaceY);
+
+      // Boundary Line
+      ctx.strokeStyle = '#38bdf8';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(0, interfaceY);
+      ctx.lineTo(viewWidth, interfaceY);
+      ctx.stroke();
+
+      // Normal Line (অভিলম্ব)
+      ctx.setLineDash([4, 4]);
+      ctx.strokeStyle = '#ffffffaa';
+      ctx.beginPath();
+      ctx.moveTo(centerX, interfaceY - 180);
+      ctx.lineTo(centerX, interfaceY + 180);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Laser Pointer Gun
+      const s = state.snell;
+      const rad1 = s.theta1Deg * Math.PI / 180;
+      const laserDist = 200;
+      const gunX = centerX - laserDist * Math.sin(rad1);
+      const gunY = interfaceY - laserDist * Math.cos(rad1);
+
+      // Incident Laser Beam (Red/Green glowing laser)
+      ctx.strokeStyle = '#ef4444';
+      ctx.lineWidth = 3.5;
+      ctx.beginPath();
+      ctx.moveTo(gunX, gunY);
+      ctx.lineTo(centerX, interfaceY);
+      ctx.stroke();
+
+      // Refracted Laser Beam
+      const sinTheta2 = (s.n1 * Math.sin(rad1)) / s.n2;
+      const rad2 = Math.asin(sinTheta2);
+      const refrDist = 220;
+      const refrX = centerX + refrDist * Math.sin(rad2);
+      const refrY = interfaceY + refrDist * Math.cos(rad2);
+
+      ctx.strokeStyle = '#ef4444';
+      ctx.beginPath();
+      ctx.moveTo(centerX, interfaceY);
+      ctx.lineTo(refrX, refrY);
+      ctx.stroke();
+
+      // Weak Partially Reflected Beam
+      const reflX = centerX + laserDist * Math.sin(rad1);
+      const reflY = interfaceY - laserDist * Math.cos(rad1);
+      ctx.strokeStyle = 'rgba(239, 68, 68, 0.35)';
+      ctx.beginPath();
+      ctx.moveTo(centerX, interfaceY);
+      ctx.lineTo(reflX, reflY);
+      ctx.stroke();
+
+      // Laser Gun Housing
+      ctx.save();
+      ctx.translate(gunX, gunY);
+      ctx.rotate(rad1);
+      ctx.fillStyle = '#475569';
+      ctx.fillRect(-12, -25, 24, 30);
+      ctx.fillStyle = '#0f172a';
+      ctx.fillRect(-8, 5, 16, 8);
+      ctx.restore();
+    }
+
+    function renderTirStage() {
+      const centerX = viewWidth / 2;
+      const interfaceY = viewHeight / 2;
+
+      // Top: Air (Rarer)
+      ctx.fillStyle = '#0f172a';
+      ctx.fillRect(0, 0, viewWidth, interfaceY);
+      ctx.fillStyle = '#94a3b8';
+      ctx.font = 'bold 12px Hind Siliguri';
+      ctx.fillText('হালকা মাধ্যম: বাতাস (n₂ = ১.০০)', 40, interfaceY - 20);
+
+      // Bottom: Glass (Denser)
+      ctx.fillStyle = 'rgba(30, 58, 138, 0.5)';
+      ctx.fillRect(0, interfaceY, viewWidth, viewHeight - interfaceY);
+      ctx.fillStyle = '#60a5fa';
+      ctx.fillText('ঘন মাধ্যম: কাচ (n₁ = ১.৫০)', 40, interfaceY + 30);
+
+      // Interface
+      ctx.strokeStyle = '#60a5fa';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(0, interfaceY);
+      ctx.lineTo(viewWidth, interfaceY);
+      ctx.stroke();
+
+      // Normal
+      ctx.setLineDash([4, 4]);
+      ctx.strokeStyle = '#ffffffaa';
+      ctx.beginPath();
+      ctx.moveTo(centerX, interfaceY - 160);
+      ctx.lineTo(centerX, interfaceY + 160);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      const t = state.tir;
+      const rad1 = t.theta1Deg * Math.PI / 180;
+      const beamLen = 200;
+      const startX = centerX - beamLen * Math.sin(rad1);
+      const startY = interfaceY + beamLen * Math.cos(rad1);
+
+      // Incident ray coming from below
+      ctx.strokeStyle = '#a855f7';
+      ctx.lineWidth = 3.5;
+      ctx.beginPath();
+      ctx.moveTo(startX, startY);
+      ctx.lineTo(centerX, interfaceY);
+      ctx.stroke();
+
+      const tcRad = Math.asin(t.n2 / t.n1);
+      const isTir = rad1 > tcRad;
+
+      if (isTir) {
+        // Total Internal Reflection (100% bounced back down)
+        const reflX = centerX + beamLen * Math.sin(rad1);
+        const reflY = interfaceY + beamLen * Math.cos(rad1);
+        ctx.strokeStyle = '#ef4444';
+        ctx.beginPath();
+        ctx.moveTo(centerX, interfaceY);
+        ctx.lineTo(reflX, reflY);
+        ctx.stroke();
+      } else {
+        // Refraction into air
+        const sinTheta2 = (t.n1 * Math.sin(rad1)) / t.n2;
+        const rad2 = Math.asin(sinTheta2);
+        const refrX = centerX + beamLen * Math.sin(rad2);
+        const refrY = interfaceY - beamLen * Math.cos(rad2);
+        ctx.strokeStyle = '#a855f7';
+        ctx.beginPath();
+        ctx.moveTo(centerX, interfaceY);
+        ctx.lineTo(refrX, refrY);
+        ctx.stroke();
+      }
+    }
+
+    function renderLensStage() {
+      const centerX = viewWidth / 2;
+      const axisY = viewHeight / 2;
+      const fPx = state.lens.fCm * 6;
+
+      // Principal Axis
+      ctx.strokeStyle = '#475569';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(60, axisY);
+      ctx.lineTo(viewWidth - 60, axisY);
+      ctx.stroke();
+
+      // Convex Lens Body
+      ctx.fillStyle = 'rgba(56, 189, 248, 0.35)';
+      ctx.strokeStyle = '#38bdf8';
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.ellipse(centerX, axisY, 22, 110, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+
+      // Focus F1, F2
+      ctx.fillStyle = '#38bdf8';
+      ctx.beginPath();
+      ctx.arc(centerX - fPx, axisY, 4, 0, Math.PI * 2);
+      ctx.arc(centerX + fPx, axisY, 4, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillText('F₁', centerX - fPx - 6, axisY + 16);
+      ctx.fillText('F₂', centerX + fPx - 6, axisY + 16);
+
+      // Parallel Rays converging through F2
+      [-40, -20, 20, 40].forEach(offsetY => {
+        ctx.strokeStyle = '#22c55e';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(centerX - 180, axisY + offsetY);
+        ctx.lineTo(centerX, axisY + offsetY);
+        ctx.lineTo(centerX + fPx, axisY);
+        ctx.lineTo(centerX + fPx + 80, axisY - (offsetY / fPx) * 80);
+        ctx.stroke();
+      });
+    }
+
+    setStation('snell');
+    requestAnimationFrame(animate);
+
+  </script>
+</body>
+</html>

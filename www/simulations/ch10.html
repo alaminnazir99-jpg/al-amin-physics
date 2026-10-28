@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>স্থির তড়িৎ ল্যাব (PhET Interactive Electrostatics Lab) | আল-আমিন ফিজিক্স</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&family=JetBrains+Mono:wght@500;700&display=swap');
+    
+    * {
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    body {
+      font-family: 'Hind Siliguri', system-ui, sans-serif;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: #090d16;
+      color: #f8fafc;
+    }
+    #phet-stage {
+      position: absolute;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      touch-action: none;
+      cursor: default;
+    }
+    .phet-header {
+      position: absolute;
+      top: 12px;
+      left: 16px;
+      right: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 25;
+      pointer-events: none;
+    }
+    .phet-header * {
+      pointer-events: auto;
+    }
+    .phet-tab-pill {
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(8px);
+      box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+      border: 1px solid rgba(51, 65, 85, 0.8);
+      border-radius: 9999px;
+      padding: 4px;
+      display: flex;
+      gap: 4px;
+    }
+    .phet-tab-btn {
+      padding: 6px 14px;
+      border-radius: 9999px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #94a3b8;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .phet-tab-btn.active {
+      background: #8b5cf6;
+      color: #ffffff;
+      box-shadow: 0 2px 8px rgba(139, 92, 246, 0.35);
+    }
+    .phet-tray {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(12px);
+      border: 1.5px solid rgba(51, 65, 85, 0.8);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+      border-radius: 20px;
+      padding: 8px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      z-index: 25;
+    }
+    .phet-readout-card {
+      position: absolute;
+      top: 70px;
+      right: 20px;
+      background: rgba(15, 23, 42, 0.9);
+      backdrop-filter: blur(10px);
+      border: 1px solid #334155;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+      border-radius: 16px;
+      padding: 12px 16px;
+      min-width: 270px;
+      z-index: 25;
+      transition: all 0.2s;
+    }
+    .phet-hint-tag {
+      position: absolute;
+      top: 70px;
+      left: 20px;
+      background: rgba(30, 41, 59, 0.9);
+      border: 1px solid #475569;
+      color: #c4b5fd;
+      padding: 6px 14px;
+      border-radius: 14px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      z-index: 25;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      max-width: calc(100vw - 330px);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation Bar -->
+  <div class="phet-header">
+    <div class="flex items-center gap-2">
+      <a href="index.html" class="px-3 py-1.5 rounded-full bg-slate-900 border border-slate-700 text-slate-200 hover:text-purple-400 font-bold text-xs shadow-sm flex items-center gap-1.5 transition">
+        <i class="fa-solid fa-arrow-left"></i> ল্যাব তালিকা
+      </a>
+      <span class="text-xs font-bold text-slate-300 bg-slate-900/80 px-3 py-1.5 rounded-full border border-slate-700 shadow-sm hidden sm:inline">
+        অধ্যায় ১০: স্থির তড়িৎ (Electrostatics Lab)
+      </span>
+    </div>
+
+    <!-- PhET Experiment Switcher -->
+    <div class="phet-tab-pill">
+      <button onclick="setStation('coulomb')" id="tab-coulomb" class="phet-tab-btn active">
+        <i class="fa-solid fa-bolt mr-1"></i> কুলম্বের সূত্র (Coulomb's Law)
+      </button>
+      <button onclick="setStation('field')" id="tab-field" class="phet-tab-btn">
+        <i class="fa-solid fa-circle-nodes mr-1"></i> তড়িৎ বলরেখা (Field Lines)
+      </button>
+      <button onclick="setStation('electroscope')" id="tab-electroscope" class="phet-tab-btn">
+        <i class="fa-solid fa-flask mr-1"></i> স্বর্ণপাত তড়িৎবীক্ষণ
+      </button>
+    </div>
+
+    <!-- Right Controls: Readout Toggle & Reset -->
+    <div class="flex items-center gap-2">
+      <button onclick="toggleReadingCard()" id="btn-toggle-readout" class="px-3 py-1.5 rounded-full bg-slate-900 border border-slate-700 text-slate-200 hover:bg-slate-800 font-bold text-xs shadow-sm flex items-center gap-1.5 transition">
+        <i class="fa-solid fa-eye text-purple-400" id="readout-icon"></i> <span id="readout-btn-text">পাঠ লুকান</span>
+      </button>
+      <button onclick="resetLab()" class="w-8 h-8 rounded-full bg-slate-900 border border-slate-700 text-slate-200 hover:bg-slate-800 flex items-center justify-center text-xs shadow-sm transition" title="রিসেট">
+        <i class="fa-solid fa-rotate-right"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Instruction Hint -->
+  <div class="phet-hint-tag" id="hint-tag">
+    <i class="fa-solid fa-hand-pointer text-purple-400 animate-pulse"></i>
+    <span id="hint-text">আধান দুটিকে মাউস দিয়ে ডানে-বামে টেনে আকর্ষণ বা বিকর্ষণ বলের ভেক্টর তীর পর্যবেক্ষণ করুন!</span>
+  </div>
+
+  <!-- Real-Time Floating Readout Card -->
+  <div class="phet-readout-card" id="readout-card">
+    <div class="flex items-center justify-between pb-1.5 mb-1.5 border-b border-slate-700">
+      <span class="text-xs font-bold text-slate-200 flex items-center gap-1.5">
+        <i class="fa-solid fa-atom text-purple-400"></i> স্থির তড়িৎ পরিমিতি পাঠ
+      </span>
+      <span class="text-[10px] px-2 py-0.5 rounded-full bg-purple-400/20 text-purple-400 font-bold font-mono" id="coulomb-badge">k = ৯ × ১০⁹ N·m²/C²</span>
+    </div>
+
+    <!-- Coulomb Readout -->
+    <div id="readout-coulomb" class="space-y-1 text-xs">
+      <div class="flex justify-between items-center">
+        <span class="text-slate-400">১ম আধান (q₁):</span>
+        <span class="font-bold font-mono text-blue-400 text-sm" id="readout-q1">+৫.০ &mu;C</span>
+      </div>
+      <div class="flex justify-between items-center">
+        <span class="text-slate-400">২য় আধান (q₂):</span>
+        <span class="font-bold font-mono text-red-400 text-sm" id="readout-q2">-৪.০ &mu;C</span>
+      </div>
+      <div class="flex justify-between items-center">
+        <span class="text-slate-400">মধ্যবর্তী দূরত্ব (r):</span>
+        <span class="font-bold font-mono text-amber-400 text-sm" id="readout-r">২.০ m</span>
+      </div>
+      <div class="pt-1.5 mt-1 border-t border-dashed border-slate-700 flex justify-between items-center">
+        <span class="font-bold text-slate-200">কুলম্ব বল (F = kq₁q₂/r²):</span>
+        <span class="font-bold font-mono text-emerald-400 text-base" id="readout-f">০.০৪৫ N (আকর্ষণ)</span>
+      </div>
+    </div>
+
+    <!-- Field Readout -->
+    <div id="readout-field" class="space-y-1 text-xs hidden">
+      <div class="flex justify-between items-center">
+        <span class="text-slate-400">তড়িৎ দ্বিমেরু:</span>
+        <span class="font-bold font-mono text-purple-400 text-sm">+q এবং -q</span>
+      </div>
+      <div class="pt-1.5 mt-1 border-t border-dashed border-slate-700 flex justify-between items-center">
+        <span class="font-bold text-slate-200">বলরেখার ধর্ম:</span>
+        <span class="font-bold text-emerald-400 text-xs">ধনাত্মক থেকে ঋণাত্বক অভিমুখে</span>
+      </div>
+    </div>
+
+    <!-- Electroscope Readout -->
+    <div id="readout-electroscope" class="space-y-1 text-xs hidden">
+      <div class="flex justify-between items-center">
+        <span class="text-slate-400">দণ্ডের আধান:</span>
+        <span class="font-bold font-mono text-amber-400 text-sm" id="readout-es-rod">ধনাত্মক (+)</span>
+      </div>
+      <div class="pt-1.5 mt-1 border-t border-dashed border-slate-700 flex justify-between items-center">
+        <span class="font-bold text-slate-200">স্বর্ণপাত দুটি:</span>
+        <span class="font-bold text-emerald-400 text-xs" id="readout-es-leaves">বিকর্ষণে ফাঁক হয়ে আছে</span>
+      </div>
+    </div>
+
+    <!-- Live KaTeX formula line -->
+    <div class="mt-2 p-1.5 bg-slate-950 rounded-lg text-center text-xs overflow-x-auto text-purple-300" id="readout-math"></div>
+  </div>
+
+  <!-- Bottom PhET Tool Rack -->
+  <div class="phet-tray" id="phet-tray"></div>
+
+  <!-- Fullscreen Canvas -->
+  <canvas id="phet-stage"></canvas>
+
+  <script>
+    function toBn(num, decimals = null) {
+      const bnDigits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+      const str = decimals !== null ? Number(num).toFixed(decimals) : String(num);
+      return str.replace(/\d/g, d => bnDigits[Number(d)]);
+    }
+
+    const state = {
+      station: 'coulomb',
+      showReadout: true,
+      k: 9e9,
+
+      // Coulomb
+      coulomb: {
+        q1: 5, // micro Coulombs
+        q2: -4,
+        x1: 220,
+        x2: 480,
+        draggedCharge: null
+      },
+
+      // Electroscope
+      electroscope: {
+        rodDist: 60,
+        leafAngleDeg: 35
+      }
+    };
+
+    const canvas = document.getElementById('phet-stage');
+    const ctx = canvas.getContext('2d');
+
+    let viewWidth = window.innerWidth;
+    let viewHeight = window.innerHeight;
+
+    function resizeCanvas() {
+      viewWidth = window.innerWidth;
+      viewHeight = window.innerHeight;
+      canvas.width = viewWidth * window.devicePixelRatio;
+      canvas.height = viewHeight * window.devicePixelRatio;
+      ctx.resetTransform();
+      ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    function setStation(station) {
+      state.station = station;
+      ['coulomb', 'field', 'electroscope'].forEach(s => {
+        const btn = document.getElementById(`tab-${s}`);
+        const readout = document.getElementById(`readout-${s}`);
+        if (s === station) {
+          btn.classList.add('active');
+          readout.classList.remove('hidden');
+        } else {
+          btn.classList.remove('active');
+          readout.classList.add('hidden');
+        }
+      });
+
+      const hintText = document.getElementById('hint-text');
+      const tray = document.getElementById('phet-tray');
+
+      if (station === 'coulomb') {
+        hintText.innerHTML = 'আধান দুটিকে হাত দিয়ে টেনে দূরত্ব পরিবর্তন করুন বা আধানের মান বাড়িয়ে বল পর্যবেক্ষণ করুন!';
+        tray.innerHTML = `
+          <div class="flex items-center gap-3">
+            <span class="text-xs font-bold text-blue-400">q₁ আধান:</span>
+            <input type="range" min="-10" max="10" step="1" value="${state.coulomb.q1}" 
+              oninput="setQ1(this.value)" class="w-20 sm:w-28 accent-blue-400 cursor-pointer">
+            <span class="text-xs font-bold text-blue-400 w-12 font-mono" id="tray-q1">${toBn(state.coulomb.q1)} &mu;C</span>
+          </div>
+          <div class="h-6 w-px bg-slate-700"></div>
+          <div class="flex items-center gap-3">
+            <span class="text-xs font-bold text-red-400">q₂ আধান:</span>
+            <input type="range" min="-10" max="10" step="1" value="${state.coulomb.q2}" 
+              oninput="setQ2(this.value)" class="w-20 sm:w-28 accent-red-400 cursor-pointer">
+            <span class="text-xs font-bold text-red-400 w-12 font-mono" id="tray-q2">${toBn(state.coulomb.q2)} &mu;C</span>
+          </div>
+        `;
+        updateCoulombMath();
+      } else if (station === 'field') {
+        hintText.innerHTML = 'তড়িৎ দ্বিমেরুর বলরেখাগুলো ধনাত্মক আধান থেকে নির্গত হয়ে ঋণাত্বক আধানে প্রবেশ করে!';
+        tray.innerHTML = `
+          <span class="text-xs font-bold text-purple-400 mr-2">তড়িৎ বলরেখা ভিজ্যুয়ালাইজেশন:</span>
+          <button onclick="updateField()" class="px-3 py-1 rounded bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold">রিফ্রেশ ফিল্ড</button>
+        `;
+      } else if (station === 'electroscope') {
+        hintText.innerHTML = 'আহিত দণ্ডটি তড়িৎবীক্ষণের চাকতির কাছে আনলে স্বর্ণপাত দুটি সমধর্মী আধানে বিকর্ষিত হয়ে ফাঁক হয়ে যায়!';
+        tray.innerHTML = `
+          <div class="flex items-center gap-3">
+            <span class="text-xs font-bold text-slate-400">দণ্ডের দূরত্ব:</span>
+            <input type="range" min="10" max="120" value="${state.electroscope.rodDist}" 
+              oninput="setRodDist(this.value)" class="w-24 sm:w-36 accent-purple-400 cursor-pointer">
+          </div>
+        `;
+      }
+    }
+
+    function toggleReadingCard() {
+      state.showReadout = !state.showReadout;
+      const card = document.getElementById('readout-card');
+      const icon = document.getElementById('readout-icon');
+      const text = document.getElementById('readout-btn-text');
+      if (state.showReadout) {
+        card.style.display = 'block';
+        icon.className = 'fa-solid fa-eye text-purple-400';
+        text.innerText = 'পাঠ লুকান';
+      } else {
+        card.style.display = 'none';
+        icon.className = 'fa-solid fa-eye-slash text-slate-500';
+        text.innerText = 'পাঠ দেখান';
+      }
+    }
+
+    function resetLab() {
+      state.coulomb.x1 = 220;
+      state.coulomb.x2 = 480;
+      updateCoulombMath();
+    }
+
+    function setQ1(val) {
+      state.coulomb.q1 = parseFloat(val);
+      const el = document.getElementById('tray-q1');
+      if (el) el.innerText = toBn(state.coulomb.q1) + ' µC';
+      updateCoulombMath();
+    }
+
+    function setQ2(val) {
+      state.coulomb.q2 = parseFloat(val);
+      const el = document.getElementById('tray-q2');
+      if (el) el.innerText = toBn(state.coulomb.q2) + ' µC';
+      updateCoulombMath();
+    }
+
+    function setRodDist(val) {
+      state.electroscope.rodDist = parseFloat(val);
+      state.electroscope.leafAngleDeg = Math.max(5, 55 - state.electroscope.rodDist * 0.4);
+    }
+
+    function updateCoulombMath() {
+      const c = state.coulomb;
+      const distPx = Math.abs(c.x2 - c.x1);
+      const rMeters = Math.max(0.5, distPx / 130);
+
+      const q1C = c.q1 * 1e-6;
+      const q2C = c.q2 * 1e-6;
+      const fN = (state.k * Math.abs(q1C * q2C)) / (rMeters * rMeters);
+      const isAttractive = (c.q1 * c.q2) < 0;
+
+      document.getElementById('readout-q1').innerText = `${c.q1 > 0 ? '+' : ''}${toBn(c.q1)} µC`;
+      document.getElementById('readout-q2').innerText = `${c.q2 > 0 ? '+' : ''}${toBn(c.q2)} µC`;
+      document.getElementById('readout-r').innerText = `${toBn(rMeters, 2)} m`;
+      document.getElementById('readout-f').innerText = `${toBn(fN, 3)} N (${isAttractive ? 'আকর্ষণ' : 'বিকর্ষণ'})`;
+
+      if (window.katex) {
+        katex.render(
+          `F = \\frac{1}{4\\pi\\varepsilon_0} \\frac{|q_1 q_2|}{r^2} = \\frac{9 \\times 10^9 \\times (${toBn(Math.abs(c.q1))}\\times 10^{-6}) \\times (${toBn(Math.abs(c.q2))}\\times 10^{-6})}{(${toBn(rMeters, 2)})^2} = ${toBn(fN, 3)}\\text{ N}`,
+          document.getElementById('readout-math'),
+          { throwOnError: false }
+        );
+      }
+    }
+
+    // -------------------------------------------------------------
+    // POINTER INTERACTIONS (DRAG CHARGES)
+    // -------------------------------------------------------------
+    canvas.addEventListener('pointerdown', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const px = e.clientX - rect.left;
+      const py = e.clientY - rect.top;
+      const centerY = viewHeight / 2;
+
+      if (state.station === 'coulomb') {
+        if (Math.hypot(px - state.coulomb.x1, py - centerY) < 30) {
+          state.coulomb.draggedCharge = 'q1';
+        } else if (Math.hypot(px - state.coulomb.x2, py - centerY) < 30) {
+          state.coulomb.draggedCharge = 'q2';
+        }
+      }
+    });
+
+    window.addEventListener('pointermove', (e) => {
+      if (!state.coulomb.draggedCharge) return;
+      const rect = canvas.getBoundingClientRect();
+      const px = e.clientX - rect.left;
+
+      if (state.coulomb.draggedCharge === 'q1') {
+        state.coulomb.x1 = Math.max(100, Math.min(state.coulomb.x2 - 50, px));
+      } else if (state.coulomb.draggedCharge === 'q2') {
+        state.coulomb.x2 = Math.max(state.coulomb.x1 + 50, Math.min(viewWidth - 100, px));
+      }
+      updateCoulombMath();
+    });
+
+    window.addEventListener('pointerup', () => {
+      state.coulomb.draggedCharge = null;
+    });
+
+    // -------------------------------------------------------------
+    // RENDERERS
+    // -------------------------------------------------------------
+    function animate() {
+      ctx.clearRect(0, 0, viewWidth, viewHeight);
+
+      if (state.station === 'coulomb') {
+        renderCoulombStage();
+      } else if (state.station === 'field') {
+        renderFieldStage();
+      } else if (state.station === 'electroscope') {
+        renderElectroscopeStage();
+      }
+
+      requestAnimationFrame(animate);
+    }
+
+    function renderCoulombStage() {
+      const centerY = viewHeight / 2;
+      const c = state.coulomb;
+
+      // Calibrated Meter Ruler on ground
+      ctx.fillStyle = '#1e293b';
+      ctx.fillRect(80, centerY + 60, viewWidth - 160, 24);
+      ctx.strokeStyle = '#475569';
+      ctx.strokeRect(80, centerY + 60, viewWidth - 160, 24);
+      ctx.fillStyle = '#94a3b8';
+      ctx.font = '9px JetBrains Mono';
+      for (let x = 100; x < viewWidth - 100; x += 30) {
+        ctx.beginPath();
+        ctx.moveTo(x, centerY + 60);
+        ctx.lineTo(x, centerY + 70);
+        ctx.stroke();
+      }
+
+      // Charge 1 (Blue if +, Yellow if -)
+      renderSphereCharge(c.x1, centerY, c.q1, 'q₁');
+      // Charge 2
+      renderSphereCharge(c.x2, centerY, c.q2, 'q₂');
+
+      // Force Vector Arrows
+      const isAttractive = (c.q1 * c.q2) < 0;
+      const arrowLen = Math.min(120, Math.max(25, (Math.abs(c.q1 * c.q2) / Math.pow(Math.abs(c.x2 - c.x1) / 130, 2)) * 8));
+
+      // Force on q1 (F12)
+      drawForceArrow(c.x1, centerY - 45, isAttractive ? arrowLen : -arrowLen, isAttractive ? '#10b981' : '#ef4444', 'F₁₂');
+      // Force on q2 (F21)
+      drawForceArrow(c.x2, centerY - 45, isAttractive ? -arrowLen : arrowLen, isAttractive ? '#10b981' : '#ef4444', 'F₂₁');
+    }
+
+    function renderSphereCharge(x, y, q, label) {
+      const isPos = q >= 0;
+      const r = 24;
+
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      const grad = ctx.createRadialGradient(x - 6, y - 6, 2, x, y, r);
+      if (isPos) {
+        grad.addColorStop(0, '#93c5fd');
+        grad.addColorStop(0.5, '#3b82f6');
+        grad.addColorStop(1, '#1d4ed8');
+      } else {
+        grad.addColorStop(0, '#fca5a5');
+        grad.addColorStop(0.5, '#ef4444');
+        grad.addColorStop(1, '#b91c1c');
+      }
+      ctx.fillStyle = grad;
+      ctx.fill();
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 16px JetBrains Mono';
+      ctx.fillText(isPos ? '+' : '−', x - 6, y + 6);
+
+      ctx.font = 'bold 11px Hind Siliguri';
+      ctx.fillText(label, x - 8, y + 42);
+    }
+
+    function drawForceArrow(x, y, len, color, label) {
+      ctx.strokeStyle = color;
+      ctx.fillStyle = color;
+      ctx.lineWidth = 3;
+
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.lineTo(x + len, y);
+      ctx.stroke();
+
+      // Arrowhead
+      const sign = len > 0 ? 1 : -1;
+      ctx.beginPath();
+      ctx.moveTo(x + len, y);
+      ctx.lineTo(x + len - sign * 8, y - 5);
+      ctx.lineTo(x + len - sign * 8, y + 5);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.font = 'bold 10px JetBrains Mono';
+      ctx.fillText(label, x + len / 2 - 8, y - 8);
+    }
+
+    function renderFieldStage() {
+      const centerY = viewHeight / 2;
+      const p1X = viewWidth / 2 - 140;
+      const p2X = viewWidth / 2 + 140;
+
+      // Draw Dipole Field Lines
+      ctx.strokeStyle = 'rgba(168, 85, 247, 0.45)';
+      ctx.lineWidth = 1.5;
+
+      for (let angle = 0; angle < Math.PI * 2; angle += Math.PI / 8) {
+        ctx.beginPath();
+        let currX = p1X + 24 * Math.cos(angle);
+        let currY = centerY + 24 * Math.sin(angle);
+        ctx.moveTo(currX, currY);
+
+        for (let step = 0; step < 80; step++) {
+          const d1 = Math.hypot(currX - p1X, currY - centerY);
+          const d2 = Math.hypot(currX - p2X, currY - centerY);
+          if (d2 < 25) break;
+
+          const ex = (currX - p1X) / (d1 * d1 * d1) - (currX - p2X) / (d2 * d2 * d2);
+          const ey = (currY - centerY) / (d1 * d1 * d1) - (currY - centerY) / (d2 * d2 * d2);
+          const eMag = Math.hypot(ex, ey);
+
+          currX += (ex / eMag) * 6;
+          currY += (ey / eMag) * 6;
+          ctx.lineTo(currX, currY);
+        }
+        ctx.stroke();
+      }
+
+      renderSphereCharge(p1X, centerY, 5, '+q');
+      renderSphereCharge(p2X, centerY, -5, '-q');
+    }
+
+    function renderElectroscopeStage() {
+      const centerX = viewWidth / 2;
+      const centerY = viewHeight / 2;
+
+      // Glass Flask
+      ctx.strokeStyle = '#64748b';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.arc(centerX, centerY + 40, 90, 0, Math.PI * 2);
+      ctx.stroke();
+
+      // Metal Disc Top
+      ctx.fillStyle = '#fbbf24';
+      ctx.beginPath();
+      ctx.ellipse(centerX, centerY - 90, 45, 10, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#d97706';
+      ctx.stroke();
+
+      // Metal Rod
+      ctx.fillStyle = '#d97706';
+      ctx.fillRect(centerX - 3, centerY - 90, 6, 120);
+
+      // Gold Leaves at bottom of rod
+      const leafAngle = state.electroscope.leafAngleDeg * Math.PI / 180;
+      ctx.strokeStyle = '#fef08a';
+      ctx.lineWidth = 3;
+      // Left leaf
+      ctx.beginPath();
+      ctx.moveTo(centerX, centerY + 30);
+      ctx.lineTo(centerX - 40 * Math.sin(leafAngle), centerY + 30 + 40 * Math.cos(leafAngle));
+      ctx.stroke();
+      // Right leaf
+      ctx.beginPath();
+      ctx.moveTo(centerX, centerY + 30);
+      ctx.lineTo(centerX + 40 * Math.sin(leafAngle), centerY + 30 + 40 * Math.cos(leafAngle));
+      ctx.stroke();
+
+      // Charged Rod in hand (on the left)
+      const rodX = centerX - 80 - state.electroscope.rodDist;
+      ctx.fillStyle = '#38bdf8';
+      ctx.fillRect(rodX - 60, centerY - 120, 60, 16);
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 11px JetBrains Mono';
+      ctx.fillText('++++++', rodX - 52, centerY - 108);
+    }
+
+    setStation('coulomb');
+    requestAnimationFrame(animate);
+
+  </script>
+</body>
+</html>

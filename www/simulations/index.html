@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Al Amin Physics — ভার্চুয়াল পদার্থবিজ্ঞান ল্যাবরেটরি (S1–S109)</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <!-- Google Fonts Bangla (Hind Siliguri) -->
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- KaTeX Math -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <!-- Lab Core Styles -->
+  <link rel="stylesheet" href="shared/lab-core.css">
+
+  <style>
+    body { font-family: 'Hind Siliguri', sans-serif; }
+    .chapter-card:hover { transform: translateY(-3px); }
+  </style>
+</head>
+<body class="lab-page bg-slate-950 text-slate-100 min-h-screen flex flex-col">
+
+  <!-- Top Navigation Header -->
+  <header class="lab-glass sticky top-0 z-50 border-b border-slate-800/80 px-4 py-3">
+    <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <a href="../index.html" class="flex items-center gap-2 group">
+          <div class="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold text-lg shadow-lg shadow-blue-500/30 group-hover:scale-105 transition">
+            <i class="fa-solid fa-atom"></i>
+          </div>
+          <div>
+            <h1 class="text-base sm:text-lg font-bold text-white leading-tight">Al Amin <span class="text-blue-400">Physics</span></h1>
+            <span class="text-[10px] text-slate-400 block tracking-wider uppercase font-semibold">SSC ভার্চুয়াল ফিজিক্স ল্যাবরেটরি</span>
+          </div>
+        </a>
+      </div>
+
+      <!-- Search & Filters -->
+      <div class="flex-1 max-w-md hidden sm:block relative">
+        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+        <input type="text" id="sim-search" placeholder="সিমুলেশন খুঁজুন (যেমন: S12, লেখচিত্র, প্রিজম, ভার্নিয়ার)..."
+               class="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl pl-9 pr-4 py-2 text-xs text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 placeholder-slate-500 transition">
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="flex items-center gap-2">
+        <a href="../study.html" class="px-3.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition flex items-center gap-1.5">
+          <i class="fa-solid fa-book-open text-blue-400"></i> <span class="hidden md:inline">মূল স্টাডি পোর্টাল</span>
+        </a>
+        <button onclick="LabCore.Audio.toggleMute(); updateMuteIcon();" id="mute-toggle-btn" class="w-8 h-8 rounded-xl bg-slate-800 border border-slate-700 text-slate-300 hover:text-white flex items-center justify-center text-xs transition" title="শব্দ চালু/বন্ধ">
+          <i class="fa-solid fa-volume-high" id="mute-icon"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Banner -->
+  <section class="relative overflow-hidden py-8 px-4 border-b border-slate-800 bg-gradient-to-b from-blue-950/40 via-slate-950 to-slate-950">
+    <div class="max-w-7xl mx-auto text-center relative z-10">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-400 text-xs font-bold mb-3">
+        <i class="fa-solid fa-flask-vial"></i> ১০৯টি ইন্টারঅ্যাকটিভ ল্যাব ও সিমুলেশন স্পেস (NCTB কারিকুলাম)
+      </div>
+      <h2 class="text-2xl sm:text-4xl font-extrabold text-white mb-2">
+        হাতে-কলমে পরীক্ষা করো, <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-sky-300 to-cyan-400">পদার্থবিজ্ঞান উপলব্ধি করো</span>
+      </h2>
+      <p class="text-xs sm:text-sm text-slate-400 max-w-2xl mx-auto mb-6">
+        যন্ত্রপাতি ড্র্যাগ করে নাড়াও, লাইভ গ্রাফ ও সূত্র পর্যবেক্ষণ করো, ডেটা টেবিলে রিডিং রেকর্ড করো এবং ইন্টারেক্টিভ চ্যালেঞ্জের মাধ্যমে ফিজিক্সের জটিল ধারণা সহজে আয়ত্ত করো।
+      </p>
+
+      <!-- Stats Bar -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-3xl mx-auto text-center">
+        <div class="bg-slate-900/70 border border-slate-800 p-3 rounded-2xl">
+          <span class="text-xl sm:text-2xl font-black text-blue-400 block font-mono">১৩</span>
+          <span class="text-[11px] text-slate-400 font-medium">পদার্থবিজ্ঞান অধ্যায়</span>
+        </div>
+        <div class="bg-slate-900/70 border border-slate-800 p-3 rounded-2xl">
+          <span class="text-xl sm:text-2xl font-black text-cyan-400 block font-mono">১০৯</span>
+          <span class="text-[11px] text-slate-400 font-medium">সর্বমোট ল্যাব আইডি (S1–S109)</span>
+        </div>
+        <div class="bg-slate-900/70 border border-slate-800 p-3 rounded-2xl">
+          <span class="text-xl sm:text-2xl font-black text-emerald-400 block font-mono">১৪</span>
+          <span class="text-[11px] text-slate-400 font-medium">মাল্টি-স্টেশন মার্জ মডিউল</span>
+        </div>
+        <div class="bg-slate-900/70 border border-slate-800 p-3 rounded-2xl">
+          <span class="text-xl sm:text-2xl font-black text-amber-400 block font-mono">৩</span>
+          <span class="text-[11px] text-slate-400 font-medium">এক্সপ্লোরার অ্যাক্টিভিটি</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Container: Chapter Grid -->
+  <main class="max-w-7xl mx-auto px-4 py-8 flex-1 w-full">
+    <div class="flex items-center justify-between mb-6">
+      <h3 class="text-lg font-bold text-white flex items-center gap-2">
+        <i class="fa-solid fa-layer-group text-blue-400"></i> অধ্যায়ভিত্তিক ভার্চুয়াল ল্যাবরেটরি
+      </h3>
+      <span class="text-xs text-slate-400" id="filter-status-text">সবগুলো অধ্যায় দেখানো হচ্ছে</span>
+    </div>
+
+    <!-- 13 Chapters Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5" id="chapters-grid">
+
+      <!-- Ch 1 -->
+      <div class="chapter-card lab-glass-card rounded-2xl p-5 border border-slate-800 hover:border-blue-500/50 transition flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-3">
+            <span class="px-2.5 py-1 rounded-lg bg-blue-500/10 text-blue-400 text-xs font-black font-mono border border-blue-500/20">অধ্যায় ০১</span>
+            <span class="text-xs text-slate-400 font-medium">৬টি সিমুলেশন (S1–S6)</span>
+          </div>
+          <h4 class="text-lg font-bold text-white mb-1.5">ভৌত রাশি ও তাদের পরিমাপ</h4>
+          <p class="text-xs text-slate-400 mb-4 leading-relaxed">
+            দৈর্ঘ্যের স্কেল জুম (S2 Mini), ভার্নিয়ার স্কেল ক্যালিপার্স (S4), মাইক্রোমিটার স্ক্রু গজ (S5) ও পরিমাপের ত্রুটি ল্যাব (S6)।
+          </p>
+          <div class="flex flex-wrap gap-1.5 mb-4 text-[10px]">
+            <span class="bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-mono">S1 রাশি ও একক</span>
+            <span class="bg-amber-950/60 text-amber-300 border border-amber-800/50 px-2 py-0.5 rounded font-mono">S2 স্কেল জুম [Mini]</span>
+            <span class="bg-blue-950/60 text-blue-300 border border-blue-800/50 px-2 py-0.5 rounded font-mono">S4 স্লাইড ক্যালিপার্স</span>
+            <span class="bg-blue-950/60 text-blue-300 border border-blue-800/50 px-2 py-0.5 rounded font-mono">S5 স্ক্রু গজ</span>
+          </div>
+        </div>
+        <a href="ch1.html" class="w-full py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs flex items-center justify-center gap-2 transition shadow-lg shadow-blue-600/30">
+          ল্যাবে প্রবেশ করুন <i class="fa-solid fa-arrow-right"></i>
+        </a>
+      </div>
+
+      <!-- Ch 2 -->
+      <div class="chapter-card lab-glass-card rounded-2xl p-5 border border-slate-800 hover:border-cyan-500/50 transition flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-3">
+            <span class="px-2.5 py-1 rounded-lg bg-cyan-500/10 text-cyan-400 text-xs font-black font-mono border border-cyan-500/20">অধ্যায় ০২</span>
+            <span class="text-xs text-slate-400 font-medium">৯টি সিমুলেশন (S7–S15)</span>
+          </div>
+          <h4 class="text-lg font-bold text-white mb-1.5">গতি (Motion)</h4>
+          <p class="text-xs text-slate-400 mb-4 leading-relaxed">
+            আপেক্ষিক গতি, ভেক্টর ল্যাব, পড়ন্ত বস্তু, ঢালু তল এবং মার্জ মডিউল M01 (গতির সমীকরণ ও s-t/v-t লেখচিত্র ল্যাব)।
+          </p>
+          <div class="flex flex-wrap gap-1.5 mb-4 text-[10px]">
+            <span class="bg-emerald-950/60 text-emerald-300 border border-emerald-800/50 px-2 py-0.5 rounded font-mono font-bold">M01 (S12+S14) সমীকরণ ও লেখচিত্র</span>
+            <span class="bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-mono">S10 ভেক্টর</span>
+            <span class="bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-mono">S13 পড়ন্ত বস্তু</span>
+          </div>
+        </div>
+        <a href="ch2.html" class="w-full py-2.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-xs flex items-center justify-center gap-2 transition shadow-lg shadow-cyan-600/30">
+          ল্যাবে প্রবেশ করুন <i class="fa-solid fa-arrow-right"></i>
+        </a>
+      </div>
+
+      <!-- Ch 3 -->
+      <div class="chapter-card lab-glass-card rounded-2xl p-5 border border-slate-800 hover:border-indigo-500/50 transition flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-3">
+            <span class="px-2.5 py-1 rounded-lg bg-indigo-500/10 text-indigo-400 text-xs font-black font-mono border border-indigo-500/20">অধ্যায় ০৩</span>
+            <span class="text-xs text-slate-400 font-medium">১০টি সিমুলেশন (S16–S25)</span>
+          </div>
+          <h4 class="text-lg font-bold text-white mb-1.5">বল (Force)</h4>
+          <p class="text-xs text-slate-400 mb-4 leading-relaxed">
+            নিউটনের ৩টি সূত্র, ৪ মৌলিক বল (S17 Mini), ভরবেগ ও সংঘর্ষ, মহাকর্ষ, বলের ঘাত এবং বাস্তবমুখী ঘর্ষণ ল্যাব।
+          </p>
+          <div class="flex flex-wrap gap-1.5 mb-4 text-[10px]">
+            <span class="bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-mono">S16 জড়তা</span>
+            <span class="bg-amber-950/60 text-amber-300 border border-amber-800/50 px-2 py-0.5 rounded font-mono">S17 মৌলিক বল [Mini]</span>
+            <span class="bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-mono">S20 সংঘর্ষ</span>
+            <span class="bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-mono">S21 F=ma</span>
+          </div>
+        </div>
+        <a href="ch3.html" class="w-full py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs flex items-center justify-center gap-2 transition shadow-lg shadow-indigo-600/30">
+          ল্যাবে প্রবেশ করুন <i class="fa-solid fa-arrow-right"></i>
+        </a>
+      </div>
+
+      <!-- Ch 4 -->
+      <div class="chapter-card lab-glass-card rounded-2xl p-5 border border-slate-800 hover:border-emerald-500/50 transition flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-3">
+            <span class="px-2.5 py-1 rounded-lg bg-emerald-500/10 text-emerald-400 text-xs font-black font-mono border border-emerald-500/20">অধ্যায় ০৪</span>
+            <span class="text-xs text-slate-400 font-medium">৮টি সিমুলেশন (S26–S33)</span>
+          </div>
+          <h4 class="text-lg font-bold text-white mb-1.5">কাজ, ক্ষমতা ও শক্তি</h4>
+          <p class="text-xs text-slate-400 mb-4 leading-relaxed">
+            M02 (কাজ ও কাজ-শক্তি উপপাদ্য), M03 (বিভবশক্তি ও নিত্যতা), ক্ষমতা-কর্মদক্ষতা এবং S33 (শক্তির উৎস বাছাই Mini)।
+          </p>
+          <div class="flex flex-wrap gap-1.5 mb-4 text-[10px]">
+            <span class="bg-emerald-950/60 text-emerald-300 border border-emerald-800/50 px-2 py-0.5 rounded font-mono font-bold">M02 (S26+S27)</span>
+            <span class="bg-emerald-950/60 text-emerald-300 border border-emerald-800/50 px-2 py-0.5 rounded font-mono font-bold">M03 (S28+S29)</span>
+            <span class="bg-amber-950/60 text-amber-300 border border-amber-800/50 px-2 py-0.5 rounded font-mono">S33 দেশ চালাও [Mini]</span>
+          </div>
+        </div>
+        <a href="ch4.html" class="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center justify-center gap-2 transition shadow-lg shadow-emerald-600/30">
+          ল্যাবে প্রবেশ করুন <i class="fa-solid fa-arrow-right"></i>
+        </a>
+      </div>
+
+      <!-- Ch 5 -->
+      <div class="chapter-card lab-glass-card rounded-2xl p-5 border border-slate-800 hover:border-sky-500/50 transition flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-3">
+            <span class="px-2.5 py-1 rounded-lg bg-sky-500/10 text-sky-400 text-xs font-black font-mono border border-sky-500/20">অধ্যায় ০৫</span>
+            <span class="text-xs text-slate-400 font-medium">১০টি সিমুলেশন (S34–S43)</span>
+          </div>
+          <h4 class="text-lg font-bold text-white mb-1.5">পদার্থের অবস্থা ও চাপ</h4>
+          <p class="text-xs text-slate-400 mb-4 leading-relaxed">
+            প্যাসকেল ও হাইড্রোলিক লিফট, প্লবতা ও আর্কিমিডিস নীতি, এবং M05 (বায়ুমণ্ডলীয় চাপ ও ব্যারোমিটার ল্যাব)।
+          </p>
+          <div class="flex flex-wrap gap-1.5 mb-4 text-[10px]">
+            <span class="bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-mono">S37 প্লবতা</span>
+            <span class="bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-mono">S38 হাইড্রোলিক লিফট</span>
+            <span class="bg-emerald-950/60 text-emerald-300 border border-emerald-800/50 px-2 py-0.5 rounded font-mono font-bold">M05 (S39+S40) ব্যারোমিটার</span>
+          </div>
+        </div>
+        <a href="ch5.html" class="w-full py-2.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-bold text-xs flex items-center justify-center gap-2 transition shadow-lg shadow-sky-600/30">
+          ল্যাবে প্রবেশ করুন <i class="fa-solid fa-arrow-right"></i>
+        </a>
+      </div>
+
+      <!-- Ch 6 -->
+      <div class="chapter-card lab-glass-card rounded-2xl p-5 border border-slate-800 hover:border-amber-500/50 transition flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-3">
+            <span class="px-2.5 py-1 rounded-lg bg-amber-500/10 text-amber-400 text-xs font-black font-mono border border-amber-500/20">অধ্যায় ০৬</span>
+            <span class="text-xs text-slate-400 font-medium">১১টি সিমুলেশন (S44–S54)</span>
+          </div>
+          <h4 class="text-lg font-bold text-white mb-1.5">বস্তুর উপর তাপের প্রভাব</h4>
+          <p class="text-xs text-slate-400 mb-4 leading-relaxed">
+            ক্যালরিমিতি ল্যাব, M06 (তাপীয় প্রসারণ), M07 (গ্যাসের আচরণ ও অবস্থার পরিবর্তন), M08 (বাষ্পায়ন ও স্ফুটন)।
+          </p>
+          <div class="flex flex-wrap gap-1.5 mb-4 text-[10px]">
+            <span class="bg-emerald-950/60 text-emerald-300 border border-emerald-800/50 px-2 py-0.5 rounded font-mono font-bold">M06 (S46+S47)</span>
+            <span class="bg-emerald-950/60 text-emerald-300 border border-emerald-800/50 px-2 py-0.5 rounded font-mono font-bold">M07 (S48+S49)</span>
+            <span class="bg-emerald-950/60 text-emerald-300 border border-emerald-800/50 px-2 py-0.5 rounded font-mono font-bold">M08 (S52+S53)</span>
+          </div>
+        </div>
+        <a href="ch6.html" class="w-full py-2.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs flex items-center justify-center gap-2 transition shadow-lg shadow-amber-600/30">
+          ল্যাবে প্রবেশ করুন <i class="fa-solid fa-arrow-right"></i>
+        </a>
+      </div>
+
+      <!-- Ch 7 -->
+      <div class="chapter-card lab-glass-card rounded-2xl p-5 border border-slate-800 hover:border-teal-500/50 transition flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-3">
+            <span class="px-2.5 py-1 rounded-lg bg-teal-500/10 text-teal-400 text-xs font-black font-mono border border-teal-500/20">অধ্যায় ০৭</span>
+            <span class="text-xs text-slate-400 font-medium">১০টি সিমুলেশন (S55–S64)</span>
+          </div>
+          <h4 class="text-lg font-bold text-white mb-1.5">তরঙ্গ ও শব্দ</h4>
+          <p class="text-xs text-slate-400 mb-4 leading-relaxed">
+            সরল স্পন্দন গতি, তরঙ্গের উপরিপাতন, সুরের তরঙ্গরূপ, প্রতিধ্বনি এবং M09 (বিভিন্ন মাধ্যমে ও তাপমাত্রায় শব্দের বেগ ল্যাব)।
+          </p>
+          <div class="flex flex-wrap gap-1.5 mb-4 text-[10px]">
+            <span class="bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-mono">S55 সরল দোলক</span>
+            <span class="bg-emerald-950/60 text-emerald-300 border border-emerald-800/50 px-2 py-0.5 rounded font-mono font-bold">M09 (S59+S60) শব্দের বেগ</span>
+            <span class="bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-mono">S61 প্রতিধ্বনি</span>
+          </div>
+        </div>
+        <a href="ch7.html" class="w-full py-2.5 rounded-xl bg-teal-600 hover:bg-teal-500 text-white font-bold text-xs flex items-center justify-center gap-2 transition shadow-lg shadow-teal-600/30">
+          ল্যাবে প্রবেশ করুন <i class="fa-solid fa-arrow-right"></i>
+        </a>
+      </div>
+
+      <!-- Ch 8 -->
+      <div class="chapter-card lab-glass-card rounded-2xl p-5 border border-slate-800 hover:border-yellow-500/50 transition flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-3">
+            <span class="px-2.5 py-1 rounded-lg bg-yellow-500/10 text-yellow-400 text-xs font-black font-mono border border-yellow-500/20">অধ্যায় ০৮</span>
+            <span class="text-xs text-slate-400 font-medium">৮টি সিমুলেশন (S65–S72)</span>
+          </div>
+          <h4 class="text-lg font-bold text-white mb-1.5">আলোর প্রতিফলন</h4>
+          <p class="text-xs text-slate-400 mb-4 leading-relaxed">
+            M10 (প্রতিফলনের সূত্র ও নিয়মিত/ব্যাপ্ত প্রতিফলন), সমতল আয়না, পিনহোল ক্যামেরা এবং উত্তল/অবতল আয়নার ৭ অবস্থানের প্রতিবিম্ব।
+          </p>
+          <div class="flex flex-wrap gap-1.5 mb-4 text-[10px]">
+            <span class="bg-emerald-950/60 text-emerald-300 border border-emerald-800/50 px-2 py-0.5 rounded font-mono font-bold">M10 (S65+S66) প্রতিফলন</span>
+            <span class="bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-mono">S71 উত্তল আয়না</span>
+            <span class="bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-mono">S72 অবতল আয়না</span>
+          </div>
+        </div>
+        <a href="ch8.html" class="w-full py-2.5 rounded-xl bg-yellow-600 hover:bg-yellow-500 text-white font-bold text-xs flex items-center justify-center gap-2 transition shadow-lg shadow-yellow-600/30">
+          ল্যাবে প্রবেশ করুন <i class="fa-solid fa-arrow-right"></i>
+        </a>
+      </div>
+
+      <!-- Ch 9 -->
+      <div class="chapter-card lab-glass-card rounded-2xl p-5 border border-slate-800 hover:border-rose-500/50 transition flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-3">
+            <span class="px-2.5 py-1 rounded-lg bg-rose-500/10 text-rose-400 text-xs font-black font-mono border border-rose-500/20">অধ্যায় ০৯</span>
+            <span class="text-xs text-slate-400 font-medium">১০টি সিমুলেশন (S73–S82)</span>
+          </div>
+          <h4 class="text-lg font-bold text-white mb-1.5">আলোর প্রতিসরণ</h4>
+          <p class="text-xs text-slate-400 mb-4 leading-relaxed">
+            স্নেলের সূত্র, পূর্ণ অভ্যন্তরীণ প্রতিফলন (TIR), অপটিক্যাল ফাইবার, M11 (প্রিজম ও রংধনু), লেন্স ও চোখের ত্রুটি-প্রতিকার।
+          </p>
+          <div class="flex flex-wrap gap-1.5 mb-4 text-[10px]">
+            <span class="bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-mono">S73 স্নেলের সূত্র</span>
+            <span class="bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-mono">S75 TIR</span>
+            <span class="bg-emerald-950/60 text-emerald-300 border border-emerald-800/50 px-2 py-0.5 rounded font-mono font-bold">M11 (S77+S78) রংধনু</span>
+            <span class="bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-mono">S82 চোখের ত্রুটি</span>
+          </div>
+        </div>
+        <a href="ch9.html" class="w-full py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs flex items-center justify-center gap-2 transition shadow-lg shadow-rose-600/30">
+          ল্যাবে প্রবেশ করুন <i class="fa-solid fa-arrow-right"></i>
+        </a>
+      </div>
+
+      <!-- Ch 10 -->
+      <div class="chapter-card lab-glass-card rounded-2xl p-5 border border-slate-800 hover:border-violet-500/50 transition flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-3">
+            <span class="px-2.5 py-1 rounded-lg bg-violet-500/10 text-violet-400 text-xs font-black font-mono border border-violet-500/20">অধ্যায় ১০</span>
+            <span class="text-xs text-slate-400 font-medium">৮টি সিমুলেশন (S83–S90)</span>
+          </div>
+          <h4 class="text-lg font-bold text-white mb-1.5">স্থির বিদ্যুৎ</h4>
+          <p class="text-xs text-slate-400 mb-4 leading-relaxed">
+            M12 (আধান সৃষ্টি, আবেশ ও ইলেকট্রোস্কোপ ল্যাব), কুলম্বের সূত্র, M13 (তড়িৎক্ষেত্র ও বিভব ল্যাব), ধারক এবং বজ্রপাত অ্যানিমেশন (S90)।
+          </p>
+          <div class="flex flex-wrap gap-1.5 mb-4 text-[10px]">
+            <span class="bg-emerald-950/60 text-emerald-300 border border-emerald-800/50 px-2 py-0.5 rounded font-mono font-bold">M12 (S83+S84+S85)</span>
+            <span class="bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-mono">S86 কুলম্বের সূত্র</span>
+            <span class="bg-emerald-950/60 text-emerald-300 border border-emerald-800/50 px-2 py-0.5 rounded font-mono font-bold">M13 (S87+S88)</span>
+          </div>
+        </div>
+        <a href="ch10.html" class="w-full py-2.5 rounded-xl bg-violet-600 hover:bg-violet-500 text-white font-bold text-xs flex items-center justify-center gap-2 transition shadow-lg shadow-violet-600/30">
+          ল্যাবে প্রবেশ করুন <i class="fa-solid fa-arrow-right"></i>
+        </a>
+      </div>
+
+      <!-- Ch 11 -->
+      <div class="chapter-card lab-glass-card rounded-2xl p-5 border border-slate-800 hover:border-amber-500/50 transition flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-3">
+            <span class="px-2.5 py-1 rounded-lg bg-amber-500/10 text-amber-400 text-xs font-black font-mono border border-amber-500/20">অধ্যায় ১১</span>
+            <span class="text-xs text-slate-400 font-medium">৬টি সিমুলেশন (S91–S96)</span>
+          </div>
+          <h4 class="text-lg font-bold text-white mb-1.5">চল বিদ্যুৎ</h4>
+          <p class="text-xs text-slate-400 mb-4 leading-relaxed">
+            তড়িৎপ্রবাহ ও EMF, ওহমের সূত্র ও সার্কিট প্লেগ্রাউন্ড (S92), রোধের সূত্র ও রিওস্ট্যাট, বিদ্যুৎ বিলের হিসাব এবং নিরাপদ বর্তনী।
+          </p>
+          <div class="flex flex-wrap gap-1.5 mb-4 text-[10px]">
+            <span class="bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-mono">S91 EMF ল্যাব</span>
+            <span class="bg-blue-950/60 text-blue-300 border border-blue-800/50 px-2 py-0.5 rounded font-mono font-bold">S92 ওহমের সূত্র ও সার্কিট</span>
+            <span class="bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-mono">S94 বিদ্যুৎ বিল</span>
+          </div>
+        </div>
+        <a href="ch11.html" class="w-full py-2.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs flex items-center justify-center gap-2 transition shadow-lg shadow-amber-600/30">
+          ল্যাবে প্রবেশ করুন <i class="fa-solid fa-arrow-right"></i>
+        </a>
+      </div>
+
+      <!-- Ch 12 -->
+      <div class="chapter-card lab-glass-card rounded-2xl p-5 border border-slate-800 hover:border-red-500/50 transition flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-3">
+            <span class="px-2.5 py-1 rounded-lg bg-red-500/10 text-red-400 text-xs font-black font-mono border border-red-500/20">অধ্যায় ১২</span>
+            <span class="text-xs text-slate-400 font-medium">৭টি সিমুলেশন (S97–S103)</span>
+          </div>
+          <h4 class="text-lg font-bold text-white mb-1.5">বিদ্যুতের চৌম্বক ক্রিয়া</h4>
+          <p class="text-xs text-slate-400 mb-4 leading-relaxed">
+            দণ্ড চুম্বক ও বলরেখা, ওয়েরস্টেড পরীক্ষা, সলিনয়েড ও তড়িৎচুম্বক, DC মোটর, M14 (আবেশ ও জেনারেটর), এবং স্টেপ-আপ/ডাউন ট্রান্সফরমার।
+          </p>
+          <div class="flex flex-wrap gap-1.5 mb-4 text-[10px]">
+            <span class="bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-mono">S97 দণ্ড চুম্বক</span>
+            <span class="bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-mono">S100 DC মোটর</span>
+            <span class="bg-emerald-950/60 text-emerald-300 border border-emerald-800/50 px-2 py-0.5 rounded font-mono font-bold">M14 (S101+S102) জেনারেটর</span>
+            <span class="bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-mono">S103 ট্রান্সফরমার</span>
+          </div>
+        </div>
+        <a href="ch12.html" class="w-full py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-bold text-xs flex items-center justify-center gap-2 transition shadow-lg shadow-red-600/30">
+          ল্যাবে প্রবেশ করুন <i class="fa-solid fa-arrow-right"></i>
+        </a>
+      </div>
+
+      <!-- Ch 13 -->
+      <div class="chapter-card lab-glass-card rounded-2xl p-5 border border-slate-800 hover:border-fuchsia-500/50 transition flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-3">
+            <span class="px-2.5 py-1 rounded-lg bg-fuchsia-500/10 text-fuchsia-400 text-xs font-black font-mono border border-fuchsia-500/20">অধ্যায় ১৩</span>
+            <span class="text-xs text-slate-400 font-medium">৬টি সিমুলেশন (S104–S109)</span>
+          </div>
+          <h4 class="text-lg font-bold text-white mb-1.5">তেজস্ক্রিয়তা ও ইলেকট্রনিক্স</h4>
+          <p class="text-xs text-slate-400 mb-4 leading-relaxed">
+            আলফা-বিটা-গামা রশ্মি, ক্ষয় সমীকরণ, অর্ধায়ু ও কার্বন ডেটিং, M04 (নিউক্লিয়ার ফিশন ও রিঅ্যাক্টর), সেমিকন্ডাক্টর ডোপিং ও সিগন্যাল ল্যাব।
+          </p>
+          <div class="flex flex-wrap gap-1.5 mb-4 text-[10px]">
+            <span class="bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-mono">S104 α-β-γ বাধা পরীক্ষা</span>
+            <span class="bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-mono">S106 অর্ধায়ু ল্যাব</span>
+            <span class="bg-emerald-950/60 text-emerald-300 border border-emerald-800/50 px-2 py-0.5 rounded font-mono font-bold">M04 (S30+S107) ফিশন</span>
+            <span class="bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-mono">S108 ডোপিং ও p-n</span>
+          </div>
+        </div>
+        <a href="ch13.html" class="w-full py-2.5 rounded-xl bg-fuchsia-600 hover:bg-fuchsia-500 text-white font-bold text-xs flex items-center justify-center gap-2 transition shadow-lg shadow-fuchsia-600/30">
+          ল্যাবে প্রবেশ করুন <i class="fa-solid fa-arrow-right"></i>
+        </a>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-slate-900 py-6 text-center text-xs text-slate-500">
+    <p>© 2026 Al Amin Physics • SSC নবম-দশম শ্রেণির পদার্থবিজ্ঞান ভার্চুয়াল সিমুলেশন ল্যাবরেটরি</p>
+  </footer>
+
+  <script src="shared/lab-core.js"></script>
+  <script>
+    function updateMuteIcon() {
+      const isMuted = LabCore.Audio.isMuted;
+      const icon = document.getElementById('mute-icon');
+      if (icon) {
+        icon.className = isMuted ? 'fa-solid fa-volume-xmark text-rose-400' : 'fa-solid fa-volume-high text-slate-300';
+      }
+    }
+    updateMuteIcon();
+
+    // Instant Search
+    document.getElementById('sim-search').addEventListener('input', function(e) {
+      const q = e.target.value.toLowerCase().trim();
+      const cards = document.querySelectorAll('.chapter-card');
+      let visibleCount = 0;
+      cards.forEach(card => {
+        const text = card.textContent.toLowerCase();
+        if (!q || text.includes(q)) {
+          card.style.display = 'flex';
+          visibleCount++;
+        } else {
+          card.style.display = 'none';
+        }
+      });
+      document.getElementById('filter-status-text').textContent = q ? `${visibleCount}টি অধ্যায়ে মিল পাওয়া গেছে` : 'সবগুলো অধ্যায় দেখানো হচ্ছে';
+    });
+  </script>
+</body>
+</html>

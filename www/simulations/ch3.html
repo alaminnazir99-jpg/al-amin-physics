@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>বল ও গতিবিজ্ঞান ল্যাব (PhET Interactive Force Lab) | আল-আমিন ফিজিক্স</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&family=JetBrains+Mono:wght@500;700&display=swap');
+    
+    * {
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    body {
+      font-family: 'Hind Siliguri', system-ui, sans-serif;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: #f8fafc;
+      color: #0f172a;
+    }
+    #phet-stage {
+      position: absolute;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      touch-action: none;
+      cursor: default;
+    }
+    .phet-header {
+      position: absolute;
+      top: 12px;
+      left: 16px;
+      right: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 25;
+      pointer-events: none;
+    }
+    .phet-header * {
+      pointer-events: auto;
+    }
+    .phet-tab-pill {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(8px);
+      box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+      border: 1px solid rgba(226, 232, 240, 0.8);
+      border-radius: 9999px;
+      padding: 4px;
+      display: flex;
+      gap: 4px;
+    }
+    .phet-tab-btn {
+      padding: 6px 14px;
+      border-radius: 9999px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #475569;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .phet-tab-btn.active {
+      background: #4f46e5;
+      color: #ffffff;
+      box-shadow: 0 2px 8px rgba(79, 70, 229, 0.35);
+    }
+    .phet-tray {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(12px);
+      border: 1.5px solid rgba(203, 213, 225, 0.8);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.12);
+      border-radius: 20px;
+      padding: 8px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      z-index: 25;
+    }
+    .phet-readout-card {
+      position: absolute;
+      top: 70px;
+      right: 20px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border: 1px solid #cbd5e1;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+      border-radius: 16px;
+      padding: 12px 16px;
+      min-width: 270px;
+      z-index: 25;
+      transition: all 0.2s;
+    }
+    .phet-hint-tag {
+      position: absolute;
+      top: 70px;
+      left: 20px;
+      background: #eef2ff;
+      border: 1px solid #c7d2fe;
+      color: #3730a3;
+      padding: 6px 14px;
+      border-radius: 14px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      z-index: 25;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.04);
+      max-width: calc(100vw - 330px);
+    }
+    .phet-playback-bar {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(8px);
+      border: 1px solid #cbd5e1;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+      border-radius: 9999px;
+      padding: 4px 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      z-index: 25;
+    }
+    .playback-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 9999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      color: #334155;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: all 0.15s;
+    }
+    .playback-btn:hover {
+      background: #e2e8f0;
+      color: #0f172a;
+    }
+    .playback-btn.primary {
+      background: #4f46e5;
+      border-color: #4338ca;
+      color: white;
+    }
+    .playback-btn.primary:hover {
+      background: #4338ca;
+    }
+    .playback-btn.danger {
+      background: #ef4444;
+      border-color: #dc2626;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation Bar -->
+  <div class="phet-header">
+    <div class="flex items-center gap-2">
+      <a href="index.html" class="px-3 py-1.5 rounded-full bg-white border border-slate-200 text-slate-700 hover:text-indigo-600 font-bold text-xs shadow-sm flex items-center gap-1.5 transition">
+        <i class="fa-solid fa-arrow-left"></i> ল্যাব তালিকা
+      </a>
+      <span class="text-xs font-bold text-slate-600 bg-white/80 px-3 py-1.5 rounded-full border border-slate-200 shadow-sm hidden sm:inline">
+        অধ্যায় ৩: বল ও গতিবিজ্ঞান (Force Lab)
+      </span>
+    </div>
+
+    <!-- PhET Experiment Switcher -->
+    <div class="phet-tab-pill">
+      <button onclick="setStation('fma')" id="tab-fma" class="phet-tab-btn active">
+        <i class="fa-solid fa-truck-ramp-box mr-1"></i> F = ma বল ও ত্বরণ
+      </button>
+      <button onclick="setStation('collision')" id="tab-collision" class="phet-tab-btn">
+        <i class="fa-solid fa-arrows-left-right-to-line mr-1"></i> ভরবেগ ও সংঘর্ষ
+      </button>
+      <button onclick="setStation('incline')" id="tab-incline" class="phet-tab-btn">
+        <i class="fa-solid fa-ruler-triangle mr-1"></i> আনত তল ও ঘর্ষণ
+      </button>
+    </div>
+
+    <!-- Right Controls: Readout Toggle & Reset -->
+    <div class="flex items-center gap-2">
+      <button onclick="toggleReadingCard()" id="btn-toggle-readout" class="px-3 py-1.5 rounded-full bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 font-bold text-xs shadow-sm flex items-center gap-1.5 transition">
+        <i class="fa-solid fa-eye text-indigo-600" id="readout-icon"></i> <span id="readout-btn-text">পাঠ লুকান</span>
+      </button>
+      <button onclick="resetLab()" class="w-8 h-8 rounded-full bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 flex items-center justify-center text-xs shadow-sm transition" title="রিসেট">
+        <i class="fa-solid fa-rotate-right"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Instruction Hint -->
+  <div class="phet-hint-tag" id="hint-tag">
+    <i class="fa-solid fa-hand-pointer text-indigo-600 animate-pulse"></i>
+    <span id="hint-text">বস্তুটি ড্র্যাগ করে গাড়ির ওপর রাখুন, বলের মান পরিবর্তন করে কার্টটিকে গতিশীল করুন!</span>
+  </div>
+
+  <!-- Real-Time Floating Readout Card (PhET Sticky Note Style) -->
+  <div class="phet-readout-card" id="readout-card">
+    <div class="flex items-center justify-between pb-1.5 mb-1.5 border-b border-slate-200">
+      <span class="text-xs font-bold text-slate-700 flex items-center gap-1.5">
+        <i class="fa-solid fa-calculator text-indigo-600"></i> লাইভ গতিমিতি ও বলবিজ্ঞান
+      </span>
+      <span class="text-[10px] px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 font-bold font-mono" id="force-badge">নিউটনীয় বলবিজ্ঞান</span>
+    </div>
+
+    <!-- F=ma Readout -->
+    <div id="readout-fma" class="space-y-1 text-xs">
+      <div class="flex justify-between items-center">
+        <span class="text-slate-500">প্রযুক্ত বল (F):</span>
+        <span class="font-bold font-mono text-indigo-700 text-sm" id="readout-f">৫০.০ N</span>
+      </div>
+      <div class="flex justify-between items-center">
+        <span class="text-slate-500">ঘর্ষণ বল (fₖ):</span>
+        <span class="font-bold font-mono text-red-600 text-sm" id="readout-fk">১০.০ N</span>
+      </div>
+      <div class="flex justify-between items-center">
+        <span class="text-slate-500">মোট ভর (m):</span>
+        <span class="font-bold font-mono text-amber-700 text-sm" id="readout-m">২০.০ kg</span>
+      </div>
+      <div class="flex justify-between items-center">
+        <span class="text-slate-500">বর্তমান বেগ (v):</span>
+        <span class="font-bold font-mono text-teal-600 text-sm" id="readout-v">০.০ m/s</span>
+      </div>
+      <div class="pt-1.5 mt-1 border-t border-dashed border-slate-200 flex justify-between items-center">
+        <span class="font-bold text-slate-800">কার্যকরী ত্বরণ (a):</span>
+        <span class="font-bold font-mono text-emerald-600 text-base" id="readout-a">২.০০ m/s²</span>
+      </div>
+    </div>
+
+    <!-- Collision Readout -->
+    <div id="readout-collision" class="space-y-1 text-xs hidden">
+      <div class="flex justify-between items-center">
+        <span class="text-slate-500">কার্ট ১ (m₁ = ৫ kg, u₁):</span>
+        <span class="font-bold font-mono text-blue-700 text-sm" id="readout-col-c1">২.০ m/s</span>
+      </div>
+      <div class="flex justify-between items-center">
+        <span class="text-slate-500">কার্ট ২ (m₂ = ৩ kg, u₂):</span>
+        <span class="font-bold font-mono text-purple-700 text-sm" id="readout-col-c2">-১.০ m/s</span>
+      </div>
+      <div class="flex justify-between items-center">
+        <span class="text-slate-500">সংঘর্ষের প্রকৃতি:</span>
+        <span class="font-bold text-slate-700" id="readout-col-type">স্থিতিস্থাপক (e = ১)</span>
+      </div>
+      <div class="pt-1.5 mt-1 border-t border-dashed border-slate-200 flex justify-between items-center">
+        <span class="font-bold text-slate-800">মোট ভরবেগ (P = &Sigma;mv):</span>
+        <span class="font-bold font-mono text-emerald-600 text-base" id="readout-col-p">৭.০ kg·m/s</span>
+      </div>
+    </div>
+
+    <!-- Inclined Plane Readout -->
+    <div id="readout-incline" class="space-y-1 text-xs hidden">
+      <div class="flex justify-between items-center">
+        <span class="text-slate-500">নতি কোণ (&theta;):</span>
+        <span class="font-bold font-mono text-indigo-700 text-sm" id="readout-inc-theta">৩০°</span>
+      </div>
+      <div class="flex justify-between items-center">
+        <span class="text-slate-500">নিচে টান বল (mg sin&theta;):</span>
+        <span class="font-bold font-mono text-blue-700 text-sm" id="readout-inc-down">৪৯.০ N</span>
+      </div>
+      <div class="flex justify-between items-center">
+        <span class="text-slate-500">সর্বোচ্চ সীমাস্ত ঘর্ষণ (fₛ):</span>
+        <span class="font-bold font-mono text-amber-700 text-sm" id="readout-inc-fs">২৫.৫ N</span>
+      </div>
+      <div class="pt-1.5 mt-1 border-t border-dashed border-slate-200 flex justify-between items-center">
+        <span class="font-bold text-slate-800">বস্তুর অবস্থা:</span>
+        <span class="font-bold text-red-600 text-sm" id="readout-inc-state">নিচের দিকে পিছলাচ্ছে</span>
+      </div>
+    </div>
+
+    <!-- Live KaTeX formula line -->
+    <div class="mt-2 p-1.5 bg-slate-50 rounded-lg text-center text-xs overflow-x-auto" id="readout-math"></div>
+  </div>
+
+  <!-- Bottom Playback Controls Bar -->
+  <div class="phet-playback-bar">
+    <button onclick="toggleMotionPlay()" id="btn-play" class="playback-btn primary" title="চালু / বিরতি">
+      <i class="fa-solid fa-play" id="play-icon"></i>
+    </button>
+    <button onclick="toggleSlowMo()" id="btn-slow" class="playback-btn" title="স্লো-মোশন (০.৫x)">
+      <i class="fa-solid fa-gauge-simple"></i>
+    </button>
+    <button onclick="resetLab()" class="playback-btn" title="রিসেট">
+      <i class="fa-solid fa-rotate-right"></i>
+    </button>
+  </div>
+
+  <!-- Bottom PhET Tool Rack (Draggable Tools & Controls) -->
+  <div class="phet-tray" id="phet-tray">
+    <!-- Populated dynamically based on station -->
+  </div>
+
+  <!-- Fullscreen Interactive Canvas -->
+  <canvas id="phet-stage"></canvas>
+
+  <script>
+    // -------------------------------------------------------------
+    // AUDIO ENGINE (Web Audio API Synthesizer)
+    // -------------------------------------------------------------
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    
+    function playThudSound() {
+      try {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(140, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(35, audioCtx.currentTime + 0.15);
+        gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.18);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.18);
+      } catch (e) {}
+    }
+
+    function playClackSound() {
+      try {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(650, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(120, audioCtx.currentTime + 0.08);
+        gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.09);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.09);
+      } catch (e) {}
+    }
+
+    function toBn(num, decimals = null) {
+      const bnDigits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+      const str = decimals !== null ? Number(num).toFixed(decimals) : String(num);
+      return str.replace(/\d/g, d => bnDigits[Number(d)]);
+    }
+
+    // -------------------------------------------------------------
+    // STATE MODEL
+    // -------------------------------------------------------------
+    const state = {
+      station: 'fma', // 'fma' | 'collision' | 'incline'
+      showReadout: true,
+      slowMo: false,
+      isRunning: false,
+      g: 9.8,
+
+      // F = ma Station
+      fma: {
+        cartX: 180,
+        cartV: 0,
+        appliedForce: 50, // N
+        frictionCoeff: 0.1, // mu
+        cartMass: 10, // kg
+        extraMass: 10, // 10 kg block on top
+        isDraggingBlock: false
+      },
+
+      // Collision Station
+      collision: {
+        c1: { x: 220, v: 2.0, m: 5.0, color: '#3b82f6', label: 'কার্ট ১' },
+        c2: { x: 480, v: -1.0, m: 3.0, color: '#ec4899', label: 'কার্ট ২' },
+        elasticity: 1.0, // 1.0 = elastic, 0.0 = inelastic
+        hasCollided: false
+      },
+
+      // Inclined Plane Station
+      incline: {
+        angleDeg: 30,
+        mu: 0.3,
+        blockMass: 10, // kg
+        blockPos: 0.8, // 0 (bottom) to 1.0 (top)
+        blockV: 0,
+        isDraggingAngle: false
+      }
+    };
+
+    const canvas = document.getElementById('phet-stage');
+    const ctx = canvas.getContext('2d');
+
+    let viewWidth = window.innerWidth;
+    let viewHeight = window.innerHeight;
+
+    function resizeCanvas() {
+      viewWidth = window.innerWidth;
+      viewHeight = window.innerHeight;
+      canvas.width = viewWidth * window.devicePixelRatio;
+      canvas.height = viewHeight * window.devicePixelRatio;
+      ctx.resetTransform();
+      ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    // -------------------------------------------------------------
+    // STATION SWITCHING
+    // -------------------------------------------------------------
+    function setStation(station) {
+      state.station = station;
+      state.isRunning = false;
+      const playIcon = document.getElementById('play-icon');
+      if (playIcon) playIcon.className = 'fa-solid fa-play';
+
+      ['fma', 'collision', 'incline'].forEach(s => {
+        const btn = document.getElementById(`tab-${s}`);
+        const readout = document.getElementById(`readout-${s}`);
+        if (s === station) {
+          btn.classList.add('active');
+          readout.classList.remove('hidden');
+        } else {
+          btn.classList.remove('active');
+          readout.classList.add('hidden');
+        }
+      });
+
+      const hintText = document.getElementById('hint-text');
+      const tray = document.getElementById('phet-tray');
+
+      if (station === 'fma') {
+        hintText.innerHTML = 'প্রযুক্ত বল (F) ও তলের ঘর্ষণ পরিবর্তন করুন এবং প্লে বাটনে চাপ দিয়ে ত্বরণ পর্যবেক্ষণ করুন!';
+        tray.innerHTML = `
+          <div class="flex items-center gap-3">
+            <span class="text-xs font-bold text-slate-500">প্রযুক্ত বল (F):</span>
+            <input type="range" min="0" max="150" step="5" value="${state.fma.appliedForce}" 
+              oninput="setFmaForce(this.value)" class="w-24 sm:w-32 accent-indigo-600 cursor-pointer">
+            <span class="text-xs font-bold text-indigo-700 w-12 font-mono" id="tray-fma-f">${toBn(state.fma.appliedForce)} N</span>
+          </div>
+          <div class="h-6 w-px bg-slate-300"></div>
+          <div class="flex items-center gap-3">
+            <span class="text-xs font-bold text-slate-500">ঘর্ষণ গুণাঙ্ক (&mu;):</span>
+            <input type="range" min="0" max="0.5" step="0.05" value="${state.fma.frictionCoeff}" 
+              oninput="setFmaMu(this.value)" class="w-20 sm:w-28 accent-red-600 cursor-pointer">
+            <span class="text-xs font-bold text-red-600 w-10 font-mono" id="tray-fma-mu">${toBn(state.fma.frictionCoeff, 2)}</span>
+          </div>
+          <div class="h-6 w-px bg-slate-300"></div>
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-bold text-slate-500">অতিরিক্ত ভর:</span>
+            <button onclick="toggleExtraMass(10)" class="px-2.5 py-1 rounded bg-amber-100 hover:bg-amber-200 text-amber-800 text-xs font-bold">১০ kg</button>
+            <button onclick="toggleExtraMass(20)" class="px-2.5 py-1 rounded bg-amber-100 hover:bg-amber-200 text-amber-800 text-xs font-bold">২০ kg</button>
+            <button onclick="toggleExtraMass(0)" class="px-2 py-1 rounded bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-bold">খালি</button>
+          </div>
+        `;
+        updateFmaFormulas();
+      } else if (station === 'collision') {
+        hintText.innerHTML = 'উভয় কার্টের আদিবেগ ও ভর পরিবর্তন করুন। সংঘর্ষের পর ভরবেগ সংরক্ষণশীলতা ও বেগ দেখুন!';
+        tray.innerHTML = `
+          <div class="flex items-center gap-3">
+            <span class="text-xs font-bold text-blue-600">কার্ট ১ বেগ (u₁):</span>
+            <input type="range" min="-4" max="5" step="0.5" value="${state.collision.c1.v}" 
+              oninput="setColV1(this.value)" class="w-20 sm:w-24 accent-blue-600 cursor-pointer">
+            <span class="text-xs font-bold text-blue-700 w-12 font-mono" id="tray-col-v1">${toBn(state.collision.c1.v, 1)}</span>
+          </div>
+          <div class="h-6 w-px bg-slate-300"></div>
+          <div class="flex items-center gap-3">
+            <span class="text-xs font-bold text-purple-600">কার্ট ২ বেগ (u₂):</span>
+            <input type="range" min="-5" max="4" step="0.5" value="${state.collision.c2.v}" 
+              oninput="setColV2(this.value)" class="w-20 sm:w-24 accent-purple-600 cursor-pointer">
+            <span class="text-xs font-bold text-purple-700 w-12 font-mono" id="tray-col-v2">${toBn(state.collision.c2.v, 1)}</span>
+          </div>
+          <div class="h-6 w-px bg-slate-300"></div>
+          <div class="flex items-center gap-2">
+            <button onclick="setColElasticity(1.0)" id="btn-col-elastic" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-indigo-600 text-white">স্থিতিস্থাপক (e=১)</button>
+            <button onclick="setColElasticity(0.0)" id="btn-col-inelastic" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700">অস্থিতিস্থাপক (e=০)</button>
+          </div>
+        `;
+        updateCollisionFormulas();
+      } else if (station === 'incline') {
+        hintText.innerHTML = 'আনত তলের কোণ হাত দিয়ে টেনে বৃদ্ধি করুন—কোন কোণে বস্তুটি নিচে নামতে শুরু করে?';
+        tray.innerHTML = `
+          <div class="flex items-center gap-3">
+            <span class="text-xs font-bold text-slate-500">নতি কোণ (&theta;):</span>
+            <input type="range" min="5" max="65" value="${state.incline.angleDeg}" 
+              oninput="setInclineAngle(this.value)" class="w-24 sm:w-32 accent-indigo-600 cursor-pointer">
+            <span class="text-xs font-bold text-indigo-700 w-10 font-mono" id="tray-inc-theta">${toBn(state.incline.angleDeg)}°</span>
+          </div>
+          <div class="h-6 w-px bg-slate-300"></div>
+          <div class="flex items-center gap-3">
+            <span class="text-xs font-bold text-slate-500">ঘর্ষণ গুণাঙ্ক (&mu;):</span>
+            <input type="range" min="0.1" max="0.7" step="0.05" value="${state.incline.mu}" 
+              oninput="setInclineMu(this.value)" class="w-20 sm:w-28 accent-red-600 cursor-pointer">
+            <span class="text-xs font-bold text-red-600 w-10 font-mono" id="tray-inc-mu">${toBn(state.incline.mu, 2)}</span>
+          </div>
+        `;
+        updateInclineFormulas();
+      }
+    }
+
+    function toggleReadingCard() {
+      state.showReadout = !state.showReadout;
+      const card = document.getElementById('readout-card');
+      const icon = document.getElementById('readout-icon');
+      const text = document.getElementById('readout-btn-text');
+      if (state.showReadout) {
+        card.style.display = 'block';
+        icon.className = 'fa-solid fa-eye text-indigo-600';
+        text.innerText = 'পাঠ লুকান';
+      } else {
+        card.style.display = 'none';
+        icon.className = 'fa-solid fa-eye-slash text-slate-400';
+        text.innerText = 'পাঠ দেখান';
+      }
+    }
+
+    function toggleSlowMo() {
+      state.slowMo = !state.slowMo;
+      const btn = document.getElementById('btn-slow');
+      if (state.slowMo) {
+        btn.classList.add('primary');
+        btn.title = 'স্বাভাবিক গতি (১x)';
+      } else {
+        btn.classList.remove('primary');
+        btn.title = 'স্লো-মোশন (০.৫x)';
+      }
+    }
+
+    function toggleMotionPlay() {
+      state.isRunning = !state.isRunning;
+      const icon = document.getElementById('play-icon');
+      const btn = document.getElementById('btn-play');
+      if (state.isRunning) {
+        icon.className = 'fa-solid fa-pause';
+        btn.classList.add('danger');
+      } else {
+        icon.className = 'fa-solid fa-play';
+        btn.classList.remove('danger');
+      }
+    }
+
+    function resetLab() {
+      state.isRunning = false;
+      const icon = document.getElementById('play-icon');
+      const btn = document.getElementById('btn-play');
+      if (icon) icon.className = 'fa-solid fa-play';
+      if (btn) btn.classList.remove('danger');
+
+      if (state.station === 'fma') {
+        state.fma.cartX = 180;
+        state.fma.cartV = 0;
+        updateFmaFormulas();
+      } else if (state.station === 'collision') {
+        state.collision.c1.x = 220;
+        state.collision.c2.x = 480;
+        state.collision.c1.v = 2.0;
+        state.collision.c2.v = -1.0;
+        state.collision.hasCollided = false;
+        updateCollisionFormulas();
+      } else if (state.station === 'incline') {
+        state.incline.blockPos = 0.8;
+        state.incline.blockV = 0;
+        updateInclineFormulas();
+      }
+    }
+
+    // -------------------------------------------------------------
+    // F=ma LOGIC
+    // -------------------------------------------------------------
+    function setFmaForce(val) {
+      state.fma.appliedForce = parseFloat(val);
+      const el = document.getElementById('tray-fma-f');
+      if (el) el.innerText = toBn(state.fma.appliedForce) + ' N';
+      updateFmaFormulas();
+    }
+
+    function setFmaMu(val) {
+      state.fma.frictionCoeff = parseFloat(val);
+      const el = document.getElementById('tray-fma-mu');
+      if (el) el.innerText = toBn(state.fma.frictionCoeff, 2);
+      updateFmaFormulas();
+    }
+
+    function toggleExtraMass(m) {
+      state.fma.extraMass = m;
+      updateFmaFormulas();
+    }
+
+    function updateFmaFormulas() {
+      const f = state.fma;
+      const totalMass = f.cartMass + f.extraMass;
+      const normalForce = totalMass * state.g;
+      const friction = f.frictionCoeff * normalForce;
+      const netForce = Math.max(0, f.appliedForce - friction);
+      const a = f.appliedForce > friction ? netForce / totalMass : 0;
+
+      document.getElementById('readout-f').innerText = `${toBn(f.appliedForce, 1)} N`;
+      document.getElementById('readout-fk').innerText = `${toBn(friction, 1)} N`;
+      document.getElementById('readout-m').innerText = `${toBn(totalMass, 1)} kg`;
+      document.getElementById('readout-v').innerText = `${toBn(f.cartV, 1)} m/s`;
+      document.getElementById('readout-a').innerText = `${toBn(a, 2)} m/s²`;
+
+      if (window.katex) {
+        katex.render(
+          `a = \\frac{F - f_k}{m} = \\frac{${toBn(f.appliedForce)} - ${toBn(friction, 1)}}{${toBn(totalMass)}} = ${toBn(a, 2)}\\text{ m/s}^2`,
+          document.getElementById('readout-math'),
+          { throwOnError: false }
+        );
+      }
+    }
+
+    // -------------------------------------------------------------
+    // COLLISION LOGIC
+    // -------------------------------------------------------------
+    function setColV1(v) {
+      state.collision.c1.v = parseFloat(v);
+      const el = document.getElementById('tray-col-v1');
+      if (el) el.innerText = toBn(state.collision.c1.v, 1);
+      updateCollisionFormulas();
+    }
+
+    function setColV2(v) {
+      state.collision.c2.v = parseFloat(v);
+      const el = document.getElementById('tray-col-v2');
+      if (el) el.innerText = toBn(state.collision.c2.v, 1);
+      updateCollisionFormulas();
+    }
+
+    function setColElasticity(e) {
+      state.collision.elasticity = e;
+      const elBtn = document.getElementById('btn-col-elastic');
+      const inelBtn = document.getElementById('btn-col-inelastic');
+      if (e === 1.0) {
+        elBtn.className = 'px-2.5 py-1 rounded-lg text-xs font-bold bg-indigo-600 text-white';
+        inelBtn.className = 'px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700';
+        document.getElementById('readout-col-type').innerText = 'স্থিতিস্থাপক (e = ১)';
+      } else {
+        inelBtn.className = 'px-2.5 py-1 rounded-lg text-xs font-bold bg-indigo-600 text-white';
+        elBtn.className = 'px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700';
+        document.getElementById('readout-col-type').innerText = 'অস্থিতিস্থাপক (e = ০)';
+      }
+      updateCollisionFormulas();
+    }
+
+    function updateCollisionFormulas() {
+      const col = state.collision;
+      const pTotal = col.c1.m * col.c1.v + col.c2.m * col.c2.v;
+      document.getElementById('readout-col-c1').innerText = `${toBn(col.c1.v, 1)} m/s`;
+      document.getElementById('readout-col-c2').innerText = `${toBn(col.c2.v, 1)} m/s`;
+      document.getElementById('readout-col-p').innerText = `${toBn(pTotal, 1)} kg·m/s`;
+
+      if (window.katex) {
+        katex.render(
+          `m_1 u_1 + m_2 u_2 = m_1 v_1 + m_2 v_2 = ${toBn(pTotal, 1)}\\text{ kg}\\cdot\\text{m/s}`,
+          document.getElementById('readout-math'),
+          { throwOnError: false }
+        );
+      }
+    }
+
+    // -------------------------------------------------------------
+    // INCLINE LOGIC
+    // -------------------------------------------------------------
+    function setInclineAngle(deg) {
+      state.incline.angleDeg = parseFloat(deg);
+      const el = document.getElementById('tray-inc-theta');
+      if (el) el.innerText = toBn(state.incline.angleDeg) + '°';
+      updateInclineFormulas();
+    }
+
+    function setInclineMu(val) {
+      state.incline.mu = parseFloat(val);
+      const el = document.getElementById('tray-inc-mu');
+      if (el) el.innerText = toBn(state.incline.mu, 2);
+      updateInclineFormulas();
+    }
+
+    function updateInclineFormulas() {
+      const inc = state.incline;
+      const rad = inc.angleDeg * Math.PI / 180;
+      const m = inc.blockMass;
+      const g = state.g;
+
+      const fDown = m * g * Math.sin(rad);
+      const fNormal = m * g * Math.cos(rad);
+      const fFrictionMax = inc.mu * fNormal;
+
+      const willSlide = fDown > fFrictionMax;
+
+      document.getElementById('readout-inc-theta').innerText = `${toBn(inc.angleDeg)}°`;
+      document.getElementById('readout-inc-down').innerText = `${toBn(fDown, 1)} N`;
+      document.getElementById('readout-inc-fs').innerText = `${toBn(fFrictionMax, 1)} N`;
+
+      const stateEl = document.getElementById('readout-inc-state');
+      if (willSlide) {
+        stateEl.innerText = 'নিচের দিকে পিছলাচ্ছে (ত্বরণ সৃষ্টি হবে)';
+        stateEl.className = 'font-bold text-red-600 text-sm';
+      } else {
+        stateEl.innerText = 'স্থির অবস্থায় আটকে আছে';
+        stateEl.className = 'font-bold text-emerald-600 text-sm';
+      }
+
+      if (window.katex) {
+        katex.render(
+          `mg\\sin\\theta = ${toBn(fDown, 1)}\\text{ N} \\quad vs \\quad \\mu mg\\cos\\theta = ${toBn(fFrictionMax, 1)}\\text{ N}`,
+          document.getElementById('readout-math'),
+          { throwOnError: false }
+        );
+      }
+    }
+
+    // -------------------------------------------------------------
+    // ANIMATION & PHYSICS TICK
+    // -------------------------------------------------------------
+    let lastTime = performance.now();
+
+    function animate(currentTime) {
+      const dt = Math.min(0.05, (currentTime - lastTime) / 1000) * (state.slowMo ? 0.4 : 1.0);
+      lastTime = currentTime;
+
+      if (state.isRunning) {
+        if (state.station === 'fma') {
+          const f = state.fma;
+          const totalMass = f.cartMass + f.extraMass;
+          const normalForce = totalMass * state.g;
+          const friction = f.frictionCoeff * normalForce;
+          const netForce = Math.max(0, f.appliedForce - friction);
+          const a = f.appliedForce > friction ? netForce / totalMass : 0;
+
+          f.cartV += a * dt;
+          f.cartX += f.cartV * 40 * dt;
+
+          if (f.cartX > viewWidth - 140) {
+            f.cartX = viewWidth - 140;
+            f.cartV = 0;
+            state.isRunning = false;
+            playThudSound();
+            document.getElementById('play-icon').className = 'fa-solid fa-play';
+            document.getElementById('btn-play').classList.remove('danger');
+          }
+          updateFmaFormulas();
+        } else if (state.station === 'collision') {
+          const col = state.collision;
+          col.c1.x += col.c1.v * 60 * dt;
+          col.c2.x += col.c2.v * 60 * dt;
+
+          // Check collision between c1 and c2 (width 80 each)
+          if (!col.hasCollided && col.c1.x + 80 >= col.c2.x) {
+            col.hasCollided = true;
+            playClackSound();
+
+            const m1 = col.c1.m, m2 = col.c2.m;
+            const u1 = col.c1.v, u2 = col.c2.v;
+            const e = col.elasticity;
+
+            if (e === 1.0) {
+              const v1 = ((m1 - m2) * u1 + 2 * m2 * u2) / (m1 + m2);
+              const v2 = ((m2 - m1) * u2 + 2 * m1 * u1) / (m1 + m2);
+              col.c1.v = v1;
+              col.c2.v = v2;
+            } else {
+              const vCommon = (m1 * u1 + m2 * u2) / (m1 + m2);
+              col.c1.v = vCommon;
+              col.c2.v = vCommon;
+            }
+            updateCollisionFormulas();
+          }
+
+          // Boundaries
+          if (col.c1.x < 80) { col.c1.x = 80; col.c1.v = Math.abs(col.c1.v); }
+          if (col.c2.x > viewWidth - 160) { col.c2.x = viewWidth - 160; col.c2.v = -Math.abs(col.c2.v); }
+        } else if (state.station === 'incline') {
+          const inc = state.incline;
+          const rad = inc.angleDeg * Math.PI / 180;
+          const m = inc.blockMass;
+          const g = state.g;
+
+          const fDown = m * g * Math.sin(rad);
+          const fNormal = m * g * Math.cos(rad);
+          const fFrictionMax = inc.mu * fNormal;
+
+          if (fDown > fFrictionMax) {
+            const netF = fDown - fFrictionMax;
+            const a = netF / m;
+            inc.blockV += a * dt;
+            inc.blockPos -= inc.blockV * 0.15 * dt;
+
+            if (inc.blockPos <= 0.05) {
+              inc.blockPos = 0.05;
+              inc.blockV = 0;
+              state.isRunning = false;
+              playThudSound();
+              document.getElementById('play-icon').className = 'fa-solid fa-play';
+              document.getElementById('btn-play').classList.remove('danger');
+            }
+          }
+        }
+      }
+
+      // Render
+      ctx.clearRect(0, 0, viewWidth, viewHeight);
+      if (state.station === 'fma') {
+        renderFmaStage();
+      } else if (state.station === 'collision') {
+        renderCollisionStage();
+      } else if (state.station === 'incline') {
+        renderInclineStage();
+      }
+
+      requestAnimationFrame(animate);
+    }
+
+    // -------------------------------------------------------------
+    // RENDERERS
+    // -------------------------------------------------------------
+    function renderFmaStage() {
+      const groundY = viewHeight - 160;
+
+      // Track / Ground
+      ctx.fillStyle = '#f1f5f9';
+      ctx.fillRect(0, 0, viewWidth, groundY);
+      ctx.fillStyle = '#334155';
+      ctx.fillRect(0, groundY, viewWidth, 8);
+      ctx.fillStyle = '#94a3b8';
+      ctx.fillRect(0, groundY + 8, viewWidth, viewHeight - groundY - 8);
+
+      const f = state.fma;
+      const cartX = f.cartX;
+      const cartY = groundY - 35;
+
+      // Force Vector Arrow (F)
+      if (f.appliedForce > 0) {
+        ctx.beginPath();
+        ctx.moveTo(cartX + 90, cartY + 15);
+        ctx.lineTo(cartX + 90 + f.appliedForce * 1.2, cartY + 15);
+        ctx.strokeStyle = '#4f46e5';
+        ctx.lineWidth = 4;
+        ctx.stroke();
+
+        // Arrowhead
+        ctx.fillStyle = '#4f46e5';
+        ctx.beginPath();
+        const ax = cartX + 90 + f.appliedForce * 1.2;
+        ctx.moveTo(ax, cartY + 15);
+        ctx.lineTo(ax - 10, cartY + 9);
+        ctx.lineTo(ax - 10, cartY + 21);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.fillStyle = '#4f46e5';
+        ctx.font = 'bold 12px JetBrains Mono';
+        ctx.fillText(`F = ${toBn(f.appliedForce)}N`, ax - 15, cartY - 5);
+      }
+
+      // Friction Arrow (f_k)
+      const totalMass = f.cartMass + f.extraMass;
+      const friction = f.frictionCoeff * totalMass * state.g;
+      if (friction > 0 && f.appliedForce > 0) {
+        ctx.beginPath();
+        ctx.moveTo(cartX, cartY + 25);
+        ctx.lineTo(cartX - friction * 1.8, cartY + 25);
+        ctx.strokeStyle = '#ef4444';
+        ctx.lineWidth = 3;
+        ctx.stroke();
+
+        // Arrowhead
+        ctx.fillStyle = '#ef4444';
+        ctx.beginPath();
+        const fx = cartX - friction * 1.8;
+        ctx.moveTo(fx, cartY + 25);
+        ctx.lineTo(fx + 8, cartY + 20);
+        ctx.lineTo(fx + 8, cartY + 30);
+        ctx.closePath();
+        ctx.fill();
+        ctx.font = 'bold 10px JetBrains Mono';
+        ctx.fillText(`f = ${toBn(friction, 1)}N`, fx - 40, cartY + 40);
+      }
+
+      // Wooden Cart
+      ctx.fillStyle = '#b45309';
+      ctx.fillRect(cartX, cartY, 90, 25);
+      ctx.strokeStyle = '#78350f';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(cartX, cartY, 90, 25);
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 10px JetBrains Mono';
+      ctx.fillText(`${toBn(f.cartMass)}kg`, cartX + 32, cartY + 16);
+
+      // Stacked Extra Weight Block
+      if (f.extraMass > 0) {
+        ctx.fillStyle = '#d97706';
+        ctx.fillRect(cartX + 18, cartY - 26, 54, 26);
+        ctx.strokeStyle = '#92400e';
+        ctx.strokeRect(cartX + 18, cartY - 26, 54, 26);
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 10px JetBrains Mono';
+        ctx.fillText(`+${toBn(f.extraMass)}kg`, cartX + 28, cartY - 9);
+      }
+
+      // Wheels
+      ctx.fillStyle = '#0f172a';
+      ctx.beginPath();
+      ctx.arc(cartX + 18, groundY - 6, 8, 0, Math.PI * 2);
+      ctx.arc(cartX + 72, groundY - 6, 8, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#94a3b8';
+      ctx.beginPath();
+      ctx.arc(cartX + 18, groundY - 6, 3, 0, Math.PI * 2);
+      ctx.arc(cartX + 72, groundY - 6, 3, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    function renderCollisionStage() {
+      const groundY = viewHeight - 160;
+
+      // Air Track
+      ctx.fillStyle = '#f8fafc';
+      ctx.fillRect(0, 0, viewWidth, groundY);
+      ctx.fillStyle = '#475569';
+      ctx.fillRect(40, groundY, viewWidth - 80, 12);
+
+      const col = state.collision;
+
+      // Cart 1
+      renderGlider(col.c1.x, groundY, col.c1.m, col.c1.v, col.c1.color, col.c1.label);
+      // Cart 2
+      renderGlider(col.c2.x, groundY, col.c2.m, col.c2.v, col.c2.color, col.c2.label);
+    }
+
+    function renderGlider(x, groundY, m, v, color, label) {
+      const y = groundY - 35;
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.roundRect(x, y, 80, 32, 6);
+      ctx.fill();
+
+      // Bumper spring
+      ctx.strokeStyle = '#0f172a';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.arc(x + 80, y + 16, 6, -Math.PI / 2, Math.PI / 2);
+      ctx.stroke();
+
+      // Text
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 11px Hind Siliguri';
+      ctx.fillText(label, x + 20, y + 15);
+      ctx.font = 'bold 10px JetBrains Mono';
+      ctx.fillText(`${toBn(m)} kg`, x + 26, y + 27);
+
+      // Velocity Vector Arrow
+      if (Math.abs(v) > 0.1) {
+        ctx.beginPath();
+        const arrowStart = x + 40;
+        const arrowEnd = arrowStart + v * 20;
+        ctx.moveTo(arrowStart, y - 12);
+        ctx.lineTo(arrowEnd, y - 12);
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 2.5;
+        ctx.stroke();
+
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.moveTo(arrowEnd, y - 12);
+        ctx.lineTo(arrowEnd - (v > 0 ? 6 : -6), y - 16);
+        ctx.lineTo(arrowEnd - (v > 0 ? 6 : -6), y - 8);
+        ctx.closePath();
+        ctx.fill();
+        ctx.font = 'bold 9px JetBrains Mono';
+        ctx.fillText(`${toBn(v, 1)}m/s`, arrowEnd - 10, y - 18);
+      }
+    }
+
+    function renderInclineStage() {
+      const originX = 140;
+      const groundY = viewHeight - 140;
+      const rampLength = 480;
+      const rad = state.incline.angleDeg * Math.PI / 180;
+
+      const topX = originX + rampLength * Math.cos(rad);
+      const topY = groundY - rampLength * Math.sin(rad);
+
+      // Incline Ramp Triangle
+      ctx.beginPath();
+      ctx.moveTo(originX, groundY);
+      ctx.lineTo(topX, topY);
+      ctx.lineTo(topX, groundY);
+      ctx.closePath();
+      const rampGrad = ctx.createLinearGradient(originX, groundY, topX, topY);
+      rampGrad.addColorStop(0, '#94a3b8');
+      rampGrad.addColorStop(1, '#cbd5e1');
+      ctx.fillStyle = rampGrad;
+      ctx.fill();
+      ctx.strokeStyle = '#475569';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // Angle Arc
+      ctx.beginPath();
+      ctx.arc(originX, groundY, 45, -rad, 0);
+      ctx.strokeStyle = '#4f46e5';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      ctx.fillStyle = '#4f46e5';
+      ctx.font = 'bold 12px JetBrains Mono';
+      ctx.fillText(`${toBn(state.incline.angleDeg)}°`, originX + 55, groundY - 10);
+
+      // Sliding Block on Incline
+      const blockDist = state.incline.blockPos * rampLength;
+      const bx = originX + blockDist * Math.cos(rad);
+      const by = groundY - blockDist * Math.sin(rad);
+
+      ctx.save();
+      ctx.translate(bx, by);
+      ctx.rotate(-rad);
+      ctx.fillStyle = '#b45309';
+      ctx.fillRect(-22, -35, 44, 35);
+      ctx.strokeStyle = '#78350f';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(-22, -35, 44, 35);
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 10px JetBrains Mono';
+      ctx.fillText(`${toBn(state.incline.blockMass)}kg`, -12, -14);
+      ctx.restore();
+    }
+
+    // -------------------------------------------------------------
+    // INIT
+    // -------------------------------------------------------------
+    setStation('fma');
+    requestAnimationFrame(animate);
+
+  </script>
+</body>
+</html>

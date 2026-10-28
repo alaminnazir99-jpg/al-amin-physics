@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>কাজ, ক্ষমতা ও শক্তি ল্যাব (PhET Interactive Energy Lab) | আল-আমিন ফিজিক্স</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&family=JetBrains+Mono:wght@500;700&display=swap');
+    
+    * {
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    body {
+      font-family: 'Hind Siliguri', system-ui, sans-serif;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: #f8fafc;
+      color: #0f172a;
+    }
+    #phet-stage {
+      position: absolute;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      touch-action: none;
+      cursor: default;
+    }
+    .phet-header {
+      position: absolute;
+      top: 12px;
+      left: 16px;
+      right: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 25;
+      pointer-events: none;
+    }
+    .phet-header * {
+      pointer-events: auto;
+    }
+    .phet-tab-pill {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(8px);
+      box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+      border: 1px solid rgba(226, 232, 240, 0.8);
+      border-radius: 9999px;
+      padding: 4px;
+      display: flex;
+      gap: 4px;
+    }
+    .phet-tab-btn {
+      padding: 6px 14px;
+      border-radius: 9999px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #475569;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .phet-tab-btn.active {
+      background: #059669;
+      color: #ffffff;
+      box-shadow: 0 2px 8px rgba(5, 150, 105, 0.35);
+    }
+    .phet-tray {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(12px);
+      border: 1.5px solid rgba(203, 213, 225, 0.8);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.12);
+      border-radius: 20px;
+      padding: 8px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      z-index: 25;
+    }
+    .phet-readout-card {
+      position: absolute;
+      top: 70px;
+      right: 20px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border: 1px solid #cbd5e1;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+      border-radius: 16px;
+      padding: 12px 16px;
+      min-width: 270px;
+      z-index: 25;
+      transition: all 0.2s;
+    }
+    .phet-hint-tag {
+      position: absolute;
+      top: 70px;
+      left: 20px;
+      background: #ecfdf5;
+      border: 1px solid #a7f3d0;
+      color: #065f46;
+      padding: 6px 14px;
+      border-radius: 14px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      z-index: 25;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.04);
+      max-width: calc(100vw - 330px);
+    }
+    .phet-playback-bar {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(8px);
+      border: 1px solid #cbd5e1;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+      border-radius: 9999px;
+      padding: 4px 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      z-index: 25;
+    }
+    .playback-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 9999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      color: #334155;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: all 0.15s;
+    }
+    .playback-btn:hover {
+      background: #e2e8f0;
+      color: #0f172a;
+    }
+    .playback-btn.primary {
+      background: #059669;
+      border-color: #047857;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation Bar -->
+  <div class="phet-header">
+    <div class="flex items-center gap-2">
+      <a href="index.html" class="px-3 py-1.5 rounded-full bg-white border border-slate-200 text-slate-700 hover:text-emerald-600 font-bold text-xs shadow-sm flex items-center gap-1.5 transition">
+        <i class="fa-solid fa-arrow-left"></i> ল্যাব তালিকা
+      </a>
+      <span class="text-xs font-bold text-slate-600 bg-white/80 px-3 py-1.5 rounded-full border border-slate-200 shadow-sm hidden sm:inline">
+        অধ্যায় ৪: কাজ, ক্ষমতা ও শক্তি (Energy Lab)
+      </span>
+    </div>
+
+    <!-- PhET Experiment Switcher -->
+    <div class="phet-tab-pill">
+      <button onclick="setStation('skate')" id="tab-skate" class="phet-tab-btn active">
+        <i class="fa-solid fa-person-skating mr-1"></i> এনার্জি স্কেট পার্ক
+      </button>
+      <button onclick="setStation('work')" id="tab-work" class="phet-tab-btn">
+        <i class="fa-solid fa-hand-holding-hand mr-1"></i> কাজ ও কোণ (W = Fs cos&theta;)
+      </button>
+      <button onclick="setStation('pump')" id="tab-pump" class="phet-tab-btn">
+        <i class="fa-solid fa-faucet-drip mr-1"></i> পাম্প ও কর্মদক্ষতা (&eta;)
+      </button>
+    </div>
+
+    <!-- Right Controls: Readout Toggle & Reset -->
+    <div class="flex items-center gap-2">
+      <button onclick="toggleReadingCard()" id="btn-toggle-readout" class="px-3 py-1.5 rounded-full bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 font-bold text-xs shadow-sm flex items-center gap-1.5 transition">
+        <i class="fa-solid fa-eye text-emerald-600" id="readout-icon"></i> <span id="readout-btn-text">পাঠ লুকান</span>
+      </button>
+      <button onclick="resetLab()" class="w-8 h-8 rounded-full bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 flex items-center justify-center text-xs shadow-sm transition" title="রিসেট">
+        <i class="fa-solid fa-rotate-right"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Instruction Hint -->
+  <div class="phet-hint-tag" id="hint-tag">
+    <i class="fa-solid fa-hand-pointer text-emerald-600 animate-pulse"></i>
+    <span id="hint-text">স্কেটারকে মাউস দিয়ে তুলে ট্র্যাকে ছেড়ে দিন এবং গতিশক্তি ও বিভব শক্তির রূপান্তর পর্যবেক্ষণ করুন!</span>
+  </div>
+
+  <!-- Real-Time Floating Readout Card -->
+  <div class="phet-readout-card" id="readout-card">
+    <div class="flex items-center justify-between pb-1.5 mb-1.5 border-b border-slate-200">
+      <span class="text-xs font-bold text-slate-700 flex items-center gap-1.5">
+        <i class="fa-solid fa-chart-pie text-emerald-600"></i> লাইভ শক্তি ও কাজ বিশ্লেষণ
+      </span>
+      <span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-bold font-mono" id="energy-badge">শক্তির নিত্যতা</span>
+    </div>
+
+    <!-- Skate Readout -->
+    <div id="readout-skate" class="space-y-1 text-xs">
+      <div class="flex justify-between items-center">
+        <span class="text-slate-500">গতিশক্তি (Ek = ½mv²):</span>
+        <span class="font-bold font-mono text-emerald-600 text-sm" id="readout-ek">০ J</span>
+      </div>
+      <div class="flex justify-between items-center">
+        <span class="text-slate-500">বিভব শক্তি (Ep = mgh):</span>
+        <span class="font-bold font-mono text-blue-600 text-sm" id="readout-ep">২৯৪০ J</span>
+      </div>
+      <div class="flex justify-between items-center">
+        <span class="text-slate-500">স্কেটারের উচ্চতা (h):</span>
+        <span class="font-bold font-mono text-amber-600 text-sm" id="readout-h">৫.০ m</span>
+      </div>
+      <div class="flex justify-between items-center">
+        <span class="text-slate-500">বর্তমান গতিবেগ (v):</span>
+        <span class="font-bold font-mono text-teal-600 text-sm" id="readout-v">০.০ m/s</span>
+      </div>
+      <div class="pt-1.5 mt-1 border-t border-dashed border-slate-200 flex justify-between items-center">
+        <span class="font-bold text-slate-800">মোট যান্ত্রিক শক্তি (E):</span>
+        <span class="font-bold font-mono text-indigo-700 text-base" id="readout-etotal">২৯৪০ J</span>
+      </div>
+    </div>
+
+    <!-- Work Readout -->
+    <div id="readout-work" class="space-y-1 text-xs hidden">
+      <div class="flex justify-between items-center">
+        <span class="text-slate-500">প্রযুক্ত বল (F):</span>
+        <span class="font-bold font-mono text-indigo-700 text-sm" id="readout-work-f">১০০ N</span>
+      </div>
+      <div class="flex justify-between items-center">
+        <span class="text-slate-500">কোণ (&theta;):</span>
+        <span class="font-bold font-mono text-blue-700 text-sm" id="readout-work-theta">০°</span>
+      </div>
+      <div class="flex justify-between items-center">
+        <span class="text-slate-500">সরণ (s):</span>
+        <span class="font-bold font-mono text-amber-700 text-sm" id="readout-work-s">৫.০ m</span>
+      </div>
+      <div class="pt-1.5 mt-1 border-t border-dashed border-slate-200 flex justify-between items-center">
+        <span class="font-bold text-slate-800">মোট কাজ (W = Fs cos&theta;):</span>
+        <span class="font-bold font-mono text-emerald-600 text-base" id="readout-work-w">৫০০ J</span>
+      </div>
+    </div>
+
+    <!-- Pump Readout -->
+    <div id="readout-pump" class="space-y-1 text-xs hidden">
+      <div class="flex justify-between items-center">
+        <span class="text-slate-500">প্রদত্ত ক্ষমতা (Pin):</span>
+        <span class="font-bold font-mono text-purple-700 text-sm" id="readout-pump-pin">২.০ kW</span>
+      </div>
+      <div class="flex justify-between items-center">
+        <span class="text-slate-500">উত্তোলিত উচ্চতা (h):</span>
+        <span class="font-bold font-mono text-blue-700 text-sm" id="readout-pump-h">২০ m</span>
+      </div>
+      <div class="flex justify-between items-center">
+        <span class="text-slate-500">কার্যকর ক্ষমতা (Pout):</span>
+        <span class="font-bold font-mono text-teal-700 text-sm" id="readout-pump-pout">১.৪ kW</span>
+      </div>
+      <div class="pt-1.5 mt-1 border-t border-dashed border-slate-200 flex justify-between items-center">
+        <span class="font-bold text-slate-800">কর্মদক্ষতা (&eta;):</span>
+        <span class="font-bold font-mono text-emerald-600 text-base" id="readout-pump-eta">৭০.০ %</span>
+      </div>
+    </div>
+
+    <!-- Live KaTeX formula line -->
+    <div class="mt-2 p-1.5 bg-slate-50 rounded-lg text-center text-xs overflow-x-auto" id="readout-math"></div>
+  </div>
+
+  <!-- Bottom Playback Controls Bar -->
+  <div class="phet-playback-bar">
+    <button onclick="toggleEnergyPlay()" id="btn-play" class="playback-btn primary" title="চালু / থামান">
+      <i class="fa-solid fa-play" id="play-icon"></i>
+    </button>
+    <button onclick="toggleSlowMo()" id="btn-slow" class="playback-btn" title="স্লো-মোশন (০.৫x)">
+      <i class="fa-solid fa-gauge-simple"></i>
+    </button>
+    <button onclick="resetLab()" class="playback-btn" title="রিসেট">
+      <i class="fa-solid fa-rotate-right"></i>
+    </button>
+  </div>
+
+  <!-- Bottom PhET Tool Rack -->
+  <div class="phet-tray" id="phet-tray"></div>
+
+  <!-- Fullscreen Canvas -->
+  <canvas id="phet-stage"></canvas>
+
+  <script>
+    // -------------------------------------------------------------
+    // AUDIO ENGINE
+    // -------------------------------------------------------------
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function playSwooshSound() {
+      try {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(260, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(140, audioCtx.currentTime + 0.15);
+        gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.15);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.15);
+      } catch (e) {}
+    }
+
+    function toBn(num, decimals = null) {
+      const bnDigits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+      const str = decimals !== null ? Number(num).toFixed(decimals) : String(num);
+      return str.replace(/\d/g, d => bnDigits[Number(d)]);
+    }
+
+    // -------------------------------------------------------------
+    // STATE MODEL
+    // -------------------------------------------------------------
+    const state = {
+      station: 'skate',
+      showReadout: true,
+      slowMo: false,
+      isRunning: true,
+      g: 9.8,
+
+      // Skate Park
+      skate: {
+        mass: 60, // kg
+        uVal: 0.9, // position parameter -1 to 1 on parabola
+        velocity: 0,
+        isDragging: false,
+        friction: 0.0,
+        pieChart: true
+      },
+
+      // Work & Angle
+      work: {
+        f: 100,
+        thetaDeg: 30,
+        s: 5,
+        crateX: 200,
+        isDraggingHandle: false
+      },
+
+      // Water Pump
+      pump: {
+        pInKw: 2.0,
+        h: 20,
+        massKgPerSec: 7.14,
+        etaPercent: 70.0,
+        waterHeight: 40
+      }
+    };
+
+    const canvas = document.getElementById('phet-stage');
+    const ctx = canvas.getContext('2d');
+
+    let viewWidth = window.innerWidth;
+    let viewHeight = window.innerHeight;
+
+    function resizeCanvas() {
+      viewWidth = window.innerWidth;
+      viewHeight = window.innerHeight;
+      canvas.width = viewWidth * window.devicePixelRatio;
+      canvas.height = viewHeight * window.devicePixelRatio;
+      ctx.resetTransform();
+      ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    // -------------------------------------------------------------
+    // STATION SWITCHING
+    // -------------------------------------------------------------
+    function setStation(station) {
+      state.station = station;
+      ['skate', 'work', 'pump'].forEach(s => {
+        const btn = document.getElementById(`tab-${s}`);
+        const readout = document.getElementById(`readout-${s}`);
+        if (s === station) {
+          btn.classList.add('active');
+          readout.classList.remove('hidden');
+        } else {
+          btn.classList.remove('active');
+          readout.classList.add('hidden');
+        }
+      });
+
+      const hintText = document.getElementById('hint-text');
+      const tray = document.getElementById('phet-tray');
+
+      if (station === 'skate') {
+        hintText.innerHTML = 'স্কেটারকে মাউস দিয়ে তুলে ট্র্যাকে ছেড়ে দিন এবং গতিশক্তি ও বিভব শক্তির রূপান্তর পর্যবেক্ষণ করুন!';
+        tray.innerHTML = `
+          <div class="flex items-center gap-3">
+            <span class="text-xs font-bold text-slate-500">স্কেটারের ভর:</span>
+            <input type="range" min="30" max="100" value="${state.skate.mass}" 
+              oninput="setSkateMass(this.value)" class="w-24 sm:w-32 accent-emerald-600 cursor-pointer">
+            <span class="text-xs font-bold text-emerald-700 w-12 font-mono" id="tray-skate-m">${toBn(state.skate.mass)} kg</span>
+          </div>
+          <div class="h-6 w-px bg-slate-300"></div>
+          <div class="flex items-center gap-3">
+            <span class="text-xs font-bold text-slate-500">ঘর্ষণ:</span>
+            <button onclick="setSkateFriction(0)" class="px-2.5 py-1 rounded bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-700">ঘর্ষণহীন</button>
+            <button onclick="setSkateFriction(0.01)" class="px-2.5 py-1 rounded bg-amber-100 hover:bg-amber-200 text-xs font-bold text-amber-800">সামান্য</button>
+          </div>
+          <div class="h-6 w-px bg-slate-300"></div>
+          <button onclick="togglePieChart()" class="px-2.5 py-1 rounded-lg text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200">
+            <i class="fa-solid fa-chart-pie mr-1"></i> শক্তি পাই-চার্ট
+          </button>
+        `;
+        updateSkateReadout();
+      } else if (station === 'work') {
+        hintText.innerHTML = 'টান বলের হাতল ঘুরিয়ে কোণ পরিবর্তন করুন। দেখুন কখন কাজ সর্বোচ্চ এবং কখন কাজ শূন্য হয়!';
+        tray.innerHTML = `
+          <div class="flex items-center gap-3">
+            <span class="text-xs font-bold text-slate-500">বল (F):</span>
+            <input type="range" min="20" max="200" step="10" value="${state.work.f}" 
+              oninput="setWorkF(this.value)" class="w-24 sm:w-28 accent-indigo-600 cursor-pointer">
+            <span class="text-xs font-bold text-indigo-700 w-12 font-mono" id="tray-work-f">${toBn(state.work.f)} N</span>
+          </div>
+          <div class="h-6 w-px bg-slate-300"></div>
+          <div class="flex items-center gap-3">
+            <span class="text-xs font-bold text-slate-500">কোণ (&theta;):</span>
+            <input type="range" min="0" max="90" step="5" value="${state.work.thetaDeg}" 
+              oninput="setWorkTheta(this.value)" class="w-24 sm:w-28 accent-blue-600 cursor-pointer">
+            <span class="text-xs font-bold text-blue-700 w-10 font-mono" id="tray-work-theta">${toBn(state.work.thetaDeg)}°</span>
+          </div>
+          <div class="h-6 w-px bg-slate-300"></div>
+          <button onclick="presetWorkZero()" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-rose-50 text-rose-700 border border-rose-200">
+            কাজহীন বল (&theta;=৯০°)
+          </button>
+        `;
+        updateWorkReadout();
+      } else if (station === 'pump') {
+        hintText.innerHTML = 'মোটরের ক্ষমতা ও উচ্চতা সমন্বয় করে পানির পাম্পের কর্মদক্ষতা হিসাব করুন!';
+        tray.innerHTML = `
+          <div class="flex items-center gap-3">
+            <span class="text-xs font-bold text-slate-500">প্রদত্ত ক্ষমতা (Pin):</span>
+            <input type="range" min="0.5" max="5.0" step="0.5" value="${state.pump.pInKw}" 
+              oninput="setPumpPin(this.value)" class="w-24 sm:w-32 accent-purple-600 cursor-pointer">
+            <span class="text-xs font-bold text-purple-700 w-14 font-mono" id="tray-pump-pin">${toBn(state.pump.pInKw, 1)} kW</span>
+          </div>
+          <div class="h-6 w-px bg-slate-300"></div>
+          <div class="flex items-center gap-3">
+            <span class="text-xs font-bold text-slate-500">উচ্চতা (h):</span>
+            <input type="range" min="5" max="40" step="5" value="${state.pump.h}" 
+              oninput="setPumpH(this.value)" class="w-20 sm:w-28 accent-blue-600 cursor-pointer">
+            <span class="text-xs font-bold text-blue-700 w-12 font-mono" id="tray-pump-h">${toBn(state.pump.h)} m</span>
+          </div>
+        `;
+        updatePumpReadout();
+      }
+    }
+
+    function toggleReadingCard() {
+      state.showReadout = !state.showReadout;
+      const card = document.getElementById('readout-card');
+      const icon = document.getElementById('readout-icon');
+      const text = document.getElementById('readout-btn-text');
+      if (state.showReadout) {
+        card.style.display = 'block';
+        icon.className = 'fa-solid fa-eye text-emerald-600';
+        text.innerText = 'পাঠ লুকান';
+      } else {
+        card.style.display = 'none';
+        icon.className = 'fa-solid fa-eye-slash text-slate-400';
+        text.innerText = 'পাঠ দেখান';
+      }
+    }
+
+    function toggleEnergyPlay() {
+      state.isRunning = !state.isRunning;
+      const icon = document.getElementById('play-icon');
+      if (state.isRunning) {
+        icon.className = 'fa-solid fa-pause';
+      } else {
+        icon.className = 'fa-solid fa-play';
+      }
+    }
+
+    function toggleSlowMo() {
+      state.slowMo = !state.slowMo;
+      const btn = document.getElementById('btn-slow');
+      if (state.slowMo) {
+        btn.classList.add('primary');
+      } else {
+        btn.classList.remove('primary');
+      }
+    }
+
+    function resetLab() {
+      state.skate.uVal = 0.9;
+      state.skate.velocity = 0;
+      state.work.s = 5;
+      updateSkateReadout();
+      updateWorkReadout();
+      updatePumpReadout();
+    }
+
+    // -------------------------------------------------------------
+    // LOGIC & FORMULAS
+    // -------------------------------------------------------------
+    function setSkateMass(m) {
+      state.skate.mass = parseFloat(m);
+      const el = document.getElementById('tray-skate-m');
+      if (el) el.innerText = toBn(state.skate.mass) + ' kg';
+      updateSkateReadout();
+    }
+
+    function setSkateFriction(f) {
+      state.skate.friction = f;
+    }
+
+    function togglePieChart() {
+      state.skate.pieChart = !state.skate.pieChart;
+    }
+
+    function updateSkateReadout() {
+      const s = state.skate;
+      const hMax = 5.0; // peak height in meters
+      const h = s.uVal * s.uVal * hMax;
+      const ep = s.mass * state.g * h;
+      const totalE = s.mass * state.g * hMax;
+      const ek = Math.max(0, totalE - ep);
+      const v = Math.sqrt((2 * ek) / s.mass);
+
+      document.getElementById('readout-ek').innerText = `${toBn(Math.round(ek))} J`;
+      document.getElementById('readout-ep').innerText = `${toBn(Math.round(ep))} J`;
+      document.getElementById('readout-h').innerText = `${toBn(h, 2)} m`;
+      document.getElementById('readout-v').innerText = `${toBn(v, 1)} m/s`;
+      document.getElementById('readout-etotal').innerText = `${toBn(Math.round(totalE))} J`;
+
+      if (window.katex) {
+        katex.render(
+          `E_{total} = E_k + E_p = \\frac{1}{2}mv^2 + mgh = ${toBn(Math.round(totalE))}\\text{ J}`,
+          document.getElementById('readout-math'),
+          { throwOnError: false }
+        );
+      }
+    }
+
+    function setWorkF(val) {
+      state.work.f = parseFloat(val);
+      const el = document.getElementById('tray-work-f');
+      if (el) el.innerText = toBn(state.work.f) + ' N';
+      updateWorkReadout();
+    }
+
+    function setWorkTheta(val) {
+      state.work.thetaDeg = parseFloat(val);
+      const el = document.getElementById('tray-work-theta');
+      if (el) el.innerText = toBn(state.work.thetaDeg) + '°';
+      updateWorkReadout();
+    }
+
+    function presetWorkZero() {
+      setWorkTheta(90);
+      const range = document.querySelector('input[oninput*="setWorkTheta"]');
+      if (range) range.value = 90;
+    }
+
+    function updateWorkReadout() {
+      const w = state.work;
+      const rad = w.thetaDeg * Math.PI / 180;
+      const workDone = w.f * w.s * Math.cos(rad);
+
+      document.getElementById('readout-work-f').innerText = `${toBn(w.f)} N`;
+      document.getElementById('readout-work-theta').innerText = `${toBn(w.thetaDeg)}°`;
+      document.getElementById('readout-work-s').innerText = `${toBn(w.s, 1)} m`;
+      document.getElementById('readout-work-w').innerText = `${toBn(workDone, 1)} J`;
+
+      if (window.katex) {
+        katex.render(
+          `W = F s \\cos\\theta = ${toBn(w.f)} \\times ${toBn(w.s)} \\times \\cos(${toBn(w.thetaDeg)}^\\circ) = ${toBn(workDone, 1)}\\text{ J}`,
+          document.getElementById('readout-math'),
+          { throwOnError: false }
+        );
+      }
+    }
+
+    function setPumpPin(val) {
+      state.pump.pInKw = parseFloat(val);
+      const el = document.getElementById('tray-pump-pin');
+      if (el) el.innerText = toBn(state.pump.pInKw, 1) + ' kW';
+      updatePumpReadout();
+    }
+
+    function setPumpH(val) {
+      state.pump.h = parseFloat(val);
+      const el = document.getElementById('tray-pump-h');
+      if (el) el.innerText = toBn(state.pump.h) + ' m';
+      updatePumpReadout();
+    }
+
+    function updatePumpReadout() {
+      const p = state.pump;
+      const pInWatts = p.pInKw * 1000;
+      const pOutWatts = pInWatts * (p.etaPercent / 100);
+      const pOutKw = pOutWatts / 1000;
+
+      document.getElementById('readout-pump-pin').innerText = `${toBn(p.pInKw, 1)} kW`;
+      document.getElementById('readout-pump-h').innerText = `${toBn(p.h)} m`;
+      document.getElementById('readout-pump-pout').innerText = `${toBn(pOutKw, 2)} kW`;
+      document.getElementById('readout-pump-eta').innerText = `${toBn(p.etaPercent, 1)} %`;
+
+      if (window.katex) {
+        katex.render(
+          `\\eta = \\frac{P_{out}}{P_{in}} \\times 100\\% = \\frac{${toBn(pOutKw, 2)}}{${toBn(p.pInKw, 1)}} \\times 100\\% = ${toBn(p.etaPercent, 1)}\\%`,
+          document.getElementById('readout-math'),
+          { throwOnError: false }
+        );
+      }
+    }
+
+    // -------------------------------------------------------------
+    // POINTER INTERACTIONS (DRAG SKATER)
+    // -------------------------------------------------------------
+    let pointer = { isDown: false, dragSkater: false };
+
+    canvas.addEventListener('pointerdown', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const px = e.clientX - rect.left;
+      const py = e.clientY - rect.top;
+
+      if (state.station === 'skate') {
+        const centerX = viewWidth / 2;
+        const groundY = viewHeight - 160;
+        const trackRadius = 260;
+        const skaterX = centerX + state.skate.uVal * trackRadius;
+        const skaterY = groundY - (1 - state.skate.uVal * state.skate.uVal) * 180;
+
+        if (Math.hypot(px - skaterX, py - skaterY) < 40) {
+          pointer.isDown = true;
+          pointer.dragSkater = true;
+          state.skate.velocity = 0;
+        }
+      }
+    });
+
+    window.addEventListener('pointermove', (e) => {
+      if (!pointer.isDown || !pointer.dragSkater) return;
+      const rect = canvas.getBoundingClientRect();
+      const px = e.clientX - rect.left;
+      const centerX = viewWidth / 2;
+      const trackRadius = 260;
+      let u = (px - centerX) / trackRadius;
+      u = Math.max(-0.95, Math.min(0.95, u));
+      state.skate.uVal = u;
+      updateSkateReadout();
+    });
+
+    window.addEventListener('pointerup', () => {
+      pointer.isDown = false;
+      pointer.dragSkater = false;
+    });
+
+    // -------------------------------------------------------------
+    // ANIMATION LOOP
+    // -------------------------------------------------------------
+    let lastTime = performance.now();
+
+    function animate(currentTime) {
+      const dt = Math.min(0.05, (currentTime - lastTime) / 1000) * (state.slowMo ? 0.4 : 1.0);
+      lastTime = currentTime;
+
+      if (state.station === 'skate' && state.isRunning && !pointer.dragSkater) {
+        const s = state.skate;
+        // Simple harmonic-like motion on parabolic track
+        // Acceleration tangential a = -g * dh/dx
+        const accel = -s.uVal * 7.5;
+        s.velocity += accel * dt;
+        s.velocity *= (1 - s.friction);
+        s.uVal += s.velocity * dt;
+
+        if (s.uVal > 0.95) { s.uVal = 0.95; s.velocity = -s.velocity * 0.98; }
+        if (s.uVal < -0.95) { s.uVal = -0.95; s.velocity = -s.velocity * 0.98; }
+
+        updateSkateReadout();
+      }
+
+      ctx.clearRect(0, 0, viewWidth, viewHeight);
+      if (state.station === 'skate') {
+        renderSkateStage();
+      } else if (state.station === 'work') {
+        renderWorkStage();
+      } else if (state.station === 'pump') {
+        renderPumpStage();
+      }
+
+      requestAnimationFrame(animate);
+    }
+
+    // -------------------------------------------------------------
+    // RENDERERS
+    // -------------------------------------------------------------
+    function renderSkateStage() {
+      const centerX = viewWidth / 2;
+      const groundY = viewHeight - 160;
+      const trackRadius = 260;
+      const trackDepth = 180;
+
+      // Sky & Field
+      ctx.fillStyle = '#f0fdf4';
+      ctx.fillRect(0, 0, viewWidth, groundY);
+      ctx.fillStyle = '#15803d';
+      ctx.fillRect(0, groundY, viewWidth, viewHeight - groundY);
+
+      // Parabolic Skater Track
+      ctx.beginPath();
+      for (let u = -1.0; u <= 1.0; u += 0.02) {
+        const x = centerX + u * trackRadius;
+        const y = groundY - (1 - u * u) * trackDepth;
+        if (u === -1.0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.strokeStyle = '#475569';
+      ctx.lineWidth = 10;
+      ctx.stroke();
+
+      // Top Track Metal Rail
+      ctx.strokeStyle = '#cbd5e1';
+      ctx.lineWidth = 3;
+      ctx.stroke();
+
+      // Skater position
+      const s = state.skate;
+      const sx = centerX + s.uVal * trackRadius;
+      const sy = groundY - (1 - s.uVal * s.uVal) * trackDepth;
+
+      // Slope tangent angle
+      const slope = 2 * s.uVal * (trackDepth / trackRadius);
+      const rot = Math.atan(slope);
+
+      ctx.save();
+      ctx.translate(sx, sy);
+      ctx.rotate(rot);
+
+      // Skateboard
+      ctx.fillStyle = '#b45309';
+      ctx.beginPath();
+      ctx.roundRect(-22, -6, 44, 6, 2);
+      ctx.fill();
+      ctx.fillStyle = '#0f172a';
+      ctx.beginPath();
+      ctx.arc(-14, 0, 4, 0, Math.PI * 2);
+      ctx.arc(14, 0, 4, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Skater Figure
+      ctx.fillStyle = '#059669';
+      ctx.fillRect(-6, -34, 12, 28);
+      // Head
+      ctx.fillStyle = '#fcd34d';
+      ctx.beginPath();
+      ctx.arc(0, -42, 8, 0, Math.PI * 2);
+      ctx.fill();
+      // Helmet
+      ctx.fillStyle = '#2563eb';
+      ctx.beginPath();
+      ctx.arc(0, -44, 9, Math.PI, 0);
+      ctx.fill();
+
+      ctx.restore();
+
+      // Floating Energy Pie Chart above Skater
+      if (s.pieChart) {
+        const hMax = 5.0;
+        const h = s.uVal * s.uVal * hMax;
+        const ep = s.mass * state.g * h;
+        const totalE = s.mass * state.g * hMax;
+        const ek = Math.max(0, totalE - ep);
+        const ekRatio = ek / totalE;
+
+        const pieX = sx;
+        const pieY = sy - 65;
+        const r = 20;
+
+        // Potential Energy (Blue)
+        ctx.beginPath();
+        ctx.arc(pieX, pieY, r, 0, Math.PI * 2);
+        ctx.fillStyle = '#3b82f6';
+        ctx.fill();
+
+        // Kinetic Energy (Green Slice)
+        if (ekRatio > 0.01) {
+          ctx.beginPath();
+          ctx.moveTo(pieX, pieY);
+          ctx.arc(pieX, pieY, r, -Math.PI / 2, -Math.PI / 2 + ekRatio * Math.PI * 2);
+          ctx.fillStyle = '#10b981';
+          ctx.fill();
+        }
+
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.arc(pieX, pieY, r, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+    }
+
+    function renderWorkStage() {
+      const groundY = viewHeight - 160;
+
+      ctx.fillStyle = '#f8fafc';
+      ctx.fillRect(0, 0, viewWidth, groundY);
+      ctx.fillStyle = '#475569';
+      ctx.fillRect(0, groundY, viewWidth, 10);
+
+      const w = state.work;
+      const cx = w.crateX;
+      const cy = groundY - 60;
+
+      // Wooden Crate
+      ctx.fillStyle = '#b45309';
+      ctx.fillRect(cx, cy, 60, 60);
+      ctx.strokeStyle = '#78350f';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(cx, cy, 60, 60);
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 12px JetBrains Mono';
+      ctx.fillText('বস্তু', cx + 18, cy + 34);
+
+      // Pulling Rope Vector
+      const rad = w.thetaDeg * Math.PI / 180;
+      const ropeLen = 140;
+      const ropeEndX = cx + 60 + ropeLen * Math.cos(rad);
+      const ropeEndY = cy + 30 - ropeLen * Math.sin(rad);
+
+      ctx.beginPath();
+      ctx.moveTo(cx + 60, cy + 30);
+      ctx.lineTo(ropeEndX, ropeEndY);
+      ctx.strokeStyle = '#d97706';
+      ctx.lineWidth = 4;
+      ctx.stroke();
+
+      // Force Vector Arrow
+      ctx.beginPath();
+      ctx.moveTo(cx + 60, cy + 30);
+      ctx.lineTo(ropeEndX, ropeEndY);
+      ctx.strokeStyle = '#4f46e5';
+      ctx.lineWidth = 3;
+      ctx.stroke();
+
+      // Angle Arc
+      ctx.beginPath();
+      ctx.arc(cx + 60, cy + 30, 45, -rad, 0);
+      ctx.strokeStyle = '#2563eb';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      ctx.fillStyle = '#2563eb';
+      ctx.font = 'bold 12px JetBrains Mono';
+      ctx.fillText(`${toBn(w.thetaDeg)}°`, cx + 115, cy + 24);
+
+      // Horizontal component dashed line
+      ctx.setLineDash([4, 4]);
+      ctx.strokeStyle = '#94a3b8';
+      ctx.beginPath();
+      ctx.moveTo(cx + 60, cy + 30);
+      ctx.lineTo(cx + 60 + ropeLen * Math.cos(rad), cy + 30);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = '#059669';
+      ctx.font = 'bold 11px JetBrains Mono';
+      ctx.fillText(`Fx = F cos(${toBn(w.thetaDeg)}°)`, cx + 80, cy + 46);
+    }
+
+    function renderPumpStage() {
+      const centerY = viewHeight / 2;
+
+      ctx.fillStyle = '#f8fafc';
+      ctx.fillRect(0, 0, viewWidth, viewHeight);
+
+      // Underground Well
+      ctx.fillStyle = '#334155';
+      ctx.fillRect(140, centerY + 20, 100, 160);
+      ctx.fillStyle = '#0284c7';
+      ctx.fillRect(150, centerY + 70, 80, 100);
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 11px Hind Siliguri';
+      ctx.fillText('ভূগর্ভস্থ পানি (উৎস)', 145, centerY + 120);
+
+      // Overhead Tank
+      ctx.fillStyle = '#64748b';
+      ctx.fillRect(viewWidth - 280, centerY - 140, 140, 100);
+      ctx.fillStyle = '#38bdf8';
+      ctx.fillRect(viewWidth - 270, centerY - 100, 120, 55);
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 11px Hind Siliguri';
+      ctx.fillText('ছাদের পানির ট্যাংক', viewWidth - 265, centerY - 70);
+
+      // Water Pipe connecting well to tank
+      ctx.strokeStyle = '#0284c7';
+      ctx.lineWidth = 12;
+      ctx.beginPath();
+      ctx.moveTo(190, centerY + 80);
+      ctx.lineTo(190, centerY - 80);
+      ctx.lineTo(viewWidth - 210, centerY - 80);
+      ctx.stroke();
+
+      // Motor Pump
+      ctx.fillStyle = '#059669';
+      ctx.beginPath();
+      ctx.roundRect(165, centerY - 20, 50, 40, 8);
+      ctx.fill();
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 10px JetBrains Mono';
+      ctx.fillText('মোটর', 175, centerY + 5);
+
+      // Animated Water Flow Bubbles
+      const t = performance.now() / 200;
+      for (let i = 0; i < 6; i++) {
+        const bubbleY = centerY + 60 - ((t + i * 25) % 130);
+        ctx.fillStyle = '#e0f2fe';
+        ctx.beginPath();
+        ctx.arc(190, bubbleY, 3, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    // -------------------------------------------------------------
+    // INIT
+    // -------------------------------------------------------------
+    setStation('skate');
+    requestAnimationFrame(animate);
+
+  </script>
+</body>
+</html>

@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>আলোর প্রতিফলন ল্যাব (PhET Interactive Reflection Lab) | আল-আমিন ফিজিক্স</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&family=JetBrains+Mono:wght@500;700&display=swap');
+    
+    * {
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    body {
+      font-family: 'Hind Siliguri', system-ui, sans-serif;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: #090d16;
+      color: #f8fafc;
+    }
+    #phet-stage {
+      position: absolute;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      touch-action: none;
+      cursor: default;
+    }
+    .phet-header {
+      position: absolute;
+      top: 12px;
+      left: 16px;
+      right: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 25;
+      pointer-events: none;
+    }
+    .phet-header * {
+      pointer-events: auto;
+    }
+    .phet-tab-pill {
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(8px);
+      box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+      border: 1px solid rgba(51, 65, 85, 0.8);
+      border-radius: 9999px;
+      padding: 4px;
+      display: flex;
+      gap: 4px;
+    }
+    .phet-tab-btn {
+      padding: 6px 14px;
+      border-radius: 9999px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #94a3b8;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .phet-tab-btn.active {
+      background: #eab308;
+      color: #0f172a;
+      box-shadow: 0 2px 8px rgba(234, 179, 8, 0.35);
+    }
+    .phet-tray {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(12px);
+      border: 1.5px solid rgba(51, 65, 85, 0.8);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+      border-radius: 20px;
+      padding: 8px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      z-index: 25;
+    }
+    .phet-readout-card {
+      position: absolute;
+      top: 70px;
+      right: 20px;
+      background: rgba(15, 23, 42, 0.9);
+      backdrop-filter: blur(10px);
+      border: 1px solid #334155;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+      border-radius: 16px;
+      padding: 12px 16px;
+      min-width: 270px;
+      z-index: 25;
+      transition: all 0.2s;
+    }
+    .phet-hint-tag {
+      position: absolute;
+      top: 70px;
+      left: 20px;
+      background: rgba(30, 41, 59, 0.9);
+      border: 1px solid #475569;
+      color: #fde047;
+      padding: 6px 14px;
+      border-radius: 14px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      z-index: 25;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      max-width: calc(100vw - 330px);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation Bar -->
+  <div class="phet-header">
+    <div class="flex items-center gap-2">
+      <a href="index.html" class="px-3 py-1.5 rounded-full bg-slate-900 border border-slate-700 text-slate-200 hover:text-yellow-400 font-bold text-xs shadow-sm flex items-center gap-1.5 transition">
+        <i class="fa-solid fa-arrow-left"></i> ল্যাব তালিকা
+      </a>
+      <span class="text-xs font-bold text-slate-300 bg-slate-900/80 px-3 py-1.5 rounded-full border border-slate-700 shadow-sm hidden sm:inline">
+        অধ্যায় ৮: আলোর প্রতিফলন (Reflection Lab)
+      </span>
+    </div>
+
+    <!-- PhET Experiment Switcher -->
+    <div class="phet-tab-pill">
+      <button onclick="setStation('concave')" id="tab-concave" class="phet-tab-btn active">
+        <i class="fa-solid fa-circle-half-stroke mr-1"></i> অবতল দর্পণ
+      </button>
+      <button onclick="setStation('convex')" id="tab-convex" class="phet-tab-btn">
+        <i class="fa-solid fa-circle-half-stroke fa-flip-horizontal mr-1"></i> উত্তল দর্পণ
+      </button>
+      <button onclick="setStation('plane')" id="tab-plane" class="phet-tab-btn">
+        <i class="fa-solid fa-slash mr-1"></i> সমতল দর্পণ (&ang;i = &ang;r)
+      </button>
+    </div>
+
+    <!-- Right Controls: Readout Toggle & Reset -->
+    <div class="flex items-center gap-2">
+      <button onclick="toggleReadingCard()" id="btn-toggle-readout" class="px-3 py-1.5 rounded-full bg-slate-900 border border-slate-700 text-slate-200 hover:bg-slate-800 font-bold text-xs shadow-sm flex items-center gap-1.5 transition">
+        <i class="fa-solid fa-eye text-yellow-400" id="readout-icon"></i> <span id="readout-btn-text">পাঠ লুকান</span>
+      </button>
+      <button onclick="resetLab()" class="w-8 h-8 rounded-full bg-slate-900 border border-slate-700 text-slate-200 hover:bg-slate-800 flex items-center justify-center text-xs shadow-sm transition" title="রিসেট">
+        <i class="fa-solid fa-rotate-right"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Instruction Hint -->
+  <div class="phet-hint-tag" id="hint-tag">
+    <i class="fa-solid fa-hand-pointer text-yellow-400 animate-pulse"></i>
+    <span id="hint-text">জ্বলন্ত মোমবাতিটি (বস্তু) মাউস দিয়ে প্রধান অক্ষ বরাবর ডানে-বামে টেনে প্রতিবিম্বের রূপ পরিবর্তন দেখুন!</span>
+  </div>
+
+  <!-- Real-Time Floating Readout Card -->
+  <div class="phet-readout-card" id="readout-card">
+    <div class="flex items-center justify-between pb-1.5 mb-1.5 border-b border-slate-700">
+      <span class="text-xs font-bold text-slate-200 flex items-center gap-1.5">
+        <i class="fa-solid fa-lightbulb text-yellow-400"></i> আলোকীয় পরামিতি পাঠ
+      </span>
+      <span class="text-[10px] px-2 py-0.5 rounded-full bg-yellow-400/20 text-yellow-400 font-bold font-mono" id="optics-badge">1/u + 1/v = 1/f</span>
+    </div>
+
+    <div class="space-y-1 text-xs">
+      <div class="flex justify-between items-center">
+        <span class="text-slate-400">লক্ষ্যবস্তুর দূরত্ব (u):</span>
+        <span class="font-bold font-mono text-yellow-400 text-sm" id="readout-u">৩০.০ cm</span>
+      </div>
+      <div class="flex justify-between items-center">
+        <span class="text-slate-400">ফোকাস দূরত্ব (f):</span>
+        <span class="font-bold font-mono text-sky-400 text-sm" id="readout-f">১৫.০ cm</span>
+      </div>
+      <div class="flex justify-between items-center">
+        <span class="text-slate-400">প্রতিবিম্বের দূরত্ব (v):</span>
+        <span class="font-bold font-mono text-emerald-400 text-sm" id="readout-v">৩০.০ cm</span>
+      </div>
+      <div class="flex justify-between items-center">
+        <span class="text-slate-400">বিবর্ধন (m = -v/u):</span>
+        <span class="font-bold font-mono text-purple-400 text-sm" id="readout-m">-১.০০ (সমান)</span>
+      </div>
+      <div class="pt-1.5 mt-1 border-t border-dashed border-slate-700 flex justify-between items-center">
+        <span class="font-bold text-slate-200">প্রতিবিম্বের প্রকৃতি:</span>
+        <span class="font-bold text-emerald-400 text-xs" id="readout-nature">বাস্তব ও উল্টো</span>
+      </div>
+    </div>
+
+    <!-- Live KaTeX formula line -->
+    <div class="mt-2 p-1.5 bg-slate-950 rounded-lg text-center text-xs overflow-x-auto text-yellow-300" id="readout-math"></div>
+  </div>
+
+  <!-- Bottom PhET Tool Rack -->
+  <div class="phet-tray" id="phet-tray"></div>
+
+  <!-- Fullscreen Canvas -->
+  <canvas id="phet-stage"></canvas>
+
+  <script>
+    function toBn(num, decimals = null) {
+      const bnDigits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+      const str = decimals !== null ? Number(num).toFixed(decimals) : String(num);
+      return str.replace(/\d/g, d => bnDigits[Number(d)]);
+    }
+
+    const state = {
+      station: 'concave', // 'concave' | 'convex' | 'plane'
+      showReadout: true,
+      fCm: 15, // focal length
+      uCm: 30, // object distance
+      objHeight: 45, // px
+      isDraggingObj: false,
+
+      // Plane Mirror Law
+      planeAngleDeg: 40
+    };
+
+    const canvas = document.getElementById('phet-stage');
+    const ctx = canvas.getContext('2d');
+
+    let viewWidth = window.innerWidth;
+    let viewHeight = window.innerHeight;
+
+    function resizeCanvas() {
+      viewWidth = window.innerWidth;
+      viewHeight = window.innerHeight;
+      canvas.width = viewWidth * window.devicePixelRatio;
+      canvas.height = viewHeight * window.devicePixelRatio;
+      ctx.resetTransform();
+      ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    function setStation(station) {
+      state.station = station;
+      ['concave', 'convex', 'plane'].forEach(s => {
+        const btn = document.getElementById(`tab-${s}`);
+        if (s === station) btn.classList.add('active');
+        else btn.classList.remove('active');
+      });
+
+      const hintText = document.getElementById('hint-text');
+      const tray = document.getElementById('phet-tray');
+
+      if (station === 'concave') {
+        hintText.innerHTML = 'মোমবাতিটি টেনে বক্রতার কেন্দ্র (C), ফোকাস (F) এর ভেতর বা বাইরে নিয়ে প্রতিবিম্বের পরিবর্তন দেখুন!';
+        tray.innerHTML = `
+          <div class="flex items-center gap-3">
+            <span class="text-xs font-bold text-slate-400">লক্ষ্যবস্তুর দূরত্ব (u):</span>
+            <input type="range" min="5" max="50" step="1" value="${state.uCm}" 
+              oninput="setObjectDist(this.value)" class="w-24 sm:w-36 accent-yellow-400 cursor-pointer">
+            <span class="text-xs font-bold text-yellow-400 w-14 font-mono" id="tray-u">${toBn(state.uCm)} cm</span>
+          </div>
+          <div class="h-6 w-px bg-slate-700"></div>
+          <button onclick="setObjectDist(30)" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-xs font-bold text-slate-300">কেন্দ্রে (C)</button>
+          <button onclick="setObjectDist(15)" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-xs font-bold text-slate-300">ফোকাসে (F)</button>
+          <button onclick="setObjectDist(8)" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-xs font-bold text-slate-300">ফোকাসের ভেতরে (অবাস্তব)</button>
+        `;
+        updateMirrorMath();
+      } else if (station === 'convex') {
+        hintText.innerHTML = 'উত্তল দর্পণে মোমবাতি যেখানেই রাখুন না কেন, প্রতিবিম্ব সর্বদা অবাস্তব, সোজা ও খর্বিত হয়!';
+        tray.innerHTML = `
+          <div class="flex items-center gap-3">
+            <span class="text-xs font-bold text-slate-400">লক্ষ্যবস্তুর দূরত্ব (u):</span>
+            <input type="range" min="5" max="50" step="1" value="${state.uCm}" 
+              oninput="setObjectDist(this.value)" class="w-24 sm:w-36 accent-yellow-400 cursor-pointer">
+            <span class="text-xs font-bold text-yellow-400 w-14 font-mono" id="tray-u">${toBn(state.uCm)} cm</span>
+          </div>
+        `;
+        updateMirrorMath();
+      } else if (station === 'plane') {
+        hintText.innerHTML = 'আপতন কোণ পরিবর্তন করে প্রতিফলন কোণ মেপে দেখুন—আপতন কোণ ও প্রতিফলন কোণ সর্বদা সমান!';
+        tray.innerHTML = `
+          <div class="flex items-center gap-3">
+            <span class="text-xs font-bold text-slate-400">আপতন কোণ (&ang;i):</span>
+            <input type="range" min="10" max="80" value="${state.planeAngleDeg}" 
+              oninput="setPlaneAngle(this.value)" class="w-24 sm:w-36 accent-yellow-400 cursor-pointer">
+            <span class="text-xs font-bold text-yellow-400 w-12 font-mono" id="tray-plane-i">${toBn(state.planeAngleDeg)}°</span>
+          </div>
+        `;
+        updatePlaneMath();
+      }
+    }
+
+    function toggleReadingCard() {
+      state.showReadout = !state.showReadout;
+      const card = document.getElementById('readout-card');
+      const icon = document.getElementById('readout-icon');
+      const text = document.getElementById('readout-btn-text');
+      if (state.showReadout) {
+        card.style.display = 'block';
+        icon.className = 'fa-solid fa-eye text-yellow-400';
+        text.innerText = 'পাঠ লুকান';
+      } else {
+        card.style.display = 'none';
+        icon.className = 'fa-solid fa-eye-slash text-slate-500';
+        text.innerText = 'পাঠ দেখান';
+      }
+    }
+
+    function resetLab() {
+      state.uCm = 30;
+      updateMirrorMath();
+    }
+
+    function setObjectDist(val) {
+      state.uCm = parseFloat(val);
+      const el = document.getElementById('tray-u');
+      if (el) el.innerText = toBn(state.uCm) + ' cm';
+      updateMirrorMath();
+    }
+
+    function updateMirrorMath() {
+      const u = state.uCm;
+      const f = state.station === 'convex' ? -state.fCm : state.fCm;
+
+      // 1/v = 1/f - 1/u = (u - f)/(u*f) => v = u*f / (u - f)
+      let v = 0;
+      let m = 0;
+      let nature = '';
+
+      if (u === f) {
+        v = Infinity;
+        m = Infinity;
+        nature = 'অসীমে (অত্যন্ত বিবর্ধিত)';
+      } else {
+        v = (u * f) / (u - f);
+        m = -v / u;
+        if (v > 0) {
+          nature = m < 0 ? 'বাস্তব ও উল্টো' : 'বাস্তব ও সোজা';
+        } else {
+          nature = 'অবাস্তব ও সোজা';
+        }
+      }
+
+      document.getElementById('readout-u').innerText = `${toBn(u, 1)} cm`;
+      document.getElementById('readout-f').innerText = `${toBn(Math.abs(f), 1)} cm`;
+      document.getElementById('readout-v').innerText = v === Infinity ? 'অসীমে' : `${toBn(Math.abs(v), 1)} cm`;
+      document.getElementById('readout-m').innerText = m === Infinity ? 'অসীম' : `${toBn(Math.abs(m), 2)} গুণ`;
+      document.getElementById('readout-nature').innerText = nature;
+
+      if (window.katex) {
+        katex.render(
+          `\\frac{1}{v} = \\frac{1}{f} - \\frac{1}{u} \\implies v = ${v === Infinity ? '\\infty' : toBn(v, 1)}\\text{ cm}`,
+          document.getElementById('readout-math'),
+          { throwOnError: false }
+        );
+      }
+    }
+
+    function setPlaneAngle(deg) {
+      state.planeAngleDeg = parseFloat(deg);
+      const el = document.getElementById('tray-plane-i');
+      if (el) el.innerText = toBn(state.planeAngleDeg) + '°';
+      updatePlaneMath();
+    }
+
+    function updatePlaneMath() {
+      const i = state.planeAngleDeg;
+      document.getElementById('readout-u').innerText = `∠i = ${toBn(i)}°`;
+      document.getElementById('readout-v').innerText = `∠r = ${toBn(i)}°`;
+      document.getElementById('readout-nature').innerText = 'আপতন কোণ = প্রতিফলন কোণ';
+
+      if (window.katex) {
+        katex.render(
+          `\\angle i = \\angle r = ${toBn(i)}^\\circ`,
+          document.getElementById('readout-math'),
+          { throwOnError: false }
+        );
+      }
+    }
+
+    // -------------------------------------------------------------
+    // POINTER INTERACTIONS (DRAG CANDLE OBJECT)
+    // -------------------------------------------------------------
+    let pointer = { isDown: false };
+
+    canvas.addEventListener('pointerdown', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const px = e.clientX - rect.left;
+      const py = e.clientY - rect.top;
+
+      const mirrorX = viewWidth * 0.65;
+      const axisY = viewHeight / 2;
+      const scale = 8; // 8px per cm
+      const objX = mirrorX - state.uCm * scale;
+
+      if (Math.hypot(px - objX, py - (axisY - state.objHeight / 2)) < 35) {
+        pointer.isDown = true;
+      }
+    });
+
+    window.addEventListener('pointermove', (e) => {
+      if (!pointer.isDown) return;
+      const rect = canvas.getBoundingClientRect();
+      const px = e.clientX - rect.left;
+      const mirrorX = viewWidth * 0.65;
+      const scale = 8;
+
+      let u = (mirrorX - px) / scale;
+      u = Math.max(5, Math.min(50, Math.round(u)));
+      state.uCm = u;
+      const rangeEl = document.querySelector('input[oninput*="setObjectDist"]');
+      if (rangeEl) rangeEl.value = u;
+      updateMirrorMath();
+    });
+
+    window.addEventListener('pointerup', () => { pointer.isDown = false; });
+
+    // -------------------------------------------------------------
+    // RENDERERS
+    // -------------------------------------------------------------
+    function animate() {
+      ctx.clearRect(0, 0, viewWidth, viewHeight);
+
+      if (state.station === 'concave' || state.station === 'convex') {
+        renderSphericalMirrorStage();
+      } else if (state.station === 'plane') {
+        renderPlaneMirrorStage();
+      }
+
+      requestAnimationFrame(animate);
+    }
+
+    function renderSphericalMirrorStage() {
+      const mirrorX = viewWidth * 0.65;
+      const axisY = viewHeight / 2;
+      const scale = 8;
+      const isConcave = state.station === 'concave';
+      const fCm = state.fCm;
+      const fPx = fCm * scale;
+      const cPx = fPx * 2;
+
+      // Principal Axis
+      ctx.strokeStyle = '#475569';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(50, axisY);
+      ctx.lineTo(viewWidth - 50, axisY);
+      ctx.stroke();
+
+      // Mirror Arc
+      ctx.strokeStyle = '#38bdf8';
+      ctx.lineWidth = 5;
+      ctx.beginPath();
+      const arcSign = isConcave ? 1 : -1;
+      ctx.arc(mirrorX + arcSign * cPx, axisY, cPx, Math.PI - 0.45 * arcSign, Math.PI + 0.45 * arcSign, isConcave);
+      ctx.stroke();
+
+      // Pole P, Focus F, Center C markers
+      const focalX = mirrorX - (isConcave ? fPx : -fPx);
+      const centerX = mirrorX - (isConcave ? cPx : -cPx);
+
+      // Pole P
+      ctx.fillStyle = '#94a3b8';
+      ctx.beginPath();
+      ctx.arc(mirrorX, axisY, 4, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillText('P', mirrorX + 8, axisY + 16);
+
+      // Focus F
+      ctx.fillStyle = '#38bdf8';
+      ctx.beginPath();
+      ctx.arc(focalX, axisY, 4, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillText('F', focalX - 4, axisY + 16);
+
+      // Center C
+      ctx.fillStyle = '#a855f7';
+      ctx.beginPath();
+      ctx.arc(centerX, axisY, 4, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillText('C', centerX - 4, axisY + 16);
+
+      // Object (Candle)
+      const uPx = state.uCm * scale;
+      const objX = mirrorX - uPx;
+      const objH = state.objHeight;
+
+      // Candle body
+      ctx.fillStyle = '#eab308';
+      ctx.fillRect(objX - 4, axisY - objH, 8, objH);
+      // Flame
+      ctx.fillStyle = '#ef4444';
+      ctx.beginPath();
+      ctx.ellipse(objX, axisY - objH - 7, 4, 7, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#fef08a';
+      ctx.beginPath();
+      ctx.ellipse(objX, axisY - objH - 5, 2, 4, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Ray Tracing
+      const f = isConcave ? fCm : -fCm;
+      const u = state.uCm;
+      if (u !== f) {
+        const v = (u * f) / (u - f);
+        const m = -v / u;
+        const imgX = mirrorX - v * scale;
+        const imgH = objH * m;
+
+        // Ray 1: Parallel to Principal Axis -> Passes through F
+        ctx.strokeStyle = 'rgba(250, 204, 21, 0.75)';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(objX, axisY - objH);
+        ctx.lineTo(mirrorX, axisY - objH);
+        ctx.lineTo(imgX, axisY + imgH);
+        ctx.stroke();
+
+        // Ray 2: Directed towards/through F -> Reflects parallel
+        ctx.strokeStyle = 'rgba(56, 189, 248, 0.75)';
+        ctx.beginPath();
+        ctx.moveTo(objX, axisY - objH);
+        ctx.lineTo(mirrorX, axisY + imgH);
+        ctx.lineTo(imgX, axisY + imgH);
+        ctx.stroke();
+
+        // Formed Image
+        ctx.fillStyle = v > 0 ? '#10b981' : '#a855f7';
+        ctx.fillRect(imgX - 3, axisY, 6, imgH);
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 11px Hind Siliguri';
+        ctx.fillText('প্রতিবিম্ব', imgX - 18, axisY + imgH + (imgH > 0 ? 15 : -8));
+      }
+    }
+
+    function renderPlaneMirrorStage() {
+      const centerX = viewWidth / 2;
+      const mirrorY = viewHeight / 2 + 50;
+      const i = state.planeAngleDeg;
+      const rad = i * Math.PI / 180;
+      const rayLen = 180;
+
+      // Plane Mirror Horizontal
+      ctx.fillStyle = '#94a3b8';
+      ctx.fillRect(centerX - 160, mirrorY, 320, 8);
+      // Mirror silver back
+      ctx.setLineDash([4, 4]);
+      ctx.strokeStyle = '#475569';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(centerX - 160, mirrorY + 12);
+      ctx.lineTo(centerX + 160, mirrorY + 12);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Normal line (অভিলম্ব)
+      ctx.setLineDash([4, 4]);
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(centerX, mirrorY - 140);
+      ctx.lineTo(centerX, mirrorY);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Incident Ray (আপতিত রশ্মি)
+      const incStartX = centerX - rayLen * Math.sin(rad);
+      const incStartY = mirrorY - rayLen * Math.cos(rad);
+      ctx.strokeStyle = '#eab308';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(incStartX, incStartY);
+      ctx.lineTo(centerX, mirrorY);
+      ctx.stroke();
+
+      // Reflected Ray (প্রতিফলিত রশ্মি)
+      const refEndX = centerX + rayLen * Math.sin(rad);
+      const refEndY = mirrorY - rayLen * Math.cos(rad);
+      ctx.strokeStyle = '#ef4444';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(centerX, mirrorY);
+      ctx.lineTo(refEndX, refEndY);
+      ctx.stroke();
+
+      // Angle Arcs
+      ctx.strokeStyle = '#eab308';
+      ctx.beginPath();
+      ctx.arc(centerX, mirrorY, 40, -Math.PI / 2 - rad, -Math.PI / 2);
+      ctx.stroke();
+      ctx.fillStyle = '#eab308';
+      ctx.font = 'bold 12px JetBrains Mono';
+      ctx.fillText(`i = ${toBn(i)}°`, centerX - 60, mirrorY - 50);
+
+      ctx.strokeStyle = '#ef4444';
+      ctx.beginPath();
+      ctx.arc(centerX, mirrorY, 40, -Math.PI / 2, -Math.PI / 2 + rad);
+      ctx.stroke();
+      ctx.fillStyle = '#ef4444';
+      ctx.fillText(`r = ${toBn(i)}°`, centerX + 25, mirrorY - 50);
+    }
+
+    setStation('concave');
+    requestAnimationFrame(animate);
+
+  </script>
+</body>
+</html>
