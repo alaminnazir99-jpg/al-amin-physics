@@ -427,6 +427,86 @@
     return urlParams.get(name);
   };
 
+  // -------------------------------------------------------------
+  // 9. STUDIO MODE & ISOLATED STATION CONTROLLER
+  // -------------------------------------------------------------
+  LabCore.Studio = {
+    currentMode: 'free', // 'free' | 'mission'
+    currentStation: null,
+
+    initModeSwitcher: function(onModeChange) {
+      const freeBtn = document.getElementById('btn-mode-free');
+      const missionBtn = document.getElementById('btn-mode-mission');
+      const missionPanel = document.getElementById('mission-panel');
+
+      const setMode = (mode) => {
+        this.currentMode = mode;
+        if (mode === 'free') {
+          if (freeBtn) {
+            freeBtn.classList.add('active', 'mode-free');
+            freeBtn.classList.remove('text-slate-400');
+          }
+          if (missionBtn) {
+            missionBtn.classList.remove('active', 'mode-mission');
+            missionBtn.classList.add('text-slate-400');
+          }
+          if (missionPanel) {
+            missionPanel.classList.add('hidden');
+          }
+        } else {
+          if (freeBtn) {
+            freeBtn.classList.remove('active', 'mode-free');
+            freeBtn.classList.add('text-slate-400');
+          }
+          if (missionBtn) {
+            missionBtn.classList.add('active', 'mode-mission');
+            missionBtn.classList.remove('text-slate-400');
+          }
+          if (missionPanel) {
+            missionPanel.classList.remove('hidden');
+          }
+        }
+        LabCore.Audio.playSnap();
+        if (typeof onModeChange === 'function') onModeChange(mode);
+      };
+
+      if (freeBtn) freeBtn.addEventListener('click', () => setMode('free'));
+      if (missionBtn) missionBtn.addEventListener('click', () => setMode('mission'));
+
+      // Default start mode
+      setMode(this.currentMode);
+    },
+
+    activateStation: function(stationId, onStationChange) {
+      this.currentStation = stationId;
+
+      // 1. Switch station tab buttons
+      document.querySelectorAll('.station-btn, .station-tab').forEach(btn => {
+        if (btn.id === `nav-${stationId}`) {
+          btn.classList.add('active', 'bg-blue-600', 'text-white');
+          btn.classList.remove('bg-slate-900', 'text-slate-400', 'text-slate-300');
+        } else {
+          btn.classList.remove('active', 'bg-blue-600', 'text-white');
+          btn.classList.add('bg-slate-900', 'text-slate-400');
+        }
+      });
+
+      // 2. Hide all other station control panels, show only target
+      document.querySelectorAll('.station-control-panel').forEach(panel => {
+        if (panel.id === `ctrl-station-${stationId}`) {
+          panel.classList.add('active');
+          panel.style.display = 'flex';
+        } else {
+          panel.classList.remove('active');
+          panel.style.display = 'none';
+        }
+      });
+
+      LabCore.Audio.playSnap();
+      if (typeof onStationChange === 'function') onStationChange(stationId);
+    }
+  };
+
   // Expose globally
   window.LabCore = LabCore;
 

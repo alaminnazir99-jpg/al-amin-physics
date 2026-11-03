@@ -323,6 +323,103 @@ body.lab-page {
   to { opacity: 1; transform: scale(1); }
 }
 
+/* ==========================================================================
+   ENHANCED STUDIO CONTROLS: FREE EXPLORATION & MISSION ISOLATION
+   ========================================================================== */
+
+/* Dual Mode Toggle Switcher */
+.lab-mode-switcher-container {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  padding: 3px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+.lab-mode-switch-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 9px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: #94a3b8;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.lab-mode-switch-btn:hover {
+  color: #f1f5f9;
+}
+
+.lab-mode-switch-btn.active.mode-free {
+  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(2, 132, 199, 0.45);
+}
+
+.lab-mode-switch-btn.active.mode-mission {
+  background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(217, 119, 6, 0.45);
+}
+
+/* Station Control Panels: Absolute isolation per experiment */
+.station-control-panel {
+  display: none;
+  animation: fadeInPanel 0.2s ease-in-out forwards;
+}
+
+.station-control-panel.active {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+@keyframes fadeInPanel {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Realistic Studio Canvas Accents */
+.canvas-realistic-frame {
+  box-shadow: inset 0 0 40px rgba(0,0,0,0.6), 0 10px 30px -10px rgba(0,0,0,0.7);
+  border: 1px solid rgba(56, 189, 248, 0.25);
+}
+
+/* Quick Mission Selector Pills */
+.mission-selector-pill {
+  flex: 1;
+  padding: 5px 4px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-align: center;
+  border-radius: 8px;
+  background: rgba(30, 41, 59, 0.7);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  color: #94a3b8;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.mission-selector-pill.active {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  color: #ffffff;
+  border-color: #fcd34d;
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.4);
+}
+
+.mission-selector-pill:hover:not(.active) {
+  background: rgba(51, 65, 85, 0.8);
+  color: #f8fafc;
+}
+
 /* Print Styles for Lab Reports */
 @media print {
   body.lab-page {

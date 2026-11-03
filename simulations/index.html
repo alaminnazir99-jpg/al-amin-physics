@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Al Amin Physics — ভার্চুয়াল পদার্থবিজ্ঞান ল্যাবরেটরি</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <!-- Google Fonts Bangla (Hind Siliguri) -->
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    body { font-family: 'Hind Siliguri', sans-serif; }
+    .chapter-card { transition: all 0.2s ease-in-out; }
+    .chapter-card:hover { transform: translateY(-3px); }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col">
+
+  <!-- Top Navigation Header -->
+  <header class="sticky top-0 z-50 bg-slate-900/90 backdrop-blur border-b border-slate-800 px-4 py-3">
+    <div class="max-w-6xl mx-auto flex items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <a href="../index.html" class="flex items-center gap-2 group">
+          <div class="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold text-base shadow-lg shadow-blue-500/20 group-hover:scale-105 transition">
+            <i class="fa-solid fa-atom"></i>
+          </div>
+          <div>
+            <h1 class="text-sm sm:text-base font-bold text-white leading-tight">Al Amin <span class="text-blue-400">Physics</span></h1>
+            <span class="text-[10px] text-slate-400 block font-medium">ভার্চুয়াল পদার্থবিজ্ঞান ল্যাবরেটরি</span>
+          </div>
+        </a>
+      </div>
+
+      <div class="flex items-center gap-2.5">
+        <!-- Direct Full Lab Suite Link -->
+        <a href="../physics-labs/index.html" class="px-3.5 py-1.5 rounded-xl bg-teal-500/10 hover:bg-teal-500/20 text-teal-300 text-xs font-semibold border border-teal-500/30 transition flex items-center gap-1.5 shadow-sm">
+          <i class="fa-solid fa-flask text-teal-400"></i> <span class="hidden sm:inline">সকল ২৬টি ল্যাব</span><span>(Full Suite)</span>
+        </a>
+
+        <!-- Quick Link to Study Portal -->
+        <a href="../study.html" class="px-3.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition flex items-center gap-1.5">
+          <i class="fa-solid fa-arrow-left text-blue-400"></i> <span>স্টাডি পোর্টাল</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Page Title Banner -->
+  <section class="py-10 px-4 text-center border-b border-slate-800 bg-gradient-to-b from-slate-900/60 to-slate-950">
+    <div class="max-w-4xl mx-auto">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-semibold mb-3">
+        <i class="fa-solid fa-microscope"></i> এসএসসি পদার্থবিজ্ঞান · ১৩টি অধ্যায় · ২৬টি সিমুলেশন
+      </div>
+      <h2 class="text-2xl sm:text-4xl font-extrabold text-white mb-3">
+        অধ্যায় ভিত্তিক ভার্চুয়াল ল্যাবরেটরি
+      </h2>
+      <p class="text-xs sm:text-sm text-slate-400 max-w-2xl mx-auto leading-relaxed">
+        হাতে-কলমে পরীক্ষা করে পদার্থবিজ্ঞান শিখুন। প্রতিটি অধ্যায়ে রয়েছে ২টি করে সম্পূর্ণ বাস্তবসম্মত ও ইন্টারেক্টিভ সিমুলেশন।
+      </p>
+    </div>
+  </section>
+
+  <!-- Main Container: 13 Chapter Cards -->
+  <main class="max-w-6xl mx-auto px-4 py-8 flex-1 w-full">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="chapters-grid">
+
+      <!-- Ch 1 -->
+      <div class="chapter-card bg-slate-900/90 border border-slate-800 hover:border-slate-700 rounded-2xl p-5 flex flex-col justify-between gap-4 shadow-sm">
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-[11px] font-bold text-slate-400 bg-slate-800/80 px-2.5 py-0.5 rounded-md">অধ্যায় ০১</span>
+            <span class="text-[10px] text-teal-400 font-semibold flex items-center gap-1"><i class="fa-solid fa-circle text-[6px]"></i> ২টি ল্যাব</span>
+          </div>
+          <h4 class="text-base sm:text-lg font-bold text-white mb-3">ভৌত রাশি ও পরিমাপ</h4>
+          
+          <div class="space-y-2 mb-4">
+            
+            <a href="../physics-labs/index.html?lab=caliper" class="w-full py-2 px-3 rounded-xl bg-slate-800/70 hover:bg-slate-700/80 border border-slate-700/60 text-slate-200 text-xs font-semibold flex items-center justify-between group transition">
+              <span class="flex items-center gap-2">
+                <span class="w-5 h-5 rounded-md bg-teal-500/10 text-teal-400 text-[10px] flex items-center justify-center font-mono font-bold">০১</span>
+                <span class="truncate">ভার্নিয়ার ও স্ক্রু গজ</span>
+              </span>
+              <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-slate-500 group-hover:text-teal-300 transition"></i>
+            </a>
+            <a href="../physics-labs/index.html?lab=density" class="w-full py-2 px-3 rounded-xl bg-slate-800/70 hover:bg-slate-700/80 border border-slate-700/60 text-slate-200 text-xs font-semibold flex items-center justify-between group transition">
+              <span class="flex items-center gap-2">
+                <span class="w-5 h-5 rounded-md bg-teal-500/10 text-teal-400 text-[10px] flex items-center justify-center font-mono font-bold">০২</span>
+                <span class="truncate">ঘনত্ব অনুসন্ধান</span>
+              </span>
+              <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-slate-500 group-hover:text-teal-300 transition"></i>
+            </a>
+          </div>
+        </div>
+
+        <a href="ch1.html" class="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-blue-600 text-white font-bold text-xs flex items-center justify-center gap-2 transition border border-slate-700 hover:border-blue-500 shadow-sm">
+          অধ্যায় ল্যাব ভিউয়ার <i class="fa-solid fa-arrow-right text-[11px]"></i>
+        </a>
+      </div>
+      <!-- Ch 2 -->
+      <div class="chapter-card bg-slate-900/90 border border-slate-800 hover:border-slate-700 rounded-2xl p-5 flex flex-col justify-between gap-4 shadow-sm">
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-[11px] font-bold text-slate-400 bg-slate-800/80 px-2.5 py-0.5 rounded-md">অধ্যায় ০২</span>
+            <span class="text-[10px] text-teal-400 font-semibold flex items-center gap-1"><i class="fa-solid fa-circle text-[6px]"></i> ২টি ল্যাব</span>
+          </div>
+          <h4 class="text-base sm:text-lg font-bold text-white mb-3">গতি</h4>
+          
+          <div class="space-y-2 mb-4">
+            
+            <a href="../physics-labs/index.html?lab=motion" class="w-full py-2 px-3 rounded-xl bg-slate-800/70 hover:bg-slate-700/80 border border-slate-700/60 text-slate-200 text-xs font-semibold flex items-center justify-between group transition">
+              <span class="flex items-center gap-2">
+                <span class="w-5 h-5 rounded-md bg-teal-500/10 text-teal-400 text-[10px] flex items-center justify-center font-mono font-bold">০৩</span>
+                <span class="truncate">গাড়ি, গতি ও লেখচিত্র</span>
+              </span>
+              <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-slate-500 group-hover:text-teal-300 transition"></i>
+            </a>
+            <a href="../physics-labs/index.html?lab=fall" class="w-full py-2 px-3 rounded-xl bg-slate-800/70 hover:bg-slate-700/80 border border-slate-700/60 text-slate-200 text-xs font-semibold flex items-center justify-between group transition">
+              <span class="flex items-center gap-2">
+                <span class="w-5 h-5 rounded-md bg-teal-500/10 text-teal-400 text-[10px] flex items-center justify-center font-mono font-bold">০৪</span>
+                <span class="truncate">মুক্তপতন পরীক্ষাগার</span>
+              </span>
+              <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-slate-500 group-hover:text-teal-300 transition"></i>
+            </a>
+          </div>
+        </div>
+
+        <a href="ch2.html" class="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-blue-600 text-white font-bold text-xs flex items-center justify-center gap-2 transition border border-slate-700 hover:border-blue-500 shadow-sm">
+          অধ্যায় ল্যাব ভিউয়ার <i class="fa-solid fa-arrow-right text-[11px]"></i>
+        </a>
+      </div>
+      <!-- Ch 3 -->
+      <div class="chapter-card bg-slate-900/90 border border-slate-800 hover:border-slate-700 rounded-2xl p-5 flex flex-col justify-between gap-4 shadow-sm">
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-[11px] font-bold text-slate-400 bg-slate-800/80 px-2.5 py-0.5 rounded-md">অধ্যায় ০৩</span>
+            <span class="text-[10px] text-teal-400 font-semibold flex items-center gap-1"><i class="fa-solid fa-circle text-[6px]"></i> ২টি ল্যাব</span>
+          </div>
+          <h4 class="text-base sm:text-lg font-bold text-white mb-3">বল</h4>
+          
+          <div class="space-y-2 mb-4">
+            
+            <a href="../physics-labs/index.html?lab=friction" class="w-full py-2 px-3 rounded-xl bg-slate-800/70 hover:bg-slate-700/80 border border-slate-700/60 text-slate-200 text-xs font-semibold flex items-center justify-between group transition">
+              <span class="flex items-center gap-2">
+                <span class="w-5 h-5 rounded-md bg-teal-500/10 text-teal-400 text-[10px] flex items-center justify-center font-mono font-bold">০৫</span>
+                <span class="truncate">বল ও ঘর্ষণ</span>
+              </span>
+              <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-slate-500 group-hover:text-teal-300 transition"></i>
+            </a>
+            <a href="../physics-labs/index.html?lab=collision" class="w-full py-2 px-3 rounded-xl bg-slate-800/70 hover:bg-slate-700/80 border border-slate-700/60 text-slate-200 text-xs font-semibold flex items-center justify-between group transition">
+              <span class="flex items-center gap-2">
+                <span class="w-5 h-5 rounded-md bg-teal-500/10 text-teal-400 text-[10px] flex items-center justify-center font-mono font-bold">০৬</span>
+                <span class="truncate">ট্রলির সংঘর্ষ</span>
+              </span>
+              <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-slate-500 group-hover:text-teal-300 transition"></i>
+            </a>
+          </div>
+        </div>
+
+        <a href="ch3.html" class="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-blue-600 text-white font-bold text-xs flex items-center justify-center gap-2 transition border border-slate-700 hover:border-blue-500 shadow-sm">
+          অধ্যায় ল্যাব ভিউয়ার <i class="fa-solid fa-arrow-right text-[11px]"></i>
+        </a>
+      </div>
+      <!-- Ch 4 -->
+      <div class="chapter-card bg-slate-900/90 border border-slate-800 hover:border-slate-700 rounded-2xl p-5 flex flex-col justify-between gap-4 shadow-sm">
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-[11px] font-bold text-slate-400 bg-slate-800/80 px-2.5 py-0.5 rounded-md">অধ্যায় ০৪</span>
+            <span class="text-[10px] text-teal-400 font-semibold flex items-center gap-1"><i class="fa-solid fa-circle text-[6px]"></i> ২টি ল্যাব</span>
+          </div>
+          <h4 class="text-base sm:text-lg font-bold text-white mb-3">কাজ, ক্ষমতা ও শক্তি</h4>
+          
+          <div class="space-y-2 mb-4">
+            
+            <a href="../physics-labs/index.html?lab=energy" class="w-full py-2 px-3 rounded-xl bg-slate-800/70 hover:bg-slate-700/80 border border-slate-700/60 text-slate-200 text-xs font-semibold flex items-center justify-between group transition">
+              <span class="flex items-center gap-2">
+                <span class="w-5 h-5 rounded-md bg-teal-500/10 text-teal-400 text-[10px] flex items-center justify-center font-mono font-bold">০৭</span>
+                <span class="truncate">রোলার কোস্টার ও শক্তি</span>
+              </span>
+              <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-slate-500 group-hover:text-teal-300 transition"></i>
+            </a>
+            <a href="../physics-labs/index.html?lab=crane" class="w-full py-2 px-3 rounded-xl bg-slate-800/70 hover:bg-slate-700/80 border border-slate-700/60 text-slate-200 text-xs font-semibold flex items-center justify-between group transition">
+              <span class="flex items-center gap-2">
+                <span class="w-5 h-5 rounded-md bg-teal-500/10 text-teal-400 text-[10px] flex items-center justify-center font-mono font-bold">০৮</span>
+                <span class="truncate">ক্রেন, কাজ ও ক্ষমতা</span>
+              </span>
+              <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-slate-500 group-hover:text-teal-300 transition"></i>
+            </a>
+          </div>
+        </div>
+
+        <a href="ch4.html" class="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-blue-600 text-white font-bold text-xs flex items-center justify-center gap-2 transition border border-slate-700 hover:border-blue-500 shadow-sm">
+          অধ্যায় ল্যাব ভিউয়ার <i class="fa-solid fa-arrow-right text-[11px]"></i>
+        </a>
+      </div>
+      <!-- Ch 5 -->
+      <div class="chapter-card bg-slate-900/90 border border-slate-800 hover:border-slate-700 rounded-2xl p-5 flex flex-col justify-between gap-4 shadow-sm">
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-[11px] font-bold text-slate-400 bg-slate-800/80 px-2.5 py-0.5 rounded-md">অধ্যায় ০৫</span>
+            <span class="text-[10px] text-teal-400 font-semibold flex items-center gap-1"><i class="fa-solid fa-circle text-[6px]"></i> ২টি ল্যাব</span>
+          </div>
+          <h4 class="text-base sm:text-lg font-bold text-white mb-3">পদার্থের অবস্থা ও চাপ</h4>
+          
+          <div class="space-y-2 mb-4">
+            
+            <a href="../physics-labs/index.html?lab=buoyancy" class="w-full py-2 px-3 rounded-xl bg-slate-800/70 hover:bg-slate-700/80 border border-slate-700/60 text-slate-200 text-xs font-semibold flex items-center justify-between group transition">
+              <span class="flex items-center gap-2">
+                <span class="w-5 h-5 rounded-md bg-teal-500/10 text-teal-400 text-[10px] flex items-center justify-center font-mono font-bold">০৯</span>
+                <span class="truncate">ভাসা–ডোবা ও প্লবতা</span>
+              </span>
+              <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-slate-500 group-hover:text-teal-300 transition"></i>
+            </a>
+            <a href="../physics-labs/index.html?lab=pressure" class="w-full py-2 px-3 rounded-xl bg-slate-800/70 hover:bg-slate-700/80 border border-slate-700/60 text-slate-200 text-xs font-semibold flex items-center justify-between group transition">
+              <span class="flex items-center gap-2">
+                <span class="w-5 h-5 rounded-md bg-teal-500/10 text-teal-400 text-[10px] flex items-center justify-center font-mono font-bold">১০</span>
+                <span class="truncate">চাপ ও হাইড্রলিক লিফট</span>
+              </span>
+              <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-slate-500 group-hover:text-teal-300 transition"></i>
+            </a>
+          </div>
+        </div>
+
+        <a href="ch5.html" class="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-blue-600 text-white font-bold text-xs flex items-center justify-center gap-2 transition border border-slate-700 hover:border-blue-500 shadow-sm">
+          অধ্যায় ল্যাব ভিউয়ার <i class="fa-solid fa-arrow-right text-[11px]"></i>
+        </a>
+      </div>
+      <!-- Ch 6 -->
+      <div class="chapter-card bg-slate-900/90 border border-slate-800 hover:border-slate-700 rounded-2xl p-5 flex flex-col justify-between gap-4 shadow-sm">
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-[11px] font-bold text-slate-400 bg-slate-800/80 px-2.5 py-0.5 rounded-md">অধ্যায় ০৬</span>
+            <span class="text-[10px] text-teal-400 font-semibold flex items-center gap-1"><i class="fa-solid fa-circle text-[6px]"></i> ২টি ল্যাব</span>
+          </div>
+          <h4 class="text-base sm:text-lg font-bold text-white mb-3">বস্তুর ওপর তাপের প্রভাব</h4>
+          
+          <div class="space-y-2 mb-4">
+            
+            <a href="../physics-labs/index.html?lab=heat" class="w-full py-2 px-3 rounded-xl bg-slate-800/70 hover:bg-slate-700/80 border border-slate-700/60 text-slate-200 text-xs font-semibold flex items-center justify-between group transition">
+              <span class="flex items-center gap-2">
+                <span class="w-5 h-5 rounded-md bg-teal-500/10 text-teal-400 text-[10px] flex items-center justify-center font-mono font-bold">১১</span>
+                <span class="truncate">বরফ থেকে বাষ্প</span>
+              </span>
+              <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-slate-500 group-hover:text-teal-300 transition"></i>
+            </a>
+            <a href="../physics-labs/index.html?lab=expansion" class="w-full py-2 px-3 rounded-xl bg-slate-800/70 hover:bg-slate-700/80 border border-slate-700/60 text-slate-200 text-xs font-semibold flex items-center justify-between group transition">
+              <span class="flex items-center gap-2">
+                <span class="w-5 h-5 rounded-md bg-teal-500/10 text-teal-400 text-[10px] flex items-center justify-center font-mono font-bold">১২</span>
+                <span class="truncate">তাপে ধাতুর প্রসারণ</span>
+              </span>
+              <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-slate-500 group-hover:text-teal-300 transition"></i>
+            </a>
+          </div>
+        </div>
+
+        <a href="ch6.html" class="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-blue-600 text-white font-bold text-xs flex items-center justify-center gap-2 transition border border-slate-700 hover:border-blue-500 shadow-sm">
+          অধ্যায় ল্যাব ভিউয়ার <i class="fa-solid fa-arrow-right text-[11px]"></i>
+        </a>
+      </div>
+      <!-- Ch 7 -->
+      <div class="chapter-card bg-slate-900/90 border border-slate-800 hover:border-slate-700 rounded-2xl p-5 flex flex-col justify-between gap-4 shadow-sm">
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-[11px] font-bold text-slate-400 bg-slate-800/80 px-2.5 py-0.5 rounded-md">অধ্যায় ০৭</span>
+            <span class="text-[10px] text-teal-400 font-semibold flex items-center gap-1"><i class="fa-solid fa-circle text-[6px]"></i> ২টি ল্যাব</span>
+          </div>
+          <h4 class="text-base sm:text-lg font-bold text-white mb-3">তরঙ্গ ও শব্দ</h4>
+          
+          <div class="space-y-2 mb-4">
+            
+            <a href="../physics-labs/index.html?lab=wave" class="w-full py-2 px-3 rounded-xl bg-slate-800/70 hover:bg-slate-700/80 border border-slate-700/60 text-slate-200 text-xs font-semibold flex items-center justify-between group transition">
+              <span class="flex items-center gap-2">
+                <span class="w-5 h-5 rounded-md bg-teal-500/10 text-teal-400 text-[10px] flex items-center justify-center font-mono font-bold">১৩</span>
+                <span class="truncate">দড়িতে তরঙ্গ</span>
+              </span>
+              <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-slate-500 group-hover:text-teal-300 transition"></i>
+            </a>
+            <a href="../physics-labs/index.html?lab=sound" class="w-full py-2 px-3 rounded-xl bg-slate-800/70 hover:bg-slate-700/80 border border-slate-700/60 text-slate-200 text-xs font-semibold flex items-center justify-between group transition">
+              <span class="flex items-center gap-2">
+                <span class="w-5 h-5 rounded-md bg-teal-500/10 text-teal-400 text-[10px] flex items-center justify-center font-mono font-bold">১৪</span>
+                <span class="truncate">শব্দ ও প্রতিধ্বনি</span>
+              </span>
+              <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-slate-500 group-hover:text-teal-300 transition"></i>
+            </a>
+          </div>
+        </div>
+
+        <a href="ch7.html" class="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-blue-600 text-white font-bold text-xs flex items-center justify-center gap-2 transition border border-slate-700 hover:border-blue-500 shadow-sm">
+          অধ্যায় ল্যাব ভিউয়ার <i class="fa-solid fa-arrow-right text-[11px]"></i>
+        </a>
+      </div>
+      <!-- Ch 8 -->
+      <div class="chapter-card bg-slate-900/90 border border-slate-800 hover:border-slate-700 rounded-2xl p-5 flex flex-col justify-between gap-4 shadow-sm">
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-[11px] font-bold text-slate-400 bg-slate-800/80 px-2.5 py-0.5 rounded-md">অধ্যায় ০৮</span>
+            <span class="text-[10px] text-teal-400 font-semibold flex items-center gap-1"><i class="fa-solid fa-circle text-[6px]"></i> ২টি ল্যাব</span>
+          </div>
+          <h4 class="text-base sm:text-lg font-bold text-white mb-3">আলোর প্রতিফলন</h4>
+          
+          <div class="space-y-2 mb-4">
+            
+            <a href="../physics-labs/index.html?lab=reflection" class="w-full py-2 px-3 rounded-xl bg-slate-800/70 hover:bg-slate-700/80 border border-slate-700/60 text-slate-200 text-xs font-semibold flex items-center justify-between group transition">
+              <span class="flex items-center gap-2">
+                <span class="w-5 h-5 rounded-md bg-teal-500/10 text-teal-400 text-[10px] flex items-center justify-center font-mono font-bold">১৫</span>
+                <span class="truncate">দর্পণ ও লেজার</span>
+              </span>
+              <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-slate-500 group-hover:text-teal-300 transition"></i>
+            </a>
+            <a href="../physics-labs/index.html?lab=mirror" class="w-full py-2 px-3 rounded-xl bg-slate-800/70 hover:bg-slate-700/80 border border-slate-700/60 text-slate-200 text-xs font-semibold flex items-center justify-between group transition">
+              <span class="flex items-center gap-2">
+                <span class="w-5 h-5 rounded-md bg-teal-500/10 text-teal-400 text-[10px] flex items-center justify-center font-mono font-bold">১৬</span>
+                <span class="truncate">গোলীয় দর্পণে প্রতিবিম্ব</span>
+              </span>
+              <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-slate-500 group-hover:text-teal-300 transition"></i>
+            </a>
+          </div>
+        </div>
+
+        <a href="ch8.html" class="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-blue-600 text-white font-bold text-xs flex items-center justify-center gap-2 transition border border-slate-700 hover:border-blue-500 shadow-sm">
+          অধ্যায় ল্যাব ভিউয়ার <i class="fa-solid fa-arrow-right text-[11px]"></i>
+        </a>
+      </div>
+      <!-- Ch 9 -->
+      <div class="chapter-card bg-slate-900/90 border border-slate-800 hover:border-slate-700 rounded-2xl p-5 flex flex-col justify-between gap-4 shadow-sm">
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-[11px] font-bold text-slate-400 bg-slate-800/80 px-2.5 py-0.5 rounded-md">অধ্যায় ০৯</span>
+            <span class="text-[10px] text-teal-400 font-semibold flex items-center gap-1"><i class="fa-solid fa-circle text-[6px]"></i> ২টি ল্যাব</span>
+          </div>
+          <h4 class="text-base sm:text-lg font-bold text-white mb-3">আলোর প্রতিসরণ</h4>
+          
+          <div class="space-y-2 mb-4">
+            
+            <a href="../physics-labs/index.html?lab=refraction" class="w-full py-2 px-3 rounded-xl bg-slate-800/70 hover:bg-slate-700/80 border border-slate-700/60 text-slate-200 text-xs font-semibold flex items-center justify-between group transition">
+              <span class="flex items-center gap-2">
+                <span class="w-5 h-5 rounded-md bg-teal-500/10 text-teal-400 text-[10px] flex items-center justify-center font-mono font-bold">১৭</span>
+                <span class="truncate">প্রতিসরণ ও সংকট কোণ</span>
+              </span>
+              <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-slate-500 group-hover:text-teal-300 transition"></i>
+            </a>
+            <a href="../physics-labs/index.html?lab=lens" class="w-full py-2 px-3 rounded-xl bg-slate-800/70 hover:bg-slate-700/80 border border-slate-700/60 text-slate-200 text-xs font-semibold flex items-center justify-between group transition">
+              <span class="flex items-center gap-2">
+                <span class="w-5 h-5 rounded-md bg-teal-500/10 text-teal-400 text-[10px] flex items-center justify-center font-mono font-bold">১৮</span>
+                <span class="truncate">লেন্স ও দৃষ্টি সংশোধন</span>
+              </span>
+              <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-slate-500 group-hover:text-teal-300 transition"></i>
+            </a>
+          </div>
+        </div>
+
+        <a href="ch9.html" class="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-blue-600 text-white font-bold text-xs flex items-center justify-center gap-2 transition border border-slate-700 hover:border-blue-500 shadow-sm">
+          অধ্যায় ল্যাব ভিউয়ার <i class="fa-solid fa-arrow-right text-[11px]"></i>
+        </a>
+      </div>
+      <!-- Ch 10 -->
+      <div class="chapter-card bg-slate-900/90 border border-slate-800 hover:border-slate-700 rounded-2xl p-5 flex flex-col justify-between gap-4 shadow-sm">
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-[11px] font-bold text-slate-400 bg-slate-800/80 px-2.5 py-0.5 rounded-md">অধ্যায় ১০</span>
+            <span class="text-[10px] text-teal-400 font-semibold flex items-center gap-1"><i class="fa-solid fa-circle text-[6px]"></i> ২টি ল্যাব</span>
+          </div>
+          <h4 class="text-base sm:text-lg font-bold text-white mb-3">স্থির বিদ্যুৎ</h4>
+          
+          <div class="space-y-2 mb-4">
+            
+            <a href="../physics-labs/index.html?lab=charges" class="w-full py-2 px-3 rounded-xl bg-slate-800/70 hover:bg-slate-700/80 border border-slate-700/60 text-slate-200 text-xs font-semibold flex items-center justify-between group transition">
+              <span class="flex items-center gap-2">
+                <span class="w-5 h-5 rounded-md bg-teal-500/10 text-teal-400 text-[10px] flex items-center justify-center font-mono font-bold">১৯</span>
+                <span class="truncate">আধান ও তড়িৎক্ষেত্র</span>
+              </span>
+              <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-slate-500 group-hover:text-teal-300 transition"></i>
+            </a>
+            <a href="../physics-labs/index.html?lab=electroscope" class="w-full py-2 px-3 rounded-xl bg-slate-800/70 hover:bg-slate-700/80 border border-slate-700/60 text-slate-200 text-xs font-semibold flex items-center justify-between group transition">
+              <span class="flex items-center gap-2">
+                <span class="w-5 h-5 rounded-md bg-teal-500/10 text-teal-400 text-[10px] flex items-center justify-center font-mono font-bold">২০</span>
+                <span class="truncate">তড়িৎ আবেশ ও ইলেকট্রোস্কোপ</span>
+              </span>
+              <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-slate-500 group-hover:text-teal-300 transition"></i>
+            </a>
+          </div>
+        </div>
+
+        <a href="ch10.html" class="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-blue-600 text-white font-bold text-xs flex items-center justify-center gap-2 transition border border-slate-700 hover:border-blue-500 shadow-sm">
+          অধ্যায় ল্যাব ভিউয়ার <i class="fa-solid fa-arrow-right text-[11px]"></i>
+        </a>
+      </div>
+      <!-- Ch 11 -->
+      <div class="chapter-card bg-slate-900/90 border border-slate-800 hover:border-slate-700 rounded-2xl p-5 flex flex-col justify-between gap-4 shadow-sm">
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-[11px] font-bold text-slate-400 bg-slate-800/80 px-2.5 py-0.5 rounded-md">অধ্যায় ১১</span>
+            <span class="text-[10px] text-teal-400 font-semibold flex items-center gap-1"><i class="fa-solid fa-circle text-[6px]"></i> ২টি ল্যাব</span>
+          </div>
+          <h4 class="text-base sm:text-lg font-bold text-white mb-3">চল বিদ্যুৎ</h4>
+          
+          <div class="space-y-2 mb-4">
+            
+            <a href="../physics-labs/index.html?lab=circuit" class="w-full py-2 px-3 rounded-xl bg-slate-800/70 hover:bg-slate-700/80 border border-slate-700/60 text-slate-200 text-xs font-semibold flex items-center justify-between group transition">
+              <span class="flex items-center gap-2">
+                <span class="w-5 h-5 rounded-md bg-teal-500/10 text-teal-400 text-[10px] flex items-center justify-center font-mono font-bold">২১</span>
+                <span class="truncate">নিজের সার্কিট তৈরি করো</span>
+              </span>
+              <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-slate-500 group-hover:text-teal-300 transition"></i>
+            </a>
+            <a href="../physics-labs/index.html?lab=house" class="w-full py-2 px-3 rounded-xl bg-slate-800/70 hover:bg-slate-700/80 border border-slate-700/60 text-slate-200 text-xs font-semibold flex items-center justify-between group transition">
+              <span class="flex items-center gap-2">
+                <span class="w-5 h-5 rounded-md bg-teal-500/10 text-teal-400 text-[10px] flex items-center justify-center font-mono font-bold">২২</span>
+                <span class="truncate">বাড়ির বিদ্যুৎ ও ফিউজ</span>
+              </span>
+              <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-slate-500 group-hover:text-teal-300 transition"></i>
+            </a>
+          </div>
+        </div>
+
+        <a href="ch11.html" class="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-blue-600 text-white font-bold text-xs flex items-center justify-center gap-2 transition border border-slate-700 hover:border-blue-500 shadow-sm">
+          অধ্যায় ল্যাব ভিউয়ার <i class="fa-solid fa-arrow-right text-[11px]"></i>
+        </a>
+      </div>
+      <!-- Ch 12 -->
+      <div class="chapter-card bg-slate-900/90 border border-slate-800 hover:border-slate-700 rounded-2xl p-5 flex flex-col justify-between gap-4 shadow-sm">
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-[11px] font-bold text-slate-400 bg-slate-800/80 px-2.5 py-0.5 rounded-md">অধ্যায় ১২</span>
+            <span class="text-[10px] text-teal-400 font-semibold flex items-center gap-1"><i class="fa-solid fa-circle text-[6px]"></i> ২টি ল্যাব</span>
+          </div>
+          <h4 class="text-base sm:text-lg font-bold text-white mb-3">বিদ্যুতের চৌম্বক ক্রিয়া</h4>
+          
+          <div class="space-y-2 mb-4">
+            
+            <a href="../physics-labs/index.html?lab=motor" class="w-full py-2 px-3 rounded-xl bg-slate-800/70 hover:bg-slate-700/80 border border-slate-700/60 text-slate-200 text-xs font-semibold flex items-center justify-between group transition">
+              <span class="flex items-center gap-2">
+                <span class="w-5 h-5 rounded-md bg-teal-500/10 text-teal-400 text-[10px] flex items-center justify-center font-mono font-bold">২৩</span>
+                <span class="truncate">তড়িৎচুম্বক ও মোটর</span>
+              </span>
+              <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-slate-500 group-hover:text-teal-300 transition"></i>
+            </a>
+            <a href="../physics-labs/index.html?lab=induction" class="w-full py-2 px-3 rounded-xl bg-slate-800/70 hover:bg-slate-700/80 border border-slate-700/60 text-slate-200 text-xs font-semibold flex items-center justify-between group transition">
+              <span class="flex items-center gap-2">
+                <span class="w-5 h-5 rounded-md bg-teal-500/10 text-teal-400 text-[10px] flex items-center justify-center font-mono font-bold">২৪</span>
+                <span class="truncate">চুম্বক, কয়েল ও জেনারেটর</span>
+              </span>
+              <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-slate-500 group-hover:text-teal-300 transition"></i>
+            </a>
+          </div>
+        </div>
+
+        <a href="ch12.html" class="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-blue-600 text-white font-bold text-xs flex items-center justify-center gap-2 transition border border-slate-700 hover:border-blue-500 shadow-sm">
+          অধ্যায় ল্যাব ভিউয়ার <i class="fa-solid fa-arrow-right text-[11px]"></i>
+        </a>
+      </div>
+      <!-- Ch 13 -->
+      <div class="chapter-card bg-slate-900/90 border border-slate-800 hover:border-slate-700 rounded-2xl p-5 flex flex-col justify-between gap-4 shadow-sm">
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-[11px] font-bold text-slate-400 bg-slate-800/80 px-2.5 py-0.5 rounded-md">অধ্যায় ১৩</span>
+            <span class="text-[10px] text-teal-400 font-semibold flex items-center gap-1"><i class="fa-solid fa-circle text-[6px]"></i> ২টি ল্যাব</span>
+          </div>
+          <h4 class="text-base sm:text-lg font-bold text-white mb-3">আধুনিক পদার্থবিজ্ঞান ও ইলেকট্রনিক্স</h4>
+          
+          <div class="space-y-2 mb-4">
+            
+            <a href="../physics-labs/index.html?lab=decay" class="w-full py-2 px-3 rounded-xl bg-slate-800/70 hover:bg-slate-700/80 border border-slate-700/60 text-slate-200 text-xs font-semibold flex items-center justify-between group transition">
+              <span class="flex items-center gap-2">
+                <span class="w-5 h-5 rounded-md bg-teal-500/10 text-teal-400 text-[10px] flex items-center justify-center font-mono font-bold">২৫</span>
+                <span class="truncate">তেজস্ক্রিয় ক্ষয় ও অর্ধায়ু</span>
+              </span>
+              <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-slate-500 group-hover:text-teal-300 transition"></i>
+            </a>
+            <a href="../physics-labs/index.html?lab=electronics" class="w-full py-2 px-3 rounded-xl bg-slate-800/70 hover:bg-slate-700/80 border border-slate-700/60 text-slate-200 text-xs font-semibold flex items-center justify-between group transition">
+              <span class="flex items-center gap-2">
+                <span class="w-5 h-5 rounded-md bg-teal-500/10 text-teal-400 text-[10px] flex items-center justify-center font-mono font-bold">২৬</span>
+                <span class="truncate">ডায়োড ও ট্রানজিস্টর</span>
+              </span>
+              <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-slate-500 group-hover:text-teal-300 transition"></i>
+            </a>
+          </div>
+        </div>
+
+        <a href="ch13.html" class="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-blue-600 text-white font-bold text-xs flex items-center justify-center gap-2 transition border border-slate-700 hover:border-blue-500 shadow-sm">
+          অধ্যায় ল্যাব ভিউয়ার <i class="fa-solid fa-arrow-right text-[11px]"></i>
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-slate-900 py-6 text-center text-xs text-slate-500">
+    <p>© 2026 Al Amin Physics • অধ্যায় ভিত্তিক ভার্চুয়াল ল্যাবরেটরি</p>
+  </footer>
+
+</body>
+</html>

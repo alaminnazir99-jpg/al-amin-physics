@@ -457,7 +457,9 @@ function switchTab(tabKey) {
     const target = document.getElementById(`section-${tabKey}`);
     if (target) target.classList.remove('hidden');
 
-    if (tabKey === 'simulation' && !animFrameId) startSimLoop();
+    if (tabKey === 'simulation') {
+        renderChapterSimulation();
+    }
 
     // Mark progress when opening a section
     addProgress(getCurrentChap().id, tabKey);
@@ -657,6 +659,9 @@ function renderChapterData() {
     /* ── 7. Q&A FEED ── */
     renderQAFeed();
 
+    /* ── 7.1. CHAPTER SIMULATION ── */
+    renderChapterSimulation();
+
     /* ── 8. EXAM reset ── */
     document.getElementById('exam-start-screen').classList.remove('hidden');
     document.getElementById('exam-active-screen').classList.add('hidden');
@@ -680,6 +685,150 @@ function renderChapterData() {
     actionBox.innerHTML = isEnrolled
         ? `<div class="px-6 py-3.5 bg-blue-600 text-white font-black rounded-xl flex items-center gap-2 text-sm shadow-xl"><i class="fa-solid fa-circle-check text-lg"></i> কোর্সে এনরোল্ড আছেন (All Unlocked)</div>`
         : `<button onclick="openPaymentModal()" class="w-full sm:w-auto px-8 py-3.5 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white font-black rounded-xl shadow-lg transition transform hover:scale-[1.02]"><i class="fa-solid fa-lock-open mr-2"></i> এখনই এনরোল করুন (bKash/Nagad)</button>`;
+}
+
+/* ===================================================
+   CHAPTER SIMULATION (26 ChatGPT-crafted Labs)
+=================================================== */
+const CHAPTER_LAB_MAP = {
+    1:  { name: "ভৌত রাশি ও পরিমাপ", labs: [ { id: "caliper", num: 1, title: "ভার্নিয়ার ও স্ক্রু গজ", sub: "পরিমাপের ছোট্ট পার্থক্য, বিজ্ঞানের বড় নির্ভুলতা।" }, { id: "density", num: 2, title: "ঘনত্ব অনুসন্ধান", sub: "একটি অজানা বস্তুর পরিচয় খুঁজে বের করো।" } ] },
+    2:  { name: "গতি", labs: [ { id: "motion", num: 3, title: "গাড়ি, গতি ও লেখচিত্র", sub: "চলন্ত গাড়ির প্রতিটি মুহূর্তকে গ্রাফে ধরো।" }, { id: "fall", num: 4, title: "মুক্তপতন পরীক্ষাগার", sub: "ভিন্ন ভর, একই মহাকর্ষ—ফল কী হবে?" } ] },
+    3:  { name: "বল", labs: [ { id: "friction", num: 5, title: "বল ও ঘর্ষণ", sub: "কখন বাক্স নড়বে, কখন থামবে—নিজে পরীক্ষা করো।" }, { id: "collision", num: 6, title: "ট্রলির সংঘর্ষ", sub: "ভরবেগ কোথায় যায়? সংঘর্ষে খুঁজে দেখো।" } ] },
+    4:  { name: "কাজ, ক্ষমতা ও শক্তি", labs: [ { id: "energy", num: 7, title: "রোলার কোস্টার ও শক্তি", sub: "উঁচু–নিচু পথে শক্তির রূপান্তর দেখো।" }, { id: "crane", num: 8, title: "ক্রেন, কাজ ও ক্ষমতা", sub: "একই কাজ, ভিন্ন সময়—ক্ষমতার পার্থক্য।" } ] },
+    5:  { name: "পদার্থের অবস্থা ও চাপ", labs: [ { id: "buoyancy", num: 9, title: "ভাসা–ডোবা ও প্লবতা", sub: "ওজন আর পানির ঊর্ধ্বমুখী বলের লড়াই।" }, { id: "pressure", num: 10, title: "চাপ ও হাইড্রলিক লিফট", sub: "অল্প বল দিয়ে বড় ভার—কীভাবে সম্ভব?" } ] },
+    6:  { name: "বস্তুর ওপর তাপের প্রভাব", labs: [ { id: "heat", num: 11, title: "বরফ থেকে বাষ্প", sub: "তাপ দিলেও কখন তাপমাত্রা বাড়ে না?" }, { id: "expansion", num: 12, title: "তাপে ধাতুর প্রসারণ", sub: "ক্ষুদ্র পরিবর্তন, বড় প্রকৌশল সিদ্ধান্ত।" } ] },
+    7:  { name: "তরঙ্গ ও শব্দ", labs: [ { id: "wave", num: 13, title: "দড়িতে তরঙ্গ", sub: "একটি দোলন, ছড়িয়ে পড়ে পুরো দড়িতে।" }, { id: "sound", num: 14, title: "শব্দ ও প্রতিধ্বনি", sub: "শব্দ পাঠাও, ফিরে আসার সময় মাপো।" } ] },
+    8:  { name: "আলোর প্রতিফলন", labs: [ { id: "reflection", num: 15, title: "দর্পণ ও লেজার", sub: "আলোর কোণ নিজে মেপে সূত্র যাচাই করো।" }, { id: "mirror", num: 16, title: "গোলীয় দর্পণে প্রতিবিম্ব", sub: "বাস্তব না অবাস্তব—দর্পণ সরিয়ে খুঁজে দেখো।" } ] },
+    9:  { name: "আলোর প্রতিসরণ", labs: [ { id: "refraction", num: 17, title: "প্রতিসরণ ও সংকট কোণ", sub: "মাধ্যম বদলালে আলোর পথ কোথায় যায়?" }, { id: "lens", num: 18, title: "লেন্স ও দৃষ্টি সংশোধন", sub: "আলোর রশ্মি মিলিয়ে স্পষ্ট প্রতিবিম্ব তৈরি করো।" } ] },
+    10: { name: "স্থির বিদ্যুৎ", labs: [ { id: "charges", num: 19, title: "আধান ও তড়িৎক্ষেত্র", sub: "অদৃশ্য বলকে দৃশ্যমান করো।" }, { id: "electroscope", num: 20, title: "তড়িৎ আবেশ ও ইলেকট্রোস্কোপ", sub: "কাছে আনা, ছোঁয়ানো ও আর্থিং পরীক্ষা করো।" } ] },
+    11: { name: "চল বিদ্যুৎ", labs: [ { id: "circuit", num: 21, title: "নিজের সার্কিট তৈরি করো", sub: "তার জোড়া দাও। সুইচ চালাও। বিদ্যুৎকে বুঝে নাও।" }, { id: "house", num: 22, title: "বাড়ির বিদ্যুৎ ও ফিউজ", sub: "কত লোড নিরাপদ? হিসাব করে চালাও।" } ] },
+    12: { name: "বিদ্যুতের চৌম্বক ক্রিয়া", labs: [ { id: "motor", num: 23, title: "তড়িৎচুম্বক ও মোটর", sub: "বিদ্যুৎ থেকে ঘূর্ণন—ভেতরের প্রক্রিয়া দেখো।" }, { id: "induction", num: 24, title: "চুম্বক, কয়েল ও জেনারেটর", sub: "হাতের গতিতে তৈরি করো বিদ্যুৎ।" } ] },
+    13: { name: "আধুনিক পদার্থবিজ্ঞান ও ইলেকট্রনিক্স", labs: [ { id: "decay", num: 25, title: "তেজস্ক্রিয় ক্ষয় ও অর্ধায়ু", sub: "প্রতিটি পরমাণু অনিশ্চিত, সমষ্টিতে একটি নিয়ম।" }, { id: "electronics", num: 26, title: "ডায়োড ও ট্রানজিস্টর", sub: "একদিকে কারেন্ট, ক্ষুদ্র সংকেতে বড় নিয়ন্ত্রণ।" } ] }
+};
+
+function renderChapterSimulation() {
+    const container = document.getElementById('simulation-tab-content');
+    if (!container) return;
+
+    if (currentLevel === 'ssc') {
+        const chapNum = currentChapterIndex + 1;
+        const chapData = CHAPTER_LAB_MAP[chapNum];
+        if (!chapData) return;
+
+        const lab1 = chapData.labs[0];
+        const lab2 = chapData.labs[1];
+
+        container.innerHTML = `
+            <div class="bg-white p-5 sm:p-6 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+                <!-- Top Header & Tabs -->
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
+                    <div>
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="px-2.5 py-0.5 rounded-md bg-teal-50 text-teal-700 font-bold text-[11px] border border-teal-200">অধ্যায় ${String(chapNum).padStart(2, '0')}</span>
+                            <span class="text-xs font-bold text-slate-400">ভার্চুয়াল ল্যাবরেটরি</span>
+                        </div>
+                        <h3 class="text-lg sm:text-xl font-bold text-slate-900">${chapData.name} — ইন্টারেক্টিভ সিমুলেশন</h3>
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <a id="study-sim-fs-btn" href="physics-labs/index.html?lab=${lab1.id}" target="_blank" class="px-3.5 py-2 rounded-xl bg-teal-50 hover:bg-teal-100 text-teal-700 text-xs font-bold border border-teal-200 transition flex items-center gap-1.5 shadow-sm">
+                            <i class="fa-solid fa-up-right-and-down-left-from-center"></i> <span>পূর্ণ পর্দায় খুলুন ↗</span>
+                        </a>
+                        <a href="simulations/index.html" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition flex items-center gap-1.5">
+                            <i class="fa-solid fa-flask text-teal-600"></i> <span>সকল ২৬টি ল্যাব</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Lab Switcher Buttons -->
+                <div class="flex items-center gap-2 overflow-x-auto pb-1">
+                    <button id="study-sim-tab-1" onclick="switchStudySimulationLab('${lab1.id}', 1)" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-teal-600 text-white shadow-sm transition flex items-center gap-2">
+                        <span class="w-5 h-5 rounded-md bg-white/20 text-white text-[10px] flex items-center justify-center font-mono font-bold">${String(lab1.num).padStart(2, '0')}</span>
+                        <span>${lab1.title}</span>
+                    </button>
+                    <button id="study-sim-tab-2" onclick="switchStudySimulationLab('${lab2.id}', 2)" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 transition flex items-center gap-2">
+                        <span class="w-5 h-5 rounded-md bg-white text-slate-600 border border-slate-200 text-[10px] flex items-center justify-center font-mono font-bold">${String(lab2.num).padStart(2, '0')}</span>
+                        <span>${lab2.title}</span>
+                    </button>
+                </div>
+
+                <!-- Interactive Iframe -->
+                <div class="relative w-full rounded-2xl overflow-hidden border border-slate-200 bg-[#08111d] shadow-inner">
+                    <iframe id="study-simulation-iframe" src="physics-labs/index.html?lab=${lab1.id}&embed=1" title="${lab1.title}" class="w-full h-[600px] sm:h-[700px] lg:h-[760px] border-0" allow="fullscreen; clipboard-write"></iframe>
+                </div>
+
+                <!-- Two Labs Details Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                    <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-teal-800 flex items-center gap-1.5">
+                                <span class="w-5 h-5 rounded bg-teal-100 text-teal-700 text-[10px] flex items-center justify-center font-mono">${String(lab1.num).padStart(2, '0')}</span>
+                                ${lab1.title}
+                            </span>
+                            <a href="physics-labs/index.html?lab=${lab1.id}" target="_blank" class="text-[11px] font-bold text-teal-600 hover:underline">নতুন ট্যাব ↗</a>
+                        </div>
+                        <p class="text-xs text-slate-500">${lab1.sub}</p>
+                        <button onclick="switchStudySimulationLab('${lab1.id}', 1)" class="w-full py-1.5 px-3 rounded-xl bg-white hover:bg-teal-50 border border-slate-200 text-xs font-bold text-slate-700 transition">
+                            এই ল্যাবটি স্ক্রিনে চালু করুন
+                        </button>
+                    </div>
+
+                    <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-teal-800 flex items-center gap-1.5">
+                                <span class="w-5 h-5 rounded bg-teal-100 text-teal-700 text-[10px] flex items-center justify-center font-mono">${String(lab2.num).padStart(2, '0')}</span>
+                                ${lab2.title}
+                            </span>
+                            <a href="physics-labs/index.html?lab=${lab2.id}" target="_blank" class="text-[11px] font-bold text-teal-600 hover:underline">নতুন ট্যাব ↗</a>
+                        </div>
+                        <p class="text-xs text-slate-500">${lab2.sub}</p>
+                        <button onclick="switchStudySimulationLab('${lab2.id}', 2)" class="w-full py-1.5 px-3 rounded-xl bg-white hover:bg-teal-50 border border-slate-200 text-xs font-bold text-slate-700 transition">
+                            এই ল্যাবটি স্ক্রিনে চালু করুন
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+    } else {
+        container.innerHTML = `
+            <div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm text-center max-w-xl mx-auto my-6 space-y-4">
+                <div class="w-16 h-16 rounded-2xl bg-teal-50 text-teal-600 border border-teal-100 flex items-center justify-center text-2xl mx-auto mb-2">
+                    <i class="fa-solid fa-flask"></i>
+                </div>
+                <h3 class="text-xl font-bold text-slate-900">ভার্চুয়াল পদার্থবিজ্ঞান ল্যাবরেটরি</h3>
+                <p class="text-xs sm:text-sm text-slate-500 leading-relaxed">
+                    বর্তমানে এসএসসি পদার্থবিজ্ঞানের ১৩টি অধ্যায়ের জন্য মোট ২৬টি হ্যান্ডস-অন ইন্টারেক্টিভ ল্যাব প্রস্তুত রয়েছে। এইচএসসি শিক্ষার্থীদের জন্যও এই মৌলিক ল্যাবগুলো অত্যন্ত কার্যকর।
+                </p>
+                <div class="pt-2">
+                    <a href="simulations/index.html" class="inline-flex items-center gap-2 px-6 py-3 bg-teal-600 hover:bg-teal-500 text-white font-bold rounded-2xl text-xs sm:text-sm shadow-lg shadow-teal-600/25 transition">
+                        <i class="fa-solid fa-atom"></i> ২৬টি ল্যাবরেটরি এক্সপ্লোর করুন <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        `;
+    }
+}
+
+function switchStudySimulationLab(labId, tabNum) {
+    const iframe = document.getElementById('study-simulation-iframe');
+    const tab1 = document.getElementById('study-sim-tab-1');
+    const tab2 = document.getElementById('study-sim-tab-2');
+    const btnFs = document.getElementById('study-sim-fs-btn');
+    if (iframe) {
+        iframe.src = `physics-labs/index.html?lab=${labId}&embed=1`;
+    }
+    if (btnFs) {
+        btnFs.href = `physics-labs/index.html?lab=${labId}`;
+    }
+    if (tab1 && tab2) {
+        if (tabNum === 1) {
+            tab1.className = 'px-3.5 py-2 rounded-xl text-xs font-bold bg-teal-600 text-white shadow-sm transition flex items-center gap-2';
+            tab2.className = 'px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 transition flex items-center gap-2';
+        } else {
+            tab2.className = 'px-3.5 py-2 rounded-xl text-xs font-bold bg-teal-600 text-white shadow-sm transition flex items-center gap-2';
+            tab1.className = 'px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 transition flex items-center gap-2';
+        }
+    }
 }
 
 /* ===================================================
@@ -1379,7 +1528,15 @@ function goToSpecificChapterAndTab(lvl, chapIdx, tabKey) {
 
 function openSimulationDirectly(simId) {
     if (simId) {
-        window.location.href = `simulations/index.html?id=${simId}`;
+        window.location.href = `physics-labs/index.html?lab=${simId}`;
+        return;
+    }
+    if (currentLevel === 'ssc') {
+        switchTab('simulation');
+        const target = document.getElementById('section-simulation');
+        if (target) {
+            target.scrollIntoView({ behavior: 'smooth' });
+        }
     } else {
         window.location.href = 'simulations/index.html';
     }
