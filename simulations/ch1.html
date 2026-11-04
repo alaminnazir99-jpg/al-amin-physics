@@ -27,7 +27,7 @@
       </div>
 
       <div class="flex items-center gap-2">
-        <a href="/physics-labs/?lab=caliper" id="btn-fullscreen-top" target="_blank" class="px-3 py-1.5 rounded-xl bg-teal-500/15 hover:bg-teal-500/25 text-teal-300 text-xs font-bold border border-teal-500/40 transition flex items-center gap-1.5 shadow-sm">
+        <a href="/simulations/vernier-caliper.html" id="btn-fullscreen-top" target="_blank" class="px-3 py-1.5 rounded-xl bg-teal-500/15 hover:bg-teal-500/25 text-teal-300 text-xs font-bold border border-teal-500/40 transition flex items-center gap-1.5 shadow-sm">
           <i class="fa-solid fa-up-right-and-down-left-from-center"></i> <span class="hidden sm:inline">পূর্ণ পর্দা</span>
         </a>
         <a href="/study" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition flex items-center gap-1.5">
@@ -45,7 +45,7 @@
       <div class="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0">
         <button id="tab-lab-1" onclick="switchLab('caliper', 1)" class="lab-tab-active px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 whitespace-nowrap border border-transparent shadow-sm">
           <span class="w-5 h-5 rounded-md bg-white/20 text-white text-[10px] flex items-center justify-center font-mono font-bold">০১</span>
-          <span>ভার্নিয়ার ও স্ক্রু গজ</span>
+          <span>ভার্নিয়ার ও স্লাইড ক্যালিপার্স</span>
         </button>
         <button id="tab-lab-2" onclick="switchLab('density', 2)" class="px-3.5 py-2 rounded-xl text-xs font-bold text-slate-300 bg-[#112133] hover:bg-[#162c45] hover:text-white transition flex items-center gap-2 whitespace-nowrap border border-slate-700/60">
           <span class="w-5 h-5 rounded-md bg-white/10 text-slate-300 text-[10px] flex items-center justify-center font-mono font-bold">০২</span>
@@ -54,8 +54,8 @@
       </div>
 
       <div class="flex items-center gap-2">
-        <span id="current-lab-sub" class="text-xs text-slate-400 hidden lg:inline truncate max-w-sm">ভার্নিয়ার ধ্রুবক ও পিচ মেপে ক্ষুদ্র দৈর্ঘ্য নির্ভুলভাবে নির্ণয় করো।</span>
-        <a id="btn-fullscreen-main" href="/physics-labs/?lab=caliper" target="_blank" class="px-3 py-1.5 rounded-xl bg-[#112133] hover:bg-[#162c45] text-slate-200 text-xs font-semibold border border-slate-700 transition flex items-center gap-1.5 ml-auto">
+        <span id="current-lab-sub" class="text-xs text-slate-400 hidden lg:inline truncate max-w-sm">বাস্তবসম্মত সিলভার স্লাইড ক্যালিপার্স দিয়ে সূক্ষ্ম দৈর্ঘ্য পরিমাপ।</span>
+        <a id="btn-fullscreen-main" href="/simulations/vernier-caliper.html" target="_blank" class="px-3 py-1.5 rounded-xl bg-[#112133] hover:bg-[#162c45] text-slate-200 text-xs font-semibold border border-slate-700 transition flex items-center gap-1.5 ml-auto">
           <i class="fa-solid fa-arrow-up-right-from-square text-teal-400"></i> <span>নতুন ট্যাবে খুলুন ↗</span>
         </a>
       </div>
@@ -65,9 +65,9 @@
     <div class="relative w-full rounded-2xl overflow-hidden border border-slate-800 bg-[#08111d] shadow-2xl">
       <iframe 
         id="lab-iframe" 
-        src="/physics-labs/?lab=caliper&embed=1" 
-        title="ভার্নিয়ার ও স্ক্রু গজ" 
-        class="w-full h-[650px] sm:h-[750px] lg:h-[820px] border-0 bg-[#08111d]" 
+        src="/simulations/vernier-caliper.html" 
+        title="ভার্নিয়ার ও স্লাইড ক্যালিপার্স" 
+        class="w-full h-[680px] sm:h-[780px] lg:h-[860px] border-0 bg-[#08111d]" 
         allow="fullscreen; clipboard-write">
       </iframe>
     </div>
@@ -78,11 +78,11 @@
         <div class="flex items-center justify-between">
           <span class="flex items-center gap-2 text-xs font-bold text-teal-400">
             <span class="w-5 h-5 rounded bg-teal-500/20 flex items-center justify-center font-mono">০১</span>
-            <span>ভার্নিয়ার ও স্ক্রু গজ</span>
+            <span>ভার্নিয়ার ও স্লাইড ক্যালিপার্স</span>
           </span>
-          <a href="/physics-labs/?lab=caliper" target="_blank" class="text-[11px] font-bold text-teal-400 hover:underline">পূর্ণ পর্দা ↗</a>
+          <a href="/simulations/vernier-caliper.html" target="_blank" class="text-[11px] font-bold text-teal-400 hover:underline">পূর্ণ পর্দা ↗</a>
         </div>
-        <p class="text-xs text-slate-400">ভার্নিয়ার ধ্রুবক ও পিচ মেপে ক্ষুদ্র দৈর্ঘ্য নির্ভুলভাবে নির্ণয় করো।</p>
+        <p class="text-xs text-slate-400">বাস্তবসম্মত সিলভার স্লাইড ক্যালিপার্স দিয়ে সূক্ষ্ম দৈর্ঘ্য পরিমাপ।</p>
       </div>
       <div class="p-4 rounded-2xl bg-[#0b1624] border border-slate-800 space-y-1">
         <div class="flex items-center justify-between">
@@ -130,9 +130,15 @@
       const btnFsMain = document.getElementById('btn-fullscreen-main');
       const subEl = document.getElementById('current-lab-sub');
 
-      iframe.src = '/physics-labs/?lab=' + labId + '&embed=1';
-      btnFsTop.href = '/physics-labs/?lab=' + labId;
-      btnFsMain.href = '/physics-labs/?lab=' + labId;
+      if (labId === 'caliper') {
+        iframe.src = '/simulations/vernier-caliper.html';
+        btnFsTop.href = '/simulations/vernier-caliper.html';
+        btnFsMain.href = '/simulations/vernier-caliper.html';
+      } else {
+        iframe.src = '/physics-labs/?lab=' + labId + '&embed=1';
+        btnFsTop.href = '/physics-labs/?lab=' + labId;
+        btnFsMain.href = '/physics-labs/?lab=' + labId;
+      }
 
       if (tabNum === 1) {
         tab1.className = 'lab-tab-active px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 whitespace-nowrap border border-transparent shadow-sm';

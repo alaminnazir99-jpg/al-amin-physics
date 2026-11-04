@@ -13,6 +13,8 @@
     { "source": "/ch10", "destination": "/simulations/ch10", "permanent": false },
     { "source": "/ch11", "destination": "/simulations/ch11", "permanent": false },
     { "source": "/ch12", "destination": "/simulations/ch12", "permanent": false },
-    { "source": "/ch13", "destination": "/simulations/ch13", "permanent": false }
+    { "source": "/ch13", "destination": "/simulations/ch13", "permanent": false },
+    { "source": "/caliper", "destination": "/simulations/vernier-caliper.html", "permanent": false },
+    { "source": "/vernier", "destination": "/simulations/vernier-caliper.html", "permanent": false }
   ]
 }
