@@ -1,20 +1,18 @@
 {
   "cleanUrls": true,
-  "rewrites": [
-    { "source": "/ch1", "destination": "/simulations/ch1.html" },
-    { "source": "/ch2", "destination": "/simulations/ch2.html" },
-    { "source": "/ch3", "destination": "/simulations/ch3.html" },
-    { "source": "/ch4", "destination": "/simulations/ch4.html" },
-    { "source": "/ch5", "destination": "/simulations/ch5.html" },
-    { "source": "/ch6", "destination": "/simulations/ch6.html" },
-    { "source": "/ch7", "destination": "/simulations/ch7.html" },
-    { "source": "/ch8", "destination": "/simulations/ch8.html" },
-    { "source": "/ch9", "destination": "/simulations/ch9.html" },
-    { "source": "/ch10", "destination": "/simulations/ch10.html" },
-    { "source": "/ch11", "destination": "/simulations/ch11.html" },
-    { "source": "/ch12", "destination": "/simulations/ch12.html" },
-    { "source": "/ch13", "destination": "/simulations/ch13.html" },
-    { "source": "/ch:num(\\d+)", "destination": "/simulations/ch:num.html" },
-    { "source": "/ch:num(\\d+).html", "destination": "/simulations/ch:num.html" }
+  "redirects": [
+    { "source": "/ch1", "destination": "/simulations/ch1", "permanent": false },
+    { "source": "/ch2", "destination": "/simulations/ch2", "permanent": false },
+    { "source": "/ch3", "destination": "/simulations/ch3", "permanent": false },
+    { "source": "/ch4", "destination": "/simulations/ch4", "permanent": false },
+    { "source": "/ch5", "destination": "/simulations/ch5", "permanent": false },
+    { "source": "/ch6", "destination": "/simulations/ch6", "permanent": false },
+    { "source": "/ch7", "destination": "/simulations/ch7", "permanent": false },
+    { "source": "/ch8", "destination": "/simulations/ch8", "permanent": false },
+    { "source": "/ch9", "destination": "/simulations/ch9", "permanent": false },
+    { "source": "/ch10", "destination": "/simulations/ch10", "permanent": false },
+    { "source": "/ch11", "destination": "/simulations/ch11", "permanent": false },
+    { "source": "/ch12", "destination": "/simulations/ch12", "permanent": false },
+    { "source": "/ch13", "destination": "/simulations/ch13", "permanent": false }
   ]
 }
