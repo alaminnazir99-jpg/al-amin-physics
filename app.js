@@ -731,7 +731,7 @@ function renderChapterSimulation() {
                     </div>
 
                     <div class="flex items-center gap-2">
-                        <a id="study-sim-fs-btn" href="physics-labs/index.html?lab=${lab1.id}" target="_blank" class="px-3.5 py-2 rounded-xl bg-teal-50 hover:bg-teal-100 text-teal-700 text-xs font-bold border border-teal-200 transition flex items-center gap-1.5 shadow-sm">
+                        <a id="study-sim-fs-btn" href="physics-labs/?lab=${lab1.id}" target="_blank" class="px-3.5 py-2 rounded-xl bg-teal-50 hover:bg-teal-100 text-teal-700 text-xs font-bold border border-teal-200 transition flex items-center gap-1.5 shadow-sm">
                             <i class="fa-solid fa-up-right-and-down-left-from-center"></i> <span>পূর্ণ পর্দায় খুলুন ↗</span>
                         </a>
                         <a href="simulations/index.html" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition flex items-center gap-1.5">
@@ -754,7 +754,7 @@ function renderChapterSimulation() {
 
                 <!-- Interactive Iframe -->
                 <div class="relative w-full rounded-2xl overflow-hidden border border-slate-200 bg-[#08111d] shadow-inner">
-                    <iframe id="study-simulation-iframe" src="physics-labs/index.html?lab=${lab1.id}&embed=1" title="${lab1.title}" class="w-full h-[600px] sm:h-[700px] lg:h-[760px] border-0" allow="fullscreen; clipboard-write"></iframe>
+                    <iframe id="study-simulation-iframe" src="physics-labs/?lab=${lab1.id}&embed=1" title="${lab1.title}" class="w-full h-[600px] sm:h-[700px] lg:h-[760px] border-0 bg-[#08111d]" allow="fullscreen; clipboard-write"></iframe>
                 </div>
 
                 <!-- Two Labs Details Grid -->
@@ -765,7 +765,7 @@ function renderChapterSimulation() {
                                 <span class="w-5 h-5 rounded bg-teal-100 text-teal-700 text-[10px] flex items-center justify-center font-mono">${String(lab1.num).padStart(2, '0')}</span>
                                 ${lab1.title}
                             </span>
-                            <a href="physics-labs/index.html?lab=${lab1.id}" target="_blank" class="text-[11px] font-bold text-teal-600 hover:underline">নতুন ট্যাব ↗</a>
+                            <a href="physics-labs/?lab=${lab1.id}" target="_blank" class="text-[11px] font-bold text-teal-600 hover:underline">নতুন ট্যাব ↗</a>
                         </div>
                         <p class="text-xs text-slate-500">${lab1.sub}</p>
                         <button onclick="switchStudySimulationLab('${lab1.id}', 1)" class="w-full py-1.5 px-3 rounded-xl bg-white hover:bg-teal-50 border border-slate-200 text-xs font-bold text-slate-700 transition">
@@ -779,7 +779,7 @@ function renderChapterSimulation() {
                                 <span class="w-5 h-5 rounded bg-teal-100 text-teal-700 text-[10px] flex items-center justify-center font-mono">${String(lab2.num).padStart(2, '0')}</span>
                                 ${lab2.title}
                             </span>
-                            <a href="physics-labs/index.html?lab=${lab2.id}" target="_blank" class="text-[11px] font-bold text-teal-600 hover:underline">নতুন ট্যাব ↗</a>
+                            <a href="physics-labs/?lab=${lab2.id}" target="_blank" class="text-[11px] font-bold text-teal-600 hover:underline">নতুন ট্যাব ↗</a>
                         </div>
                         <p class="text-xs text-slate-500">${lab2.sub}</p>
                         <button onclick="switchStudySimulationLab('${lab2.id}', 2)" class="w-full py-1.5 px-3 rounded-xl bg-white hover:bg-teal-50 border border-slate-200 text-xs font-bold text-slate-700 transition">
@@ -815,10 +815,10 @@ function switchStudySimulationLab(labId, tabNum) {
     const tab2 = document.getElementById('study-sim-tab-2');
     const btnFs = document.getElementById('study-sim-fs-btn');
     if (iframe) {
-        iframe.src = `physics-labs/index.html?lab=${labId}&embed=1`;
+        iframe.src = `physics-labs/?lab=${labId}&embed=1`;
     }
     if (btnFs) {
-        btnFs.href = `physics-labs/index.html?lab=${labId}`;
+        btnFs.href = `physics-labs/?lab=${labId}`;
     }
     if (tab1 && tab2) {
         if (tabNum === 1) {
@@ -1531,15 +1531,24 @@ function openSimulationDirectly(simId) {
         window.location.href = `physics-labs/index.html?lab=${simId}`;
         return;
     }
-    if (currentLevel === 'ssc') {
-        switchTab('simulation');
+    if (currentLevel !== 'ssc') {
+        currentLevel = 'ssc';
+        const lvlSelect = document.getElementById('class-level-select');
+        if (lvlSelect) lvlSelect.value = 'ssc';
+    }
+    // Switch to classroom view mode so the content display area is visible
+    openClassroomView();
+    // Switch to simulation tab
+    switchTab('simulation');
+    // Render the chapter's simulations
+    renderChapterSimulation();
+    // Scroll smoothly to the simulation container
+    setTimeout(() => {
         const target = document.getElementById('section-simulation');
         if (target) {
-            target.scrollIntoView({ behavior: 'smooth' });
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
-    } else {
-        window.location.href = 'simulations/index.html';
-    }
+    }, 150);
 }
 
 /* ===================================================

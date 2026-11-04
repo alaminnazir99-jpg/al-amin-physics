@@ -6,16 +6,16 @@
   <title>অধ্যায় ০৩: বল | আল-আমিন ফিজিক্স ল্যাব</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700;800&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     body { font-family: "Hind Siliguri", sans-serif; }
-    .lab-tab-active { background-color: #0f766e !important; color: #ffffff !important; border-color: #14b8a6 !important; }
+    .lab-tab-active { background: #0d9488 !important; color: #ffffff !important; border-color: #14b8a6 !important; }
   </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between">
+<body class="bg-[#070e17] text-slate-100 min-h-screen flex flex-col justify-between">
 
   <!-- Header -->
-  <header class="bg-slate-900/90 backdrop-blur border-b border-slate-800 px-4 py-3 sticky top-0 z-40">
+  <header class="bg-[#0a1523]/90 backdrop-blur border-b border-slate-800/80 px-4 py-3 sticky top-0 z-40">
     <div class="max-w-7xl mx-auto flex items-center justify-between gap-3">
       <div class="flex items-center gap-2 sm:gap-3">
         <a href="index.html" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition flex items-center gap-1.5">
@@ -27,7 +27,7 @@
       </div>
 
       <div class="flex items-center gap-2">
-        <a href="../physics-labs/index.html?lab=friction" id="btn-fullscreen-top" target="_blank" class="px-3 py-1.5 rounded-xl bg-teal-500/10 hover:bg-teal-500/20 text-teal-300 text-xs font-semibold border border-teal-500/30 transition flex items-center gap-1.5">
+        <a href="../physics-labs/?lab=friction" id="btn-fullscreen-top" target="_blank" class="px-3 py-1.5 rounded-xl bg-teal-500/15 hover:bg-teal-500/25 text-teal-300 text-xs font-bold border border-teal-500/40 transition flex items-center gap-1.5 shadow-sm">
           <i class="fa-solid fa-up-right-and-down-left-from-center"></i> <span class="hidden sm:inline">পূর্ণ পর্দা</span>
         </a>
         <a href="../study.html" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition flex items-center gap-1.5">
@@ -38,34 +38,34 @@
   </header>
 
   <!-- Main Simulation Stage -->
-  <main class="max-w-7xl mx-auto px-3 sm:px-4 py-6 w-full flex-1 space-y-4">
+  <main class="max-w-7xl mx-auto px-3 sm:px-4 py-5 w-full flex-1 space-y-4">
 
     <!-- Lab Selection Tabs Bar -->
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-900/90 border border-slate-800 p-2.5 rounded-2xl">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#0b1624] border border-slate-800 p-2.5 rounded-2xl">
       <div class="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0">
-        <button id="tab-lab-1" onclick="switchLab('friction', 1)" class="lab-tab-active px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 whitespace-nowrap border border-transparent">
-          <span class="w-5 h-5 rounded-md bg-white/20 text-white text-[10px] flex items-center justify-center font-mono">০৫</span>
+        <button id="tab-lab-1" onclick="switchLab('friction', 1)" class="lab-tab-active px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 whitespace-nowrap border border-transparent shadow-sm">
+          <span class="w-5 h-5 rounded-md bg-white/20 text-white text-[10px] flex items-center justify-center font-mono font-bold">০৫</span>
           <span>বল ও ঘর্ষণ</span>
         </button>
-        <button id="tab-lab-2" onclick="switchLab('collision', 2)" class="px-3.5 py-2 rounded-xl text-xs font-bold text-slate-300 bg-slate-800/80 hover:bg-slate-700 hover:text-white transition flex items-center gap-2 whitespace-nowrap border border-slate-700">
-          <span class="w-5 h-5 rounded-md bg-white/10 text-slate-300 text-[10px] flex items-center justify-center font-mono">০৬</span>
+        <button id="tab-lab-2" onclick="switchLab('collision', 2)" class="px-3.5 py-2 rounded-xl text-xs font-bold text-slate-300 bg-[#112133] hover:bg-[#162c45] hover:text-white transition flex items-center gap-2 whitespace-nowrap border border-slate-700/60">
+          <span class="w-5 h-5 rounded-md bg-white/10 text-slate-300 text-[10px] flex items-center justify-center font-mono font-bold">০৬</span>
           <span>ট্রলির সংঘর্ষ</span>
         </button>
       </div>
 
       <div class="flex items-center gap-2">
-        <span id="current-lab-sub" class="text-xs text-slate-400 hidden lg:inline truncate max-w-sm">কখন বাক্স নড়বে, কখন থামবে—নিজে পরীক্ষা করো।</span>
-        <a id="btn-fullscreen-main" href="../physics-labs/index.html?lab=friction" target="_blank" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition flex items-center gap-1.5 ml-auto">
-          <i class="fa-solid fa-arrow-up-right-from-square text-teal-400"></i> <span>নতুন ট্যাবে খুলুন</span>
+        <span id="current-lab-sub" class="text-xs text-slate-400 hidden lg:inline truncate max-w-sm">স্থিতি ও গতীয় ঘর্ষণ বল এবং টানা বলের ভারসাম্য পরীক্ষা।</span>
+        <a id="btn-fullscreen-main" href="../physics-labs/?lab=friction" target="_blank" class="px-3 py-1.5 rounded-xl bg-[#112133] hover:bg-[#162c45] text-slate-200 text-xs font-semibold border border-slate-700 transition flex items-center gap-1.5 ml-auto">
+          <i class="fa-solid fa-arrow-up-right-from-square text-teal-400"></i> <span>নতুন ট্যাবে খুলুন ↗</span>
         </a>
       </div>
     </div>
 
     <!-- Interactive Lab Iframe -->
-    <div class="relative w-full rounded-2xl overflow-hidden border border-slate-800 bg-slate-900 shadow-2xl">
+    <div class="relative w-full rounded-2xl overflow-hidden border border-slate-800 bg-[#08111d] shadow-2xl">
       <iframe 
         id="lab-iframe" 
-        src="../physics-labs/index.html?lab=friction&embed=1" 
+        src="../physics-labs/?lab=friction&embed=1" 
         title="বল ও ঘর্ষণ" 
         class="w-full h-[650px] sm:h-[750px] lg:h-[820px] border-0 bg-[#08111d]" 
         allow="fullscreen; clipboard-write">
@@ -74,49 +74,55 @@
 
     <!-- Chapter Navigation & Labs Overview Footer -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
-      <div class="p-4 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-1">
-        <div class="flex items-center gap-2 text-xs font-bold text-teal-400">
-          <span class="w-5 h-5 rounded bg-teal-500/10 flex items-center justify-center font-mono">০৫</span>
-          <span>বল ও ঘর্ষণ</span>
+      <div class="p-4 rounded-2xl bg-[#0b1624] border border-slate-800 space-y-1">
+        <div class="flex items-center justify-between">
+          <span class="flex items-center gap-2 text-xs font-bold text-teal-400">
+            <span class="w-5 h-5 rounded bg-teal-500/20 flex items-center justify-center font-mono">০৫</span>
+            <span>বল ও ঘর্ষণ</span>
+          </span>
+          <a href="../physics-labs/?lab=friction" target="_blank" class="text-[11px] font-bold text-teal-400 hover:underline">পূর্ণ পর্দা ↗</a>
         </div>
-        <p class="text-xs text-slate-400">কখন বাক্স নড়বে, কখন থামবে—নিজে পরীক্ষা করো।</p>
+        <p class="text-xs text-slate-400">স্থিতি ও গতীয় ঘর্ষণ বল এবং টানা বলের ভারসাম্য পরীক্ষা।</p>
       </div>
-      <div class="p-4 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-1">
-        <div class="flex items-center gap-2 text-xs font-bold text-teal-400">
-          <span class="w-5 h-5 rounded bg-teal-500/10 flex items-center justify-center font-mono">০৬</span>
-          <span>ট্রলির সংঘর্ষ</span>
+      <div class="p-4 rounded-2xl bg-[#0b1624] border border-slate-800 space-y-1">
+        <div class="flex items-center justify-between">
+          <span class="flex items-center gap-2 text-xs font-bold text-teal-400">
+            <span class="w-5 h-5 rounded bg-teal-500/20 flex items-center justify-center font-mono">০৬</span>
+            <span>ট্রলির সংঘর্ষ</span>
+          </span>
+          <a href="../physics-labs/?lab=collision" target="_blank" class="text-[11px] font-bold text-teal-400 hover:underline">পূর্ণ পর্দা ↗</a>
         </div>
-        <p class="text-xs text-slate-400">ভরবেগ কোথায় যায়? সংঘর্ষে খুঁজে দেখো।</p>
+        <p class="text-xs text-slate-400">স্থিতিস্থাপক ও অস্থিতিস্থাপক সংঘর্ষে ভরবেগ এবং গতিশক্তি সংরক্ষণ।</p>
       </div>
     </div>
 
     <!-- Prev / Next Navigation -->
     <div class="flex items-center justify-between pt-4 border-t border-slate-800/80">
       
-      <a href="ch2.html" class="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 text-xs font-semibold border border-slate-800 transition flex items-center gap-2">
+      <a href="ch2.html" class="px-4 py-2 rounded-xl bg-[#0b1624] hover:bg-[#112133] text-slate-300 text-xs font-semibold border border-slate-800 transition flex items-center gap-2">
         <i class="fa-solid fa-arrow-left"></i> <span>পূর্ববর্তী: অধ্যায় ০২</span>
       </a>
 
-      <a href="index.html" class="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-slate-200 text-xs font-semibold border border-slate-800 transition">
+      <a href="index.html" class="px-4 py-2 rounded-xl bg-[#0b1624] hover:bg-[#112133] text-slate-400 hover:text-slate-200 text-xs font-semibold border border-slate-800 transition">
         ল্যাব তালিকা
       </a>
 
       
-      <a href="ch4.html" class="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 text-xs font-semibold border border-slate-800 transition flex items-center gap-2">
+      <a href="ch4.html" class="px-4 py-2 rounded-xl bg-[#0b1624] hover:bg-[#112133] text-slate-300 text-xs font-semibold border border-slate-800 transition flex items-center gap-2">
         <span>পরবর্তী: অধ্যায় ০৪</span> <i class="fa-solid fa-arrow-right"></i>
       </a>
     </div>
 
   </main>
 
-  <footer class="border-t border-slate-900 py-4 text-center text-[11px] text-slate-600 mt-6">
+  <footer class="border-t border-slate-800/80 py-4 text-center text-[11px] text-slate-500 mt-6 bg-[#070e17]">
     Al Amin Physics • ভার্চুয়াল ল্যাবরেটরি • অধ্যায় ০৩: বল
   </footer>
 
   <script>
     const labInfo = {
-      'friction': { num: 1, title: 'বল ও ঘর্ষণ', sub: 'কখন বাক্স নড়বে, কখন থামবে—নিজে পরীক্ষা করো।' },
-      'collision': { num: 2, title: 'ট্রলির সংঘর্ষ', sub: 'ভরবেগ কোথায় যায়? সংঘর্ষে খুঁজে দেখো।' }
+      'friction': { num: 1, title: 'বল ও ঘর্ষণ', sub: 'স্থিতি ও গতীয় ঘর্ষণ বল এবং টানা বলের ভারসাম্য পরীক্ষা।' },
+      'collision': { num: 2, title: 'ট্রলির সংঘর্ষ', sub: 'স্থিতিস্থাপক ও অস্থিতিস্থাপক সংঘর্ষে ভরবেগ এবং গতিশক্তি সংরক্ষণ।' }
     };
 
     function switchLab(labId, tabNum) {
@@ -127,16 +133,16 @@
       const btnFsMain = document.getElementById('btn-fullscreen-main');
       const subEl = document.getElementById('current-lab-sub');
 
-      iframe.src = '../physics-labs/index.html?lab=' + labId + '&embed=1';
-      btnFsTop.href = '../physics-labs/index.html?lab=' + labId;
-      btnFsMain.href = '../physics-labs/index.html?lab=' + labId;
+      iframe.src = '../physics-labs/?lab=' + labId + '&embed=1';
+      btnFsTop.href = '../physics-labs/?lab=' + labId;
+      btnFsMain.href = '../physics-labs/?lab=' + labId;
 
       if (tabNum === 1) {
-        tab1.className = 'lab-tab-active px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 whitespace-nowrap border border-transparent';
-        tab2.className = 'px-3.5 py-2 rounded-xl text-xs font-bold text-slate-300 bg-slate-800/80 hover:bg-slate-700 hover:text-white transition flex items-center gap-2 whitespace-nowrap border border-slate-700';
+        tab1.className = 'lab-tab-active px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 whitespace-nowrap border border-transparent shadow-sm';
+        tab2.className = 'px-3.5 py-2 rounded-xl text-xs font-bold text-slate-300 bg-[#112133] hover:bg-[#162c45] hover:text-white transition flex items-center gap-2 whitespace-nowrap border border-slate-700/60';
       } else {
-        tab2.className = 'lab-tab-active px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 whitespace-nowrap border border-transparent';
-        tab1.className = 'px-3.5 py-2 rounded-xl text-xs font-bold text-slate-300 bg-slate-800/80 hover:bg-slate-700 hover:text-white transition flex items-center gap-2 whitespace-nowrap border border-slate-700';
+        tab2.className = 'lab-tab-active px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 whitespace-nowrap border border-transparent shadow-sm';
+        tab1.className = 'px-3.5 py-2 rounded-xl text-xs font-bold text-slate-300 bg-[#112133] hover:bg-[#162c45] hover:text-white transition flex items-center gap-2 whitespace-nowrap border border-slate-700/60';
       }
 
       if (labInfo[labId]) {
@@ -144,7 +150,6 @@
       }
     }
 
-    // Auto-select lab from URL parameter if provided
     const urlParams = new URLSearchParams(window.location.search);
     const targetLab = urlParams.get('lab');
     if (targetLab === 'collision') {
