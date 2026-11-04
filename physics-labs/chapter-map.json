@@ -1,15 +1,242 @@
-[
-  { "chapter": 1, "name": "ভৌত রাশি ও পরিমাপ", "labs": [{ "id": "caliper", "name": "ভার্নিয়ার ও স্ক্রু গজ", "url": "/physics-labs/index.html?lab=caliper" }, { "id": "density", "name": "ঘনত্ব অনুসন্ধান", "url": "/physics-labs/index.html?lab=density" }] },
-  { "chapter": 2, "name": "গতি", "labs": [{ "id": "motion", "name": "গাড়ি, গতি ও লেখচিত্র", "url": "/physics-labs/index.html?lab=motion" }, { "id": "fall", "name": "মুক্তপতন পরীক্ষাগার", "url": "/physics-labs/index.html?lab=fall" }] },
-  { "chapter": 3, "name": "বল", "labs": [{ "id": "friction", "name": "বল ও ঘর্ষণ", "url": "/physics-labs/index.html?lab=friction" }, { "id": "collision", "name": "সংঘর্ষ ও ভরবেগ", "url": "/physics-labs/index.html?lab=collision" }] },
-  { "chapter": 4, "name": "কাজ, ক্ষমতা ও শক্তি", "labs": [{ "id": "energy", "name": "রোলার ট্র্যাক ও শক্তি", "url": "/physics-labs/index.html?lab=energy" }, { "id": "crane", "name": "ক্রেন, ক্ষমতা ও কর্মদক্ষতা", "url": "/physics-labs/index.html?lab=crane" }] },
-  { "chapter": 5, "name": "পদার্থের অবস্থা ও চাপ", "labs": [{ "id": "buoyancy", "name": "আর্কিমিডিস ও প্লবতা", "url": "/physics-labs/index.html?lab=buoyancy" }, { "id": "pressure", "name": "গভীরতা ও তরলের চাপ", "url": "/physics-labs/index.html?lab=pressure" }] },
-  { "chapter": 6, "name": "বস্তুর ওপর তাপের প্রভাব", "labs": [{ "id": "heat", "name": "ক্যালরিমেট্রি ও তাপমাত্রা", "url": "/physics-labs/index.html?lab=heat" }, { "id": "expansion", "name": "তাপীয় প্রসারণ", "url": "/physics-labs/index.html?lab=expansion" }] },
-  { "chapter": 7, "name": "তরঙ্গ ও শব্দ", "labs": [{ "id": "wave", "name": "তরঙ্গ বিস্তার ও কম্পাঙ্ক", "url": "/physics-labs/index.html?lab=wave" }, { "id": "sound", "name": "শব্দ ও প্রতিধ্বনি", "url": "/physics-labs/index.html?lab=sound" }] },
-  { "chapter": 8, "name": "আলোর প্রতিফলন", "labs": [{ "id": "reflection", "name": "প্রতিফলন সূত্র", "url": "/physics-labs/index.html?lab=reflection" }, { "id": "mirror", "name": "গোলীয় দর্পণ ও প্রতিবিম্ব", "url": "/physics-labs/index.html?lab=mirror" }] },
-  { "chapter": 9, "name": "আলোর প্রতিসরণ", "labs": [{ "id": "refraction", "name": "স্নেলের সূত্র ও সংকট কোণ", "url": "/physics-labs/index.html?lab=refraction" }, { "id": "lens", "name": "উত্তল লেন্স ও প্রতিবিম্ব", "url": "/physics-labs/index.html?lab=lens" }] },
-  { "chapter": 10, "name": "স্থির বিদ্যুৎ", "labs": [{ "id": "charges", "name": "কুলম্ব বল ও আধান", "url": "/physics-labs/index.html?lab=charges" }, { "id": "electroscope", "name": "স্বর্ণপাত তড়িৎবীক্ষণ", "url": "/physics-labs/index.html?lab=electroscope" }] },
-  { "chapter": 11, "name": "চল বিদ্যুৎ", "labs": [{ "id": "circuit", "name": "ওহমের সূত্র ও বর্তনী", "url": "/physics-labs/index.html?lab=circuit" }, { "id": "house", "name": "বাড়ির বিদ্যুৎ ও ফিউজ", "url": "/physics-labs/index.html?lab=house" }] },
-  { "chapter": 12, "name": "বিদ্যুতের চৌম্বক ক্রিয়া", "labs": [{ "id": "motor", "name": "তড়িৎচুম্বক ও মোটর", "url": "/physics-labs/index.html?lab=motor" }, { "id": "induction", "name": "চুম্বক, কয়েল ও জেনারেটর", "url": "/physics-labs/index.html?lab=induction" }] },
-  { "chapter": 13, "name": "তেজস্ক্রিয়তা ও ইলেকট্রনিক্স", "labs": [{ "id": "decay", "name": "তেজস্ক্রিয় ক্ষয় ও অর্ধায়ু", "url": "/physics-labs/index.html?lab=decay" }, { "id": "electronics", "name": "ডায়োড ও ট্রানজিস্টর", "url": "/physics-labs/index.html?lab=electronics" }] }
-]
+{
+  "version": 1,
+  "level": "SSC",
+  "subject": "Physics",
+  "basePath": "/physics-labs/index.html",
+  "chapters": [
+    {
+      "chapterNumber": 1,
+      "title": "ভৌত রাশি ও পরিমাপ",
+      "labs": [
+        {
+          "slug": "caliper",
+          "title": "ভার্নিয়ার ও স্ক্রু গজ",
+          "url": "/physics-labs/index.html?lab=caliper",
+          "embedUrl": "/physics-labs/index.html?lab=caliper&embed=1"
+        },
+        {
+          "slug": "density",
+          "title": "ঘনত্ব অনুসন্ধান",
+          "url": "/physics-labs/index.html?lab=density",
+          "embedUrl": "/physics-labs/index.html?lab=density&embed=1"
+        }
+      ]
+    },
+    {
+      "chapterNumber": 2,
+      "title": "গতি",
+      "labs": [
+        {
+          "slug": "motion",
+          "title": "গাড়ি, গতি ও লেখচিত্র",
+          "url": "/physics-labs/index.html?lab=motion",
+          "embedUrl": "/physics-labs/index.html?lab=motion&embed=1"
+        },
+        {
+          "slug": "fall",
+          "title": "মুক্তপতন পরীক্ষাগার",
+          "url": "/physics-labs/index.html?lab=fall",
+          "embedUrl": "/physics-labs/index.html?lab=fall&embed=1"
+        }
+      ]
+    },
+    {
+      "chapterNumber": 3,
+      "title": "বল",
+      "labs": [
+        {
+          "slug": "friction",
+          "title": "বল ও ঘর্ষণ",
+          "url": "/physics-labs/index.html?lab=friction",
+          "embedUrl": "/physics-labs/index.html?lab=friction&embed=1"
+        },
+        {
+          "slug": "collision",
+          "title": "ট্রলির সংঘর্ষ",
+          "url": "/physics-labs/index.html?lab=collision",
+          "embedUrl": "/physics-labs/index.html?lab=collision&embed=1"
+        }
+      ]
+    },
+    {
+      "chapterNumber": 4,
+      "title": "কাজ, ক্ষমতা ও শক্তি",
+      "labs": [
+        {
+          "slug": "energy",
+          "title": "রোলার কোস্টার ও শক্তি",
+          "url": "/physics-labs/index.html?lab=energy",
+          "embedUrl": "/physics-labs/index.html?lab=energy&embed=1"
+        },
+        {
+          "slug": "crane",
+          "title": "ক্রেন, কাজ ও ক্ষমতা",
+          "url": "/physics-labs/index.html?lab=crane",
+          "embedUrl": "/physics-labs/index.html?lab=crane&embed=1"
+        }
+      ]
+    },
+    {
+      "chapterNumber": 5,
+      "title": "পদার্থের অবস্থা ও চাপ",
+      "labs": [
+        {
+          "slug": "buoyancy",
+          "title": "ভাসা–ডোবা ও প্লবতা",
+          "url": "/physics-labs/index.html?lab=buoyancy",
+          "embedUrl": "/physics-labs/index.html?lab=buoyancy&embed=1"
+        },
+        {
+          "slug": "pressure",
+          "title": "চাপ ও হাইড্রলিক লিফট",
+          "url": "/physics-labs/index.html?lab=pressure",
+          "embedUrl": "/physics-labs/index.html?lab=pressure&embed=1"
+        }
+      ]
+    },
+    {
+      "chapterNumber": 6,
+      "title": "বস্তুর উপর তাপের প্রভাব",
+      "labs": [
+        {
+          "slug": "heat",
+          "title": "বরফ থেকে বাষ্প",
+          "url": "/physics-labs/index.html?lab=heat",
+          "embedUrl": "/physics-labs/index.html?lab=heat&embed=1"
+        },
+        {
+          "slug": "expansion",
+          "title": "তাপে ধাতুর প্রসারণ",
+          "url": "/physics-labs/index.html?lab=expansion",
+          "embedUrl": "/physics-labs/index.html?lab=expansion&embed=1"
+        }
+      ]
+    },
+    {
+      "chapterNumber": 7,
+      "title": "তরঙ্গ ও শব্দ",
+      "labs": [
+        {
+          "slug": "wave",
+          "title": "দড়িতে তরঙ্গ",
+          "url": "/physics-labs/index.html?lab=wave",
+          "embedUrl": "/physics-labs/index.html?lab=wave&embed=1"
+        },
+        {
+          "slug": "sound",
+          "title": "শব্দ ও প্রতিধ্বনি",
+          "url": "/physics-labs/index.html?lab=sound",
+          "embedUrl": "/physics-labs/index.html?lab=sound&embed=1"
+        }
+      ]
+    },
+    {
+      "chapterNumber": 8,
+      "title": "আলোর প্রতিফলন",
+      "labs": [
+        {
+          "slug": "reflection",
+          "title": "দর্পণ ও লেজার",
+          "url": "/physics-labs/index.html?lab=reflection",
+          "embedUrl": "/physics-labs/index.html?lab=reflection&embed=1"
+        },
+        {
+          "slug": "mirror",
+          "title": "গোলীয় দর্পণে প্রতিবিম্ব",
+          "url": "/physics-labs/index.html?lab=mirror",
+          "embedUrl": "/physics-labs/index.html?lab=mirror&embed=1"
+        }
+      ]
+    },
+    {
+      "chapterNumber": 9,
+      "title": "আলোর প্রতিসরণ",
+      "labs": [
+        {
+          "slug": "refraction",
+          "title": "প্রতিসরণ ও সংকট কোণ",
+          "url": "/physics-labs/index.html?lab=refraction",
+          "embedUrl": "/physics-labs/index.html?lab=refraction&embed=1"
+        },
+        {
+          "slug": "lens",
+          "title": "লেন্স ও দৃষ্টি সংশোধন",
+          "url": "/physics-labs/index.html?lab=lens",
+          "embedUrl": "/physics-labs/index.html?lab=lens&embed=1"
+        }
+      ]
+    },
+    {
+      "chapterNumber": 10,
+      "title": "স্থির বিদ্যুৎ",
+      "labs": [
+        {
+          "slug": "charges",
+          "title": "আধান ও তড়িৎক্ষেত্র",
+          "url": "/physics-labs/index.html?lab=charges",
+          "embedUrl": "/physics-labs/index.html?lab=charges&embed=1"
+        },
+        {
+          "slug": "electroscope",
+          "title": "তড়িৎ আবেশ ও ইলেকট্রোস্কোপ",
+          "url": "/physics-labs/index.html?lab=electroscope",
+          "embedUrl": "/physics-labs/index.html?lab=electroscope&embed=1"
+        }
+      ]
+    },
+    {
+      "chapterNumber": 11,
+      "title": "চল বিদ্যুৎ",
+      "labs": [
+        {
+          "slug": "circuit",
+          "title": "নিজের সার্কিট তৈরি করো",
+          "url": "/physics-labs/index.html?lab=circuit",
+          "embedUrl": "/physics-labs/index.html?lab=circuit&embed=1"
+        },
+        {
+          "slug": "house",
+          "title": "বাড়ির বিদ্যুৎ ও ফিউজ",
+          "url": "/physics-labs/index.html?lab=house",
+          "embedUrl": "/physics-labs/index.html?lab=house&embed=1"
+        }
+      ]
+    },
+    {
+      "chapterNumber": 12,
+      "title": "বিদ্যুতের চৌম্বক ক্রিয়া",
+      "labs": [
+        {
+          "slug": "motor",
+          "title": "তড়িৎচুম্বক ও মোটর",
+          "url": "/physics-labs/index.html?lab=motor",
+          "embedUrl": "/physics-labs/index.html?lab=motor&embed=1"
+        },
+        {
+          "slug": "induction",
+          "title": "চুম্বক, কয়েল ও জেনারেটর",
+          "url": "/physics-labs/index.html?lab=induction",
+          "embedUrl": "/physics-labs/index.html?lab=induction&embed=1"
+        }
+      ]
+    },
+    {
+      "chapterNumber": 13,
+      "title": "তেজস্ক্রিয়তা ও ইলেকট্রনিক্স",
+      "labs": [
+        {
+          "slug": "decay",
+          "title": "তেজস্ক্রিয় ক্ষয় ও অর্ধায়ু",
+          "url": "/physics-labs/index.html?lab=decay",
+          "embedUrl": "/physics-labs/index.html?lab=decay&embed=1"
+        },
+        {
+          "slug": "electronics",
+          "title": "ডায়োড ও ট্রানজিস্টর",
+          "url": "/physics-labs/index.html?lab=electronics",
+          "embedUrl": "/physics-labs/index.html?lab=electronics&embed=1"
+        }
+      ]
+    }
+  ]
+}
