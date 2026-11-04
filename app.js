@@ -233,6 +233,8 @@ function toggleDarkMode() {
 function updateDarkToggleUI(isDark) {
     const icon = document.getElementById('dark-icon');
     if (icon) icon.textContent = isDark ? '☀️' : '🌙';
+    const compactIcon = document.getElementById('compact-dark-icon');
+    if (compactIcon) compactIcon.textContent = isDark ? '☀️' : '🌙';
 }
 
 /* ===================================================
@@ -285,36 +287,46 @@ function setAppView(viewMode, params = {}, isPop = false) {
         } catch (e) {}
     }
 
-    if (viewMode === 'dashboard') {
-        const subhome = document.getElementById('lms-subhomepage');
-        if (subhome) subhome.classList.remove('hidden');
-        const lmsHomeBtn = document.getElementById('nav-lms-home');
-        if (lmsHomeBtn) lmsHomeBtn.classList.add('bg-blue-600', 'text-white');
-    } else if (viewMode === 'classroom') {
+    const siteHeader = document.getElementById('site-header');
+    const compactHeader = document.getElementById('classroom-compact-header');
+
+    if (viewMode === 'classroom') {
+        if (siteHeader) siteHeader.classList.add('hidden');
+        if (compactHeader) compactHeader.classList.remove('hidden');
         const headerCard = document.getElementById('classroom-chapter-header');
         const contentArea = document.getElementById('content-display-area');
         if (headerCard) headerCard.classList.remove('hidden');
         if (contentArea) contentArea.classList.remove('hidden');
-    } else if (viewMode === 'profile') {
-        const view = document.getElementById('student-profile-view');
-        if (view) view.classList.remove('hidden');
-        const pfBtn = document.getElementById('nav-profile-btn');
-        if (pfBtn) pfBtn.classList.add('bg-emerald-600', 'text-white');
-        renderStudentProfileData();
-    } else if (viewMode === 'leaderboard') {
-        const view = document.getElementById('leaderboard-view');
-        if (view) view.classList.remove('hidden');
-        const lbBtn = document.getElementById('nav-leaderboard');
-        if (lbBtn) lbBtn.classList.add('bg-amber-600', 'text-white');
-        renderLeaderboardData('all');
-        renderSocialActivityFeed();
-    } else if (viewMode === 'director') {
-        const view = document.getElementById('director-executive-view');
-        if (view) view.classList.remove('hidden');
-        renderDirectorDashboardData();
-    } else if (viewMode === 'aggregator') {
-        const aggView = document.getElementById('global-aggregator-view');
-        if (aggView) aggView.classList.remove('hidden');
+    } else {
+        if (siteHeader) siteHeader.classList.remove('hidden');
+        if (compactHeader) compactHeader.classList.add('hidden');
+
+        if (viewMode === 'dashboard') {
+            const subhome = document.getElementById('lms-subhomepage');
+            if (subhome) subhome.classList.remove('hidden');
+            const lmsHomeBtn = document.getElementById('nav-lms-home');
+            if (lmsHomeBtn) lmsHomeBtn.classList.add('bg-blue-600', 'text-white');
+        } else if (viewMode === 'profile') {
+            const view = document.getElementById('student-profile-view');
+            if (view) view.classList.remove('hidden');
+            const pfBtn = document.getElementById('nav-profile-btn');
+            if (pfBtn) pfBtn.classList.add('bg-emerald-600', 'text-white');
+            renderStudentProfileData();
+        } else if (viewMode === 'leaderboard') {
+            const view = document.getElementById('leaderboard-view');
+            if (view) view.classList.remove('hidden');
+            const lbBtn = document.getElementById('nav-leaderboard');
+            if (lbBtn) lbBtn.classList.add('bg-amber-600', 'text-white');
+            renderLeaderboardData('all');
+            renderSocialActivityFeed();
+        } else if (viewMode === 'director') {
+            const view = document.getElementById('director-executive-view');
+            if (view) view.classList.remove('hidden');
+            renderDirectorDashboardData();
+        } else if (viewMode === 'aggregator') {
+            const aggView = document.getElementById('global-aggregator-view');
+            if (aggView) aggView.classList.remove('hidden');
+        }
     }
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -322,6 +334,27 @@ function setAppView(viewMode, params = {}, isPop = false) {
 
 function showLMSDashboard(isPop = false) {
     setAppView('dashboard', {}, isPop);
+}
+
+function toggleNavDrawer(show) {
+    const drawer = document.getElementById('classroom-nav-drawer');
+    if (!drawer) return;
+    if (typeof show === 'boolean') {
+        if (show) drawer.classList.remove('hidden');
+        else drawer.classList.add('hidden');
+    } else {
+        drawer.classList.toggle('hidden');
+    }
+}
+
+function openHscChoiceModal() {
+    const modal = document.getElementById('hsc-choice-modal');
+    if (modal) modal.classList.remove('hidden');
+}
+
+function closeHscChoiceModal() {
+    const modal = document.getElementById('hsc-choice-modal');
+    if (modal) modal.classList.add('hidden');
 }
 
 function selectLevelAndOpen(lvl) {
@@ -510,9 +543,16 @@ function renderChapterData() {
     const chap      = getCurrentChap();
     const levelInfo = APP_DATA[currentLevel];
 
-    document.getElementById('level-badge').textContent          = levelInfo.gradeTag;
-    document.getElementById('current-chapter-title').textContent = chap.title;
-    document.getElementById('current-chapter-desc').textContent  = chap.desc;
+    const lvlBadge = document.getElementById('level-badge');
+    if (lvlBadge) lvlBadge.textContent = levelInfo.gradeTag;
+    const compactBadge = document.getElementById('compact-level-badge');
+    if (compactBadge) compactBadge.textContent = levelInfo.gradeTag;
+    const chapTitleEl = document.getElementById('current-chapter-title');
+    if (chapTitleEl) chapTitleEl.textContent = chap.title;
+    const chapDescEl = document.getElementById('current-chapter-desc');
+    if (chapDescEl) chapDescEl.textContent = chap.desc;
+    const chapterSelect = document.getElementById('chapter-select');
+    if (chapterSelect) chapterSelect.value = currentChapterIndex;
 
     updateProgressBar(chap.id);
 
