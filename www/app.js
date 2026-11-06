@@ -506,9 +506,9 @@ function getCurrentChap() {
    CHAPTER PROGRESS TRACKING
 =================================================== */
 const TAB_WEIGHTS = {
-    basic: 10, video: 20, formulas: 10, math: 15,
-    comprehension: 10, board: 10, simulation: 5,
-    qa: 5, exam: 10, paid: 5
+    basic: 10, knowledge: 10, comprehension: 10, formulas: 10,
+    math: 15, board: 15, sheet: 5, video: 10,
+    simulation: 5, qa: 5, exam: 10, paid: 5
 };
 
 function addProgress(chapId, tabKey) {
@@ -556,57 +556,92 @@ function renderChapterData() {
 
     updateProgressBar(chap.id);
 
+    // Retrieve authentic SSC curriculum data if available
+    const sscData = (window.SSC_CURRICULUM_DATA && window.SSC_CURRICULUM_DATA[chap.id])
+        ? window.SSC_CURRICULUM_DATA[chap.id]
+        : null;
+
     /* ── 1. BASIC ── */
+    const basicSummary = sscData ? sscData.summary : chap.desc;
     document.getElementById('basic-content-body').innerHTML = `
-        <div class="space-y-4 text-sm leading-relaxed">
-            <p><strong>${chap.title}</strong> অধ্যায়টি পদার্থবিজ্ঞানের একটি মৌলিক স্তম্ভ। প্রাকৃতিক ঘটনার পরিমাপযোগ্য রাশিমালা ও তাদের গাণিতিক সম্পর্ক এই অধ্যায়ের মূল বিষয়।</p>
+        <div class="space-y-4 text-sm leading-relaxed text-slate-700">
+            <p class="text-base font-semibold text-slate-900 border-l-4 border-blue-600 pl-3 leading-relaxed">
+                ${basicSummary}
+            </p>
             <div class="p-4 bg-blue-50 rounded-2xl border border-blue-200 text-blue-950 text-sm">
-                <div class="font-bold text-blue-800 flex items-center gap-2 mb-1"><i class="fa-solid fa-lightbulb text-blue-500"></i> মূল কনসেপ্ট</div>
-                পদার্থবিজ্ঞানের সূত্রগুলো সঠিকভাবে অনুধাবন করলে বোর্ড পরীক্ষা ও বাস্তব জীবনের সমস্যা সমাধান অত্যন্ত সাবলীল হয়ে ওঠে।
+                <div class="font-bold text-blue-800 flex items-center gap-2 mb-1">
+                    <i class="fa-solid fa-lightbulb text-amber-500"></i> মূল কনসেপ্ট ও বাস্তব প্রয়োগ
+                </div>
+                ${chap.title} এর তত্ত্বীয় সূত্র ও গাণিতিক সমীকরণগুলো বোর্ড পরীক্ষা এবং আধুনিক বিজ্ঞানের ভিত্তি। বাস্তব উদাহরণের সাথে মিলিয়ে পাঠ করলে ফিজিক্স মুখস্থ করতে হয় না, উপলব্ধি করা যায়।
             </div>
         </div>`;
 
-    document.getElementById('basic-definitions').innerHTML = `
+    const basicDefs = (sscData && sscData.definitions) ? sscData.definitions : [
+        { term: "ভৌত পরিবর্তনের বিশ্লেষণ", desc: "সময়ের সাথে পরিবর্তনশীল যেকোনো ভৌত অবস্থার সঠিক মান নির্ণয় এবং কারণ অনুসন্ধানের বিজ্ঞানসম্মত বিশ্লেষণ।" },
+        { term: "প্রয়োজনীয় এককাবলী", desc: "দূরত্ব: মিটার (m), সময়: সেকেন্ড (s), বেগ: m/s, বল: নিউটন (N), কাজ: জুল (J)।" }
+    ];
+    document.getElementById('basic-definitions').innerHTML = basicDefs.map(d => `
         <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200 card-hover">
             <span class="text-xs font-bold text-blue-700 bg-blue-100 px-2.5 py-0.5 rounded-full mb-2 inline-block">সংজ্ঞা ও তাৎপর্য</span>
-            <h5 class="font-bold text-sm mb-1">ভৌত পরিবর্তনের বিশ্লেষণ</h5>
-            <p class="text-xs text-slate-600">সময়ের সাথে পরিবর্তনশীল যেকোনো ভৌত অবস্থার সঠিক মান নির্ণয় এবং কারণ অনুসন্ধানের বিজ্ঞানসম্মত বিশ্লেষণ।</p>
-        </div>
-        <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200 card-hover">
-            <span class="text-xs font-bold text-indigo-700 bg-indigo-100 px-2.5 py-0.5 rounded-full mb-2 inline-block">SI একক ও মাত্রা</span>
-            <h5 class="font-bold text-sm mb-1">প্রয়োজনীয় এককাবলী</h5>
-            <p class="text-xs text-slate-600">দূরত্ব: মিটার (m), সময়: সেকেন্ড (s), বেগ: m/s, বল: নিউটন (N), কাজ: জুল (J)।</p>
-        </div>`;
-
-    document.getElementById('quick-highlights').innerHTML = `
-        <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-blue-400 text-xs"></i> <span>বোর্ড ও কলেজের স্ট্যান্ডার্ড প্রশ্ন বিন্যাস</span></li>
-        <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-blue-400 text-xs"></i> <span>সকল গুরুত্বপূর্ণ সূত্রের প্রতিপাদন</span></li>
-        <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-blue-400 text-xs"></i> <span>লেখচিত্র ও বাস্তব উদাহরণ বিশ্লেষণ</span></li>
-        <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-blue-400 text-xs"></i> <span>ক্যালকুলেটর শর্টকাট ট্রিকস</span></li>`;
-
-    /* ── 2. VIDEO PLAYLIST ── */
-    document.getElementById('video-now-playing').textContent = `লেকচার ১: ${chap.title} - মৌলিক আলোচনা`;
-    document.getElementById('video-playlist').innerHTML = [
-        { label: "লেকচার ১: মৌলিক পরিচিতি ও সংজ্ঞা", dur: "২২ মিনিট", active: true, paid: false },
-        { label: "লেকচার ২: সূত্রের প্রতিপাদন ও গ্রাফ",  dur: "২৮ মিনিট", active: false, paid: false },
-        { label: "লেকচার ৩: জটিল গাণিতিক সমস্যা",       dur: "৩৫ মিনিট", active: false, paid: false },
-        { label: "লেকচার ৪: বোর্ড CQ হ্যাকস",             dur: "৪৫ মিনিট", active: false, paid: true  }
-    ].map(v => `
-        <div class="p-3 ${v.active ? 'bg-blue-50 border-blue-200' : 'bg-slate-50 border-slate-200 hover:bg-slate-100'} rounded-xl border flex items-center justify-between cursor-pointer transition">
-            <div class="flex items-center gap-2.5">
-                <div class="w-7 h-7 rounded-lg ${v.active ? 'bg-blue-600' : v.paid ? 'bg-amber-100 text-amber-700' : 'bg-slate-200 text-slate-600'} text-white flex items-center justify-center text-xs">
-                    <i class="fa-solid ${v.paid ? 'fa-crown' : 'fa-play'}"></i>
-                </div>
-                <div>
-                    <p class="text-xs font-bold">${v.label}</p>
-                    <span class="text-[10px] ${v.active ? 'text-blue-700' : v.paid ? 'text-amber-700' : 'text-slate-400'} font-semibold">আল আমিন স্যার • ${v.dur}</span>
-                </div>
-            </div>
-            ${v.active ? '<span class="text-[10px] bg-blue-100 text-blue-800 px-2 py-0.5 rounded font-bold">চলছে</span>' : v.paid ? '<span class="text-[10px] bg-amber-100 text-amber-800 px-2 py-0.5 rounded font-bold">পেইড</span>' : ''}
+            <h5 class="font-bold text-sm text-slate-900 mb-1">${d.term}</h5>
+            <p class="text-xs text-slate-600 leading-relaxed">${d.desc}</p>
         </div>`).join('');
 
-    /* ── 3. FORMULAS (KaTeX rendered) ── */
-    const formulas = [
+    const highlightsList = (sscData && sscData.highlights) ? sscData.highlights : [
+        "বোর্ড ও কলেজের স্ট্যান্ডার্ড প্রশ্ন বিন্যাস",
+        "সকল গুরুত্বপূর্ণ সূত্রের প্রতিপাদন",
+        "লেখচিত্র ও বাস্তব উদাহরণ বিশ্লেষণ",
+        "ক্যালকুলেটর শর্টকাট ট্রিকস"
+    ];
+    document.getElementById('quick-highlights').innerHTML = highlightsList.map(h => `
+        <li class="flex items-start gap-2">
+            <i class="fa-solid fa-circle-check text-blue-400 text-xs mt-1 shrink-0"></i>
+            <span class="text-xs leading-relaxed text-slate-300">${h}</span>
+        </li>`).join('');
+
+    /* ── 2. KNOWLEDGE (জ্ঞানমূলক ক) ── */
+    const knowledgeListEl = document.getElementById('knowledge-questions-list');
+    if (knowledgeListEl) {
+        const kData = (sscData && sscData.knowledge) ? sscData.knowledge : [
+            { q: "ভৌত রাশি কাকে বলে?", a: "ভৌত জগতে যা কিছু সরাসরি বা পরোক্ষভাবে পরিমাপ করা যায় তাকে ভৌত রাশি বলে।" }
+        ];
+        knowledgeListEl.innerHTML = kData.map((k, idx) => `
+            <div class="p-4 sm:p-5 rounded-2xl border border-slate-200 bg-white shadow-sm card-hover transition">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="px-2.5 py-0.5 rounded-md bg-blue-100 text-blue-800 text-[11px] font-bold">জ্ঞানমূলক প্রশ্ন নং ${idx + 1}</span>
+                    <span class="text-[11px] text-slate-500 font-bold bg-slate-100 px-2 py-0.5 rounded">পূর্ণমান: ১</span>
+                </div>
+                <h5 class="font-bold text-sm sm:text-base text-slate-900 mb-2 flex items-start gap-2">
+                    <span class="w-6 h-6 rounded-lg bg-blue-50 text-blue-700 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">ক</span>
+                    <span>${k.q}</span>
+                </h5>
+                <div class="text-xs sm:text-sm pl-4 border-l-2 border-blue-500 py-1 space-y-1 leading-relaxed text-slate-700 bg-slate-50/80 rounded-r-xl p-3">
+                    <p><strong class="text-blue-800">উত্তর:</strong> ${k.a}</p>
+                </div>
+            </div>`).join('');
+    }
+
+    /* ── 3. COMPREHENSION (অনুধাবনমূলক খ) ── */
+    const compData = (sscData && sscData.comprehension) ? sscData.comprehension : [
+        { q: "গাছ থেকে ফল পড়ার সময় এর ত্বরণ বৃদ্ধি পায় কি? ব্যাখ্যা করো। [ঢাকা বোর্ড ২০২৪]", a: "না। বাতাসের বাধা অগ্রাহ্য করলে অভিকর্ষজ ত্বরণ g = 9.8 m/s² সর্বদা ধ্রুব থাকে। শুধু বেগ বাড়ে।" }
+    ];
+    document.getElementById('comprehension-questions-list').innerHTML = compData.map((c, idx) => `
+        <div class="p-4 sm:p-5 rounded-2xl border border-slate-200 bg-white shadow-sm card-hover transition">
+            <div class="flex items-center justify-between mb-2">
+                <span class="px-2.5 py-0.5 rounded-md bg-amber-100 text-amber-800 text-[11px] font-bold">অনুধাবনমূলক প্রশ্ন নং ${idx + 1}</span>
+                <span class="text-[11px] text-amber-700 font-bold bg-amber-50 px-2 py-0.5 rounded">পূর্ণমান: ২ (ব্যাখ্যামূলক)</span>
+            </div>
+            <h5 class="font-bold text-sm sm:text-base text-slate-900 mb-2 flex items-start gap-2">
+                <span class="w-6 h-6 rounded-lg bg-amber-100 text-amber-800 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">খ</span>
+                <span>${c.q}</span>
+            </h5>
+            <div class="text-xs sm:text-sm pl-4 border-l-2 border-amber-500 py-1 space-y-1 leading-relaxed text-slate-700 bg-amber-50/30 rounded-r-xl p-3">
+                <p><strong class="text-amber-900">উত্তর:</strong> ${c.a}</p>
+            </div>
+        </div>`).join('');
+
+    /* ── 4. FORMULAS (KaTeX rendered) ── */
+    const formulas = (sscData && sscData.formulas) ? sscData.formulas : [
         { tag: "সূত্র ১", expr: "v = u + at",           note: "শেষবেগ, আদিবেগ, ত্বরণ ও সময়ের সম্পর্ক।" },
         { tag: "সূত্র ২", expr: "s = ut + \\tfrac{1}{2}at^2", note: "অতিক্রান্ত সরণ নির্ণয়।" },
         { tag: "সূত্র ৩", expr: "v^2 = u^2 + 2as",     note: "সময় ছাড়া বেগ ও দূরত্বের সম্পর্ক।" },
@@ -615,94 +650,262 @@ function renderChapterData() {
         { tag: "সূত্র ৬", expr: "T = 2\\pi\\sqrt{\\dfrac{L}{g}}", note: "সরল দোলকের দোলনকাল।" }
     ];
     document.getElementById('formula-cards-container').innerHTML = formulas.map(f => `
-        <div class="p-4 rounded-2xl bg-white border border-slate-200 card-hover shadow-sm">
-            <span class="text-[10px] font-bold text-blue-700 uppercase tracking-wider block">${f.tag}</span>
-            <div class="my-3 text-slate-900 overflow-x-auto katex-formula" data-expr="${f.expr}"></div>
-            <p class="text-xs text-slate-600">${f.note}</p>
+        <div class="p-4 rounded-2xl bg-white border border-slate-200 card-hover shadow-sm flex flex-col justify-between">
+            <div>
+                <span class="text-[10px] font-bold text-blue-700 uppercase tracking-wider block mb-1">${f.tag}</span>
+                <div class="my-2 text-slate-900 overflow-x-auto katex-formula text-base py-1 font-semibold" data-expr="${f.expr}"></div>
+            </div>
+            <p class="text-xs text-slate-600 mt-2 border-t border-slate-100 pt-2 leading-relaxed">${f.note}</p>
         </div>`).join('');
 
-    // Render KaTeX after DOM update
+    /* ── 5. MATH PROBLEMS ── */
+    const mathProblems = (sscData && sscData.math) ? sscData.math : [
+        {
+            title: "ট্রেনের গতি ও সরণ",
+            type: "বোর্ড CQ স্ট্যান্ডার্ড",
+            marks: "৩",
+            question: "একটি ট্রেন 0.5 m/s² সমত্বরণে চলে 180 m দূরত্ব অতিক্রম করে। সময় ও শেষবেগ নির্ণয় করো।",
+            solution: "দেওয়া আছে: u = 0, a = 0.5 m/s², s = 180 m\ns = ½ at² → t = √(2s/a) = √720 ≈ 26.83 s\nv = u + at = 0 + 0.5×26.83 = 13.42 m/s"
+        }
+    ];
+    document.getElementById('math-problems-list').innerHTML = mathProblems.map((m, idx) => `
+        <div class="p-5 rounded-2xl border border-slate-200 bg-white shadow-sm space-y-3 card-hover">
+            <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-indigo-800 bg-indigo-100 px-3 py-1 rounded-full">${m.type || 'বোর্ড ও এডমিশন স্ট্যান্ডার্ড'}</span>
+                <span class="text-xs text-slate-500 font-bold bg-slate-100 px-2 py-0.5 rounded">নম্বর: ${m.marks || '৩/৪'}</span>
+            </div>
+            <h5 class="text-sm sm:text-base font-bold text-slate-900 leading-snug">
+                ${m.title ? `<span class="text-indigo-600">${m.title}:</span> ` : ''}${m.question}
+            </h5>
+            <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 text-xs sm:text-sm space-y-2 text-slate-800">
+                <div class="text-indigo-700 font-bold mb-1 flex items-center gap-1.5">
+                    <i class="fa-solid fa-square-check"></i> সমাধান ধাপসমূহ:
+                </div>
+                <div class="whitespace-pre-line leading-relaxed font-mono bg-white p-3 rounded-lg border border-slate-200 text-slate-800">${m.solution}</div>
+            </div>
+        </div>`).join('');
+
+    /* ── 6. BOARD CQ QUESTIONS ── */
+    const cqs = (sscData && sscData.cqs) ? sscData.cqs : [
+        {
+            board: "রাজশাহী বোর্ড ২০২৪",
+            marks: "১০",
+            stimulus: "একটি 800 kg গাড়ি 72 km/h বেগে চলছিল। চালক 40 m সামনে পথচারী দেখে সাথে সাথে ব্রেক চাপলেন। গাড়িটি পথচারীর 2 m সামনে থামল।",
+            q_a: "ত্বরণ কাকে বলে?",
+            ans_a: "সময়ের সাথে কোনো বস্তুর বেগ পরিবর্তনের হারকে ত্বরণ বলে।",
+            q_b: "সমদ্রুতিতে চলমান বস্তুর ত্বরণ থাকতে পারে কি? ব্যাখ্যা করো।",
+            ans_b: "হ্যাঁ, বৃত্তাকার পথে সমদ্রুতিতে ঘুরলেও প্রতি মুহূর্তে বেগের দিক পরিবর্তিত হয় বলে এতে ত্বরণ থাকে।",
+            q_c: "ব্রেকিং বল নির্ণয় করো।",
+            ans_c: "a = u²/2s = 400/76 = 5.26 m/s²\nF = m×a = 800 × 5.26 = 4210.53 N",
+            q_d: "যদি প্রতিক্রিয়া সময় 0.4s হয় তবে দুর্ঘটনা ঘটবে কি না গাণিতিক বিশ্লেষণ করো।",
+            ans_d: "প্রতিক্রিয়া দূরত্ব = 20×0.4 = 8 m। মোট থামার দূরত্ব = 8+38 = 46 m > 40 m। সুতরাং দুর্ঘটনা ঘটবে।"
+        }
+    ];
+    document.getElementById('board-questions-list').innerHTML = cqs.map((cq, idx) => `
+        <div class="p-5 sm:p-6 rounded-2xl border border-slate-200 bg-white shadow-sm space-y-4 card-hover">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3">
+                <div class="flex items-center gap-2">
+                    <span class="w-7 h-7 rounded-lg bg-blue-600 text-white flex items-center justify-center text-xs font-bold">CQ ${idx + 1}</span>
+                    <span class="px-3 py-0.5 bg-blue-100 text-blue-800 rounded-full text-xs font-bold">${cq.board}</span>
+                </div>
+                <span class="text-xs font-bold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-md">পূর্ণমান: ${cq.marks || '১০'}</span>
+            </div>
+            
+            <div class="p-4 bg-blue-50/60 rounded-xl border border-blue-200 text-xs sm:text-sm text-slate-900 leading-relaxed font-medium">
+                <strong class="text-blue-900 flex items-center gap-1.5 mb-1.5"><i class="fa-solid fa-quote-left text-blue-500"></i> উদ্দীপক:</strong>
+                ${cq.stimulus}
+            </div>
+
+            <div class="space-y-3 pt-1">
+                <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs sm:text-sm space-y-1">
+                    <p class="font-bold text-slate-900 flex items-start gap-1.5">
+                        <span class="text-blue-700 font-black">(ক)</span> <span>${cq.q_a}</span>
+                        <span class="text-[10px] text-slate-400 ml-auto shrink-0 font-bold">[১ নম্বর]</span>
+                    </p>
+                    <p class="text-slate-700 pl-4 border-l-2 border-blue-400 mt-1"><strong class="text-slate-900">উত্তর:</strong> ${cq.ans_a}</p>
+                </div>
+
+                <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs sm:text-sm space-y-1">
+                    <p class="font-bold text-slate-900 flex items-start gap-1.5">
+                        <span class="text-amber-700 font-black">(খ)</span> <span>${cq.q_b}</span>
+                        <span class="text-[10px] text-slate-400 ml-auto shrink-0 font-bold">[২ নম্বর]</span>
+                    </p>
+                    <p class="text-slate-700 pl-4 border-l-2 border-amber-400 mt-1"><strong class="text-slate-900">উত্তর:</strong> ${cq.ans_b}</p>
+                </div>
+
+                <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs sm:text-sm space-y-1">
+                    <p class="font-bold text-slate-900 flex items-start gap-1.5">
+                        <span class="text-emerald-700 font-black">(গ)</span> <span>${cq.q_c}</span>
+                        <span class="text-[10px] text-slate-400 ml-auto shrink-0 font-bold">[৩ নম্বর]</span>
+                    </p>
+                    <div class="text-slate-700 pl-4 border-l-2 border-emerald-400 mt-1 whitespace-pre-line font-mono bg-white p-2.5 rounded-lg border border-slate-200">
+                        <strong class="text-slate-900 font-sans block mb-1">সমাধান:</strong>
+                        ${cq.ans_c}
+                    </div>
+                </div>
+
+                <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs sm:text-sm space-y-1">
+                    <p class="font-bold text-slate-900 flex items-start gap-1.5">
+                        <span class="text-purple-700 font-black">(ঘ)</span> <span>${cq.q_d}</span>
+                        <span class="text-[10px] text-slate-400 ml-auto shrink-0 font-bold">[৪ নম্বর]</span>
+                    </p>
+                    <div class="text-slate-700 pl-4 border-l-2 border-purple-400 mt-1 whitespace-pre-line font-mono bg-white p-2.5 rounded-lg border border-slate-200">
+                        <strong class="text-slate-900 font-sans block mb-1">গাণিতিক যুক্তি ও বিশ্লেষণ:</strong>
+                        ${cq.ans_d}
+                    </div>
+                </div>
+            </div>
+        </div>`).join('');
+
+    /* ── 7. SHEET PREVIEW (শিট ও হ্যান্ডনোট) ── */
+    const sheetPreview = document.getElementById('sheet-interactive-preview');
+    if (sheetPreview) {
+        const sheetBanner = document.getElementById('sheet-title-banner');
+        if (sheetBanner) sheetBanner.textContent = `${chap.title} — এক্সক্লুসিভ রিভিশন ও লেকচার শিট`;
+
+        sheetPreview.innerHTML = `
+            <!-- Sheet Header -->
+            <div class="border-b-2 border-blue-600 pb-4 mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                    <h2 class="text-2xl font-black text-blue-900 flex items-center gap-2">
+                        <i class="fa-solid fa-atom text-blue-600"></i> Al amin Physics
+                    </h2>
+                    <p class="text-sm font-bold text-slate-700">${chap.title} • এক্সক্লুসিভ স্টাডি শিট ও হ্যান্ডনোট</p>
+                    <p class="text-xs text-slate-500">সিলেবাস: NCTB ২০২৬ | নবম-দশম ও এসএসসি পরীক্ষার্থী</p>
+                </div>
+                <div class="sm:text-right text-xs text-slate-600">
+                    <p class="font-bold text-blue-700 text-sm">প্রভাষক: আল আমিন স্যার</p>
+                    <p>জলেশ্বরীতলা, বগুড়া | হটলাইন: ০১৭৯৬৪৩১৭৯৫</p>
+                    <p class="text-[11px] text-slate-400">al-amin-physics.vercel.app</p>
+                </div>
+            </div>
+
+            <!-- 1. Chapter Summary -->
+            <div class="p-5 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
+                <h4 class="font-bold text-blue-900 text-sm flex items-center gap-2">
+                    <i class="fa-solid fa-book-open text-blue-600"></i> অধ্যায় সারসংক্ষেপ
+                </h4>
+                <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">${basicSummary}</p>
+            </div>
+
+            <!-- 2. Essential Formulas Chart -->
+            <div class="space-y-3">
+                <h4 class="font-bold text-blue-900 text-sm flex items-center gap-2">
+                    <i class="fa-solid fa-square-root-variable text-emerald-600"></i> প্রয়োজনীয় সূত্রাবলি ও একক তালিকা
+                </h4>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    ${formulas.map(f => `
+                        <div class="p-3 bg-white rounded-xl border border-slate-200 text-xs space-y-1">
+                            <span class="font-bold text-blue-700">${f.tag}</span>
+                            <div class="font-mono text-slate-900 font-bold text-sm my-1">${f.expr}</div>
+                            <p class="text-slate-500 text-[11px]">${f.note}</p>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+
+            <!-- 3. Top Knowledge & Comprehension Questions -->
+            <div class="space-y-4">
+                <h4 class="font-bold text-blue-900 text-sm flex items-center gap-2">
+                    <i class="fa-solid fa-feather text-amber-600"></i> নির্বাচিত ক ও খ প্রশ্নোত্তর
+                </h4>
+                <div class="space-y-3">
+                    ${(sscData && sscData.knowledge ? sscData.knowledge.slice(0, 3) : []).map(k => `
+                        <div class="p-3 bg-blue-50/50 rounded-xl border border-blue-100 text-xs space-y-1">
+                            <p class="font-bold text-blue-900"><strong>(ক)</strong> ${k.q}</p>
+                            <p class="text-slate-700 pl-3 border-l-2 border-blue-400"><strong>উত্তর:</strong> ${k.a}</p>
+                        </div>
+                    `).join('')}
+                    ${compData.slice(0, 2).map(c => `
+                        <div class="p-3 bg-amber-50/50 rounded-xl border border-amber-100 text-xs space-y-1">
+                            <p class="font-bold text-amber-900"><strong>(খ)</strong> ${c.q}</p>
+                            <p class="text-slate-700 pl-3 border-l-2 border-amber-400"><strong>উত্তর:</strong> ${c.a}</p>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+
+            <!-- 4. Top Solved Creative Question (CQ) -->
+            ${(cqs && cqs.length > 0) ? `
+                <div class="space-y-3">
+                    <h4 class="font-bold text-blue-900 text-sm flex items-center gap-2">
+                        <i class="fa-solid fa-graduation-cap text-purple-600"></i> মডেল সৃজনশীল প্রশ্ন (CQ) ও পূর্ণ সমাধান
+                    </h4>
+                    <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200 text-xs sm:text-sm space-y-3">
+                        <p class="font-bold text-slate-800">উদ্দীপক: ${cqs[0].stimulus}</p>
+                        <div class="space-y-2 pt-2 border-t border-slate-200">
+                            <p><strong class="text-blue-700">(ক)</strong> ${cqs[0].q_a} → <em>${cqs[0].ans_a}</em></p>
+                            <p><strong class="text-amber-700">(খ)</strong> ${cqs[0].q_b} → <em>${cqs[0].ans_b}</em></p>
+                            <p><strong class="text-emerald-700">(গ)</strong> ${cqs[0].q_c}<br><span class="font-mono text-slate-700 pl-3 block mt-1">${cqs[0].ans_c}</span></p>
+                            <p><strong class="text-purple-700">(ঘ)</strong> ${cqs[0].q_d}<br><span class="font-mono text-slate-700 pl-3 block mt-1">${cqs[0].ans_d}</span></p>
+                        </div>
+                    </div>
+                </div>
+            ` : ''}
+
+            <!-- Footer Action -->
+            <div class="pt-6 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <span class="text-xs text-slate-500">© Al amin Physics • সর্বস্বত্ব সংরক্ষিত</span>
+                <button onclick="downloadPdfNotice()" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition flex items-center gap-2 shadow-sm">
+                    <i class="fa-solid fa-print"></i> সম্পূর্ণ শিট প্রিন্ট করুন
+                </button>
+            </div>
+        `;
+    }
+
+    /* ── 8. VIDEO PLAYLIST ── */
+    const playlist = (sscData && sscData.video_playlist) ? sscData.video_playlist : [
+        { label: "লেকচার ১: মৌলিক পরিচিতি ও সংজ্ঞা", dur: "২২ মিনিট", active: true, paid: false },
+        { label: "লেকচার ২: সূত্রের প্রতিপাদন ও গ্রাফ",  dur: "২৮ মিনিট", active: false, paid: false },
+        { label: "লেকচার ৩: জটিল গাণিতিক সমস্যা",       dur: "৩৫ মিনিট", active: false, paid: false },
+        { label: "লেকচার ৪: বোর্ড CQ হ্যাকস",             dur: "৪৫ মিনিট", active: false, paid: true  }
+    ];
+    document.getElementById('video-now-playing').textContent = `${playlist[0]?.label || chap.title}`;
+    document.getElementById('video-playlist').innerHTML = playlist.map(v => `
+        <div class="p-3 ${v.active ? 'bg-blue-50 border-blue-200' : 'bg-slate-50 border-slate-200 hover:bg-slate-100'} rounded-xl border flex items-center justify-between cursor-pointer transition">
+            <div class="flex items-center gap-2.5">
+                <div class="w-7 h-7 rounded-lg ${v.active ? 'bg-blue-600 text-white' : v.paid ? 'bg-amber-100 text-amber-700' : 'bg-slate-200 text-slate-600'} flex items-center justify-center text-xs">
+                    <i class="fa-solid ${v.paid ? 'fa-crown' : 'fa-play'}"></i>
+                </div>
+                <div>
+                    <p class="text-xs font-bold text-slate-900">${v.label}</p>
+                    <span class="text-[10px] ${v.active ? 'text-blue-700' : v.paid ? 'text-amber-700' : 'text-slate-400'} font-semibold">আল আমিন স্যার • ${v.dur}</span>
+                </div>
+            </div>
+            ${v.active ? '<span class="text-[10px] bg-blue-100 text-blue-800 px-2 py-0.5 rounded font-bold">চলছে</span>' : v.paid ? '<span class="text-[10px] bg-amber-100 text-amber-800 px-2 py-0.5 rounded font-bold">পেইড</span>' : ''}
+        </div>`).join('');
+
+    // Render KaTeX formulas and auto-render
     setTimeout(() => {
         document.querySelectorAll('.katex-formula').forEach(el => {
             try {
-                katex.render(el.dataset.expr, el, { throwOnError: false, displayMode: false });
+                if (window.katex) {
+                    window.katex.render(el.dataset.expr, el, { throwOnError: false, displayMode: false });
+                }
             } catch(e) {
                 el.textContent = el.dataset.expr;
             }
         });
-    }, 50);
+        if (window.renderMathInElement) {
+            try {
+                window.renderMathInElement(document.body, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$', right: '$', display: false}
+                    ],
+                    throwOnError: false
+                });
+            } catch(e) {}
+        }
+    }, 60);
 
-    /* ── 4. MATH PROBLEMS ── */
-    document.getElementById('math-problems-list').innerHTML = `
-        <div class="p-5 rounded-2xl border border-slate-200 bg-white shadow-sm space-y-3 card-hover">
-            <div class="flex items-center justify-between">
-                <span class="text-xs font-bold text-blue-800 bg-blue-100 px-3 py-1 rounded-full">বোর্ড CQ স্ট্যান্ডার্ড</span>
-                <span class="text-xs text-slate-400">নম্বর: ৩</span>
-            </div>
-            <h5 class="text-sm font-bold">একটি ট্রেন 0.5 m/s² সমত্বরণে চলে 180 m দূরত্ব অতিক্রম করে। সময় ও শেষবেগ নির্ণয় করো।</h5>
-            <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 text-xs font-mono space-y-1.5 text-slate-700">
-                <p class="text-blue-700 font-bold">// দেওয়া আছে: u = 0, a = 0.5 m/s², s = 180 m</p>
-                <p>s = ½ at² → t = √(2s/a) = √720 ≈ <strong>26.83 s</strong></p>
-                <p>v = u + at = 0 + 0.5×26.83 = <strong>13.42 m/s</strong></p>
-            </div>
-        </div>
-        <div class="p-5 rounded-2xl border border-slate-200 bg-white shadow-sm space-y-3 card-hover">
-            <div class="flex items-center justify-between">
-                <span class="text-xs font-bold text-indigo-800 bg-indigo-100 px-3 py-1 rounded-full">এডমিশন স্ট্যান্ডার্ড</span>
-                <span class="text-xs text-slate-400">নম্বর: ৪</span>
-            </div>
-            <h5 class="text-sm font-bold">120 m উঁচু টাওয়ার থেকে 20 m/s বেগে খাড়া উপরে নিক্ষেপ করা বলটি কত সময়ে মাটিতে পড়বে? (g = 9.8 m/s²)</h5>
-            <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 text-xs font-mono space-y-1.5 text-slate-700">
-                <p class="text-indigo-700 font-bold">// উপরে ধনাত্মক: u = +20, g = -9.8, h = -120 m</p>
-                <p>−120 = 20t − 4.9t² → 4.9t² − 20t − 120 = 0</p>
-                <p>t = [20 ± √(400 + 2352)] / 9.8 → <strong>t ≈ 7.49 s</strong></p>
-            </div>
-        </div>`;
-
-    /* ── 5. COMPREHENSION ── */
-    document.getElementById('comprehension-questions-list').innerHTML = `
-        <div class="p-4 rounded-xl border border-slate-200 bg-white shadow-sm card-hover">
-            <h5 class="font-bold text-sm mb-2 flex items-center gap-2">
-                <span class="w-6 h-6 rounded bg-blue-100 text-blue-700 flex items-center justify-center text-xs font-bold">ক</span>
-                গাছ থেকে ফল পড়ার সময় এর ত্বরণ বৃদ্ধি পায় কি? ব্যাখ্যা করো। [ঢাকা বোর্ড ২০২৪]
-            </h5>
-            <div class="text-xs pl-4 border-l-2 border-blue-500 space-y-1 leading-relaxed text-slate-600">
-                <p><strong>উত্তর:</strong> না। বাতাসের বাধা অগ্রাহ্য করলে অভিকর্ষজ ত্বরণ g = 9.8 m/s² সর্বদা ধ্রুব থাকে। শুধু বেগ বাড়ে।</p>
-            </div>
-        </div>
-        <div class="p-4 rounded-xl border border-slate-200 bg-white shadow-sm card-hover">
-            <h5 class="font-bold text-sm mb-2 flex items-center gap-2">
-                <span class="w-6 h-6 rounded bg-blue-100 text-blue-700 flex items-center justify-center text-xs font-bold">খ</span>
-                বৈদ্যুতিক পাখার সুইচ বন্ধের পরেও পাখা কেন সাথে সাথে থামে না? [চট্টগ্রাম বোর্ড ২০২৩]
-            </h5>
-            <div class="text-xs pl-4 border-l-2 border-blue-500 space-y-1 leading-relaxed text-slate-600">
-                <p><strong>উত্তর:</strong> নিউটনের ১ম সূত্র অনুযায়ী গতি জড়তার কারণে। বিদ্যুৎ বন্ধ হলেও ঘূর্ণন গতি জড়তাবশত অব্যাহত থাকে; ঘর্ষণে ধীরে থামে।</p>
-            </div>
-        </div>`;
-
-    /* ── 6. BOARD QUESTIONS ── */
-    document.getElementById('board-questions-list').innerHTML = `
-        <div class="p-5 rounded-2xl border border-slate-200 bg-white shadow-sm space-y-3 card-hover">
-            <div class="flex items-center justify-between border-b border-slate-100 pb-2">
-                <span class="px-3 py-0.5 bg-blue-100 text-blue-800 rounded-full text-xs font-bold">রাজশাহী বোর্ড ২০২৪</span>
-                <span class="text-xs text-slate-500">পূর্ণমান: ১০</span>
-            </div>
-            <p class="text-xs text-slate-800 leading-relaxed font-medium">
-                <strong>উদ্দীপক:</strong> একটি 800 kg গাড়ি 72 km/h বেগে চলছিল। চালক 40 m সামনে পথচারী দেখে সাথে সাথে ব্রেক চাপলেন। গাড়িটি পথচারীর 2 m সামনে থামল।
-            </p>
-            <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs space-y-2 text-slate-700">
-                <p><span class="font-bold text-blue-700">(গ)</span> ব্রেকিং বল: a = u²/2s = 400/76 = 5.26 m/s²; F = 800 × 5.26 = <strong>4210.53 N</strong></p>
-                <p><span class="font-bold text-blue-700">(ঘ)</span> 0.4s দেরিতে ব্রেক: প্রতিক্রিয়া দূরত্ব = 20×0.4 = 8 m; মোট = 8+38 = 46 m > 40 m → দুর্ঘটনা ঘটত।</p>
-            </div>
-        </div>`;
-
-    /* ── 7. Q&A FEED ── */
+    /* ── 9. Q&A FEED ── */
     renderQAFeed();
 
-    /* ── 7.1. CHAPTER SIMULATION ── */
+    /* ── 10. CHAPTER SIMULATION ── */
     renderChapterSimulation();
 
-    /* ── 8. EXAM reset ── */
+    /* ── 11. EXAM reset ── */
     document.getElementById('exam-start-screen').classList.remove('hidden');
     document.getElementById('exam-active-screen').classList.add('hidden');
     document.getElementById('exam-result-screen').classList.add('hidden');
@@ -1487,43 +1690,51 @@ function renderGlobalAggregatorContent() {
             const card = document.createElement('div');
             card.className = 'p-4 rounded-2xl border border-slate-200 bg-slate-50/70 hover:bg-white hover:border-blue-300 transition shadow-sm space-y-2';
 
+            const ssc = (lvl === 'ssc' && window.SSC_CURRICULUM_DATA) ? window.SSC_CURRICULUM_DATA[chap.id] : null;
+
             let snippetHTML = '';
             if (currentAggregatorType === 'formulas') {
+                const fPreview = (ssc && ssc.formulas && ssc.formulas.length > 0)
+                    ? ssc.formulas.slice(0, 2).map(f => `<span class="font-bold text-blue-700">${f.tag}:</span> ${f.expr} (${f.note})`).join('<br>')
+                    : 's = ut + ½at²  |  v = u + at  |  v² = u² + 2as';
                 snippetHTML = `
                     <div class="text-xs space-y-1 bg-white p-3 rounded-xl border border-slate-100">
-                        <p class="font-mono text-blue-700 font-bold">s = ut + ½at²  |  v = u + at  |  v² = u² + 2as</p>
-                        <p class="text-slate-500 text-[11px]">F = ma | W = Fs cosθ | P = W/t</p>
+                        <p class="font-mono text-slate-800 text-[11px] leading-relaxed">${fPreview}</p>
                     </div>
                 `;
             } else if (currentAggregatorType === 'math') {
+                const mPrev = (ssc && ssc.math && ssc.math[0]) ? ssc.math[0] : null;
                 snippetHTML = `
                     <div class="text-xs space-y-1.5 bg-white p-3 rounded-xl border border-slate-100">
-                        <p class="font-medium text-slate-800">গাণিতিক সমস্যা: 54 km/h বেগে চলমান গাড়ি 5s এ থেমে গেলে ত্বরণ ও দূরত্ব নির্ণয় করো।</p>
-                        <p class="text-emerald-600 font-semibold text-[11px]"><i class="fa-solid fa-check"></i> সমাধান সূত্র: a = (v-u)/t, s = (u+v)/2 × t</p>
+                        <p class="font-medium text-slate-800 line-clamp-2">${mPrev ? mPrev.question : 'গাণিতিক সমস্যা ও প্রয়োগমূলক ম্যাথ'}</p>
+                        <p class="text-emerald-600 font-semibold text-[11px]"><i class="fa-solid fa-check"></i> সমাধান ও ধাপসমূহ সংকলিত</p>
                     </div>
                 `;
             } else if (currentAggregatorType === 'video') {
+                const vPrev = (ssc && ssc.video_playlist && ssc.video_playlist[0]) ? ssc.video_playlist[0] : null;
                 snippetHTML = `
                     <div class="flex items-center gap-3 bg-white p-3 rounded-xl border border-slate-100">
                         <div class="w-10 h-10 rounded-xl bg-red-100 text-red-600 flex items-center justify-center text-lg"><i class="fa-solid fa-play"></i></div>
                         <div>
-                            <p class="text-xs font-bold text-slate-800">লেকচার ক্লাস (রেকর্ডেড ও লাইভ নোট)</p>
-                            <p class="text-[11px] text-slate-400">সময়কাল: ৪৫ মিনিট | আল আমিন স্যার</p>
+                            <p class="text-xs font-bold text-slate-800">${vPrev ? vPrev.label : 'লেকচার ক্লাস'}</p>
+                            <p class="text-[11px] text-slate-400">সময়কাল: ${vPrev ? vPrev.dur : '৩৫ মিনিট'} | আল আমিন স্যার</p>
                         </div>
                     </div>
                 `;
             } else if (currentAggregatorType === 'comprehension') {
+                const cPrev = (ssc && ssc.comprehension && ssc.comprehension[0]) ? ssc.comprehension[0] : null;
                 snippetHTML = `
                     <div class="text-xs space-y-1 bg-white p-3 rounded-xl border border-slate-100">
-                        <p class="font-bold text-slate-800">অনুধাবন প্রশ্ন: সমবেগে চলমান বস্তুর ত্বরণ থাকে কি? ব্যাখ্যা করো।</p>
-                        <p class="text-slate-500 text-[11px]">উত্তর: না, বেগ পরিবর্তনের হারই ত্বরণ। বেগ অপরিবর্তিত থাকলে ত্বরণ শূন্য।</p>
+                        <p class="font-bold text-slate-800 line-clamp-1">অনুধাবন: ${cPrev ? cPrev.q : 'ব্যাখ্যামূলক খ-প্রশ্ন'}</p>
+                        <p class="text-slate-500 text-[11px] line-clamp-2">${cPrev ? cPrev.a : 'বোর্ড স্ট্যান্ডার্ড উত্তর'}</p>
                     </div>
                 `;
             } else {
+                const cqPrev = (ssc && ssc.cqs && ssc.cqs[0]) ? ssc.cqs[0] : null;
                 snippetHTML = `
-                    <div class="text-xs bg-white p-3 rounded-xl border border-slate-100">
-                        <p class="font-bold text-slate-800">ঢাকা বোর্ড, রাজশাহী বোর্ড, চট্টগ্রাম বোর্ড সমন্বিত CQ & MCQ</p>
-                        <p class="text-[11px] text-slate-400">বিগত ৫ বছরের সমাধানসহ বিশ্লেষণ</p>
+                    <div class="text-xs bg-white p-3 rounded-xl border border-slate-100 space-y-1">
+                        <p class="font-bold text-slate-800">${cqPrev ? cqPrev.board : 'বোর্ড সৃজনশীল প্রশ্ন (CQ)'}</p>
+                        <p class="text-[11px] text-slate-500 line-clamp-2">${cqPrev ? cqPrev.stimulus : 'উদ্দীপকসহ ক, খ, গ, ঘ এর পূর্ণাঙ্গ সমাধান'}</p>
                     </div>
                 `;
             }
@@ -1615,56 +1826,294 @@ function markVideoComplete() {
 function printFormulaSheet() { window.print(); }
 function downloadPdfNotice() {
     const chap = getCurrentChap();
+    const sscData = (window.SSC_CURRICULUM_DATA && window.SSC_CURRICULUM_DATA[chap.id])
+        ? window.SSC_CURRICULUM_DATA[chap.id]
+        : null;
+
     const printWindow = window.open('', '_blank');
     if (!printWindow) {
         alert('পপ-আপ ব্লক থাকায় প্রিন্ট উইন্ডো খোলা যায়নি। অনুগ্রহ করে ব্রাউজার পারমিশন দিন।');
         return;
     }
+
+    const formulasHtml = (sscData && sscData.formulas ? sscData.formulas : []).map((f, i) => `
+        <div class="formula-item">
+            <strong>${f.tag}:</strong> <code class="formula-code">${f.expr}</code>
+            <p class="formula-note">${f.note}</p>
+        </div>
+    `).join('');
+
+    const knowledgeHtml = (sscData && sscData.knowledge ? sscData.knowledge : []).map((k, i) => `
+        <div class="qa-item">
+            <p class="qa-q"><strong>ক-${i+1}.</strong> ${k.q}</p>
+            <p class="qa-a"><strong>উত্তর:</strong> ${k.a}</p>
+        </div>
+    `).join('');
+
+    const compHtml = (sscData && sscData.comprehension ? sscData.comprehension : []).map((c, i) => `
+        <div class="qa-item">
+            <p class="qa-q"><strong>খ-${i+1}.</strong> ${c.q}</p>
+            <p class="qa-a"><strong>উত্তর:</strong> ${c.a}</p>
+        </div>
+    `).join('');
+
+    const cqHtml = (sscData && sscData.cqs ? sscData.cqs : []).map((cq, i) => `
+        <div class="cq-card">
+            <div class="cq-header">
+                <strong>সৃজনশীল প্রশ্ন (CQ ${i+1})</strong> • <span>${cq.board}</span> (পূর্ণমান: ${cq.marks || 10})
+            </div>
+            <div class="cq-stimulus">
+                <strong>উদ্দীপক:</strong> ${cq.stimulus}
+            </div>
+            <div class="cq-parts">
+                <p><strong>(ক) [১ নম্বর]</strong> ${cq.q_a}</p>
+                <div class="cq-ans"><strong>উত্তর:</strong> ${cq.ans_a}</div>
+
+                <p><strong>(খ) [২ নম্বর]</strong> ${cq.q_b}</p>
+                <div class="cq-ans"><strong>উত্তর:</strong> ${cq.ans_b}</div>
+
+                <p><strong>(গ) [৩ নম্বর]</strong> ${cq.q_c}</p>
+                <div class="cq-ans" style="white-space: pre-line; font-family: monospace;"><strong>সমাধান:</strong>\n${cq.ans_c}</div>
+
+                <p><strong>(ঘ) [৪ নম্বর]</strong> ${cq.q_d}</p>
+                <div class="cq-ans" style="white-space: pre-line; font-family: monospace;"><strong>উচ্চতর দক্ষতা ও বিশ্লেষণ:</strong>\n${cq.ans_d}</div>
+            </div>
+        </div>
+    `).join('');
+
+    const mathHtml = (sscData && sscData.math ? sscData.math : []).map((m, i) => `
+        <div class="math-item">
+            <p class="math-q"><strong>সমস্যা ${i+1} (${m.type || 'বোর্ড'}):</strong> ${m.question}</p>
+            <div class="math-a" style="white-space: pre-line; font-family: monospace;"><strong>সমাধান:</strong>\n${m.solution}</div>
+        </div>
+    `).join('');
+
     printWindow.document.write(`
         <!DOCTYPE html>
         <html lang="bn">
         <head>
             <meta charset="UTF-8">
-            <title>${chap.title} — এক্সক্লুসিভ লেকচার শিট</title>
-            <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&display=swap" rel="stylesheet">
+            <title>${chap.title} — এক্সক্লুসিভ লেকচার শিট | Al amin Physics</title>
+            <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
             <style>
-                body { font-family: 'Hind Siliguri', sans-serif; padding: 40px; color: #1e293b; }
-                .header { border-bottom: 2px solid #2563eb; padding-bottom: 15px; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center; }
-                h1 { color: #1e3a8a; margin: 0 0 5px 0; font-size: 24px; }
-                p { margin: 0; color: #64748b; font-size: 13px; }
-                .box { background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 12px; padding: 18px; margin-bottom: 20px; }
-                h3 { margin-top: 0; color: #2563eb; font-size: 16px; }
-                .footer { margin-top: 40px; text-align: center; font-size: 12px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px; }
+                @page { size: A4; margin: 15mm 12mm; }
+                body {
+                    font-family: 'Hind Siliguri', sans-serif;
+                    color: #0f172a;
+                    line-height: 1.6;
+                    padding: 0;
+                    margin: 0;
+                    font-size: 13px;
+                }
+                .container { max-width: 800px; margin: 0 auto; }
+                .sheet-header {
+                    border-bottom: 3px solid #1e3a8a;
+                    padding-bottom: 12px;
+                    margin-bottom: 16px;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: flex-end;
+                }
+                .sheet-brand h1 { margin: 0; color: #1e3a8a; font-size: 26px; font-weight: 800; letter-spacing: -0.5px; }
+                .sheet-brand p { margin: 2px 0 0; color: #475569; font-size: 13px; font-weight: 600; }
+                .sheet-author { text-align: right; }
+                .sheet-author p { margin: 0; font-size: 12px; color: #334155; }
+                .sheet-author .author-name { font-weight: 700; color: #2563eb; font-size: 14px; }
+                .badge-strip {
+                    background: #f1f5f9;
+                    border: 1px solid #cbd5e1;
+                    padding: 8px 14px;
+                    border-radius: 8px;
+                    font-size: 12px;
+                    font-weight: 600;
+                    color: #1e293b;
+                    margin-bottom: 16px;
+                    display: flex;
+                    justify-content: space-between;
+                }
+                .section-title {
+                    font-size: 15px;
+                    font-weight: 700;
+                    color: #1e3a8a;
+                    border-left: 4px solid #2563eb;
+                    padding-left: 8px;
+                    margin: 18px 0 10px;
+                    text-transform: uppercase;
+                }
+                .summary-box {
+                    background: #f8fafc;
+                    border: 1px solid #e2e8f0;
+                    border-radius: 8px;
+                    padding: 12px 14px;
+                    font-size: 13px;
+                    line-height: 1.7;
+                    text-align: justify;
+                }
+                .formula-grid {
+                    display: grid;
+                    grid-template-columns: 1fr 1fr;
+                    gap: 10px;
+                }
+                .formula-item {
+                    background: #f0fdf4;
+                    border: 1px solid #bbf7d0;
+                    padding: 8px 10px;
+                    border-radius: 6px;
+                }
+                .formula-code {
+                    font-size: 13px;
+                    font-weight: bold;
+                    color: #166534;
+                    background: #dcfce7;
+                    padding: 2px 6px;
+                    border-radius: 4px;
+                    display: inline-block;
+                    margin: 2px 0;
+                }
+                .formula-note { margin: 2px 0 0; font-size: 11px; color: #4b5563; }
+                .qa-item {
+                    background: #fff;
+                    border: 1px solid #e2e8f0;
+                    border-radius: 6px;
+                    padding: 8px 12px;
+                    margin-bottom: 8px;
+                    page-break-inside: avoid;
+                }
+                .qa-q { margin: 0 0 4px; font-weight: 600; color: #1e293b; }
+                .qa-a { margin: 0; color: #334155; padding-left: 10px; border-left: 2px solid #3b82f6; }
+                .cq-card {
+                    background: #fff;
+                    border: 1px solid #cbd5e1;
+                    border-radius: 8px;
+                    padding: 12px;
+                    margin-bottom: 14px;
+                    page-break-inside: avoid;
+                }
+                .cq-header {
+                    font-size: 12px;
+                    color: #2563eb;
+                    font-weight: bold;
+                    border-bottom: 1px dashed #cbd5e1;
+                    padding-bottom: 6px;
+                    margin-bottom: 8px;
+                }
+                .cq-stimulus {
+                    background: #f8fafc;
+                    padding: 8px 10px;
+                    border-radius: 6px;
+                    border: 1px solid #e2e8f0;
+                    margin-bottom: 10px;
+                    line-height: 1.6;
+                }
+                .cq-ans {
+                    background: #f8fafc;
+                    padding: 6px 10px;
+                    border-radius: 4px;
+                    border-left: 2px solid #2563eb;
+                    margin: 4px 0 8px;
+                    font-size: 12px;
+                }
+                .math-item {
+                    background: #fff;
+                    border: 1px solid #e2e8f0;
+                    border-radius: 6px;
+                    padding: 10px;
+                    margin-bottom: 10px;
+                    page-break-inside: avoid;
+                }
+                .math-q { margin: 0 0 6px; font-weight: 600; color: #1e293b; }
+                .math-a { background: #f8fafc; padding: 6px 10px; border-left: 2px solid #4f46e5; font-size: 12px; }
+                .footer {
+                    margin-top: 25px;
+                    text-align: center;
+                    font-size: 11px;
+                    color: #64748b;
+                    border-top: 1px solid #cbd5e1;
+                    padding-top: 10px;
+                }
+                .print-actions {
+                    text-align: center;
+                    margin: 15px 0;
+                }
+                .print-btn {
+                    background: #2563eb;
+                    color: white;
+                    border: none;
+                    padding: 8px 20px;
+                    border-radius: 8px;
+                    font-size: 13px;
+                    font-weight: bold;
+                    cursor: pointer;
+                }
+                @media print {
+                    .print-actions { display: none; }
+                    body { font-size: 12px; }
+                }
             </style>
         </head>
         <body>
-            <div class="header">
-                <div>
-                    <h1>Al amin Physics</h1>
-                    <p>${chap.title} • এক্সক্লুসিভ রিভিশন হ্যান্ডনোট</p>
+            <div class="container">
+                <div class="print-actions">
+                    <button class="print-btn" onclick="window.print()">🖨️ প্রিন্ট করুন বা PDF হিসেবে সংরক্ষণ করুন</button>
                 </div>
-                <div style="text-align: right;">
-                    <p style="font-weight: bold; color: #2563eb;">আল আমিন স্যার</p>
-                    <p>জলেশ্বরীতলা, বগুড়া | ০১৭৯৬৪৩১৭৯৫</p>
+
+                <div class="sheet-header">
+                    <div class="sheet-brand">
+                        <h1>Al amin Physics</h1>
+                        <p>${chap.title} • পূর্ণাঙ্গ লেকচার শিট ও হ্যান্ডনোট</p>
+                    </div>
+                    <div class="sheet-author">
+                        <p class="author-name">আল আমিন স্যার</p>
+                        <p>প্রতিষ্ঠাতা ও হেড অব ফিজিক্স</p>
+                        <p>জলেশ্বরীতলা, বগুড়া | ০১৭৯৬৪৩১৭৯৫</p>
+                    </div>
                 </div>
-            </div>
-            <div class="box">
-                <h3>📌 মূল সারসংক্ষেপ ও তত্ত্বীয় পয়েন্ট</h3>
-                <p style="color: #334155; line-height: 1.8; font-size: 14px;">${chap.desc}</p>
-            </div>
-            <div class="box">
-                <h3>⚡ বোর্ড পরীক্ষার স্পেশাল টিপস</h3>
-                <p style="color: #334155; line-height: 1.8; font-size: 14px;">
-                    ১. সকল সমীকরণের SI একক ও মাত্রা সঠিকভাবে লিখলে পূর্ণ নম্বর নিশ্চিত হয়।<br>
-                    ২. গাণিতিক সমস্যার ক্ষেত্রে দেওয়া মানসমূহ প্রথমে লিখে তারপর সঠিক সূত্র প্রয়োগ করুন।<br>
-                    ৩. গ্রাফ সংক্রান্ত প্রশ্নে ঢাল (Slope) এবং ক্ষেত্রফল কী নির্দেশ করে তা স্পষ্ট উল্লেখ করুন।
-                </p>
-            </div>
-            <div class="footer">
-                Al amin Physics Digital Platform • al-amin-physics.vercel.app • হটলাইন: ০১৭৯৬৪৩১৭৯৫, ০১৫২১৪৪৩০৬৫
+
+                <div class="badge-strip">
+                    <span>সিলেবাস: NCTB ২০২৬ মানসম্পন্ন</span>
+                    <span>শ্রেনি: নবম-দশম ও এসএসসি</span>
+                    <span>ওয়েবসাইট: al-amin-physics.vercel.app</span>
+                </div>
+
+                <div class="section-title">📌 ১. অধ্যায় সারসংক্ষেপ ও মৌলিক পরিচিতি</div>
+                <div class="summary-box">
+                    ${sscData ? sscData.summary : chap.desc}
+                </div>
+
+                ${formulasHtml ? `
+                    <div class="section-title">📐 ২. প্রয়োজনীয় সকল সূত্রাবলি</div>
+                    <div class="formula-grid">${formulasHtml}</div>
+                ` : ''}
+
+                ${knowledgeHtml ? `
+                    <div class="section-title">📖 ৩. সেরা জ্ঞানমূলক প্রশ্নোত্তর (ক নম্বর)</div>
+                    <div>${knowledgeHtml}</div>
+                ` : ''}
+
+                ${compHtml ? `
+                    <div class="section-title">💡 ৪. সেরা অনুধাবনমূলক প্রশ্নোত্তর (খ নম্বর)</div>
+                    <div>${compHtml}</div>
+                ` : ''}
+
+                ${cqHtml ? `
+                    <div class="section-title">🎓 ৫. বোর্ড মানসম্পন্ন সৃজনশীল প্রশ্ন ও পূর্ণাঙ্গ সমাধান</div>
+                    <div>${cqHtml}</div>
+                ` : ''}
+
+                ${mathHtml ? `
+                    <div class="section-title">🧮 ৬. গাণিতিক সমস্যাবলি ও সমাধান</div>
+                    <div>${mathHtml}</div>
+                ` : ''}
+
+                <div class="footer">
+                    <strong>Al amin Physics Digital Platform</strong> • জলেশ্বরীতলা, বগুড়া • হটলাইন: ০১৭৯৬৪৩১৭৯৫, ০১৫২১৪৪৩০৬৫ • al-amin-physics.vercel.app
+                </div>
             </div>
             <script>
-                window.onload = function() { window.print(); }
+                window.onload = function() {
+                    // Small delay to ensure styles loaded
+                    setTimeout(function() { window.print(); }, 400);
+                }
             </script>
         </body>
         </html>

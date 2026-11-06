@@ -12,6 +12,7 @@
     <!-- KaTeX Math Rendering -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
     <!-- Custom Styles -->
     <link rel="stylesheet" href="style.css">
 
@@ -498,14 +499,16 @@
             </div>
         </div>
 
-        <!-- 10 Module Subtabs -->
+        <!-- 12 Module Subtabs -->
         <div class="flex overflow-x-auto pt-4 space-x-2 text-xs scrollbar-hide">
             <button onclick="switchTab('basic')"          id="tab-basic"          class="subtab-btn subtab-active           px-3.5 py-2.5 rounded-xl flex items-center gap-1.5 whitespace-nowrap"><i class="fa-solid fa-book-open"></i> বেসিক</button>
+            <button onclick="switchTab('knowledge')"      id="tab-knowledge"      class="subtab-btn bg-slate-100 text-slate-700 px-3.5 py-2.5 rounded-xl flex items-center gap-1.5 whitespace-nowrap"><i class="fa-solid fa-feather-pointed text-blue-600"></i> জ্ঞানমূলক (ক)</button>
+            <button onclick="switchTab('comprehension')"  id="tab-comprehension"  class="subtab-btn bg-slate-100 text-slate-700 px-3.5 py-2.5 rounded-xl flex items-center gap-1.5 whitespace-nowrap"><i class="fa-solid fa-brain text-amber-600"></i> অনুধাবনমূলক (খ)</button>
+            <button onclick="switchTab('formulas')"       id="tab-formulas"       class="subtab-btn bg-slate-100 text-slate-700 px-3.5 py-2.5 rounded-xl flex items-center gap-1.5 whitespace-nowrap"><i class="fa-solid fa-square-root-variable text-emerald-600"></i> সূত্রসমূহ</button>
+            <button onclick="switchTab('math')"           id="tab-math"           class="subtab-btn bg-slate-100 text-slate-700 px-3.5 py-2.5 rounded-xl flex items-center gap-1.5 whitespace-nowrap"><i class="fa-solid fa-calculator text-indigo-600"></i> গাণিতিক</button>
+            <button onclick="switchTab('board')"          id="tab-board"          class="subtab-btn bg-slate-100 text-slate-700 px-3.5 py-2.5 rounded-xl flex items-center gap-1.5 whitespace-nowrap"><i class="fa-solid fa-graduation-cap text-purple-600"></i> সৃজনশীল (CQ)</button>
+            <button onclick="switchTab('sheet')"          id="tab-sheet"          class="subtab-btn bg-slate-100 text-slate-700 px-3.5 py-2.5 rounded-xl flex items-center gap-1.5 whitespace-nowrap"><i class="fa-solid fa-file-pdf text-red-600"></i> শিট ও হ্যান্ডনোট</button>
             <button onclick="switchTab('video')"          id="tab-video"          class="subtab-btn bg-slate-100 text-slate-700 px-3.5 py-2.5 rounded-xl flex items-center gap-1.5 whitespace-nowrap"><i class="fa-solid fa-play"></i> ভিডিও ক্লাস</button>
-            <button onclick="switchTab('formulas')"       id="tab-formulas"       class="subtab-btn bg-slate-100 text-slate-700 px-3.5 py-2.5 rounded-xl flex items-center gap-1.5 whitespace-nowrap"><i class="fa-solid fa-square-root-variable"></i> সূত্রসমূহ</button>
-            <button onclick="switchTab('math')"           id="tab-math"           class="subtab-btn bg-slate-100 text-slate-700 px-3.5 py-2.5 rounded-xl flex items-center gap-1.5 whitespace-nowrap"><i class="fa-solid fa-calculator"></i> গাণিতিক</button>
-            <button onclick="switchTab('comprehension')"  id="tab-comprehension"  class="subtab-btn bg-slate-100 text-slate-700 px-3.5 py-2.5 rounded-xl flex items-center gap-1.5 whitespace-nowrap"><i class="fa-solid fa-lightbulb"></i> অনুধাবনমূলক</button>
-            <button onclick="switchTab('board')"          id="tab-board"          class="subtab-btn bg-slate-100 text-slate-700 px-3.5 py-2.5 rounded-xl flex items-center gap-1.5 whitespace-nowrap"><i class="fa-solid fa-graduation-cap"></i> বোর্ড প্রশ্ন</button>
             <button onclick="switchTab('simulation')"     id="tab-simulation"     class="subtab-btn bg-slate-100 text-slate-700 px-3.5 py-2.5 rounded-xl flex items-center gap-1.5 whitespace-nowrap"><i class="fa-solid fa-flask"></i> সিমুলেশন</button>
             <button onclick="switchTab('qa')"             id="tab-qa"             class="subtab-btn bg-slate-100 text-slate-700 px-3.5 py-2.5 rounded-xl flex items-center gap-1.5 whitespace-nowrap"><i class="fa-solid fa-comments"></i> জিজ্ঞাসা</button>
             <button onclick="switchTab('exam')"           id="tab-exam"           class="subtab-btn bg-slate-100 text-slate-700 px-3.5 py-2.5 rounded-xl flex items-center gap-1.5 whitespace-nowrap"><i class="fa-solid fa-file-pen"></i> ফ্রি পরীক্ষা</button>
@@ -558,7 +561,21 @@
             </div>
         </div>
 
-        <!-- 2. ভিডিও ক্লাস -->
+        <!-- জ্ঞানমূলক (ক) -->
+        <div id="section-knowledge" class="tab-pane hidden">
+            <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                    <div>
+                        <h3 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+                            <i class="fa-solid fa-feather-pointed text-blue-600"></i> জ্ঞানমূলক প্রশ্নোত্তর (ক নম্বর)
+                        </h3>
+                        <p class="text-xs sm:text-sm text-slate-500">বোর্ড পরীক্ষায় সর্বাধিক কমন উপযোগী সংজ্ঞা, একক, মাত্রা ও বৈজ্ঞানিক বিবৃতি।</p>
+                    </div>
+                    <span class="self-start px-3 py-1 bg-blue-50 text-blue-700 text-xs font-bold rounded-lg border border-blue-200">১ নম্বরের প্রশ্ন</span>
+                </div>
+                <div id="knowledge-questions-list" class="space-y-4"></div>
+            </div>
+        </div>
         <div id="section-video" class="tab-pane hidden">
             <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
                 <h3 class="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
@@ -687,6 +704,33 @@
                     <span class="self-start px-3 py-1 bg-blue-50 text-blue-700 text-xs font-bold rounded-lg border border-blue-200">২০২৪ – ২০১৯ আপডেট</span>
                 </div>
                 <div id="board-questions-list" class="space-y-4"></div>
+            </div>
+        </div>
+
+        <!-- শিট ডাউনলোড ও পূর্ণাঙ্গ হ্যান্ডনোট -->
+        <div id="section-sheet" class="tab-pane hidden">
+            <div class="space-y-6">
+                <div class="bg-gradient-to-r from-blue-950 via-slate-900 to-indigo-950 p-6 sm:p-8 rounded-3xl text-white shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-6 border border-blue-500/20">
+                    <div class="space-y-2 max-w-xl">
+                        <span class="inline-block px-3 py-1 rounded-full bg-blue-500/20 text-blue-300 text-xs font-bold border border-blue-400/30">
+                            অফিসিয়াল লেকচার শিট ও হ্যান্ডনোট
+                        </span>
+                        <h3 id="sheet-title-banner" class="text-xl sm:text-2xl font-black">অধ্যায়ভিত্তিক পূর্ণাঙ্গ রিভিশন ও ফর্মুলা শিট</h3>
+                        <p class="text-xs sm:text-sm text-slate-300">
+                            আল আমিন স্যারের ক্লাস সামারি, সকল সূত্র, জ্ঞানমূলক (ক), অনুধাবনমূলক (খ) এবং সমাধানকৃত সৃজনশীল প্রশ্নাবলির সম্পূর্ণ শিট। প্রিন্ট করে বা পিডিএফ হিসেবে সংরক্ষণ করতে পারবেন।
+                        </p>
+                    </div>
+                    <div class="flex flex-wrap gap-3">
+                        <button onclick="downloadPdfNotice()" class="px-5 py-3 bg-red-600 hover:bg-red-500 text-white rounded-2xl font-bold text-sm shadow-lg transition flex items-center gap-2.5">
+                            <i class="fa-solid fa-file-pdf text-lg"></i> সম্পূর্ণ শিট প্রিন্ট / PDF
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Printable Sheet Live Preview -->
+                <div id="sheet-interactive-preview" class="bg-white p-6 sm:p-10 rounded-3xl border border-slate-200 shadow-sm space-y-8">
+                    <!-- Populated dynamically via JS -->
+                </div>
             </div>
         </div>
 
@@ -1643,6 +1687,7 @@
 <!-- ====================================================
      SCRIPTS
 ==================================================== -->
+<script src="curriculum_data.js"></script>
 <script src="app.js"></script>
 
 </body>
