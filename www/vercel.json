@@ -1,0 +1,20 @@
+{
+  "cleanUrls": true,
+  "redirects": [
+    { "source": "/ch1", "destination": "/simulations/ch1.html", "permanent": false },
+    { "source": "/ch2", "destination": "/simulations/ch2.html", "permanent": false },
+    { "source": "/ch3", "destination": "/simulations/ch3.html", "permanent": false },
+    { "source": "/ch4", "destination": "/simulations/ch4.html", "permanent": false },
+    { "source": "/ch5", "destination": "/simulations/ch5.html", "permanent": false },
+    { "source": "/ch6", "destination": "/simulations/ch6.html", "permanent": false },
+    { "source": "/ch7", "destination": "/simulations/ch7.html", "permanent": false },
+    { "source": "/ch8", "destination": "/simulations/ch8.html", "permanent": false },
+    { "source": "/ch9", "destination": "/simulations/ch9.html", "permanent": false },
+    { "source": "/ch10", "destination": "/simulations/ch10.html", "permanent": false },
+    { "source": "/ch11", "destination": "/simulations/ch11.html", "permanent": false },
+    { "source": "/ch12", "destination": "/simulations/ch12.html", "permanent": false },
+    { "source": "/ch13", "destination": "/simulations/ch13.html", "permanent": false },
+    { "source": "/caliper", "destination": "/simulations/vernier-caliper.html", "permanent": false },
+    { "source": "/vernier", "destination": "/simulations/vernier-caliper.html", "permanent": false }
+  ]
+}
