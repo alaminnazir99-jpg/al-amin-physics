@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>স্লাইড ক্যালিপার্স সিমুলেটর | আল-আমিন ফিজিক্স ল্যাব</title>
+  <title>স্লাইড ক্যালিপার্স সিমুলেটর (১৬:৯ ডিসপ্লে) | আল-আমিন ফিজিক্স ল্যাব</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
@@ -46,7 +46,13 @@
       box-shadow: 0 0 14px rgba(56,189,248,0.3);
     }
 
-    /* Landscape & Monitor Display Optimization */
+    /* 16:9 Display Aspect Ratio Container */
+    .display-16-9-box {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      position: relative;
+    }
+
     @media (orientation: landscape) and (max-height: 560px) {
       header {
         padding-top: 0.25rem !important;
@@ -55,19 +61,9 @@
       .landscape-hide {
         display: none !important;
       }
-      #caliper-canvas {
-        height: calc(100vh - 105px) !important;
-        min-height: 290px !important;
-      }
       main {
         padding-top: 0.35rem !important;
         padding-bottom: 0.35rem !important;
-      }
-    }
-
-    @media (min-width: 1280px) {
-      #caliper-canvas {
-        height: 540px !important;
       }
     }
   </style>
@@ -76,7 +72,7 @@
 
   <!-- Top Navigation Bar -->
   <header class="bg-[#08121f]/95 backdrop-blur border-b border-slate-800/80 px-3 sm:px-5 py-2 sticky top-0 z-50">
-    <div class="max-w-[1500px] mx-auto flex items-center justify-between gap-3">
+    <div class="max-w-[1400px] mx-auto flex items-center justify-between gap-3">
       <div class="flex items-center gap-2 sm:gap-3">
         <a href="ch1.html" class="px-2.5 py-1 rounded-xl bg-slate-800/90 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition flex items-center gap-1.5">
           <i class="fa-solid fa-arrow-left"></i> <span class="hidden sm:inline">অধ্যায় ০১</span>
@@ -87,7 +83,7 @@
           </div>
           <div>
             <h1 class="text-xs sm:text-sm font-bold text-slate-100 flex items-center gap-2 leading-tight">
-              ভার্নিয়ার ও স্লাইড ক্যালিপার্স <span class="hidden md:inline-block text-[10px] px-2 py-0.5 rounded-full bg-cyan-950 text-cyan-300 border border-cyan-800 font-mono">MONITOR / HD VIEW</span>
+              ভার্নিয়ার ও স্লাইড ক্যালিপার্স <span class="text-[10px] px-2 py-0.5 rounded-full bg-cyan-950 text-cyan-300 border border-cyan-800 font-mono">১৬:৯ মনিটর ভিউ</span>
             </h1>
             <p class="text-[10px] text-slate-400 hidden lg:block">বাস্তবসম্মত একাধিক বস্তু পরিমাপ ও সূক্ষ্ম দৈর্ঘ্য নির্ণয়</p>
           </div>
@@ -115,340 +111,332 @@
     </div>
   </header>
 
-  <!-- Main Simulator Stage -->
-  <main class="max-w-[1500px] mx-auto px-2 sm:px-4 py-2 sm:py-3 w-full flex-1 space-y-2.5">
+  <!-- Main Simulator Stage (Structured into 2 Clear Parts) -->
+  <main class="max-w-[1400px] mx-auto px-2 sm:px-4 py-2 sm:py-3 w-full flex-1 space-y-3">
 
-    <!-- Simulator Canvas Area -->
-    <div class="relative w-full rounded-2xl overflow-hidden border border-slate-800/90 bg-[#060c18] shadow-2xl">
-      
-      <!-- Stage Overlay Toolbar (Top Left) -->
-      <div class="absolute top-2.5 left-2.5 z-20 flex flex-wrap items-center gap-1.5 sm:gap-2 pointer-events-auto">
-        <div class="bg-slate-900/90 backdrop-blur px-2.5 py-1 rounded-xl border border-slate-700/80 text-[11px] font-semibold text-slate-300 flex items-center gap-2 shadow-lg">
-          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-          <span class="hidden sm:inline">পদ্ধতি:</span>
-          <span id="current-mode-label" class="text-cyan-400 font-bold">বহিঃস্থ ব্যাস (চোয়াল)</span>
-        </div>
-
-        <div class="bg-slate-900/90 backdrop-blur px-2.5 py-1 rounded-xl border border-slate-700/80 text-[11px] font-mono text-amber-300 flex items-center gap-1 shadow-lg">
-          <span class="text-slate-400 text-[10px]">VC:</span>
-          <span id="badge-vc" class="font-bold text-white">0.1 mm</span>
-        </div>
-
-        <!-- Quick Current Measured Object Badge -->
-        <div id="badge-active-obj" class="bg-slate-900/90 backdrop-blur px-2.5 py-1 rounded-xl border border-cyan-500/40 text-[11px] text-cyan-300 hidden md:flex items-center gap-1.5 shadow-lg">
-          <i class="fa-solid fa-cube text-cyan-400 text-[10px]"></i>
-          <span>স্ক্রিনে সক্রিয়:</span>
-          <span id="badge-obj-name" class="font-bold text-white">ফাঁপা চোঙ</span>
-        </div>
-      </div>
-
-      <!-- Stage Overlay Toolbar (Top Right) Zoom Controls -->
-      <div class="absolute top-2.5 right-2.5 z-20 flex items-center gap-1 pointer-events-auto">
-        <button onclick="zoomIn()" title="জুম বাড়াও" class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-slate-200 border border-slate-700/80 text-xs flex items-center justify-center shadow-lg transition">
-          <i class="fa-solid fa-plus"></i>
-        </button>
-        <button onclick="zoomOut()" title="জুম কমাও" class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-slate-200 border border-slate-700/80 text-xs flex items-center justify-center shadow-lg transition">
-          <i class="fa-solid fa-minus"></i>
-        </button>
-        <button onclick="resetZoomPan()" title="রিসেট ভিউ" class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-slate-200 border border-slate-700/80 text-xs flex items-center justify-center shadow-lg transition">
-          <i class="fa-solid fa-arrows-rotate"></i>
-        </button>
-      </div>
-
-      <!-- Interactive Canvas -->
-      <canvas id="caliper-canvas" class="w-full h-[380px] sm:h-[450px] md:h-[490px] lg:h-[530px] block cursor-grab active:cursor-grabbing"></canvas>
-
-      <!-- Stage Bottom Hint -->
-      <div class="absolute bottom-2 left-1/2 -translate-x-1/2 z-20 pointer-events-none">
-        <div class="bg-slate-900/90 backdrop-blur px-3 py-0.5 rounded-full border border-slate-700/70 text-[10px] sm:text-[11px] text-slate-300 text-center shadow-md flex items-center gap-2 whitespace-nowrap">
-          <i class="fa-solid fa-hand-pointer text-cyan-400"></i>
-          <span>ট্রে-এর যেকোনো ছোট বস্তুতে টাচ করলে তা চোয়ালে যাবে • স্লাইডার টেনে মাপুন</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- On-Screen Specimen Tray & Quick Action HUD -->
-    <div class="bg-[#081220] border border-slate-800/90 p-2.5 sm:p-3 rounded-2xl space-y-2 shadow-xl">
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800/80 pb-1.5">
-        <div class="flex items-center gap-2">
-          <i class="fa-solid fa-box-open text-amber-400 text-xs"></i>
-          <h2 class="text-xs sm:text-sm font-bold text-slate-200">বস্তু ট্রে (ট্রে-তে ছোট বস্তু থাকবে; টাচ করলে কেবলমাত্র ওই বস্তুটিই চোয়ালে পরিমাপের জন্য যাবে)</h2>
-        </div>
-        <div class="flex items-center gap-2">
-          <button onclick="autoClampToCurrentObject()" class="px-3 py-1 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white text-[11px] font-bold border border-cyan-400 transition flex items-center gap-1.5 shadow-sm">
-            <i class="fa-solid fa-compress"></i> <span>বস্তুর গায়ে লাগাও (Clamp)</span>
-          </button>
-          <button onclick="returnObjectToTray()" class="px-2.5 py-1 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] font-semibold border border-slate-700 transition flex items-center gap-1">
-            <i class="fa-solid fa-rotate-left"></i> <span>ট্রে-তে ফেরত</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- 4 Compact Object Selection Cards -->
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
-        <!-- Object 1: Brass Cylinder -->
-        <button id="card-obj-cylinder" onclick="selectObjectById('cylinder')" class="obj-active-card p-2 rounded-xl bg-[#0c1828] border border-slate-700 text-left transition flex items-center gap-2.5 group hover:border-cyan-400">
-          <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-400 to-amber-700 flex items-center justify-center text-slate-950 font-bold text-xs shadow-md flex-shrink-0">
-            <i class="fa-solid fa-ring"></i>
+    <!-- ========================================== -->
+    <!-- ১. ডিসপ্লে পার্ট (DISPLAY PART - 16:9 RATIO) -->
+    <!-- ========================================== -->
+    <section class="w-full">
+      <div class="display-16-9-box rounded-2xl overflow-hidden border border-slate-800/90 bg-[#060c18] shadow-2xl">
+        
+        <!-- Top Left Badges Overlay -->
+        <div class="absolute top-2.5 left-2.5 z-20 flex flex-wrap items-center gap-1.5 sm:gap-2 pointer-events-auto">
+          <div class="bg-slate-900/90 backdrop-blur px-2.5 py-1 rounded-xl border border-slate-700/80 text-[11px] font-semibold text-slate-300 flex items-center gap-2 shadow-lg">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span class="hidden sm:inline">পদ্ধতি:</span>
+            <span id="current-mode-label" class="text-cyan-400 font-bold">বহিঃস্থ ব্যাস (চোয়াল)</span>
           </div>
-          <div class="min-w-0">
-            <div class="flex items-center justify-between">
-              <span class="text-xs font-bold text-slate-100 truncate">ফাঁপা চোঙ</span>
-              <span class="text-[10px] text-amber-400 font-mono font-bold">18.4 mm</span>
+
+          <div class="bg-slate-900/90 backdrop-blur px-2.5 py-1 rounded-xl border border-slate-700/80 text-[11px] font-mono text-amber-300 flex items-center gap-1 shadow-lg">
+            <span class="text-slate-400 text-[10px]">VC:</span>
+            <span id="badge-vc" class="font-bold text-white">0.1 mm</span>
+          </div>
+
+          <div id="badge-active-obj" class="bg-slate-900/90 backdrop-blur px-2.5 py-1 rounded-xl border border-cyan-500/40 text-[11px] text-cyan-300 flex items-center gap-1.5 shadow-lg">
+            <i class="fa-solid fa-cube text-cyan-400 text-[10px]"></i>
+            <span class="hidden sm:inline">সক্রিয়:</span>
+            <span id="badge-obj-name" class="font-bold text-white">ফাঁপা চোঙ</span>
+          </div>
+        </div>
+
+        <!-- Top Right Reset View Overlay (NO + / - buttons, touch-pinch enabled) -->
+        <div class="absolute top-2.5 right-2.5 z-20 flex items-center gap-1.5 pointer-events-auto">
+          <button onclick="resetZoomPan()" title="ডিসপ্লে রিসেট করুন" class="px-2.5 py-1 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-700/80 text-xs flex items-center gap-1.5 shadow-lg transition">
+            <i class="fa-solid fa-arrows-rotate text-[11px]"></i>
+            <span class="text-[10px] hidden sm:inline">রিসেট ভিউ</span>
+          </button>
+        </div>
+
+        <!-- Interactive 16:9 Canvas (No tray inside, pure simulation) -->
+        <canvas id="caliper-canvas" class="w-full h-full block cursor-grab active:cursor-grabbing"></canvas>
+
+        <!-- Bottom Floating Hint Overlay -->
+        <div class="absolute bottom-2 left-1/2 -translate-x-1/2 z-20 pointer-events-none">
+          <div class="bg-slate-900/90 backdrop-blur px-3 py-1 rounded-full border border-slate-700/70 text-[10px] sm:text-[11px] text-slate-300 text-center shadow-md flex items-center gap-2 whitespace-nowrap">
+            <i class="fa-solid fa-hand text-cyan-400"></i>
+            <span>স্ক্রিনে দুই আঙুলে পিঞ্চ করে জুম ইন/আউট করুন • নিচে বৃত্তে ক্লিক করে বস্তু নির্বাচন করুন</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- ২. অপশন পার্ট (OPTIONS PART - BELOW CANVAS) -->
+    <!-- ========================================== -->
+    <section class="space-y-2.5 w-full">
+
+      <!-- Object Selection Card (Circular Options) -->
+      <div class="bg-[#081220] border border-slate-800/90 p-3 rounded-2xl space-y-2.5 shadow-xl">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800/80 pb-2">
+          <div class="flex items-center gap-2">
+            <i class="fa-solid fa-circle-dot text-cyan-400 text-sm"></i>
+            <h2 class="text-xs sm:text-sm font-bold text-slate-200">পরিমাপের বস্তু নির্বাচন (বৃত্তে টাচ করলে সরাসরি চোয়ালে সেট হবে)</h2>
+          </div>
+          <!-- Action Buttons Bar -->
+          <div class="flex items-center gap-1.5 flex-wrap">
+            <button onclick="autoClampToCurrentObject()" class="py-1 px-3 bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-bold rounded-xl border border-cyan-400 transition flex items-center gap-1.5 shadow-sm">
+              <i class="fa-solid fa-compress text-[10px]"></i> <span>বস্তুর গায়ে লাগাও</span>
+            </button>
+            <button onclick="closeJawsFully()" class="py-1 px-3 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold rounded-xl border border-slate-700 transition flex items-center gap-1.5">
+              <i class="fa-solid fa-align-left text-[10px]"></i> <span>চোয়াল বন্ধ</span>
+            </button>
+            <button onclick="newRandomObject()" class="py-1 px-3 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl border border-emerald-400 transition flex items-center gap-1.5 shadow-sm">
+              <i class="fa-solid fa-shuffle text-[10px]"></i> <span>নতুন মাপ</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 4 Circular Specimen Selector Badges -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-2.5">
+          
+          <!-- Circle 1: Cylinder -->
+          <button id="card-obj-cylinder" onclick="selectObjectById('cylinder')" class="obj-active-card p-2.5 rounded-xl bg-[#0c1828] border border-cyan-400 text-left transition flex items-center gap-3 group shadow-lg ring-2 ring-cyan-400/50">
+            <div class="w-11 h-11 rounded-full bg-gradient-to-tr from-cyan-900/70 to-slate-800 border-2 border-cyan-400 flex items-center justify-center shadow-md shrink-0 group-hover:scale-105 transition-transform">
+              <div class="w-7 h-7 rounded-full border-2 border-dashed border-cyan-300 flex items-center justify-center">
+                <div class="w-3.5 h-3.5 rounded-full bg-cyan-400"></div>
+              </div>
             </div>
-            <p class="text-[10px] text-slate-400 truncate">বাইরের ও ভিতরের ব্যাস</p>
-          </div>
-        </button>
-
-        <!-- Object 2: Steel Sphere -->
-        <button id="card-obj-sphere" onclick="selectObjectById('sphere')" class="p-2 rounded-xl bg-[#0c1828] border border-slate-700/80 text-left transition flex items-center gap-2.5 group hover:border-cyan-400">
-          <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-slate-200 via-slate-400 to-slate-700 flex items-center justify-center text-slate-900 font-bold text-xs shadow-md flex-shrink-0">
-            <i class="fa-solid fa-circle"></i>
-          </div>
-          <div class="min-w-0">
-            <div class="flex items-center justify-between">
-              <span class="text-xs font-bold text-slate-100 truncate">স্টিল মার্বেল</span>
-              <span class="text-[10px] text-cyan-300 font-mono font-bold">24.6 mm</span>
+            <div class="min-w-0">
+              <span class="text-xs font-bold text-slate-100 block group-hover:text-cyan-300 truncate">১. ফাঁপা চোঙ</span>
+              <span class="text-[10px] text-slate-400 block font-mono">বহিঃস্থ: ২৪ মিমি</span>
+              <span class="text-[9px] text-cyan-400 block font-sans">ব্যাস ও গভীরতা</span>
             </div>
-            <p class="text-[10px] text-slate-400 truncate">গোলকের বাহ্যিক ব্যাস</p>
-          </div>
-        </button>
-
-        <!-- Object 3: Blue Block -->
-        <button id="card-obj-block" onclick="selectObjectById('block')" class="p-2 rounded-xl bg-[#0c1828] border border-slate-700/80 text-left transition flex items-center gap-2.5 group hover:border-cyan-400">
-          <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-400 to-blue-700 flex items-center justify-center text-slate-950 font-bold text-xs shadow-md flex-shrink-0">
-            <i class="fa-solid fa-cube"></i>
-          </div>
-          <div class="min-w-0">
-            <div class="flex items-center justify-between">
-              <span class="text-xs font-bold text-slate-100 truncate">ধাতব ব্লক</span>
-              <span class="text-[10px] text-emerald-400 font-mono font-bold">13.8 mm</span>
-            </div>
-            <p class="text-[10px] text-slate-400 truncate">পুরুত্ব ও প্রান্তের দৈর্ঘ্য</p>
-          </div>
-        </button>
-
-        <!-- Object 4: Copper Coin -->
-        <button id="card-obj-coin" onclick="selectObjectById('coin')" class="p-2 rounded-xl bg-[#0c1828] border border-slate-700/80 text-left transition flex items-center gap-2.5 group hover:border-cyan-400">
-          <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-rose-400 to-amber-800 flex items-center justify-center text-slate-950 font-bold text-xs shadow-md flex-shrink-0">
-            <i class="fa-solid fa-coins"></i>
-          </div>
-          <div class="min-w-0">
-            <div class="flex items-center justify-between">
-              <span class="text-xs font-bold text-slate-100 truncate">তাম্র মুদ্রা</span>
-              <span class="text-[10px] text-rose-300 font-mono font-bold">20.0 mm</span>
-            </div>
-            <p class="text-[10px] text-slate-400 truncate">মুদ্রার ব্যাস ও সরু প্রান্ত</p>
-          </div>
-        </button>
-      </div>
-    </div>
-
-    <!-- Quick Action / Fine Step Controller Bar -->
-    <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-2 bg-[#081220] border border-slate-800/80 p-2 sm:p-2.5 rounded-2xl items-center">
-      <!-- Fine steps -->
-      <div class="col-span-2 sm:col-span-4 lg:col-span-3 flex items-center justify-between gap-1 sm:gap-2">
-        <button onclick="nudgeVernier(-10)" class="flex-1 py-1.5 px-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold rounded-xl border border-slate-700 transition flex items-center justify-center gap-1">
-          <i class="fa-solid fa-backward-step"></i> -১ মিমি
-        </button>
-        <button onclick="nudgeVernier(-1)" class="flex-1 py-1.5 px-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold rounded-xl border border-slate-700 transition flex items-center justify-center gap-1">
-          <i class="fa-solid fa-caret-left"></i> -০.১
-        </button>
-        <button onclick="nudgeVernier(1)" class="flex-1 py-1.5 px-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold rounded-xl border border-slate-700 transition flex items-center justify-center gap-1">
-          +০.১ <i class="fa-solid fa-caret-right"></i>
-        </button>
-        <button onclick="nudgeVernier(10)" class="flex-1 py-1.5 px-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold rounded-xl border border-slate-700 transition flex items-center justify-center gap-1">
-          +১ মিমি <i class="fa-solid fa-forward-step"></i>
-        </button>
-      </div>
-
-      <!-- Quick Snap / Fit Button -->
-      <button onclick="autoClampToCurrentObject()" class="py-1.5 px-3 bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-bold rounded-xl border border-cyan-400 transition flex items-center justify-center gap-1.5 shadow-sm">
-        <i class="fa-solid fa-compress"></i> <span>বস্তুর গায়ে লাগাও</span>
-      </button>
-
-      <!-- Zero Jaws -->
-      <button onclick="closeJawsFully()" class="py-1.5 px-3 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold rounded-xl border border-slate-700 transition flex items-center justify-center gap-1.5">
-        <i class="fa-solid fa-align-left"></i> <span>চোয়াল বন্ধ</span>
-      </button>
-
-      <!-- Random Object -->
-      <button onclick="newRandomObject()" class="py-1.5 px-3 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl border border-emerald-400 transition flex items-center justify-center gap-1.5 shadow-sm">
-        <i class="fa-solid fa-shuffle"></i> <span>নতুন মাপ</span>
-      </button>
-    </div>
-
-    <!-- Live Reading & Calculation Breakdown Card -->
-    <div id="panel-readings" class="bg-[#081220] border border-slate-800/80 rounded-2xl p-2.5 sm:p-3.5 shadow-xl">
-      <div class="flex items-center justify-between border-b border-slate-800/80 pb-1.5 mb-2.5">
-        <div class="flex items-center gap-2">
-          <i class="fa-solid fa-calculator text-cyan-400 text-sm"></i>
-          <h2 class="text-xs sm:text-sm font-bold text-slate-200">লাইভ পাঠ ও গাণিতিক হিসাব</h2>
-        </div>
-        <button onclick="toggleCalcDetails()" id="btn-toggle-details" class="text-[11px] text-cyan-400 hover:underline flex items-center gap-1">
-          <span>হিসাব ধাপসমূহ</span> <i class="fa-solid fa-chevron-down text-[9px]"></i>
-        </button>
-      </div>
-
-      <!-- Key Readouts Grid -->
-      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-2.5">
-        <!-- Main Scale Reading (M) -->
-        <div class="p-2 sm:p-2.5 rounded-xl bg-[#0b1726] border border-slate-800/90 space-y-0.5">
-          <span class="text-[11px] text-slate-400 block font-medium">মূল স্কেল পাঠ (M)</span>
-          <div class="flex items-baseline gap-1">
-            <span id="val-msr" class="text-base sm:text-lg font-bold font-mono text-cyan-300">0.0</span>
-            <span class="text-[11px] text-slate-400">cm</span>
-            <span id="val-msr-mm" class="text-[10px] text-slate-500 font-mono">(0 mm)</span>
-          </div>
-        </div>
-
-        <!-- Vernier Coincidence (V) -->
-        <div class="p-2 sm:p-2.5 rounded-xl bg-[#0b1726] border border-slate-800/90 space-y-0.5">
-          <span class="text-[11px] text-slate-400 block font-medium">ভার্নিয়ার সমপাতন (V)</span>
-          <div class="flex items-baseline gap-1">
-            <span id="val-vsr" class="text-base sm:text-lg font-bold font-mono text-amber-300">0</span>
-            <span class="text-[11px] text-slate-400">নং দাগ</span>
-          </div>
-        </div>
-
-        <!-- Vernier Constant (VC) -->
-        <div class="p-2 sm:p-2.5 rounded-xl bg-[#0b1726] border border-slate-800/90 space-y-0.5">
-          <span class="text-[11px] text-slate-400 block font-medium">ভার্নিয়ার ধ্রুবক (VC)</span>
-          <div class="flex items-baseline gap-1">
-            <span id="val-vc" class="text-base sm:text-lg font-bold font-mono text-emerald-300">0.01</span>
-            <span class="text-[11px] text-slate-400">cm</span>
-            <span id="val-vc-mm" class="text-[10px] text-slate-500 font-mono">(0.1 mm)</span>
-          </div>
-        </div>
-
-        <!-- Total Corrected Reading -->
-        <div class="p-2 sm:p-2.5 rounded-xl bg-gradient-to-br from-cyan-950/40 to-blue-950/40 border border-cyan-800/60 space-y-0.5">
-          <span class="text-[11px] text-cyan-300 block font-bold">মোট পাঠ (L)</span>
-          <div class="flex items-baseline gap-1">
-            <span id="val-total" class="text-lg sm:text-xl font-extrabold font-mono text-cyan-200">0.00</span>
-            <span class="text-xs text-cyan-400 font-bold">cm</span>
-            <span id="val-total-mm" class="text-[11px] text-cyan-300/80 font-mono">(0.00 mm)</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Step-by-Step Formula Card -->
-      <div id="calc-step-details" class="p-2.5 rounded-xl bg-[#050b16] border border-slate-800 font-mono text-xs text-slate-300 space-y-1 leading-relaxed">
-        <div class="text-[11px] text-slate-400 font-sans font-semibold border-b border-slate-800/70 pb-1 flex items-center justify-between">
-          <span>পরিমাপ সমীকরণ:</span>
-          <span class="text-cyan-400 font-mono font-bold">L = M + (V × VC) − e</span>
-        </div>
-        <div class="flex flex-wrap items-center gap-2 pt-0.5">
-          <span class="text-slate-400">পাঠ হিসাব:</span>
-          <span id="calc-breakdown-math" class="text-cyan-300 font-bold">0.0 + (0 × 0.01) - 0.00 = 0.00 cm</span>
-        </div>
-        <div class="text-[11px] text-slate-400 font-sans">
-          যান্ত্রিক শূন্য ত্রুটি (e): <span id="calc-zero-error-text" class="text-amber-300 font-mono">0.00 cm</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Quiz Modal Area -->
-    <div id="panel-quiz" class="hidden bg-[#0a1525] border border-amber-500/40 rounded-2xl p-3.5 shadow-2xl space-y-2.5">
-      <div class="flex items-center justify-between border-b border-slate-800 pb-1.5">
-        <div class="flex items-center gap-2">
-          <span class="px-2 py-0.5 rounded-md bg-amber-500/20 text-amber-300 text-xs font-bold font-mono">QUIZ</span>
-          <h3 class="text-xs sm:text-sm font-bold text-slate-100">নিজে পরিমাপ করে উত্তর জমা দাও</h3>
-        </div>
-        <span class="text-xs text-slate-400">স্কোর: <strong id="quiz-score" class="text-amber-400 font-mono">০/০</strong></span>
-      </div>
-
-      <p class="text-xs text-slate-300 leading-relaxed">
-        চোয়ালে আবদ্ধ বস্তুর পরিমাপটি স্কেল ও ভার্নিয়ারের দাগ দেখে নির্ণয় করো। হিসাব লিখে <strong>'যাচাই করুন'</strong> চাপো:
-      </p>
-
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-        <div>
-          <label class="block text-[11px] text-slate-400 mb-1">১. মূল স্কেল পাঠ M (cm):</label>
-          <input type="number" step="0.1" id="quiz-input-m" placeholder="উদা: 1.8" class="w-full px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-700 text-slate-100 text-xs font-mono focus:border-amber-400 focus:outline-none">
-        </div>
-        <div>
-          <label class="block text-[11px] text-slate-400 mb-1">২. ভার্নিয়ার সমপাতন V (দাগ নং):</label>
-          <input type="number" step="1" id="quiz-input-v" placeholder="উদা: 4" class="w-full px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-700 text-slate-100 text-xs font-mono focus:border-amber-400 focus:outline-none">
-        </div>
-        <div>
-          <label class="block text-[11px] text-slate-400 mb-1">৩. মোট নির্ণীত দৈর্ঘ্য L (cm):</label>
-          <input type="number" step="0.01" id="quiz-input-total" placeholder="উদা: 1.84" class="w-full px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-700 text-slate-100 text-xs font-mono focus:border-amber-400 focus:outline-none">
-        </div>
-      </div>
-
-      <div class="flex items-center gap-2 pt-0.5">
-        <button onclick="checkQuizAnswer()" class="px-4 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs transition shadow-md">
-          যাচাই করুন
-        </button>
-        <button onclick="generateQuizProblem()" class="px-3.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition">
-          পরবর্তী প্রশ্ন ›
-        </button>
-        <span id="quiz-result-msg" class="text-xs font-semibold ml-2"></span>
-      </div>
-    </div>
-
-    <!-- Secondary Settings & Specs Grid (Hidden or neat at bottom) -->
-    <div class="landscape-hide grid grid-cols-1 lg:grid-cols-3 gap-2.5">
-      
-      <!-- Panel 1: Jaw Mode -->
-      <div class="bg-[#081220] border border-slate-800/80 p-3 rounded-2xl space-y-2">
-        <div class="flex items-center gap-2 border-b border-slate-800/80 pb-1.5">
-          <i class="fa-solid fa-shapes text-cyan-400 text-xs"></i>
-          <h3 class="text-xs font-bold text-slate-200">চোয়াল পরিমাপ মোড</h3>
-        </div>
-
-        <div class="grid grid-cols-3 gap-1.5">
-          <button id="btn-mode-0" onclick="setMeasureMode(0)" class="btn-active py-1.5 px-1 rounded-xl text-[11px] font-bold border border-transparent transition text-center">
-            নিচের চোয়াল (বহিঃস্থ)
           </button>
-          <button id="btn-mode-1" onclick="setMeasureMode(1)" class="bg-slate-800 hover:bg-slate-700 text-slate-300 py-1.5 px-1 rounded-xl text-[11px] font-bold border border-slate-700 transition text-center">
-            উপরের চোয়াল (অভ্যন্তরীণ)
+
+          <!-- Circle 2: Sphere -->
+          <button id="card-obj-sphere" onclick="selectObjectById('sphere')" class="p-2.5 rounded-xl bg-[#0c1828] border border-slate-700/80 text-left transition flex items-center gap-3 group hover:border-cyan-400 shadow-md">
+            <div class="w-11 h-11 rounded-full bg-gradient-to-tr from-sky-300 via-blue-500 to-indigo-900 border-2 border-slate-600 group-hover:border-cyan-400 flex items-center justify-center shadow-md shrink-0 group-hover:scale-105 transition-transform">
+              <div class="w-2.5 h-2.5 rounded-full bg-white/80 -translate-x-1.5 -translate-y-1.5"></div>
+            </div>
+            <div class="min-w-0">
+              <span class="text-xs font-bold text-slate-100 block group-hover:text-cyan-300 truncate">২. নিরেট মার্বেল</span>
+              <span class="text-[10px] text-slate-400 block font-mono">ব্যাস: ১৮ মিমি</span>
+              <span class="text-[9px] text-cyan-400 block font-sans">গোলকের ব্যাস</span>
+            </div>
           </button>
-          <button id="btn-mode-2" onclick="setMeasureMode(2)" class="bg-slate-800 hover:bg-slate-700 text-slate-300 py-1.5 px-1 rounded-xl text-[11px] font-bold border border-slate-700 transition text-center">
-            টেইল রড (গভীরতা)
+
+          <!-- Circle 3: Block -->
+          <button id="card-obj-block" onclick="selectObjectById('block')" class="p-2.5 rounded-xl bg-[#0c1828] border border-slate-700/80 text-left transition flex items-center gap-3 group hover:border-cyan-400 shadow-md">
+            <div class="w-11 h-11 rounded-full bg-gradient-to-tr from-amber-900/60 to-yellow-600/50 border-2 border-slate-600 group-hover:border-cyan-400 flex items-center justify-center shadow-md shrink-0 group-hover:scale-105 transition-transform">
+              <div class="w-5 h-5 rounded bg-amber-400/90 border border-amber-200 shadow-inner flex items-center justify-center text-[9px] font-bold text-amber-950">3D</div>
+            </div>
+            <div class="min-w-0">
+              <span class="text-xs font-bold text-slate-100 block group-hover:text-cyan-300 truncate">৩. কাঠের ব্লক</span>
+              <span class="text-[10px] text-slate-400 block font-mono">দৈর্ঘ্য: ২২ মিমি</span>
+              <span class="text-[9px] text-cyan-400 block font-sans">দৈর্ঘ্য ও পুরুত্ব</span>
+            </div>
+          </button>
+
+          <!-- Circle 4: Coin -->
+          <button id="card-obj-coin" onclick="selectObjectById('coin')" class="p-2.5 rounded-xl bg-[#0c1828] border border-slate-700/80 text-left transition flex items-center gap-3 group hover:border-cyan-400 shadow-md">
+            <div class="w-11 h-11 rounded-full bg-gradient-to-tr from-yellow-300 via-amber-400 to-yellow-600 border-2 border-amber-300 group-hover:border-cyan-400 flex items-center justify-center shadow-md shrink-0 group-hover:scale-105 transition-transform">
+              <i class="fa-solid fa-coins text-amber-950 text-xs"></i>
+            </div>
+            <div class="min-w-0">
+              <span class="text-xs font-bold text-slate-100 block group-hover:text-cyan-300 truncate">৪. ধাতব মুদ্রা</span>
+              <span class="text-[10px] text-slate-400 block font-mono">পুরুত্ব: ৩.৫ মিমি</span>
+              <span class="text-[9px] text-cyan-400 block font-sans">মুদ্রার পুরুত্ব</span>
+            </div>
+          </button>
+
+        </div>
+      </div>
+
+      <!-- Micro-Nudge Control Bar -->
+      <div class="bg-[#081220] border border-slate-800/90 p-2 sm:p-2.5 rounded-2xl flex items-center justify-between gap-1.5 sm:gap-2 shadow-xl">
+        <div class="text-[11px] font-bold text-slate-400 pl-1 hidden sm:block">
+          <i class="fa-solid fa-arrows-left-right text-cyan-400 mr-1"></i> সূক্ষ্ম সরান:
+        </div>
+        <div class="flex items-center gap-1.5 flex-1 max-w-xl">
+          <button onclick="nudgeVernier(-10)" class="flex-1 py-1.5 px-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold rounded-xl border border-slate-700 transition flex items-center justify-center gap-1">
+            <i class="fa-solid fa-backward-step"></i> -১ মিমি
+          </button>
+          <button onclick="nudgeVernier(-1)" class="flex-1 py-1.5 px-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold rounded-xl border border-slate-700 transition flex items-center justify-center gap-1">
+            <i class="fa-solid fa-caret-left"></i> -০.১
+          </button>
+          <button onclick="nudgeVernier(1)" class="flex-1 py-1.5 px-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold rounded-xl border border-slate-700 transition flex items-center justify-center gap-1">
+            +০.১ <i class="fa-solid fa-caret-right"></i>
+          </button>
+          <button onclick="nudgeVernier(10)" class="flex-1 py-1.5 px-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold rounded-xl border border-slate-700 transition flex items-center justify-center gap-1">
+            +১ মিমি <i class="fa-solid fa-forward-step"></i>
           </button>
         </div>
       </div>
 
-      <!-- Panel 2: Divisions and Zero Error -->
-      <div class="bg-[#081220] border border-slate-800/80 p-3 rounded-2xl space-y-2">
-        <div class="flex items-center gap-2 border-b border-slate-800/80 pb-1.5">
-          <i class="fa-solid fa-sliders text-cyan-400 text-xs"></i>
-          <h3 class="text-xs font-bold text-slate-200">যন্ত্রের বিবরণ ও শূন্য ত্রুটি</h3>
+      <!-- Live Reading & Calculation Breakdown Card -->
+      <div id="panel-readings" class="bg-[#081220] border border-slate-800/80 rounded-2xl p-2.5 sm:p-3.5 shadow-xl">
+        <div class="flex items-center justify-between border-b border-slate-800/80 pb-1.5 mb-2.5">
+          <div class="flex items-center gap-2">
+            <i class="fa-solid fa-calculator text-cyan-400 text-sm"></i>
+            <h2 class="text-xs sm:text-sm font-bold text-slate-200">লাইভ পাঠ ও গাণিতিক হিসাব</h2>
+          </div>
+          <button onclick="toggleCalcDetails()" id="btn-toggle-details" class="text-[11px] text-cyan-400 hover:underline flex items-center gap-1">
+            <span>হিসাব ধাপসমূহ</span> <i class="fa-solid fa-chevron-down text-[9px]"></i>
+          </button>
         </div>
 
-        <div class="flex items-center justify-between text-[11px]">
-          <span class="text-slate-400">ভার্নিয়ার স্কেলের ভাগ:</span>
-          <div class="flex items-center gap-1">
-            <button id="btn-vsd-10" onclick="setVernierDivisions(10)" class="btn-active py-1 px-2 rounded-lg text-[10px] font-bold transition">১০ ভাগ</button>
-            <button id="btn-vsd-20" onclick="setVernierDivisions(20)" class="bg-slate-800 text-slate-300 py-1 px-2 rounded-lg text-[10px] font-bold transition">২০ ভাগ</button>
-            <button id="btn-vsd-50" onclick="setVernierDivisions(50)" class="bg-slate-800 text-slate-300 py-1 px-2 rounded-lg text-[10px] font-bold transition">৫০ ভাগ</button>
+        <!-- Key Readouts Grid -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-2.5">
+          <!-- Main Scale Reading (M) -->
+          <div class="p-2 sm:p-2.5 rounded-xl bg-[#0b1726] border border-slate-800/90 space-y-0.5">
+            <span class="text-[11px] text-slate-400 block font-medium">মূল স্কেল পাঠ (M)</span>
+            <div class="flex items-baseline gap-1">
+              <span id="val-msr" class="text-base sm:text-lg font-bold font-mono text-cyan-300">0.0</span>
+              <span class="text-[11px] text-slate-400">cm</span>
+              <span id="val-msr-mm" class="text-[10px] text-slate-500 font-mono">(0 mm)</span>
+            </div>
+          </div>
+
+          <!-- Vernier Coincidence (V) -->
+          <div class="p-2 sm:p-2.5 rounded-xl bg-[#0b1726] border border-slate-800/90 space-y-0.5">
+            <span class="text-[11px] text-slate-400 block font-medium">ভার্নিয়ার সমপাতন (V)</span>
+            <div class="flex items-baseline gap-1">
+              <span id="val-vsr" class="text-base sm:text-lg font-bold font-mono text-amber-300">0</span>
+              <span class="text-[11px] text-slate-400">নং দাগ</span>
+            </div>
+          </div>
+
+          <!-- Vernier Constant (VC) -->
+          <div class="p-2 sm:p-2.5 rounded-xl bg-[#0b1726] border border-slate-800/90 space-y-0.5">
+            <span class="text-[11px] text-slate-400 block font-medium">ভার্নিয়ার ধ্রুবক (VC)</span>
+            <div class="flex items-baseline gap-1">
+              <span id="val-vc" class="text-base sm:text-lg font-bold font-mono text-emerald-300">0.01</span>
+              <span class="text-[11px] text-slate-400">cm</span>
+              <span id="val-vc-mm" class="text-[10px] text-slate-500 font-mono">(0.1 mm)</span>
+            </div>
+          </div>
+
+          <!-- Total Corrected Reading -->
+          <div class="p-2 sm:p-2.5 rounded-xl bg-gradient-to-br from-cyan-950/40 to-blue-950/40 border border-cyan-800/60 space-y-0.5">
+            <span class="text-[11px] text-cyan-300 block font-bold">মোট পাঠ (L)</span>
+            <div class="flex items-baseline gap-1">
+              <span id="val-total" class="text-lg sm:text-xl font-extrabold font-mono text-cyan-200">0.00</span>
+              <span class="text-xs text-cyan-400 font-bold">cm</span>
+              <span id="val-total-mm" class="text-[11px] text-cyan-300/80 font-mono">(0.00 mm)</span>
+            </div>
           </div>
         </div>
 
-        <div class="flex items-center justify-between text-[11px] pt-1">
-          <span class="text-slate-400">যান্ত্রিক শূন্য ত্রুটি:</span>
-          <div class="flex items-center gap-1">
-            <button onclick="setZeroError(0)" class="py-1 px-1.5 bg-slate-800 text-slate-300 text-[10px] font-bold rounded-lg transition">০</button>
-            <button onclick="setZeroError(1)" class="py-1 px-1.5 bg-slate-800 text-slate-300 text-[10px] font-bold rounded-lg transition">+১</button>
-            <button onclick="setZeroError(-1)" class="py-1 px-1.5 bg-slate-800 text-slate-300 text-[10px] font-bold rounded-lg transition">-১</button>
-            <button onclick="randomizeZeroError()" class="py-1 px-1.5 bg-slate-800 text-slate-300 text-[10px] font-bold rounded-lg transition">র‍্যান্ডম</button>
+        <!-- Step-by-Step Formula Card -->
+        <div id="calc-step-details" class="p-2.5 rounded-xl bg-[#050b16] border border-slate-800 font-mono text-xs text-slate-300 space-y-1 leading-relaxed">
+          <div class="text-[11px] text-slate-400 font-sans font-semibold border-b border-slate-800/70 pb-1 flex items-center justify-between">
+            <span>পরিমাপ সমীকরণ:</span>
+            <span class="text-cyan-400 font-mono font-bold">L = M + (V × VC) − e</span>
+          </div>
+          <div class="flex flex-wrap items-center gap-2 pt-0.5">
+            <span class="text-slate-400">পাঠ হিসাব:</span>
+            <span id="calc-breakdown-math" class="text-cyan-300 font-bold">0.0 + (0 × 0.01) - 0.00 = 0.00 cm</span>
+          </div>
+          <div class="text-[11px] text-slate-400 font-sans">
+            যান্ত্রিক শূন্য ত্রুটি (e): <span id="calc-zero-error-text" class="text-amber-300 font-mono">0.00 cm</span>
           </div>
         </div>
       </div>
 
-      <!-- Panel 3: Formula Summary -->
-      <div class="bg-[#081220] border border-slate-800/80 p-3 rounded-2xl space-y-1.5 text-[11px] text-slate-300">
-        <div class="flex items-center gap-2 border-b border-slate-800/80 pb-1.5">
-          <i class="fa-solid fa-graduation-cap text-cyan-400 text-xs"></i>
-          <h3 class="text-xs font-bold text-slate-200">তত্ত্ব ও কার্যপদ্ধতি</h3>
+      <!-- Quiz Modal Area -->
+      <div id="panel-quiz" class="hidden bg-[#0a1525] border border-amber-500/40 rounded-2xl p-3.5 shadow-2xl space-y-2.5">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-1.5">
+          <div class="flex items-center gap-2">
+            <span class="px-2 py-0.5 rounded-md bg-amber-500/20 text-amber-300 text-xs font-bold font-mono">QUIZ</span>
+            <h3 class="text-xs sm:text-sm font-bold text-slate-100">নিজে পরিমাপ করে উত্তর জমা দাও</h3>
+          </div>
+          <span class="text-xs text-slate-400">স্কোর: <strong id="quiz-score" class="text-amber-400 font-mono">০/০</strong></span>
         </div>
-        <p><strong>ভার্নিয়ার ধ্রুবক (VC):</strong> <code class="text-cyan-300 font-mono">VC = s / n = 1 mm / 10 = 0.1 mm</code></p>
-        <p><strong>ভার্নিয়ার সমপাতন (V):</strong> ভার্নিয়ারের যে দাগটি মূল স্কেলের দাগের সাথে হুবহু মিলে একটি সরলরেখা তৈরি করে।</p>
+
+        <p class="text-xs text-slate-300 leading-relaxed">
+          চোয়ালে আবদ্ধ বস্তুর পরিমাপটি স্কেল ও ভার্নিয়ারের দাগ দেখে নির্ণয় করো। হিসাব লিখে <strong>'যাচাই করুন'</strong> চাপো:
+        </p>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+          <div>
+            <label class="block text-[11px] text-slate-400 mb-1">১. মূল স্কেল পাঠ M (cm):</label>
+            <input type="number" step="0.1" id="quiz-input-m" placeholder="উদা: 1.8" class="w-full px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-700 text-slate-100 text-xs font-mono focus:border-amber-400 focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-[11px] text-slate-400 mb-1">২. ভার্নিয়ার সমপাতন V (দাগ নং):</label>
+            <input type="number" step="1" id="quiz-input-v" placeholder="উদা: 4" class="w-full px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-700 text-slate-100 text-xs font-mono focus:border-amber-400 focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-[11px] text-slate-400 mb-1">৩. মোট নির্ণীত দৈর্ঘ্য L (cm):</label>
+            <input type="number" step="0.01" id="quiz-input-total" placeholder="উদা: 1.84" class="w-full px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-700 text-slate-100 text-xs font-mono focus:border-amber-400 focus:outline-none">
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2 pt-0.5">
+          <button onclick="checkQuizAnswer()" class="px-4 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs transition shadow-md">
+            যাচাই করুন
+          </button>
+          <button onclick="generateQuizProblem()" class="px-3.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition">
+            পরবর্তী প্রশ্ন ›
+          </button>
+          <span id="quiz-result-msg" class="text-xs font-semibold ml-2"></span>
+        </div>
       </div>
 
-    </div>
+      <!-- Settings & Specifications Grid -->
+      <div class="landscape-hide grid grid-cols-1 lg:grid-cols-3 gap-2.5">
+        
+        <!-- Panel 1: Jaw Mode -->
+        <div class="bg-[#081220] border border-slate-800/80 p-3 rounded-2xl space-y-2">
+          <div class="flex items-center gap-2 border-b border-slate-800/80 pb-1.5">
+            <i class="fa-solid fa-shapes text-cyan-400 text-xs"></i>
+            <h3 class="text-xs font-bold text-slate-200">চোয়াল পরিমাপ মোড</h3>
+          </div>
+
+          <div class="grid grid-cols-3 gap-1.5">
+            <button id="btn-mode-0" onclick="setMeasureMode(0)" class="btn-active py-1.5 px-1 rounded-xl text-[11px] font-bold border border-transparent transition text-center">
+              নিচের চোয়াল (বহিঃস্থ)
+            </button>
+            <button id="btn-mode-1" onclick="setMeasureMode(1)" class="bg-slate-800 hover:bg-slate-700 text-slate-300 py-1.5 px-1 rounded-xl text-[11px] font-bold border border-slate-700 transition text-center">
+              উপরের চোয়াল (অভ্যন্তরীণ)
+            </button>
+            <button id="btn-mode-2" onclick="setMeasureMode(2)" class="bg-slate-800 hover:bg-slate-700 text-slate-300 py-1.5 px-1 rounded-xl text-[11px] font-bold border border-slate-700 transition text-center">
+              টেইল রড (গভীরতা)
+            </button>
+          </div>
+        </div>
+
+        <!-- Panel 2: Divisions and Zero Error -->
+        <div class="bg-[#081220] border border-slate-800/80 p-3 rounded-2xl space-y-2">
+          <div class="flex items-center gap-2 border-b border-slate-800/80 pb-1.5">
+            <i class="fa-solid fa-sliders text-cyan-400 text-xs"></i>
+            <h3 class="text-xs font-bold text-slate-200">যন্ত্রের বিবরণ ও শূন্য ত্রুটি</h3>
+          </div>
+
+          <div class="flex items-center justify-between text-[11px]">
+            <span class="text-slate-400">ভার্নিয়ার স্কেলের ভাগ:</span>
+            <div class="flex items-center gap-1">
+              <button id="btn-vsd-10" onclick="setVernierDivisions(10)" class="btn-active py-1 px-2 rounded-lg text-[10px] font-bold transition">১০ ভাগ</button>
+              <button id="btn-vsd-20" onclick="setVernierDivisions(20)" class="bg-slate-800 text-slate-300 py-1 px-2 rounded-lg text-[10px] font-bold transition">২০ ভাগ</button>
+              <button id="btn-vsd-50" onclick="setVernierDivisions(50)" class="bg-slate-800 text-slate-300 py-1 px-2 rounded-lg text-[10px] font-bold transition">৫০ ভাগ</button>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between text-[11px] pt-1">
+            <span class="text-slate-400">যান্ত্রিক শূন্য ত্রুটি:</span>
+            <div class="flex items-center gap-1">
+              <button onclick="setZeroError(0)" class="py-1 px-1.5 bg-slate-800 text-slate-300 text-[10px] font-bold rounded-lg transition">০</button>
+              <button onclick="setZeroError(1)" class="py-1 px-1.5 bg-slate-800 text-slate-300 text-[10px] font-bold rounded-lg transition">+১</button>
+              <button onclick="setZeroError(-1)" class="py-1 px-1.5 bg-slate-800 text-slate-300 text-[10px] font-bold rounded-lg transition">-১</button>
+              <button onclick="randomizeZeroError()" class="py-1 px-1.5 bg-slate-800 text-slate-300 text-[10px] font-bold rounded-lg transition">র‍্যান্ডম</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Panel 3: Formula Summary -->
+        <div class="bg-[#081220] border border-slate-800/80 p-3 rounded-2xl space-y-1.5 text-[11px] text-slate-300">
+          <div class="flex items-center gap-2 border-b border-slate-800/80 pb-1.5">
+            <i class="fa-solid fa-graduation-cap text-cyan-400 text-xs"></i>
+            <h3 class="text-xs font-bold text-slate-200">তত্ত্ব ও কার্যপদ্ধতি</h3>
+          </div>
+          <p><strong>ভার্নিয়ার ধ্রুবক (VC):</strong> <code class="text-cyan-300 font-mono">VC = s / n = 1 mm / 10 = 0.1 mm</code></p>
+          <p><strong>ভার্নিয়ার সমপাতন (V):</strong> ভার্নিয়ারের যে দাগটি মূল স্কেলের দাগের সাথে হুবহু মিলে একটি সরলরেখা তৈরি করে।</p>
+        </div>
+
+      </div>
+
+    </section>
 
   </main>
 
@@ -466,74 +454,50 @@
     const OBJECT_PRESETS = {
       cylinder: {
         id: 'cylinder',
-        name: 'ফাঁপা ব্রাস চোঙ',
+        name: 'ফাঁপা চোঙ',
         type: 'cylinder',
-        outerDia: 18.4, // 18.4 mm
-        innerDia: 9.6,  // 9.6 mm
-        depth: 14.0,    // 14.0 mm
-        R2: 92,
-        R1: 48,
-        h2: 140,
-        h1: 90,
-        color: 'brass',
-        w: 184,
-        h: 140
+        outerDia: 24.0, // 24.0 mm
+        innerDia: 14.0, // 14.0 mm
+        depth: 30.0,    // 30.0 mm
+        color: '#38bdf8'
       },
       sphere: {
         id: 'sphere',
-        name: 'স্টিল মার্বেল',
+        name: 'নিরেট মার্বেল',
         type: 'sphere',
-        outerDia: 24.6, // 24.6 mm
+        outerDia: 18.0, // 18.0 mm
         innerDia: 0,
-        depth: 0,
-        R2: 123,
-        R1: 0,
-        h2: 246,
-        h1: 0,
-        color: 'chrome',
-        w: 246,
-        h: 246
+        depth: 18.0,
+        color: '#60a5fa'
       },
       block: {
         id: 'block',
-        name: 'ধাতব ব্লক',
+        name: 'কাঠের ব্লক',
         type: 'block',
-        outerDia: 13.8, // 13.8 mm
+        outerDia: 22.0, // 22.0 mm
         innerDia: 0,
-        depth: 26.0,
-        R2: 69,
-        R1: 0,
-        h2: 260,
-        h1: 0,
-        color: 'cyan',
-        w: 138,
-        h: 260
+        depth: 22.0,
+        color: '#fbbf24'
       },
       coin: {
         id: 'coin',
-        name: 'তাম্র মুদ্রা',
+        name: 'ধাতব মুদ্রা',
         type: 'coin',
         outerDia: 20.0, // 20.0 mm
         innerDia: 0,
-        depth: 2.4, // 2.4 mm
-        R2: 100,
-        R1: 0,
-        h2: 50,
-        h1: 0,
-        color: 'copper',
-        w: 200,
-        h: 50
+        depth: 3.5,     // 3.5 mm thickness
+        color: '#f59e0b'
       }
     };
 
-    // Global State
+    // State Variables
     window.caliperState = {
       images: {},
       loaded: false,
       scale: 1,
       xOffset: 30,
       yOffset: 30,
-      dragMode: 0, // 0: none, 1: world pan, 2: vernier slider, 3: active object dragging
+      dragMode: 0, // 0: none, 1: world pan, 2: vernier slider, 3: active object dragging, 4: pinch zoom
       draggedObjectId: null,
       mx: 0,
       my: 0,
@@ -566,10 +530,6 @@
 
       measureMode: 0, // 0: External, 1: Internal, 2: Depth
       selectedObjectId: 'cylinder', // active object currently measured
-      
-      // Tray layout geometry
-      trayScale: 0.35, // Objects in tray are drawn small
-      trayBounds: [], // Click/touch hotspots for mini objects in tray
 
       // Object state dictionary
       objects: {}
@@ -579,48 +539,19 @@
     const canvas = document.getElementById('caliper-canvas');
     const ctx = canvas.getContext('2d');
 
-    // Initialize all objects
-    Object.keys(OBJECT_PRESETS).forEach(key => {
-      const p = OBJECT_PRESETS[key];
-      S.objects[key] = {
-        id: p.id,
-        name: p.name,
-        type: p.type,
-        state: key === 'cylinder' ? 2 : 1, // 2: active on stage, 1: resting in tray
-        x: 0,
-        y: 0,
-        w: p.w,
-        h: p.h,
-        th: 0,
-        R2: p.R2,
-        R1: p.R1,
-        h2: p.h2,
-        h1: p.h1,
-        length: 2 * p.R2,
-        color: p.color
-      };
-    });
-
-    // Synthesized Click/Tick Sound Generator
+    // Audio Synthesizer
     let audioCtx = null;
     function playTickSound() {
       if (!S.soundEnabled) return;
       try {
-        if (!audioCtx) {
-          const AudioContext = window.AudioContext || window.webkitAudioContext;
-          if (AudioContext) audioCtx = new AudioContext();
-        }
-        if (audioCtx && audioCtx.state === 'suspended') {
-          audioCtx.resume();
-        }
-        if (!audioCtx) return;
-
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
         osc.type = 'triangle';
-        osc.frequency.setValueAtTime(1450, audioCtx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(320, audioCtx.currentTime + 0.035);
-        gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+        osc.frequency.setValueAtTime(1400, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(350, audioCtx.currentTime + 0.035);
+        gain.gain.setValueAtTime(0.09, audioCtx.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.035);
         osc.connect(gain);
         gain.connect(audioCtx.destination);
@@ -629,20 +560,71 @@
       } catch (err) {}
     }
 
-    // Preload Base64 Images
+    function playSnapSound() {
+      if (!S.soundEnabled) return;
+      try {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(750, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(180, audioCtx.currentTime + 0.08);
+        gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.08);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.09);
+      } catch (err) {}
+    }
+
+    // Initialize Multi-Object Instances
+    function initializeObjects() {
+      const scaleFactor = 10; // 10 px per mm
+
+      Object.keys(OBJECT_PRESETS).forEach((k) => {
+        const p = OBJECT_PRESETS[k];
+        let w = p.outerDia * scaleFactor;
+        let h = (p.type === 'coin') ? p.depth * scaleFactor : w;
+
+        S.objects[k] = {
+          id: k,
+          name: p.name,
+          type: p.type,
+          x: S.scaleOriginX + 5,
+          y: 200,
+          w: w,
+          h: h,
+          R1: (p.innerDia / 2) * scaleFactor,
+          R2: (p.outerDia / 2) * scaleFactor,
+          depth: p.depth * scaleFactor,
+          thickness: (p.type === 'coin') ? p.depth * scaleFactor : 60,
+          color: p.color,
+          state: (k === S.selectedObjectId) ? 2 : 1 // 1: Inactive, 2: Active on caliper
+        };
+      });
+
+      snapActiveObjectToJaws();
+    }
+
+    // Load Simulation Assets
+    const imageKeys = ['base.png', 'vernier1.png', 'blade.png', 'glass.png', 'wood.png', 'iron.png'];
     let loadedCount = 0;
-    const imgKeys = ['vernier_base.png', 'vernier1.png', 'vernier2.png', 'vernier3.png', 'blade.png'];
-    imgKeys.forEach(k => {
+
+    function onDone() {
+      loadedCount++;
+      if (loadedCount === imageKeys.length) {
+        S.loaded = true;
+        initializeObjects();
+        resizeCanvas();
+        autoClampToCurrentObject();
+        render();
+      }
+    }
+
+    imageKeys.forEach(k => {
       const img = new Image();
-      const onDone = () => {
-        loadedCount++;
-        if (loadedCount >= imgKeys.length) {
-          S.loaded = true;
-          snapActiveObjectToJaws();
-          resizeCanvas();
-          autoClampToCurrentObject();
-        }
-      };
       img.onload = onDone;
       img.onerror = () => {
         console.warn('Caliper image load notice:', k);
@@ -658,156 +640,98 @@
       const obj = S.objects[activeId];
       if (!obj) return;
 
-      // Ensure ONLY this object is on stage (state = 2); all others stay in tray (state = 1)
+      // Ensure ONLY this object is active on stage (state = 2); all others are inactive
       Object.keys(S.objects).forEach(id => {
-        if (id === activeId) {
-          S.objects[id].state = 2; // Active on stage
-        } else {
-          S.objects[id].state = 1; // Mini in tray
-        }
+        S.objects[id].state = (id === activeId) ? 2 : 1;
       });
 
+      const msd_px = S.mainScaleLength / S.mainScaleDivisions; // 10 px/mm
+      const shift_px = (S.msr + S.vsr / S.vernierDivisions) * msd_px;
+
       if (S.measureMode === 0) {
-        // Lower External Jaws
-        obj.w = 2 * obj.R2;
-        obj.h = obj.h2;
-        obj.th = 0;
-        obj.x = S.scaleOriginX;
-        obj.y = 230;
-        obj.length = 2 * obj.R2;
+        // Mode 0: Lower External Jaws (Measure outer diameter/length)
+        obj.x = S.scaleOriginX + 1;
+        obj.y = 215;
       } else if (S.measureMode === 1) {
-        // Upper Internal Jaws
-        obj.w = 2 * obj.R2;
-        obj.h = obj.h2;
-        obj.th = 0;
-        obj.x = S.scaleOriginX - obj.R2 + obj.R1 - 32;
-        obj.y = 12;
-        obj.length = 2 * (obj.R1 || obj.R2 * 0.5);
+        // Mode 1: Upper Internal Jaws (Measure inner diameter)
+        obj.x = S.scaleOriginX - 10;
+        obj.y = 15;
       } else if (S.measureMode === 2) {
-        // Right Depth Probe Rod
-        obj.th = Math.PI / 2;
-        obj.w = obj.h2;
-        obj.h = obj.R2 * 2;
-        obj.x = S.rulerWidthPixel - 8;
-        obj.y = 100;
-        obj.length = obj.h1 || obj.h2;
+        // Mode 2: Depth Gauge Probe (Measure hole depth)
+        obj.x = S.rulerWidthPixel - 15;
+        obj.y = 110;
       }
-
-      const badgeName = document.getElementById('badge-obj-name');
-      if (badgeName) badgeName.textContent = obj.name;
     }
 
-    // Canvas Resize with High-DPI Crispness and Monitor Optimization
-    function resizeCanvas() {
-      const rect = canvas.getBoundingClientRect();
-      const dpr = window.devicePixelRatio || 1;
-      canvas.width = Math.round(rect.width * dpr);
-      canvas.height = Math.round(rect.height * dpr);
+    // High Precision Silver Caliper Graduations
+    function drawGraduations() {
+      const msd_px = S.mainScaleLength / S.mainScaleDivisions; // 10 px per mm
+      const shift_px = (S.msr + S.vsr / S.vernierDivisions) * msd_px;
 
-      // Auto-fit caliper scale according to canvas dimensions
-      const aspect = rect.width / rect.height;
-      if (aspect > 1.8) {
-        // Widescreen monitor / phone landscape
-        S.scale = (canvas.width / dpr) / 1060;
-        if (S.scale > 1.35) S.scale = 1.35;
-        if (S.scale < 0.5) S.scale = 0.5;
-        S.xOffset = Math.max(20, (canvas.width / dpr - 960 * S.scale) / 2);
-        S.yOffset = Math.max(10, (canvas.height / dpr - 470 * S.scale) / 2);
-      } else {
-        // Portrait mobile
-        S.scale = (canvas.width / dpr) / 1020;
-        if (S.scale < 0.40) S.scale = 0.40;
-        if (S.scale > 1.15) S.scale = 1.15;
-        S.xOffset = Math.max(12, (canvas.width / dpr - 940 * S.scale) / 2);
-        S.yOffset = Math.max(15, (canvas.height / dpr - 480 * S.scale) / 2);
-      }
+      // 1. Main Scale Graduations
+      let mainStartX = S.scaleOriginX + S.offsetOriginX - msd_px * S.zeroError / S.vernierDivisions;
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = '#1e293b';
+      ctx.fillStyle = '#0f172a';
+      ctx.font = '600 9px "JetBrains Mono", monospace';
 
-      render();
-    }
+      for (let i = 0; i <= S.mainScaleDivisions; i++) {
+        const x = mainStartX + i * msd_px;
+        const isMajor = (i % 10 === 0);
+        const isMid = (i % 5 === 0);
+        const tickLen = isMajor ? S.majorTickLength : (isMid ? 15 : S.minorTickLength);
 
-    // Step Movement Function with Mahesh Kurmi physics limits
-    function translateVernier(step) {
-      S.vsr += step;
-      while (S.vsr < 0) {
-        S.vsr += S.vernierDivisions;
-        S.msr -= 1;
-      }
-      while (S.vsr >= S.vernierDivisions) {
-        S.vsr -= S.vernierDivisions;
-        S.msr += 1;
-      }
+        ctx.beginPath();
+        ctx.moveTo(x, S.scaleOriginY);
+        ctx.lineTo(x, S.scaleOriginY - tickLen);
+        ctx.stroke();
 
-      // Minimum bounds
-      if (S.msr < 0) {
-        S.msr = 0;
-        S.vsr = 0;
-        playTickSound();
-      }
-
-      // Maximum bounds (60 mm = 6 cm)
-      if (S.msr >= S.mainScaleDivisions) {
-        S.msr = S.mainScaleDivisions;
-        S.vsr = 0;
-        playTickSound();
-      }
-
-      // Contact resistance against active snapped object
-      const activeObj = S.objects[S.selectedObjectId];
-      if (activeObj && activeObj.state === 2) {
-        const msd_px = S.mainScaleLength / S.mainScaleDivisions;
-        const current_px = (S.msr + S.vsr / S.vernierDivisions) * msd_px;
-        const target_px = activeObj.length;
-
-        if (S.measureMode === 0 && current_px < target_px) {
-          S.msr = Math.floor(target_px / msd_px);
-          S.vsr = Math.round((target_px / msd_px - S.msr) * S.vernierDivisions);
-          playTickSound();
-        } else if (S.measureMode === 1 && current_px > target_px) {
-          S.msr = Math.floor(target_px / msd_px);
-          S.vsr = Math.round((target_px / msd_px - S.msr) * S.vernierDivisions);
-          playTickSound();
-        } else if (S.measureMode === 2 && current_px > target_px) {
-          S.msr = Math.floor(target_px / msd_px);
-          S.vsr = Math.round((target_px / msd_px - S.msr) * S.vernierDivisions);
-          playTickSound();
+        if (isMajor) {
+          const cmVal = (i / 10).toString();
+          ctx.fillText(cmVal, x - 3, S.scaleOriginY - tickLen - 4);
         }
       }
 
-      updatePhysics(false);
+      // Unit Label
+      ctx.font = 'bold 8px "JetBrains Mono", monospace';
+      ctx.fillStyle = '#475569';
+      ctx.fillText('cm', mainStartX + S.mainScaleDivisions * msd_px + 8, S.scaleOriginY - 8);
+
+      // 2. Vernier Scale Graduations
+      const vsd_px = msd_px * (1 - 1 / S.vernierDivisions);
+      let vernierStartX = S.scaleOriginX + shift_px + S.offsetOriginX;
+      ctx.font = '600 8.5px "JetBrains Mono", monospace';
+
+      for (let i = 0; i <= S.vernierDivisions; i++) {
+        const x = vernierStartX + i * vsd_px;
+        const isMajor = (i % (S.vernierDivisions >= 50 ? 5 : (S.vernierDivisions >= 20 ? 2 : 1)) === 0);
+        const tickLen = isMajor ? S.vernierMajorTick : S.vernierMinorTick;
+
+        // Highlight coincident mark in vibrant red
+        if (i === S.vsr && S.showLoupe) {
+          ctx.strokeStyle = '#dc2626';
+          ctx.lineWidth = 1.5;
+        } else {
+          ctx.strokeStyle = '#0f172a';
+          ctx.lineWidth = 0.9;
+        }
+
+        ctx.beginPath();
+        ctx.moveTo(x, S.vernierOriginY);
+        ctx.lineTo(x, S.vernierOriginY + tickLen);
+        ctx.stroke();
+
+        if (isMajor) {
+          ctx.fillStyle = (i === S.vsr && S.showLoupe) ? '#dc2626' : '#1e293b';
+          const numStr = i.toString();
+          ctx.fillText(numStr, x - 2.5, S.vernierOriginY + tickLen + 9);
+        }
+      }
+
+      ctx.lineWidth = 1;
     }
 
-    // Live Readout Calculation & UI Update
-    function updatePhysics(forceDraw = true) {
-      const msd_cm = S.msdValue; // 0.1 cm
-      const vc_cm = msd_cm / S.vernierDivisions;
-      const zero_error_cm = (S.zeroError / S.vernierDivisions) * msd_cm;
-      
-      const observed_cm = S.msr * msd_cm + S.vsr * vc_cm;
-      const corrected_cm = Math.max(0, observed_cm - zero_error_cm);
-
-      document.getElementById('val-msr').textContent = (S.msr * msd_cm).toFixed(1);
-      document.getElementById('val-msr-mm').textContent = `(${S.msr.toFixed(0)} mm)`;
-      
-      document.getElementById('val-vsr').textContent = S.vsr;
-      document.getElementById('val-vc').textContent = vc_cm.toFixed(3);
-      document.getElementById('val-vc-mm').textContent = `(${(vc_cm * 10).toFixed(2)} mm)`;
-      document.getElementById('badge-vc').textContent = `${(vc_cm * 10).toFixed(2)} mm`;
-
-      document.getElementById('val-total').textContent = corrected_cm.toFixed(3);
-      document.getElementById('val-total-mm').textContent = `(${(corrected_cm * 10).toFixed(2)} mm)`;
-
-      const sign = zero_error_cm >= 0 ? '−' : '+';
-      const abs_ze = Math.abs(zero_error_cm);
-      document.getElementById('calc-breakdown-math').textContent = 
-        `${(S.msr * msd_cm).toFixed(1)} + (${S.vsr} × ${vc_cm.toFixed(3)}) ${sign} ${abs_ze.toFixed(3)} = ${corrected_cm.toFixed(3)} cm`;
-      
-      document.getElementById('calc-zero-error-text').textContent = 
-        `${zero_error_cm >= 0 ? '+' : ''}${zero_error_cm.toFixed(3)} cm (${(zero_error_cm * 10).toFixed(2)} mm)`;
-
-      render();
-    }
-
-    // Primary High-Fidelity Rendering Function
+    // Render Canvas Loop (Pure 16:9 Simulator Screen, No Tray)
     function render() {
       if (!S.loaded) return;
 
@@ -817,9 +741,6 @@
       ctx.save();
       ctx.scale(S.scale * dpr, S.scale * dpr);
       ctx.translate(S.xOffset, S.yOffset);
-
-      // 0. Draw Technical Blueprint Workbench Tray (with compact miniatures)
-      drawWorkbenchTray();
 
       const msd_px = S.mainScaleLength / S.mainScaleDivisions; // 10 px / mm
       const shift_px = (S.msr + S.vsr / S.vernierDivisions) * msd_px;
@@ -837,389 +758,172 @@
       ctx.fillStyle = bladeGrad;
       ctx.fillRect(bladeX, bladeY, S.images['blade.png'].width, S.images['blade.png'].height);
 
-      // 2. Draw Caliper Base (Main fixed beam & fixed jaws)
-      ctx.drawImage(S.images['vernier_base.png'], 0, 0);
+      // 2. Draw Fixed Base & Main Scale Beam (Realistic Brushed Metallic Steel)
+      ctx.drawImage(S.images['base.png'], 0, 0);
 
-      // Satin Brushed Silver Metallic Overlay on Base
-      ctx.save();
-      const silverGrad = ctx.createLinearGradient(0, 40, 0, 260);
-      silverGrad.addColorStop(0, 'rgba(255,255,255,0.24)');
-      silverGrad.addColorStop(0.25, 'rgba(226,232,240,0.08)');
-      silverGrad.addColorStop(0.5, 'rgba(248,250,252,0.18)');
-      silverGrad.addColorStop(0.85, 'rgba(148,163,184,0.12)');
-      silverGrad.addColorStop(1, 'rgba(71,85,105,0.28)');
-      ctx.fillStyle = silverGrad;
-      ctx.fillRect(0, 0, S.rulerWidthPixel, 350);
-      ctx.restore();
+      const baseGrad = ctx.createLinearGradient(0, 0, 0, 360);
+      baseGrad.addColorStop(0, 'rgba(255, 255, 255, 0.28)');
+      baseGrad.addColorStop(0.35, 'rgba(241, 245, 249, 0.08)');
+      baseGrad.addColorStop(0.65, 'rgba(148, 163, 184, 0.15)');
+      baseGrad.addColorStop(1, 'rgba(51, 65, 85, 0.35)');
+      ctx.fillStyle = baseGrad;
+      ctx.fillRect(0, 0, S.rulerWidthPixel, 360);
 
-      // 3. Draw Laser-Etched Main Scale Graduations
-      ctx.save();
-      ctx.translate(S.scaleOriginX + S.offsetOriginX, S.scaleOriginY);
-      
-      let tickX = -msd_px * S.zeroError / S.vernierDivisions;
-      ctx.lineWidth = 1.3;
-      ctx.strokeStyle = '#0f172a'; // Deep etched charcoal
-      ctx.fillStyle = '#0f172a';
-      ctx.font = '600 11px "JetBrains Mono", monospace';
+      // 3. Draw ONLY the Active Single Measured Object between the Jaws
+      drawActiveObjectOnBench();
 
-      for (let i = 0; i <= S.mainScaleDivisions; i++) {
-        let tickLen;
-        if (i % 10 === 0) {
-          tickLen = S.majorTickLength; // 1 cm marks
-          ctx.beginPath();
-          ctx.moveTo(tickX, 0);
-          ctx.lineTo(tickX, -tickLen);
-          ctx.stroke();
-          const cmNum = (i / 10).toString();
-          const tw = ctx.measureText(cmNum).width;
-          ctx.fillText(cmNum, tickX - tw / 2, -tickLen - 4);
-        } else if (i % 5 === 0) {
-          tickLen = S.majorTickLength - 6; // 0.5 cm marks
-          ctx.beginPath();
-          ctx.moveTo(tickX, 0);
-          ctx.lineTo(tickX, -tickLen);
-          ctx.stroke();
-        } else {
-          tickLen = S.minorTickLength; // 1 mm marks
-          ctx.beginPath();
-          ctx.moveTo(tickX, 0);
-          ctx.lineTo(tickX, -tickLen);
-          ctx.stroke();
-        }
-        tickX += msd_px;
-      }
-
-      ctx.font = '700 9px "JetBrains Mono", sans-serif';
-      ctx.fillStyle = '#334155';
-      ctx.fillText('cm', S.mainScaleLength + 8, -6);
-      ctx.fillText('1 MSD = 1 mm', S.mainScaleLength - 60, -28);
-      ctx.restore();
-
-      // 4. Draw ONLY the single active object on the stage / between jaws
-      drawActiveObjectOnStage();
-
-      // 5. Draw Sliding Vernier Scale Assembly (vernier1, stretched vernier2, vernier3)
+      // 4. Draw Sliding Vernier Assembly
       const vLeft = S.scaleOriginX - S.offsetOriginX + shift_px - S.vernierOriginX;
-      const vTop = S.scaleOriginY - S.vernierOriginY;
+      ctx.drawImage(S.images['vernier1.png'], vLeft, 0);
 
-      ctx.drawImage(S.images['vernier1.png'], vLeft, vTop);
+      // Metallic Sheen on Sliding Vernier
+      const vGrad = ctx.createLinearGradient(vLeft, 0, vLeft + 260, 340);
+      vGrad.addColorStop(0, 'rgba(255, 255, 255, 0.35)');
+      vGrad.addColorStop(0.4, 'rgba(226, 232, 240, 0.08)');
+      vGrad.addColorStop(0.7, 'rgba(148, 163, 184, 0.2)');
+      vGrad.addColorStop(1, 'rgba(30, 41, 59, 0.4)');
+      ctx.fillStyle = vGrad;
+      ctx.fillRect(vLeft, 0, 260, 340);
 
-      const vsd_px = msd_px * (1 - 1 / S.vernierDivisions);
-      const minScaleWidth = 60 + vsd_px * S.vernierDivisions + 50;
-      const stretchW = Math.max(10, minScaleWidth - S.images['vernier1.png'].width - S.images['vernier3.png'].width);
-      
-      const v2X = vLeft + S.images['vernier1.png'].width;
-      ctx.drawImage(S.images['vernier2.png'], 0, 0, S.images['vernier2.png'].width, S.images['vernier1.png'].height, v2X, vTop, stretchW, S.images['vernier1.png'].height);
+      // 5. Draw Scale Millimeter Graduations
+      drawGraduations();
 
-      const v3X = v2X + stretchW;
-      ctx.drawImage(S.images['vernier3.png'], v3X, vTop);
-
-      // Vernier Brushed Sheen
-      ctx.save();
-      const vSheen = ctx.createLinearGradient(vLeft, vTop, vLeft, vTop + S.images['vernier1.png'].height);
-      vSheen.addColorStop(0, 'rgba(255,255,255,0.3)');
-      vSheen.addColorStop(0.3, 'rgba(226,232,240,0.1)');
-      vSheen.addColorStop(0.6, 'rgba(248,250,252,0.2)');
-      vSheen.addColorStop(1, 'rgba(71,85,105,0.25)');
-      ctx.fillStyle = vSheen;
-      ctx.fillRect(vLeft, vTop, S.images['vernier1.png'].width + stretchW + S.images['vernier3.png'].width, S.images['vernier1.png'].height);
-      ctx.restore();
-
-      // 6. Draw Vernier Scale Laser Graduations
-      ctx.save();
-      let vTickX = S.scaleOriginX + shift_px + S.offsetOriginX;
-      const vTickY = S.vernierOriginY - 1;
-      ctx.lineWidth = 1.3;
-      ctx.strokeStyle = '#0f172a';
-      ctx.fillStyle = '#0f172a';
-      ctx.font = '600 9px "JetBrains Mono", monospace';
-
-      const N = S.vernierDivisions;
-      const labelInterval = N >= 50 ? 5 : (N >= 20 ? 2 : 1);
-
-      for (let i = 0; i <= N; i++) {
-        let vLen = S.vernierMinorTick;
-        if (i % labelInterval === 0) {
-          vLen = S.vernierMajorTick;
-          ctx.beginPath();
-          ctx.moveTo(vTickX, vTickY);
-          ctx.lineTo(vTickX, vTickY + vLen);
-          ctx.stroke();
-
-          const numStr = i.toString();
-          const tw = ctx.measureText(numStr).width;
-          ctx.fillText(numStr, vTickX - tw / 2, vTickY + vLen + 10);
-        } else {
-          ctx.beginPath();
-          ctx.moveTo(vTickX, vTickY);
-          ctx.lineTo(vTickX, vTickY + vLen);
-          ctx.stroke();
-        }
-
-        // Highlight Vernier Coincidence with cyan marker
-        if (i === S.vsr && !S.quizMode) {
-          ctx.save();
-          ctx.strokeStyle = '#0284c7';
-          ctx.lineWidth = 2.0;
-          ctx.beginPath();
-          ctx.moveTo(vTickX, vTickY - 2);
-          ctx.lineTo(vTickX, vTickY + vLen + 2);
-          ctx.stroke();
-          ctx.restore();
-        }
-
-        vTickX += vsd_px;
-      }
-      ctx.restore();
-
-      // 7. Base Overlap Front Lip (Draws front jaw lip over sliding track)
-      ctx.drawImage(S.images['vernier_base.png'], 0, 0, 64, 102, 0, 0, 64, 102);
-
-      // 8. Snap Target Hotspots (Pulsing dashed highlights when dragging)
+      // 6. Draw Highlight Snapping targets when actively dragging object
       if (S.dragMode === 3) {
         drawSnapTargetHighlights();
       }
 
-      // 9. Floating Magnifier Loupe Lens (Mathematical precision alignment)
-      if (S.showLoupe && !S.quizMode) {
-        // EXACT mathematical coordinate of the coincident vernier mark:
-        const coincidenceX = S.scaleOriginX + shift_px + S.offsetOriginX + S.vsr * vsd_px;
-        drawMagnifyingLoupe(coincidenceX, S.scaleOriginY);
+      // 7. Draw High-Precision Magnifier Loupe Lens
+      if (S.showLoupe) {
+        const coincidenceX = S.scaleOriginX + shift_px + S.offsetOriginX + S.vsr * (msd_px * (1 - 1 / S.vernierDivisions));
+        const baselineY = S.scaleOriginY;
+        drawMagnifyingLoupe(coincidenceX, baselineY);
       }
 
       ctx.restore();
     }
 
-    // Draw On-Screen Workbench Tray with Compact Small Specimen Pods
-    function drawWorkbenchTray() {
-      ctx.save();
-      const trayY = 375;
-      const trayW = 880;
-      const trayH = 80;
-
-      // Elegant brushed aluminum specimen dish tray
-      const trayGrad = ctx.createLinearGradient(0, trayY, 0, trayY + trayH);
-      trayGrad.addColorStop(0, 'rgba(15, 23, 42, 0.85)');
-      trayGrad.addColorStop(1, 'rgba(30, 41, 59, 0.6)');
-      ctx.fillStyle = trayGrad;
-      ctx.roundRect ? ctx.roundRect(40, trayY, trayW, trayH, 12) : ctx.rect(40, trayY, trayW, trayH);
-      ctx.fill();
-
-      ctx.strokeStyle = 'rgba(56, 189, 248, 0.25)';
-      ctx.lineWidth = 1.2;
-      ctx.setLineDash([3, 3]);
-      ctx.stroke();
-      ctx.setLineDash([]);
-
-      // Tray Header Label
-      ctx.font = '600 10px "Hind Siliguri", sans-serif';
-      ctx.fillStyle = '#94a3b8';
-      ctx.fillText('পরিমাপের নমুনা ট্রে (SPECIMEN TRAY) — যেকোনো বস্তুতে টাচ করলে তা সরাসরি পরিমাপের জন্য চোয়ালে যাবে', 55, trayY + 16);
-
-      // Reset touch hotspots
-      S.trayBounds = [];
-
-      // Render the 4 compact mini objects inside individual circular dishes
-      const objKeys = ['cylinder', 'sphere', 'block', 'coin'];
-      const podW = 195;
-      const startX = 65;
-
-      objKeys.forEach((id, idx) => {
-        const obj = S.objects[id];
-        const podX = startX + idx * podW;
-        const podY = trayY + 22;
-        const isSelected = S.selectedObjectId === id && obj.state === 2;
-
-        // Circular specimen pedestal dish
-        ctx.save();
-        ctx.beginPath();
-        ctx.ellipse(podX + 45, podY + 26, 42, 18, 0, 0, Math.PI * 2);
-        ctx.fillStyle = isSelected ? 'rgba(56, 189, 248, 0.25)' : 'rgba(15, 23, 42, 0.9)';
-        ctx.fill();
-        ctx.strokeStyle = isSelected ? '#38bdf8' : 'rgba(100, 116, 139, 0.35)';
-        ctx.lineWidth = isSelected ? 2 : 1;
-        ctx.stroke();
-        ctx.restore();
-
-        // Mini Object Render (Scale = 0.35x)
-        ctx.save();
-        ctx.translate(podX + 45, podY + 20);
-        ctx.scale(0.35, 0.35);
-
-        // Center the mini object on the dish
-        const halfW = obj.w / 2;
-        const halfH = obj.h / 2;
-        ctx.translate(-halfW, -halfH);
-
-        // Object gradient
-        let grad;
-        if (obj.color === 'brass') {
-          grad = ctx.createLinearGradient(0, 0, obj.w, obj.h);
-          grad.addColorStop(0, '#f59e0b');
-          grad.addColorStop(0.3, '#fef3c7');
-          grad.addColorStop(0.7, '#d97706');
-          grad.addColorStop(1, '#92400e');
-        } else if (obj.color === 'chrome') {
-          grad = ctx.createRadialGradient(obj.R2 * 0.7, obj.R2 * 0.7, 5, obj.R2, obj.R2, obj.R2);
-          grad.addColorStop(0, '#ffffff');
-          grad.addColorStop(0.4, '#cbd5e1');
-          grad.addColorStop(0.8, '#64748b');
-          grad.addColorStop(1, '#1e293b');
-        } else if (obj.color === 'cyan') {
-          grad = ctx.createLinearGradient(0, 0, obj.w, obj.h);
-          grad.addColorStop(0, '#38bdf8');
-          grad.addColorStop(0.4, '#e0f2fe');
-          grad.addColorStop(0.8, '#0284c7');
-          grad.addColorStop(1, '#075985');
-        } else {
-          grad = ctx.createLinearGradient(0, 0, obj.w, obj.h);
-          grad.addColorStop(0, '#fb7185');
-          grad.addColorStop(0.4, '#fed7aa');
-          grad.addColorStop(0.8, '#e11d48');
-          grad.addColorStop(1, '#881337');
-        }
-
-        ctx.fillStyle = grad;
-        ctx.strokeStyle = '#0f172a';
-        ctx.lineWidth = 1.6;
-
-        if (obj.type === 'cylinder') {
-          ctx.beginPath();
-          ctx.moveTo(0, 0);
-          ctx.lineTo(obj.w, 0);
-          ctx.lineTo(obj.w, obj.h);
-          ctx.lineTo(obj.R1 + obj.R2, obj.h);
-          ctx.lineTo(obj.R2 + obj.R1, obj.h - obj.h1);
-          ctx.lineTo(obj.R2 - obj.R1, obj.h - obj.h1);
-          ctx.lineTo(obj.R2 - obj.R1, obj.h);
-          ctx.lineTo(0, obj.h);
-          ctx.closePath();
-          ctx.fill();
-          ctx.stroke();
-          ctx.fillStyle = 'rgba(0,0,0,0.35)';
-          ctx.fillRect(obj.R2 - obj.R1, obj.h - obj.h1, 2 * obj.R1, obj.h1);
-        } else if (obj.type === 'sphere') {
-          ctx.beginPath();
-          ctx.arc(obj.R2, obj.R2, obj.R2, 0, Math.PI * 2);
-          ctx.fill();
-          ctx.stroke();
-        } else if (obj.type === 'block') {
-          ctx.beginPath();
-          ctx.rect(0, 0, obj.w, obj.h);
-          ctx.fill();
-          ctx.stroke();
-        } else if (obj.type === 'coin') {
-          ctx.beginPath();
-          ctx.roundRect ? ctx.roundRect(0, 0, obj.w, obj.h, 6) : ctx.rect(0, 0, obj.w, obj.h);
-          ctx.fill();
-          ctx.stroke();
-        }
-
-        ctx.restore();
-
-        // Mini Specimen Name and Dimension Tag
-        ctx.font = isSelected ? '700 11px "Hind Siliguri", sans-serif' : '600 10px "Hind Siliguri", sans-serif';
-        ctx.fillStyle = isSelected ? '#38bdf8' : '#e2e8f0';
-        ctx.fillText(obj.name, podX + 96, podY + 16);
-
-        ctx.font = '600 9px "JetBrains Mono", monospace';
-        ctx.fillStyle = isSelected ? '#7dd3fc' : '#94a3b8';
-        ctx.fillText(`${OBJECT_PRESETS[id].outerDia} mm`, podX + 96, podY + 31);
-
-        // Record hotspot bounds for direct canvas touch/click
-        S.trayBounds.push({
-          id: id,
-          x: podX,
-          y: podY,
-          w: podW - 10,
-          h: 50
-        });
-      });
-
-      ctx.restore();
-    }
-
-    // Draw ONLY the Active Single Object on the Measurement Stage
-    function drawActiveObjectOnStage() {
+    // Draw ONLY the Active Single Object between the Caliper Jaws
+    function drawActiveObjectOnBench() {
       const activeId = S.selectedObjectId;
       const obj = S.objects[activeId];
-      if (!obj || obj.state === 0) return;
+      if (!obj || obj.state !== 2) return;
 
       ctx.save();
       ctx.translate(obj.x, obj.y);
-      ctx.rotate(obj.th);
 
-      let grad;
-      if (obj.color === 'brass') {
-        grad = ctx.createLinearGradient(0, 0, obj.w, obj.h);
-        grad.addColorStop(0, '#f59e0b');
-        grad.addColorStop(0.3, '#fef3c7');
-        grad.addColorStop(0.7, '#d97706');
-        grad.addColorStop(1, '#92400e');
-      } else if (obj.color === 'chrome') {
-        grad = ctx.createRadialGradient(obj.R2 * 0.7, obj.R2 * 0.7, 5, obj.R2, obj.R2, obj.R2);
-        grad.addColorStop(0, '#ffffff');
-        grad.addColorStop(0.35, '#cbd5e1');
-        grad.addColorStop(0.8, '#64748b');
-        grad.addColorStop(1, '#1e293b');
-      } else if (obj.color === 'cyan') {
-        grad = ctx.createLinearGradient(0, 0, obj.w, obj.h);
-        grad.addColorStop(0, '#38bdf8');
-        grad.addColorStop(0.4, '#e0f2fe');
-        grad.addColorStop(0.8, '#0284c7');
-        grad.addColorStop(1, '#075985');
-      } else {
-        grad = ctx.createLinearGradient(0, 0, obj.w, obj.h);
-        grad.addColorStop(0, '#fb7185');
-        grad.addColorStop(0.4, '#fed7aa');
-        grad.addColorStop(0.8, '#e11d48');
-        grad.addColorStop(1, '#881337');
-      }
-
-      ctx.fillStyle = grad;
-      ctx.strokeStyle = '#0f172a';
-      ctx.lineWidth = 1.4;
-
+      // Realistic 3D shading & material textures
       if (obj.type === 'cylinder') {
+        const r2 = obj.R2;
+        const r1 = obj.R1;
+
+        // Outer Metallic Cylinder Shell
+        const cylGrad = ctx.createLinearGradient(0, 0, r2 * 2, 0);
+        cylGrad.addColorStop(0, '#64748b');
+        cylGrad.addColorStop(0.2, '#cbd5e1');
+        cylGrad.addColorStop(0.45, '#ffffff');
+        cylGrad.addColorStop(0.75, '#475569');
+        cylGrad.addColorStop(1, '#1e293b');
+
+        ctx.fillStyle = cylGrad;
+        ctx.strokeStyle = '#334155';
+        ctx.lineWidth = 1.5;
+
         ctx.beginPath();
-        ctx.moveTo(0, 0);
-        ctx.lineTo(obj.w, 0);
-        ctx.lineTo(obj.w, obj.h);
-        ctx.lineTo(obj.R1 + obj.R2, obj.h);
-        ctx.lineTo(obj.R2 + obj.R1, obj.h - obj.h1);
-        ctx.lineTo(obj.R2 - obj.R1, obj.h - obj.h1);
-        ctx.lineTo(obj.R2 - obj.R1, obj.h);
-        ctx.lineTo(0, obj.h);
-        ctx.closePath();
+        ctx.arc(r2, r2, r2, 0, Math.PI * 2);
         ctx.fill();
         ctx.stroke();
 
-        ctx.fillStyle = 'rgba(0,0,0,0.3)';
-        ctx.fillRect(obj.R2 - obj.R1, obj.h - obj.h1, 2 * obj.R1, obj.h1);
+        // Inner Hollow Bore
+        const innerGrad = ctx.createRadialGradient(r2, r2, 0, r2, r2, r1);
+        innerGrad.addColorStop(0, '#040812');
+        innerGrad.addColorStop(0.85, '#0f172a');
+        innerGrad.addColorStop(1, '#334155');
+
+        ctx.fillStyle = innerGrad;
+        ctx.beginPath();
+        ctx.arc(r2, r2, r1, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+
+        // Crosshairs in bore for realistic engineering look
+        ctx.strokeStyle = 'rgba(56, 189, 248, 0.4)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(r2 - r1, r2);
+        ctx.lineTo(r2 + r1, r2);
+        ctx.moveTo(r2, r2 - r1);
+        ctx.lineTo(r2, r2 + r1);
+        ctx.stroke();
 
       } else if (obj.type === 'sphere') {
+        const rad = obj.R2;
+        const sphGrad = ctx.createRadialGradient(rad * 0.65, rad * 0.65, rad * 0.1, rad, rad, rad);
+        sphGrad.addColorStop(0, '#ffffff');
+        sphGrad.addColorStop(0.25, '#93c5fd');
+        sphGrad.addColorStop(0.65, '#2563eb');
+        sphGrad.addColorStop(0.9, '#1e3a8a');
+        sphGrad.addColorStop(1, '#0f172a');
+
+        ctx.fillStyle = sphGrad;
+        ctx.strokeStyle = '#1d4ed8';
+        ctx.lineWidth = 1.5;
+
         ctx.beginPath();
-        ctx.arc(obj.R2, obj.R2, obj.R2, 0, Math.PI * 2);
+        ctx.arc(rad, rad, rad, 0, Math.PI * 2);
         ctx.fill();
         ctx.stroke();
 
       } else if (obj.type === 'block') {
+        const blockGrad = ctx.createLinearGradient(0, 0, obj.w, obj.h);
+        blockGrad.addColorStop(0, '#fef08a');
+        blockGrad.addColorStop(0.3, '#f59e0b');
+        blockGrad.addColorStop(0.7, '#d97706');
+        blockGrad.addColorStop(1, '#78350f');
+
+        ctx.fillStyle = blockGrad;
+        ctx.strokeStyle = '#92400e';
+        ctx.lineWidth = 1.5;
+
         ctx.beginPath();
         ctx.rect(0, 0, obj.w, obj.h);
         ctx.fill();
         ctx.stroke();
 
-        ctx.strokeStyle = 'rgba(255,255,255,0.4)';
+        // 3D edge highlight
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.6)';
+        ctx.lineWidth = 1.5;
         ctx.beginPath();
         ctx.moveTo(2, 2);
         ctx.lineTo(obj.w - 2, 2);
         ctx.stroke();
 
       } else if (obj.type === 'coin') {
+        const coinGrad = ctx.createLinearGradient(0, 0, obj.w, obj.h);
+        coinGrad.addColorStop(0, '#fef08a');
+        coinGrad.addColorStop(0.2, '#fde047');
+        coinGrad.addColorStop(0.5, '#eab308');
+        coinGrad.addColorStop(0.8, '#ca8a04');
+        coinGrad.addColorStop(1, '#854d0e');
+
+        ctx.fillStyle = coinGrad;
+        ctx.strokeStyle = '#a16207';
+        ctx.lineWidth = 1.5;
+
         ctx.beginPath();
         ctx.roundRect ? ctx.roundRect(0, 0, obj.w, obj.h, 6) : ctx.rect(0, 0, obj.w, obj.h);
         ctx.fill();
         ctx.stroke();
+
+        // Coin milled edge grooves
+        ctx.strokeStyle = 'rgba(113, 63, 18, 0.6)';
+        ctx.lineWidth = 1;
+        for (let gx = 8; gx < obj.w - 8; gx += 8) {
+          ctx.beginPath();
+          ctx.moveTo(gx, 2);
+          ctx.lineTo(gx, obj.h - 2);
+          ctx.stroke();
+        }
       }
 
       ctx.restore();
@@ -1251,7 +955,6 @@
     // High-Precision Magnifier Loupe Lens
     function drawMagnifyingLoupe(coincidenceX, baselineY) {
       const loupeRadius = 48;
-      // Clamp coordinates so lens never gets cut off by canvas borders
       const loupeX = Math.max(loupeRadius + 15, Math.min(S.rulerWidthPixel - loupeRadius - 15, coincidenceX));
       const loupeY = Math.max(loupeRadius + 12, baselineY - 80);
 
@@ -1376,227 +1079,377 @@
       ctx.restore();
     }
 
-    // Touch & Mouse Pointer Event Handling
-    function getCanvasCoords(e) {
+    // Touch & Pointer Handling (Multi-touch Pinch to Zoom, Pan & Slider Drag)
+    function getCanvasCoordsFromClient(clientX, clientY) {
       const rect = canvas.getBoundingClientRect();
       const dpr = window.devicePixelRatio || 1;
-      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
       const x = ((clientX - rect.left) * (canvas.width / rect.width) / dpr) / S.scale - S.xOffset;
       const y = ((clientY - rect.top) * (canvas.height / rect.height) / dpr) / S.scale - S.yOffset;
       return [x, y, clientX, clientY];
     }
 
+    let activePointers = {};
+    let initialPinchDist = 0;
+    let initialPinchScale = 1;
+    let pinchMidX = 0;
+    let pinchMidY = 0;
     let isPointerDown = false;
-    canvas.addEventListener('pointerdown', e => {
-      canvas.setPointerCapture(e.pointerId);
-      isPointerDown = true;
-      const [wx, wy, cx, cy] = getCanvasCoords(e);
-      S.mx = cx;
-      S.my = cy;
+    let lastTapTime = 0;
 
-      // 1. Check if user tapped one of the mini objects in the tray
-      for (let i = 0; i < S.trayBounds.length; i++) {
-        const b = S.trayBounds[i];
-        if (wx >= b.x && wx <= b.x + b.w && wy >= b.y - 10 && wy <= b.y + b.h + 10) {
-          selectObjectById(b.id);
+    canvas.addEventListener('pointerdown', (e) => {
+      canvas.setPointerCapture(e.pointerId);
+      activePointers[e.pointerId] = { clientX: e.clientX, clientY: e.clientY };
+      const ptrKeys = Object.keys(activePointers);
+
+      if (ptrKeys.length === 2) {
+        // Multi-touch Pinch to Zoom gesture
+        S.dragMode = 4;
+        const p1 = activePointers[ptrKeys[0]];
+        const p2 = activePointers[ptrKeys[1]];
+        initialPinchDist = Math.hypot(p1.clientX - p2.clientX, p1.clientY - p2.clientY);
+        initialPinchScale = S.scale;
+        pinchMidX = (p1.clientX + p2.clientX) / 2;
+        pinchMidY = (p1.clientY + p2.clientY) / 2;
+        return;
+      }
+
+      if (ptrKeys.length === 1) {
+        isPointerDown = true;
+        const now = Date.now();
+        if (now - lastTapTime < 280) {
+          // Double Tap: Reset View
+          resetZoomPan();
+          lastTapTime = 0;
           S.dragMode = 0;
           return;
         }
-      }
+        lastTapTime = now;
 
-      // 2. Check if user clicked the active object between jaws to drag it
-      const activeObj = S.objects[S.selectedObjectId];
-      if (activeObj && activeObj.state === 2 && 
-          wx >= activeObj.x - 15 && wx <= activeObj.x + activeObj.w + 15 && 
-          wy >= activeObj.y - 15 && wy <= activeObj.y + activeObj.h + 15) {
-        S.dragMode = 3; // Drag active object
-        S.draggedObjectId = S.selectedObjectId;
-        return;
-      }
+        const [wx, wy, cx, cy] = getCanvasCoordsFromClient(e.clientX, e.clientY);
+        S.mx = cx;
+        S.my = cy;
 
-      // 3. Check if clicked on vernier slider assembly
-      const msd_px = S.mainScaleLength / S.mainScaleDivisions;
-      const shift_px = (S.msr + S.vsr / S.vernierDivisions) * msd_px;
-      const vLeft = S.scaleOriginX - S.offsetOriginX + shift_px - S.vernierOriginX;
+        // Check if user clicked the active object between jaws to drag it
+        const activeObj = S.objects[S.selectedObjectId];
+        if (activeObj && activeObj.state === 2 && 
+            wx >= activeObj.x - 20 && wx <= activeObj.x + activeObj.w + 20 && 
+            wy >= activeObj.y - 20 && wy <= activeObj.y + activeObj.h + 20) {
+          S.dragMode = 3; // Drag active object
+          S.draggedObjectId = S.selectedObjectId;
+          return;
+        }
 
-      if (wx >= vLeft && wx <= vLeft + 290 && wy >= 0 && wy <= 350) {
-        S.dragMode = 2; // Drag Vernier slider
-        return;
-      }
-
-      // 4. Otherwise Pan Canvas
-      S.dragMode = 1;
-    });
-
-    canvas.addEventListener('pointermove', e => {
-      if (!isPointerDown) return;
-      const [wx, wy, cx, cy] = getCanvasCoords(e);
-      const dx = (cx - S.mx) / S.scale;
-      const dy = (cy - S.my) / S.scale;
-      S.mx = cx;
-      S.my = cy;
-
-      if (S.dragMode === 2) {
-        // Dragging Vernier Slider
+        // Check if clicked on vernier slider assembly
         const msd_px = S.mainScaleLength / S.mainScaleDivisions;
-        const stepChange = Math.round(dx / (msd_px / S.vernierDivisions));
-        if (stepChange !== 0) {
-          translateVernier(stepChange);
+        const shift_px = (S.msr + S.vsr / S.vernierDivisions) * msd_px;
+        const vLeft = S.scaleOriginX - S.offsetOriginX + shift_px - S.vernierOriginX;
+
+        if (wx >= vLeft && wx <= vLeft + 290 && wy >= 0 && wy <= 350) {
+          S.dragMode = 2; // Drag Vernier slider
+          return;
         }
-      } else if (S.dragMode === 3 && S.draggedObjectId) {
-        // Dragging Active Object
-        const obj = S.objects[S.draggedObjectId];
-        obj.x += dx;
-        obj.y += dy;
-        render();
-      } else if (S.dragMode === 1) {
-        // Pan Canvas
-        S.xOffset += dx;
-        S.yOffset += dy;
-        render();
+
+        // Otherwise Pan Canvas
+        S.dragMode = 1;
       }
     });
 
-    const endPointer = () => {
-      if (!isPointerDown) return;
-      isPointerDown = false;
+    canvas.addEventListener('pointermove', (e) => {
+      if (activePointers[e.pointerId]) {
+        activePointers[e.pointerId] = { clientX: e.clientX, clientY: e.clientY };
+      }
+      const ptrKeys = Object.keys(activePointers);
 
-      if (S.dragMode === 3 && S.draggedObjectId) {
-        const obj = S.objects[S.draggedObjectId];
-        const cx = obj.x + obj.w / 2;
-        const cy = obj.y + obj.h / 2;
+      if (ptrKeys.length >= 2 && S.dragMode === 4) {
+        // Dynamic Pinch Zooming
+        const p1 = activePointers[ptrKeys[0]];
+        const p2 = activePointers[ptrKeys[1]];
+        const currentDist = Math.hypot(p1.clientX - p2.clientX, p1.clientY - p2.clientY);
+        if (initialPinchDist > 5) {
+          const zoomFactor = currentDist / initialPinchDist;
+          const targetScale = Math.min(2.8, Math.max(0.35, initialPinchScale * zoomFactor));
 
-        // Check Zone 1: Lower External Jaws
-        if (Math.abs(cx - (S.scaleOriginX + 60)) < 130 && Math.abs(cy - 270) < 130) {
-          S.measureMode = 0;
-          snapActiveObjectToJaws();
-          autoClampToCurrentObject();
-        }
-        // Check Zone 2: Upper Internal Jaws
-        else if (Math.abs(cx - S.scaleOriginX) < 120 && Math.abs(cy - 40) < 100) {
-          S.measureMode = 1;
-          snapActiveObjectToJaws();
-          autoClampToCurrentObject();
-        }
-        // Check Zone 3: Right Depth Probe
-        else if (Math.abs(cx - S.rulerWidthPixel) < 120 && Math.abs(cy - 140) < 100) {
-          S.measureMode = 2;
-          snapActiveObjectToJaws();
-          autoClampToCurrentObject();
-        }
-        else {
-          // If dropped in tray area or outside, return to tray
-          snapActiveObjectToJaws();
-        }
+          const rect = canvas.getBoundingClientRect();
+          const dpr = window.devicePixelRatio || 1;
+          const curMidX = (p1.clientX + p2.clientX) / 2;
+          const curMidY = (p1.clientY + p2.clientY) / 2;
+          const cx = ((curMidX - rect.left) * (canvas.width / rect.width) / dpr);
+          const cy = ((curMidY - rect.top) * (canvas.height / rect.height) / dpr);
 
-        render();
+          const wxBefore = cx / S.scale - S.xOffset;
+          const wyBefore = cy / S.scale - S.yOffset;
+
+          S.scale = targetScale;
+
+          S.xOffset = cx / S.scale - wxBefore;
+          S.yOffset = cy / S.scale - wyBefore;
+
+          render();
+        }
+        return;
       }
 
-      S.dragMode = 0;
-      S.draggedObjectId = null;
+      if (ptrKeys.length === 1 && isPointerDown) {
+        const [wx, wy, cx, cy] = getCanvasCoordsFromClient(e.clientX, e.clientY);
+        const dx = (cx - S.mx) / S.scale;
+        const dy = (cy - S.my) / S.scale;
+        S.mx = cx;
+        S.my = cy;
+
+        if (S.dragMode === 2) {
+          // Dragging Vernier Slider
+          const msd_px = S.mainScaleLength / S.mainScaleDivisions;
+          const stepChange = Math.round(dx / (msd_px / S.vernierDivisions));
+          if (stepChange !== 0) {
+            translateVernier(stepChange);
+          }
+        } else if (S.dragMode === 3 && S.draggedObjectId) {
+          // Dragging Active Object
+          const obj = S.objects[S.draggedObjectId];
+          obj.x += dx;
+          obj.y += dy;
+          render();
+        } else if (S.dragMode === 1) {
+          // Pan Canvas
+          S.xOffset += dx;
+          S.yOffset += dy;
+          render();
+        }
+      }
+    });
+
+    const endPointer = (e) => {
+      delete activePointers[e.pointerId];
+      const ptrKeys = Object.keys(activePointers);
+
+      if (ptrKeys.length < 2 && S.dragMode === 4) {
+        S.dragMode = 0;
+      }
+
+      if (ptrKeys.length === 0) {
+        isPointerDown = false;
+        if (S.dragMode === 3 && S.draggedObjectId) {
+          const obj = S.objects[S.draggedObjectId];
+          const cx = obj.x + obj.w / 2;
+          const cy = obj.y + obj.h / 2;
+
+          // Check Zone 1: Lower External Jaws
+          if (Math.abs(cx - (S.scaleOriginX + 60)) < 130 && Math.abs(cy - 270) < 130) {
+            S.measureMode = 0;
+            snapActiveObjectToJaws();
+            autoClampToCurrentObject();
+          }
+          // Check Zone 2: Upper Internal Jaws
+          else if (Math.abs(cx - S.scaleOriginX) < 120 && Math.abs(cy - 40) < 100) {
+            S.measureMode = 1;
+            snapActiveObjectToJaws();
+            autoClampToCurrentObject();
+          }
+          // Check Zone 3: Right Depth Probe
+          else if (Math.abs(cx - S.rulerWidthPixel) < 120 && Math.abs(cy - 140) < 100) {
+            S.measureMode = 2;
+            snapActiveObjectToJaws();
+            autoClampToCurrentObject();
+          }
+          else {
+            snapActiveObjectToJaws();
+          }
+          render();
+        }
+
+        S.dragMode = 0;
+        S.draggedObjectId = null;
+      }
     };
 
     canvas.addEventListener('pointerup', endPointer);
     canvas.addEventListener('pointercancel', endPointer);
 
-    // Mouse Wheel
-    canvas.addEventListener('wheel', e => {
+    // Desktop Mouse Wheel Zoom
+    canvas.addEventListener('wheel', (e) => {
       e.preventDefault();
-      const delta = e.deltaY > 0 ? 1 : -1;
-      translateVernier(delta);
+      const rect = canvas.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      const cx = ((e.clientX - rect.left) * (canvas.width / rect.width) / dpr);
+      const cy = ((e.clientY - rect.top) * (canvas.height / rect.height) / dpr);
+
+      const wxBefore = cx / S.scale - S.xOffset;
+      const wyBefore = cy / S.scale - S.yOffset;
+
+      const zoomFactor = e.deltaY < 0 ? 1.09 : 0.91;
+      S.scale = Math.min(2.8, Math.max(0.35, S.scale * zoomFactor));
+
+      S.xOffset = cx / S.scale - wxBefore;
+      S.yOffset = cy / S.scale - wyBefore;
+
+      render();
     }, { passive: false });
 
-    // Keyboard Arrow Keys
-    window.addEventListener('keydown', e => {
-      if (e.key === 'ArrowRight' || e.key === 'ArrowUp') {
-        translateVernier(1);
-      } else if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') {
-        translateVernier(-1);
+    // Slider Translation Logic
+    function translateVernier(stepChange) {
+      let targetVsr = S.vsr + stepChange;
+      let targetMsr = S.msr;
+
+      while (targetVsr >= S.vernierDivisions) {
+        targetVsr -= S.vernierDivisions;
+        targetMsr += 1;
       }
-    });
+      while (targetVsr < 0) {
+        targetVsr += S.vernierDivisions;
+        targetMsr -= 1;
+      }
 
-    window.addEventListener('resize', resizeCanvas);
+      // Check collision with physical active object
+      const activeObj = S.objects[S.selectedObjectId];
+      if (activeObj && activeObj.state === 2) {
+        const objDimensionMm = (S.measureMode === 0) ? (activeObj.w / 10) :
+                               (S.measureMode === 1) ? (activeObj.R1 * 2 / 10) :
+                               (activeObj.depth / 10);
 
-    // Public UI Methods
-    window.selectObjectById = function(id) {
-      S.selectedObjectId = id;
-      snapActiveObjectToJaws();
-      updateObjectCardUI();
-      autoClampToCurrentObject();
-    };
+        const currentOpeningMm = targetMsr + targetVsr / S.vernierDivisions;
 
-    function updateObjectCardUI() {
-      ['cylinder', 'sphere', 'block', 'coin'].forEach(id => {
-        const card = document.getElementById('card-obj-' + id);
-        if (card) {
-          if (id === S.selectedObjectId) {
-            card.className = 'obj-active-card p-2 rounded-xl bg-[#0c1828] border border-cyan-400 text-left transition flex items-center gap-2.5 group shadow-lg';
-          } else {
-            card.className = 'p-2 rounded-xl bg-[#0c1828] border border-slate-700/80 text-left transition flex items-center gap-2.5 group hover:border-cyan-400';
-          }
+        // In mode 0 (external) or mode 2 (depth), jaws cannot crush through solid object
+        if ((S.measureMode === 0 || S.measureMode === 2) && currentOpeningMm < objDimensionMm) {
+          const clampedSteps = Math.round(objDimensionMm * S.vernierDivisions);
+          targetMsr = Math.floor(clampedSteps / S.vernierDivisions);
+          targetVsr = clampedSteps % S.vernierDivisions;
+          playSnapSound();
         }
-      });
+      }
+
+      // Min opening 0, Max opening 58 mm
+      if (targetMsr < 0) {
+        targetMsr = 0;
+        targetVsr = 0;
+      }
+      if (targetMsr > 58) {
+        targetMsr = 58;
+        targetVsr = 0;
+      }
+
+      if (S.msr !== targetMsr || S.vsr !== targetVsr) {
+        S.msr = targetMsr;
+        S.vsr = targetVsr;
+        playTickSound();
+        updateReadouts();
+        render();
+      }
     }
 
+    // Auto Clamp Jaws to Current Object
     window.autoClampToCurrentObject = function() {
+      const activeObj = S.objects[S.selectedObjectId];
+      if (!activeObj) return;
+
+      const dimMm = (S.measureMode === 0) ? (activeObj.w / 10) :
+                    (S.measureMode === 1) ? (activeObj.R1 * 2 / 10) :
+                    (activeObj.depth / 10);
+
+      const totalSteps = Math.round(dimMm * S.vernierDivisions);
+      S.msr = Math.floor(totalSteps / S.vernierDivisions);
+      S.vsr = totalSteps % S.vernierDivisions;
+
       snapActiveObjectToJaws();
-      const obj = S.objects[S.selectedObjectId];
-      if (!obj) return;
-
-      const msd_px = S.mainScaleLength / S.mainScaleDivisions;
-      const target_px = obj.length;
-      S.msr = Math.floor(target_px / msd_px);
-      S.vsr = Math.round((target_px / msd_px - S.msr) * S.vernierDivisions);
-      
-      updatePhysics();
-      playTickSound();
+      playSnapSound();
+      updateReadouts();
+      render();
     };
 
-    window.returnObjectToTray = function() {
-      // Put all objects into tray (free caliper mode)
-      Object.keys(S.objects).forEach(id => {
-        S.objects[id].state = 1;
-      });
-      closeJawsFully();
-    };
-
-    window.nudgeVernier = function(steps) {
-      translateVernier(steps);
-      playTickSound();
-    };
-
+    // Close Jaws to Zero
     window.closeJawsFully = function() {
       S.msr = 0;
       S.vsr = 0;
-      updatePhysics();
-      playTickSound();
+      playSnapSound();
+      updateReadouts();
+      render();
     };
 
-    window.newRandomObject = function() {
-      const obj = S.objects[S.selectedObjectId];
-      if (!obj) return;
+    // Select Object from Circular Cards below Canvas
+    window.selectObjectById = function(id) {
+      if (!S.objects[id]) return;
+      S.selectedObjectId = id;
 
-      const msd_px = S.mainScaleLength / S.mainScaleDivisions;
-      const rand_mm = 12 + Math.random() * 26;
-      const rand_px = rand_mm * msd_px;
+      // Update active state
+      Object.keys(S.objects).forEach(k => {
+        S.objects[k].state = (k === id) ? 2 : 1;
+      });
 
-      obj.R2 = Math.round(rand_px / 2);
-      obj.R1 = Math.round(obj.R2 * 0.52);
-      obj.h2 = Math.round(rand_px * 0.9);
-      obj.h1 = Math.round(obj.h2 * 0.65);
-      obj.w = 2 * obj.R2;
-      obj.h = obj.h2;
+      // Update circular card styling in options section below
+      ['cylinder', 'sphere', 'block', 'coin'].forEach(k => {
+        const card = document.getElementById('card-obj-' + k);
+        if (card) {
+          if (k === id) {
+            card.className = 'obj-active-card p-2.5 rounded-xl bg-[#0c1828] border border-cyan-400 text-left transition flex items-center gap-3 group shadow-lg ring-2 ring-cyan-400/50';
+          } else {
+            card.className = 'p-2.5 rounded-xl bg-[#0c1828] border border-slate-700/80 text-left transition flex items-center gap-3 group hover:border-cyan-400 shadow-md';
+          }
+        }
+      });
+
+      const badgeObjName = document.getElementById('badge-obj-name');
+      if (badgeObjName) {
+        badgeObjName.textContent = OBJECT_PRESETS[id].name;
+      }
 
       snapActiveObjectToJaws();
       autoClampToCurrentObject();
+      playTickSound();
     };
 
+    // Randomize dimensions for fresh exercises
+    window.newRandomObject = function() {
+      const activeObj = S.objects[S.selectedObjectId];
+      if (!activeObj) return;
+
+      const randomDia = Math.round((12 + Math.random() * 26) * 10) / 10;
+      activeObj.w = randomDia * 10;
+      activeObj.h = (activeObj.type === 'coin') ? 35 : activeObj.w;
+      activeObj.R2 = activeObj.w / 2;
+      activeObj.R1 = Math.round(activeObj.R2 * 0.58);
+      activeObj.depth = Math.round((15 + Math.random() * 25) * 10);
+
+      autoClampToCurrentObject();
+      playTickSound();
+    };
+
+    // Update Live Readout Panel
+    function updateReadouts() {
+      const vc_mm = 1 / S.vernierDivisions; // e.g. 0.1 mm
+      const vc_cm = vc_mm / 10; // e.g. 0.01 cm
+
+      const msr_cm = (S.msr / 10);
+      const vsr_val = S.vsr;
+      const zero_err_cm = (S.zeroError * vc_mm) / 10;
+
+      // Formula: L = M + (V * VC) - e
+      const measured_length_cm = msr_cm + (vsr_val * vc_cm) - zero_err_cm;
+      const measured_length_mm = measured_length_cm * 10;
+
+      // Update DOM
+      document.getElementById('val-msr').textContent = msr_cm.toFixed(1);
+      document.getElementById('val-msr-mm').textContent = `(${S.msr} mm)`;
+
+      document.getElementById('val-vsr').textContent = vsr_val.toString();
+
+      document.getElementById('val-vc').textContent = vc_cm.toFixed(vc_cm < 0.01 ? 3 : 2);
+      document.getElementById('val-vc-mm').textContent = `(${vc_mm.toFixed(vc_mm < 0.1 ? 2 : 1)} mm)`;
+      document.getElementById('badge-vc').textContent = `${vc_mm.toFixed(vc_mm < 0.1 ? 2 : 1)} mm`;
+
+      document.getElementById('val-total').textContent = Math.max(0, measured_length_cm).toFixed(S.vernierDivisions >= 50 ? 3 : 2);
+      document.getElementById('val-total-mm').textContent = `(${Math.max(0, measured_length_mm).toFixed(S.vernierDivisions >= 50 ? 2 : 1)} mm)`;
+
+      // Step-by-step breakdown string
+      const breakdown = `${msr_cm.toFixed(1)} + (${vsr_val} × ${vc_cm.toFixed(3)}) - (${zero_err_cm.toFixed(3)}) = ${Math.max(0, measured_length_cm).toFixed(3)} cm`;
+      const elMath = document.getElementById('calc-breakdown-math');
+      if (elMath) elMath.textContent = breakdown;
+
+      const elZero = document.getElementById('calc-zero-error-text');
+      if (elZero) elZero.textContent = `${zero_err_cm >= 0 ? '+' : ''}${zero_err_cm.toFixed(3)} cm (${(S.zeroError * vc_mm).toFixed(2)} mm)`;
+    }
+
+    // Measure Mode Setting (0: Lower External, 1: Upper Internal, 2: Depth)
     window.setMeasureMode = function(mode) {
       S.measureMode = mode;
-      const labels = ['বহিঃস্থ ব্যাস (নিচের চোয়াল)', 'অভ্যন্তরীণ ব্যাস (উপরের চোয়াল)', 'গভীরতা দণ্ড (টেইল রড)'];
-      document.getElementById('current-mode-label').textContent = labels[mode];
-
       for (let i = 0; i < 3; i++) {
         const btn = document.getElementById('btn-mode-' + i);
         if (i === mode) {
@@ -1606,14 +1459,17 @@
         }
       }
 
+      const labels = ['বহিঃস্থ ব্যাস (নিচের চোয়াল)', 'অভ্যন্তরীণ ব্যাস (উপরের চোয়াল)', 'গভীরতা (টেইল রড)'];
+      document.getElementById('current-mode-label').textContent = labels[mode];
+
       snapActiveObjectToJaws();
       autoClampToCurrentObject();
+      render();
     };
 
+    // Vernier Scale Divisions (10, 20, 50)
     window.setVernierDivisions = function(divs) {
       S.vernierDivisions = divs;
-      document.getElementById('label-vsd-count').textContent = divs + ' ভাগ';
-
       [10, 20, 50].forEach(d => {
         const btn = document.getElementById('btn-vsd-' + d);
         if (d === divs) {
@@ -1623,16 +1479,16 @@
         }
       });
 
-      if (S.vsr >= S.vernierDivisions) S.vsr = 0;
-      updatePhysics();
+      updateReadouts();
+      render();
+      playTickSound();
     };
 
-    window.setZeroError = function(divs) {
-      S.zeroError = divs;
-      const msd_cm = S.msdValue;
-      const ze_cm = (divs / S.vernierDivisions) * msd_cm;
-      document.getElementById('label-zero-error').textContent = `${(ze_cm * 10).toFixed(2)} mm`;
-      updatePhysics();
+    // Zero Error Setting
+    window.setZeroError = function(val) {
+      S.zeroError = val;
+      updateReadouts();
+      render();
     };
 
     window.randomizeZeroError = function() {
@@ -1640,17 +1496,12 @@
       setZeroError(rand);
     };
 
-    window.toggleLoupe = function() {
-      S.showLoupe = !S.showLoupe;
-      const btn = document.getElementById('btn-loupe');
-      if (S.showLoupe) {
-        btn.classList.add('bg-cyan-500/20', 'border-cyan-500/50', 'text-cyan-300');
-      } else {
-        btn.classList.remove('bg-cyan-500/20', 'border-cyan-500/50', 'text-cyan-300');
-      }
-      render();
+    // Nudge Controls
+    window.nudgeVernier = function(steps) {
+      translateVernier(steps);
     };
 
+    // Audio & Magnifier Toggles
     window.toggleSound = function() {
       S.soundEnabled = !S.soundEnabled;
       const icon = document.getElementById('sound-icon');
@@ -1661,27 +1512,46 @@
       }
     };
 
-    window.toggleCalcDetails = function() {
-      const details = document.getElementById('calc-step-details');
-      const btn = document.getElementById('btn-toggle-details');
-      if (details.classList.contains('hidden')) {
-        details.classList.remove('hidden');
-        btn.innerHTML = 'হিসাব ধাপসমূহ <i class="fa-solid fa-chevron-up text-[9px]"></i>';
+    window.toggleLoupe = function() {
+      S.showLoupe = !S.showLoupe;
+      const btn = document.getElementById('btn-loupe');
+      if (S.showLoupe) {
+        btn.className = 'px-2.5 py-1 rounded-xl bg-cyan-500/20 text-cyan-300 border border-cyan-500/50 text-xs font-semibold transition flex items-center gap-1.5 shadow-sm';
       } else {
-        details.classList.add('hidden');
-        btn.innerHTML = 'হিসাব ধাপসমূহ <i class="fa-solid fa-chevron-down text-[9px]"></i>';
+        btn.className = 'px-2.5 py-1 rounded-xl bg-slate-800 text-slate-400 border border-slate-700 text-xs font-semibold transition flex items-center gap-1.5';
       }
+      render();
     };
 
-    // Zoom and Pan
-    window.zoomIn = function() {
-      S.scale *= 1.15;
-      render();
+    window.toggleCalcDetails = function() {
+      const details = document.getElementById('calc-step-details');
+      details.classList.toggle('hidden');
     };
-    window.zoomOut = function() {
-      S.scale = Math.max(0.35, S.scale * 0.88);
+
+    // Auto-fit 16:9 Canvas Resize & Reset
+    function resizeCanvas() {
+      const rect = canvas.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = Math.round(rect.width * dpr);
+      canvas.height = Math.round(rect.height * dpr);
+
+      const logicalW = canvas.width / dpr;
+      const logicalH = canvas.height / dpr;
+
+      // Fit the slide caliper comfortably inside the 16:9 aspect box
+      const scaleW = logicalW / 1060;
+      const scaleH = logicalH / 440;
+      S.scale = Math.min(scaleW, scaleH);
+      if (S.scale < 0.35) S.scale = 0.35;
+      if (S.scale > 1.35) S.scale = 1.35;
+
+      // Center horizontally and vertically with generous margins
+      S.xOffset = Math.max(10, (logicalW / S.scale - 980) / 2);
+      S.yOffset = Math.max(10, (logicalH / S.scale - 360) / 2);
+
       render();
-    };
+    }
+
     window.resetZoomPan = function() {
       resizeCanvas();
     };
@@ -1697,20 +1567,22 @@
     // Quiz Mode
     window.toggleQuizMode = function() {
       S.quizMode = !S.quizMode;
-      const panelQuiz = document.getElementById('panel-quiz');
-      const panelReadings = document.getElementById('panel-readings');
-      const btnText = document.getElementById('quiz-btn-text');
+      const panel = document.getElementById('panel-quiz');
+      const readings = document.getElementById('panel-readings');
+      const btn = document.getElementById('btn-quiz-toggle');
 
       if (S.quizMode) {
-        panelQuiz.classList.remove('hidden');
-        panelReadings.classList.add('opacity-40', 'pointer-events-none');
-        btnText.textContent = 'ল্যাব মোড';
+        panel.classList.remove('hidden');
+        readings.classList.add('hidden');
+        btn.className = 'btn-active px-2.5 py-1 rounded-xl text-white text-xs font-bold border border-transparent transition flex items-center gap-1.5';
+        document.getElementById('quiz-btn-text').textContent = 'কুইজ চলছে';
         generateQuizProblem();
       } else {
-        panelQuiz.classList.add('hidden');
-        panelReadings.classList.remove('opacity-40', 'pointer-events-none');
-        btnText.textContent = 'কুইজ মোড';
-        render();
+        panel.classList.add('hidden');
+        readings.classList.remove('hidden');
+        btn.className = 'px-2.5 py-1 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 text-xs font-bold border border-amber-500/40 transition flex items-center gap-1.5';
+        document.getElementById('quiz-btn-text').textContent = 'কুইজ মোড';
+        updateReadouts();
       }
     };
 
@@ -1720,49 +1592,45 @@
       selectObjectById(randId);
       newRandomObject();
 
-      const msd_cm = S.msdValue;
-      const vc_cm = msd_cm / S.vernierDivisions;
-      const zero_error_cm = (S.zeroError / S.vernierDivisions) * msd_cm;
-      const targetTotal = Math.max(0, S.msr * msd_cm + S.vsr * vc_cm - zero_error_cm);
-
-      S.quizTarget = {
-        m: S.msr * msd_cm,
-        v: S.vsr,
-        total: targetTotal
-      };
-
       document.getElementById('quiz-input-m').value = '';
       document.getElementById('quiz-input-v').value = '';
       document.getElementById('quiz-input-total').value = '';
       document.getElementById('quiz-result-msg').textContent = '';
-      render();
     };
 
     window.checkQuizAnswer = function() {
-      if (!S.quizTarget) return;
-
       const userM = parseFloat(document.getElementById('quiz-input-m').value);
-      const userV = parseInt(document.getElementById('quiz-input-v').value, 10);
-      const userTot = parseFloat(document.getElementById('quiz-input-total').value);
+      const userV = parseInt(document.getElementById('quiz-input-v').value);
+      const userTotal = parseFloat(document.getElementById('quiz-input-total').value);
 
-      const msgEl = document.getElementById('quiz-result-msg');
+      const vc_mm = 1 / S.vernierDivisions;
+      const vc_cm = vc_mm / 10;
+      const expectedM = S.msr / 10;
+      const expectedV = S.vsr;
+      const expectedTotal = expectedM + (expectedV * vc_cm) - ((S.zeroError * vc_mm) / 10);
+
+      const isMCorrect = !isNaN(userM) && Math.abs(userM - expectedM) < 0.05;
+      const isVCorrect = !isNaN(userV) && (userV === expectedV);
+      const isTotalCorrect = !isNaN(userTotal) && Math.abs(userTotal - expectedTotal) < 0.02;
+
+      const resultMsg = document.getElementById('quiz-result-msg');
       S.quizScore.total++;
 
-      const isMCorrect = Math.abs(userM - S.quizTarget.m) < 0.05;
-      const isVCorrect = userV === S.quizTarget.v;
-      const isTotCorrect = Math.abs(userTot - S.quizTarget.total) < 0.02;
-
-      if (isMCorrect && isVCorrect && isTotCorrect) {
+      if (isMCorrect && isVCorrect && isTotalCorrect) {
         S.quizScore.correct++;
-        msgEl.className = 'text-xs font-bold text-emerald-400 ml-2';
-        msgEl.innerHTML = '<i class="fa-solid fa-circle-check"></i> অসাধারণ! তোমার হিসাব সম্পূর্ণ সঠিক হয়েছে।';
+        resultMsg.className = 'text-xs font-bold text-emerald-400 ml-2';
+        resultMsg.innerHTML = '<i class="fa-solid fa-circle-check"></i> সঠিক উত্তর হয়েছে! অসাধারণ!';
       } else {
-        msgEl.className = 'text-xs font-bold text-rose-400 ml-2';
-        msgEl.innerHTML = `<i class="fa-solid fa-circle-xmark"></i> সঠিক নয়! সঠিক মান: M = ${S.quizTarget.m.toFixed(1)} cm, V = ${S.quizTarget.v}, মোট = ${S.quizTarget.total.toFixed(3)} cm`;
+        resultMsg.className = 'text-xs font-bold text-rose-400 ml-2';
+        resultMsg.innerHTML = `<i class="fa-solid fa-circle-xmark"></i> ভুল হয়েছে! সঠিক পাঠ: M = ${expectedM.toFixed(1)} cm, V = ${expectedV}, মোট = ${expectedTotal.toFixed(2)} cm`;
       }
 
       document.getElementById('quiz-score').textContent = `${S.quizScore.correct}/${S.quizScore.total}`;
     };
+
+    // Window Resize Observer
+    window.addEventListener('resize', resizeCanvas);
+    window.addEventListener('orientationchange', () => setTimeout(resizeCanvas, 150));
 
   </script>
 </body>
