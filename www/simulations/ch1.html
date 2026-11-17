@@ -47,13 +47,13 @@
           <span class="w-5 h-5 rounded-md bg-white/20 text-white text-[10px] flex items-center justify-center font-mono font-bold">০১</span>
           <span>ভার্নিয়ার ও স্লাইড ক্যালিপার্স</span>
         </button>
-        <button id="tab-lab-2" onclick="switchLab('density', 2)" class="px-3.5 py-2 rounded-xl text-xs font-bold text-slate-300 bg-[#112133] hover:bg-[#162c45] hover:text-white transition flex items-center gap-2 whitespace-nowrap border border-slate-700/60">
+        <button id="tab-lab-2" onclick="switchLab('micrometer', 2)" class="px-3.5 py-2 rounded-xl text-xs font-bold text-slate-300 bg-[#112133] hover:bg-[#162c45] hover:text-white transition flex items-center gap-2 whitespace-nowrap border border-slate-700/60">
           <span class="w-5 h-5 rounded-md bg-white/10 text-slate-300 text-[10px] flex items-center justify-center font-mono font-bold">০২</span>
-          <span>ঘনত্ব অনুসন্ধান</span>
-        </button>
-        <button id="tab-lab-3" onclick="switchLab('micrometer', 3)" class="px-3.5 py-2 rounded-xl text-xs font-bold text-slate-300 bg-[#112133] hover:bg-[#162c45] hover:text-white transition flex items-center gap-2 whitespace-nowrap border border-slate-700/60">
-          <span class="w-5 h-5 rounded-md bg-white/10 text-slate-300 text-[10px] flex items-center justify-center font-mono font-bold">০৩</span>
           <span>স্ক্রু গজ ও মাইক্রোমিটার</span>
+        </button>
+        <button id="tab-lab-3" onclick="switchLab('density', 3)" class="px-3.5 py-2 rounded-xl text-xs font-bold text-slate-300 bg-[#112133] hover:bg-[#162c45] hover:text-white transition flex items-center gap-2 whitespace-nowrap border border-slate-700/60">
+          <span class="w-5 h-5 rounded-md bg-white/10 text-slate-300 text-[10px] flex items-center justify-center font-mono font-bold">০৩</span>
+          <span>ঘনত্ব অনুসন্ধান</span>
         </button>
       </div>
 
@@ -76,27 +76,48 @@
       </iframe>
     </div>
 
-    <!-- Chapter Navigation & Labs Overview Footer -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
-      <div class="p-4 rounded-2xl bg-[#0b1624] border border-slate-800 space-y-1">
-        <div class="flex items-center justify-between">
-          <span class="flex items-center gap-2 text-xs font-bold text-teal-400">
-            <span class="w-5 h-5 rounded bg-teal-500/20 flex items-center justify-center font-mono">০১</span>
-            <span>ভার্নিয়ার ও স্লাইড ক্যালিপার্স</span>
-          </span>
-          <a href="vernier-caliper.html" target="_blank" class="text-[11px] font-bold text-teal-400 hover:underline">পূর্ণ পর্দা ↗</a>
+    <!-- Chapter Navigation & Labs Overview Footer (3 Labs Grid) -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+      <div class="p-4 rounded-2xl bg-[#0b1624] border border-slate-800 space-y-2 flex flex-col justify-between">
+        <div class="space-y-1">
+          <div class="flex items-center justify-between">
+            <span class="flex items-center gap-2 text-xs font-bold text-teal-400">
+              <span class="w-5 h-5 rounded bg-teal-500/20 flex items-center justify-center font-mono">০১</span>
+              <span>ভার্নিয়ার ও স্লাইড ক্যালিপার্স</span>
+            </span>
+            <a href="vernier-caliper.html" target="_blank" class="text-[11px] font-bold text-teal-400 hover:underline">পূর্ণ পর্দা ↗</a>
+          </div>
+          <p class="text-xs text-slate-400">বাস্তবসম্মত সিলভার স্লাইড ক্যালিপার্স দিয়ে সূক্ষ্ম দৈর্ঘ্য পরিমাপ ও ভার্নিয়ার ধ্রুবক নির্ণয়।</p>
         </div>
-        <p class="text-xs text-slate-400">বাস্তবসম্মত সিলভার স্লাইড ক্যালিপার্স দিয়ে সূক্ষ্ম দৈর্ঘ্য পরিমাপ।</p>
+        <button onclick="switchLab('caliper', 1)" class="w-full py-1.5 px-3 rounded-xl bg-[#112133] hover:bg-[#162c45] text-xs font-semibold text-slate-200 border border-slate-700 transition">এই ল্যাবটি চালু করুন</button>
       </div>
-      <div class="p-4 rounded-2xl bg-[#0b1624] border border-slate-800 space-y-1">
-        <div class="flex items-center justify-between">
-          <span class="flex items-center gap-2 text-xs font-bold text-teal-400">
-            <span class="w-5 h-5 rounded bg-teal-500/20 flex items-center justify-center font-mono">০২</span>
-            <span>ঘনত্ব অনুসন্ধান</span>
-          </span>
-          <a href="../physics-labs/index.html?lab=density" target="_blank" class="text-[11px] font-bold text-teal-400 hover:underline">পূর্ণ পর্দা ↗</a>
+
+      <div class="p-4 rounded-2xl bg-[#0b1624] border border-slate-800 space-y-2 flex flex-col justify-between">
+        <div class="space-y-1">
+          <div class="flex items-center justify-between">
+            <span class="flex items-center gap-2 text-xs font-bold text-teal-400">
+              <span class="w-5 h-5 rounded bg-teal-500/20 flex items-center justify-center font-mono">০২</span>
+              <span>স্ক্রু গজ ও মাইক্রোমিটার</span>
+            </span>
+            <a href="micrometer.html" target="_blank" class="text-[11px] font-bold text-teal-400 hover:underline">পূর্ণ পর্দা ↗</a>
+          </div>
+          <p class="text-xs text-slate-400">বাস্তবসম্মত স্ক্রু গজ দিয়ে তারের ব্যাস, পাতের পুরুত্ব ও লঘিষ্ঠ গণন নির্ণয়।</p>
         </div>
-        <p class="text-xs text-slate-400">অজানা পদার্থের ভর ও আয়তন মেপে ঘনত্ব এবং বস্তু সনাক্তকরণ।</p>
+        <button onclick="switchLab('micrometer', 2)" class="w-full py-1.5 px-3 rounded-xl bg-[#112133] hover:bg-[#162c45] text-xs font-semibold text-slate-200 border border-slate-700 transition">এই ল্যাবটি চালু করুন</button>
+      </div>
+
+      <div class="p-4 rounded-2xl bg-[#0b1624] border border-slate-800 space-y-2 flex flex-col justify-between">
+        <div class="space-y-1">
+          <div class="flex items-center justify-between">
+            <span class="flex items-center gap-2 text-xs font-bold text-teal-400">
+              <span class="w-5 h-5 rounded bg-teal-500/20 flex items-center justify-center font-mono">০৩</span>
+              <span>ঘনত্ব অনুসন্ধান</span>
+            </span>
+            <a href="../physics-labs/index.html?lab=density" target="_blank" class="text-[11px] font-bold text-teal-400 hover:underline">পূর্ণ পর্দা ↗</a>
+          </div>
+          <p class="text-xs text-slate-400">অজানা পদার্থের ভর ও আয়তন মেপে ঘনত্ব এবং আর্কিমিডিসের নীতি যাচাই।</p>
+        </div>
+        <button onclick="switchLab('density', 3)" class="w-full py-1.5 px-3 rounded-xl bg-[#112133] hover:bg-[#162c45] text-xs font-semibold text-slate-200 border border-slate-700 transition">এই ল্যাবটি চালু করুন</button>
       </div>
     </div>
 
@@ -108,9 +129,8 @@
         ল্যাব তালিকা
       </a>
 
-      
       <a href="ch2.html" class="px-4 py-2 rounded-xl bg-[#0b1624] hover:bg-[#112133] text-slate-300 text-xs font-semibold border border-slate-800 transition flex items-center gap-2">
-        <span>পরবর্তী: অধ্যায় ০২</span> <i class="fa-solid fa-arrow-right"></i>
+        <span>পরবর্তী: অধ্যায় ০২</span> <i class="fa-solid fa-arrow-right"></i>
       </a>
     </div>
 
@@ -122,14 +142,13 @@
 
   <script>
     const labInfo = {
-      'caliper': { num: 1, title: 'ভার্নিয়ার ও স্ক্রু গজ', sub: 'ভার্নিয়ার ধ্রুবক ও পিচ মেপে ক্ষুদ্র দৈর্ঘ্য নির্ভুলভাবে নির্ণয় করো।' },
-      'density': { num: 2, title: 'ঘনত্ব অনুসন্ধান', sub: 'অজানা পদার্থের ভর ও আয়তন মেপে ঘনত্ব এবং বস্তু সনাক্তকরণ।' }
+      'caliper': { num: 1, title: 'ভার্নিয়ার ও স্লাইড ক্যালিপার্স', sub: 'বাস্তবসম্মত সিলভার স্লাইড ক্যালিপার্স দিয়ে সূক্ষ্ম দৈর্ঘ্য পরিমাপ।' },
+      'micrometer': { num: 2, title: 'স্ক্রু গজ ও মাইক্রোমিটার', sub: 'বাস্তবসম্মত স্ক্রু গজ দিয়ে তারের ব্যাস ও পাতের পুরুত্ব নির্ণয়।' },
+      'density': { num: 3, title: 'ঘনত্ব অনুসন্ধান', sub: 'অজানা পদার্থের ভর ও আয়তন মেপে ঘনত্ব এবং বস্তু সনাক্তকরণ।' }
     };
 
     function switchLab(labId, tabNum) {
       const iframe = document.getElementById('lab-iframe');
-      const tab1 = document.getElementById('tab-lab-1');
-      const tab2 = document.getElementById('tab-lab-2');
       const btnFsTop = document.getElementById('btn-fullscreen-top');
       const btnFsMain = document.getElementById('btn-fullscreen-main');
       const subEl = document.getElementById('current-lab-sub');
@@ -148,23 +167,33 @@
         btnFsMain.href = '../physics-labs/index.html?lab=' + labId;
       }
 
-      if (tabNum === 1) {
-        tab1.className = 'lab-tab-active px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 whitespace-nowrap border border-transparent shadow-sm';
-        tab2.className = 'px-3.5 py-2 rounded-xl text-xs font-bold text-slate-300 bg-[#112133] hover:bg-[#162c45] hover:text-white transition flex items-center gap-2 whitespace-nowrap border border-slate-700/60';
-      } else {
-        tab2.className = 'lab-tab-active px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 whitespace-nowrap border border-transparent shadow-sm';
-        tab1.className = 'px-3.5 py-2 rounded-xl text-xs font-bold text-slate-300 bg-[#112133] hover:bg-[#162c45] hover:text-white transition flex items-center gap-2 whitespace-nowrap border border-slate-700/60';
-      }
+      [1, 2, 3].forEach(n => {
+        const tab = document.getElementById('tab-lab-' + n);
+        if (tab) {
+          if (n === tabNum) {
+            tab.className = 'lab-tab-active px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 whitespace-nowrap border border-transparent shadow-sm';
+            const numSpan = tab.querySelector('span:first-child');
+            if (numSpan) numSpan.className = 'w-5 h-5 rounded-md bg-white/20 text-white text-[10px] flex items-center justify-center font-mono font-bold';
+          } else {
+            tab.className = 'px-3.5 py-2 rounded-xl text-xs font-bold text-slate-300 bg-[#112133] hover:bg-[#162c45] hover:text-white transition flex items-center gap-2 whitespace-nowrap border border-slate-700/60';
+            const numSpan = tab.querySelector('span:first-child');
+            if (numSpan) numSpan.className = 'w-5 h-5 rounded-md bg-white/10 text-slate-300 text-[10px] flex items-center justify-center font-mono font-bold';
+          }
+        }
+      });
 
       if (labInfo[labId]) {
-        subEl.textContent = labInfo[labId].sub;
+        if (subEl) subEl.textContent = labInfo[labId].sub;
+        if (iframe) iframe.title = labInfo[labId].title;
       }
     }
 
     const urlParams = new URLSearchParams(window.location.search);
     const targetLab = urlParams.get('lab');
-    if (targetLab === 'density') {
-      switchLab('density', 2);
+    if (targetLab === 'micrometer') {
+      switchLab('micrometer', 2);
+    } else if (targetLab === 'density') {
+      switchLab('density', 3);
     }
   </script>
 </body>

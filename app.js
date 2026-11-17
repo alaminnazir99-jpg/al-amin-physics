@@ -934,7 +934,11 @@ function renderChapterData() {
    CHAPTER SIMULATION (26 ChatGPT-crafted Labs)
 =================================================== */
 const CHAPTER_LAB_MAP = {
-    1:  { name: "ভৌত রাশি ও পরিমাপ", labs: [ { id: "caliper", num: 1, title: "ভার্নিয়ার ও স্ক্রু গজ", sub: "পরিমাপের ছোট্ট পার্থক্য, বিজ্ঞানের বড় নির্ভুলতা।" }, { id: "density", num: 2, title: "ঘনত্ব অনুসন্ধান", sub: "একটি অজানা বস্তুর পরিচয় খুঁজে বের করো।" } ] },
+    1:  { name: "ভৌত রাশি ও পরিমাপ", labs: [ 
+        { id: "caliper", num: 1, title: "ভার্নিয়ার ক্যালিপার্স", sub: "বাস্তবসম্মত স্লাইড ক্যালিপার্স দিয়ে সূক্ষ্ম দৈর্ঘ্য পরিমাপ।" }, 
+        { id: "micrometer", num: 2, title: "স্ক্রু গজ ও মাইক্রোমিটার", sub: "বাস্তবসম্মত স্ক্রু গজ দিয়ে তারের ব্যাস ও পাতের পুরুত্ব নির্ণয়।" }, 
+        { id: "density", num: 3, title: "ঘনত্ব অনুসন্ধান", sub: "কঠিন ও তরলের ভর, আয়তন ও ঘনত্বের সম্পর্ক অনুসন্ধান।" } 
+    ] },
     2:  { name: "গতি", labs: [ { id: "motion", num: 3, title: "গাড়ি, গতি ও লেখচিত্র", sub: "চলন্ত গাড়ির প্রতিটি মুহূর্তকে গ্রাফে ধরো।" }, { id: "fall", num: 4, title: "মুক্তপতন পরীক্ষাগার", sub: "ভিন্ন ভর, একই মহাকর্ষ—ফল কী হবে?" } ] },
     3:  { name: "বল", labs: [ { id: "friction", num: 5, title: "বল ও ঘর্ষণ", sub: "কখন বাক্স নড়বে, কখন থামবে—নিজে পরীক্ষা করো।" }, { id: "collision", num: 6, title: "ট্রলির সংঘর্ষ", sub: "ভরবেগ কোথায় যায়? সংঘর্ষে খুঁজে দেখো।" } ] },
     4:  { name: "কাজ, ক্ষমতা ও শক্তি", labs: [ { id: "energy", num: 7, title: "রোলার কোস্টার ও শক্তি", sub: "উঁচু–নিচু পথে শক্তির রূপান্তর দেখো।" }, { id: "crane", num: 8, title: "ক্রেন, কাজ ও ক্ষমতা", sub: "একই কাজ, ভিন্ন সময়—ক্ষমতার পার্থক্য।" } ] },
@@ -949,6 +953,16 @@ const CHAPTER_LAB_MAP = {
     13: { name: "আধুনিক পদার্থবিজ্ঞান ও ইলেকট্রনিক্স", labs: [ { id: "decay", num: 25, title: "তেজস্ক্রিয় ক্ষয় ও অর্ধায়ু", sub: "প্রতিটি পরমাণু অনিশ্চিত, সমষ্টিতে একটি নিয়ম।" }, { id: "electronics", num: 26, title: "ডায়োড ও ট্রানজিস্টর", sub: "একদিকে কারেন্ট, ক্ষুদ্র সংকেতে বড় নিয়ন্ত্রণ।" } ] }
 };
 
+function getLabSimulationUrl(labId, embed = false) {
+    if (labId === 'caliper') {
+        return 'simulations/vernier-caliper.html';
+    }
+    if (labId === 'micrometer') {
+        return 'simulations/micrometer.html';
+    }
+    return embed ? `physics-labs/index.html?lab=${labId}&embed=1` : `physics-labs/index.html?lab=${labId}`;
+}
+
 function renderChapterSimulation() {
     const container = document.getElementById('simulation-tab-content');
     if (!container) return;
@@ -956,10 +970,44 @@ function renderChapterSimulation() {
     if (currentLevel === 'ssc') {
         const chapNum = currentChapterIndex + 1;
         const chapData = CHAPTER_LAB_MAP[chapNum];
-        if (!chapData) return;
+        if (!chapData || !chapData.labs || !chapData.labs.length) return;
 
-        const lab1 = chapData.labs[0];
-        const lab2 = chapData.labs[1];
+        const firstLab = chapData.labs[0];
+        const tabsHtml = chapData.labs.map((lab, idx) => {
+            const isActive = idx === 0;
+            const activeClass = "px-3.5 py-2 rounded-xl text-xs font-bold bg-teal-600 text-white shadow-sm transition flex items-center gap-2 whitespace-nowrap";
+            const inactiveClass = "px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 transition flex items-center gap-2 whitespace-nowrap";
+            const numBg = isActive ? "bg-white/20 text-white" : "bg-white text-slate-600 border border-slate-200";
+            return `
+                <button id="study-sim-tab-${idx + 1}" onclick="switchStudySimulationLab('${lab.id}', ${idx + 1})" class="${isActive ? activeClass : inactiveClass}">
+                    <span class="w-5 h-5 rounded-md ${numBg} text-[10px] flex items-center justify-center font-mono font-bold">${String(lab.num).padStart(2, '0')}</span>
+                    <span>${lab.title}</span>
+                </button>
+            `;
+        }).join('');
+
+        const gridCols = chapData.labs.length >= 3 ? 'grid-cols-1 md:grid-cols-3' : 'grid-cols-1 md:grid-cols-2';
+
+        const cardsHtml = chapData.labs.map((lab, idx) => {
+            const labUrl = getLabSimulationUrl(lab.id, false);
+            return `
+                <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2 flex flex-col justify-between">
+                    <div class="space-y-1.5">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-teal-800 flex items-center gap-1.5">
+                                <span class="w-5 h-5 rounded bg-teal-100 text-teal-700 text-[10px] flex items-center justify-center font-mono">${String(lab.num).padStart(2, '0')}</span>
+                                ${lab.title}
+                            </span>
+                            <a href="${labUrl}" target="_blank" class="text-[11px] font-bold text-teal-600 hover:underline">নতুন ট্যাব ↗</a>
+                        </div>
+                        <p class="text-xs text-slate-500">${lab.sub}</p>
+                    </div>
+                    <button onclick="switchStudySimulationLab('${lab.id}', ${idx + 1})" class="w-full py-1.5 px-3 rounded-xl bg-white hover:bg-teal-50 border border-slate-200 text-xs font-bold text-slate-700 transition">
+                        এই ল্যাবটি স্ক্রিনে চালু করুন
+                    </button>
+                </div>
+            `;
+        }).join('');
 
         container.innerHTML = `
             <div class="bg-white p-5 sm:p-6 rounded-3xl border border-slate-200 shadow-sm space-y-4">
@@ -974,61 +1022,28 @@ function renderChapterSimulation() {
                     </div>
 
                     <div class="flex items-center gap-2">
-                        <a id="study-sim-fs-btn" href="${lab1.id === 'caliper' ? 'simulations/vernier-caliper.html' : 'physics-labs/index.html?lab=' + lab1.id}" target="_blank" class="px-3.5 py-2 rounded-xl bg-teal-50 hover:bg-teal-100 text-teal-700 text-xs font-bold border border-teal-200 transition flex items-center gap-1.5 shadow-sm">
+                        <a id="study-sim-fs-btn" href="${getLabSimulationUrl(firstLab.id, false)}" target="_blank" class="px-3.5 py-2 rounded-xl bg-teal-50 hover:bg-teal-100 text-teal-700 text-xs font-bold border border-teal-200 transition flex items-center gap-1.5 shadow-sm">
                             <i class="fa-solid fa-up-right-and-down-left-from-center"></i> <span>পূর্ণ পর্দায় খুলুন ↗</span>
                         </a>
                         <a href="simulations/index.html" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition flex items-center gap-1.5">
-                            <i class="fa-solid fa-flask text-teal-600"></i> <span>সকল ২৬টি ল্যাব</span>
+                            <i class="fa-solid fa-flask text-teal-600"></i> <span>সকল সিমুলেশন</span>
                         </a>
                     </div>
                 </div>
 
                 <!-- Lab Switcher Buttons -->
                 <div class="flex items-center gap-2 overflow-x-auto pb-1">
-                    <button id="study-sim-tab-1" onclick="switchStudySimulationLab('${lab1.id}', 1)" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-teal-600 text-white shadow-sm transition flex items-center gap-2">
-                        <span class="w-5 h-5 rounded-md bg-white/20 text-white text-[10px] flex items-center justify-center font-mono font-bold">${String(lab1.num).padStart(2, '0')}</span>
-                        <span>${lab1.title}</span>
-                    </button>
-                    <button id="study-sim-tab-2" onclick="switchStudySimulationLab('${lab2.id}', 2)" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 transition flex items-center gap-2">
-                        <span class="w-5 h-5 rounded-md bg-white text-slate-600 border border-slate-200 text-[10px] flex items-center justify-center font-mono font-bold">${String(lab2.num).padStart(2, '0')}</span>
-                        <span>${lab2.title}</span>
-                    </button>
+                    ${tabsHtml}
                 </div>
 
                 <!-- Interactive Iframe -->
                 <div class="relative w-full rounded-2xl overflow-hidden border border-slate-200 bg-[#08111d] shadow-inner">
-                    <iframe id="study-simulation-iframe" src="${lab1.id === 'caliper' ? 'simulations/vernier-caliper.html' : 'physics-labs/index.html?lab=' + lab1.id + '&embed=1'}" title="${lab1.title}" class="w-full h-[600px] sm:h-[700px] lg:h-[760px] border-0 bg-[#08111d]" allow="fullscreen; clipboard-write"></iframe>
+                    <iframe id="study-simulation-iframe" src="${getLabSimulationUrl(firstLab.id, true)}" title="${firstLab.title}" class="w-full h-[600px] sm:h-[700px] lg:h-[760px] border-0 bg-[#08111d]" allow="fullscreen; clipboard-write"></iframe>
                 </div>
 
-                <!-- Two Labs Details Grid -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
-                    <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
-                        <div class="flex items-center justify-between">
-                            <span class="text-xs font-bold text-teal-800 flex items-center gap-1.5">
-                                <span class="w-5 h-5 rounded bg-teal-100 text-teal-700 text-[10px] flex items-center justify-center font-mono">${String(lab1.num).padStart(2, '0')}</span>
-                                ${lab1.title}
-                            </span>
-                            <a href="${lab1.id === 'caliper' ? 'simulations/vernier-caliper.html' : 'physics-labs/index.html?lab=' + lab1.id}" target="_blank" class="text-[11px] font-bold text-teal-600 hover:underline">নতুন ট্যাব ↗</a>
-                        </div>
-                        <p class="text-xs text-slate-500">${lab1.sub}</p>
-                        <button onclick="switchStudySimulationLab('${lab1.id}', 1)" class="w-full py-1.5 px-3 rounded-xl bg-white hover:bg-teal-50 border border-slate-200 text-xs font-bold text-slate-700 transition">
-                            এই ল্যাবটি স্ক্রিনে চালু করুন
-                        </button>
-                    </div>
-
-                    <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
-                        <div class="flex items-center justify-between">
-                            <span class="text-xs font-bold text-teal-800 flex items-center gap-1.5">
-                                <span class="w-5 h-5 rounded bg-teal-100 text-teal-700 text-[10px] flex items-center justify-center font-mono">${String(lab2.num).padStart(2, '0')}</span>
-                                ${lab2.title}
-                            </span>
-                            <a href="${lab2.id === 'caliper' ? 'simulations/vernier-caliper.html' : 'physics-labs/index.html?lab=' + lab2.id}" target="_blank" class="text-[11px] font-bold text-teal-600 hover:underline">নতুন ট্যাব ↗</a>
-                        </div>
-                        <p class="text-xs text-slate-500">${lab2.sub}</p>
-                        <button onclick="switchStudySimulationLab('${lab2.id}', 2)" class="w-full py-1.5 px-3 rounded-xl bg-white hover:bg-teal-50 border border-slate-200 text-xs font-bold text-slate-700 transition">
-                            এই ল্যাবটি স্ক্রিনে চালু করুন
-                        </button>
-                    </div>
+                <!-- Labs Details Grid -->
+                <div class="grid ${gridCols} gap-4 pt-2">
+                    ${cardsHtml}
                 </div>
             </div>
         `;
@@ -1044,7 +1059,7 @@ function renderChapterSimulation() {
                 </p>
                 <div class="pt-2">
                     <a href="simulations/index.html" class="inline-flex items-center gap-2 px-6 py-3 bg-teal-600 hover:bg-teal-500 text-white font-bold rounded-2xl text-xs sm:text-sm shadow-lg shadow-teal-600/25 transition">
-                        <i class="fa-solid fa-atom"></i> ২৬টি ল্যাবরেটরি এক্সপ্লোর করুন <i class="fa-solid fa-arrow-right"></i>
+                        <i class="fa-solid fa-atom"></i> ল্যাবরেটরি এক্সপ্লোর করুন <i class="fa-solid fa-arrow-right"></i>
                     </a>
                 </div>
             </div>
@@ -1054,24 +1069,26 @@ function renderChapterSimulation() {
 
 function switchStudySimulationLab(labId, tabNum) {
     const iframe = document.getElementById('study-simulation-iframe');
-    const tab1 = document.getElementById('study-sim-tab-1');
-    const tab2 = document.getElementById('study-sim-tab-2');
     const btnFs = document.getElementById('study-sim-fs-btn');
     if (iframe) {
-        iframe.src = labId === 'caliper' ? 'simulations/vernier-caliper.html' : `physics-labs/index.html?lab=${labId}&embed=1`;
+        iframe.src = getLabSimulationUrl(labId, true);
     }
     if (btnFs) {
-        btnFs.href = labId === 'caliper' ? 'simulations/vernier-caliper.html' : `physics-labs/index.html?lab=${labId}`;
+        btnFs.href = getLabSimulationUrl(labId, false);
     }
-    if (tab1 && tab2) {
-        if (tabNum === 1) {
-            tab1.className = 'px-3.5 py-2 rounded-xl text-xs font-bold bg-teal-600 text-white shadow-sm transition flex items-center gap-2';
-            tab2.className = 'px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 transition flex items-center gap-2';
-        } else {
-            tab2.className = 'px-3.5 py-2 rounded-xl text-xs font-bold bg-teal-600 text-white shadow-sm transition flex items-center gap-2';
-            tab1.className = 'px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 transition flex items-center gap-2';
+    const allTabs = document.querySelectorAll('[id^="study-sim-tab-"]');
+    allTabs.forEach((tab, idx) => {
+        const isCurrent = (idx + 1) === tabNum;
+        tab.className = isCurrent 
+            ? 'px-3.5 py-2 rounded-xl text-xs font-bold bg-teal-600 text-white shadow-sm transition flex items-center gap-2 whitespace-nowrap'
+            : 'px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 transition flex items-center gap-2 whitespace-nowrap';
+        const numSpan = tab.querySelector('span:first-child');
+        if (numSpan) {
+            numSpan.className = isCurrent
+                ? 'w-5 h-5 rounded-md bg-white/20 text-white text-[10px] flex items-center justify-center font-mono font-bold'
+                : 'w-5 h-5 rounded-md bg-white text-slate-600 border border-slate-200 text-[10px] flex items-center justify-center font-mono font-bold';
         }
-    }
+    });
 }
 
 /* ===================================================
