@@ -13,6 +13,7 @@
       user-select: none;
       -webkit-user-select: none;
       touch-action: pan-x pan-y;
+      background-color: #040913;
     }
     .font-mono {
       font-family: "JetBrains Mono", monospace;
@@ -21,8 +22,8 @@
       touch-action: none;
     }
     /* Custom scrollbar */
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: #070e1a; }
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: #060d1b; }
     ::-webkit-scrollbar-thumb { background: #1e3a5f; border-radius: 4px; }
     ::-webkit-scrollbar-thumb:hover { background: #2563eb; }
 
@@ -41,121 +42,153 @@
     }
     .obj-active-card {
       border-color: #38bdf8 !important;
-      background: linear-gradient(135deg, rgba(14,165,233,0.18), rgba(2,132,199,0.08)) !important;
-      box-shadow: 0 0 14px rgba(56,189,248,0.25);
+      background: linear-gradient(135deg, rgba(14,165,233,0.22), rgba(2,132,199,0.08)) !important;
+      box-shadow: 0 0 14px rgba(56,189,248,0.3);
+    }
+
+    /* Landscape & Monitor Display Optimization */
+    @media (orientation: landscape) and (max-height: 560px) {
+      header {
+        padding-top: 0.25rem !important;
+        padding-bottom: 0.25rem !important;
+      }
+      .landscape-hide {
+        display: none !important;
+      }
+      #caliper-canvas {
+        height: calc(100vh - 105px) !important;
+        min-height: 290px !important;
+      }
+      main {
+        padding-top: 0.35rem !important;
+        padding-bottom: 0.35rem !important;
+      }
+    }
+
+    @media (min-width: 1280px) {
+      #caliper-canvas {
+        height: 540px !important;
+      }
     }
   </style>
 </head>
-<body class="bg-[#050b14] text-slate-100 min-h-screen flex flex-col justify-between overflow-x-hidden">
+<body class="text-slate-100 min-h-screen flex flex-col justify-between overflow-x-hidden">
 
   <!-- Top Navigation Bar -->
-  <header class="bg-[#08121f]/95 backdrop-blur border-b border-slate-800/80 px-3 sm:px-5 py-2.5 sticky top-0 z-50">
-    <div class="max-w-7xl mx-auto flex items-center justify-between gap-3">
+  <header class="bg-[#08121f]/95 backdrop-blur border-b border-slate-800/80 px-3 sm:px-5 py-2 sticky top-0 z-50">
+    <div class="max-w-[1500px] mx-auto flex items-center justify-between gap-3">
       <div class="flex items-center gap-2 sm:gap-3">
-        <a href="simulations/ch1.html" class="px-2.5 py-1.5 rounded-xl bg-slate-800/90 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition flex items-center gap-1.5">
+        <a href="ch1.html" class="px-2.5 py-1 rounded-xl bg-slate-800/90 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition flex items-center gap-1.5">
           <i class="fa-solid fa-arrow-left"></i> <span class="hidden sm:inline">অধ্যায় ০১</span>
         </a>
         <div class="flex items-center gap-2">
-          <div class="w-7 h-7 rounded-lg silver-badge flex items-center justify-center font-bold text-xs shadow-inner">
+          <div class="w-6 h-6 rounded-lg silver-badge flex items-center justify-center font-bold text-xs shadow-inner">
             <i class="fa-solid fa-ruler-combined"></i>
           </div>
           <div>
             <h1 class="text-xs sm:text-sm font-bold text-slate-100 flex items-center gap-2 leading-tight">
-              ভার্নিয়ার ও স্লাইড ক্যালিপার্স <span class="hidden md:inline-block text-[10px] px-2 py-0.5 rounded-full bg-cyan-950 text-cyan-300 border border-cyan-800 font-mono">SILVER METALLIC</span>
+              ভার্নিয়ার ও স্লাইড ক্যালিপার্স <span class="hidden md:inline-block text-[10px] px-2 py-0.5 rounded-full bg-cyan-950 text-cyan-300 border border-cyan-800 font-mono">MONITOR / HD VIEW</span>
             </h1>
-            <p class="text-[10px] text-slate-400 hidden sm:block">বাস্তবসম্মত একাধিক বস্তু পরিমাপ ও সূক্ষ্ম দৈর্ঘ্য নির্ণয়</p>
+            <p class="text-[10px] text-slate-400 hidden lg:block">বাস্তবসম্মত একাধিক বস্তু পরিমাপ ও সূক্ষ্ম দৈর্ঘ্য নির্ণয়</p>
           </div>
         </div>
       </div>
 
       <div class="flex items-center gap-1.5 sm:gap-2">
         <!-- Sound Toggle -->
-        <button id="btn-sound" onclick="toggleSound()" title="শব্দ অন/অফ" class="w-8 h-8 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs flex items-center justify-center border border-slate-700 transition">
+        <button id="btn-sound" onclick="toggleSound()" title="শব্দ অন/অফ" class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs flex items-center justify-center border border-slate-700 transition">
           <i class="fa-solid fa-volume-high text-cyan-400" id="sound-icon"></i>
         </button>
         <!-- Magnifier Toggle -->
-        <button id="btn-loupe" onclick="toggleLoupe()" title="ম্যাগনিফায়িং গ্লাস" class="px-2.5 py-1.5 rounded-xl bg-cyan-500/20 text-cyan-300 border border-cyan-500/50 text-xs font-semibold transition flex items-center gap-1.5 shadow-sm">
-          <i class="fa-solid fa-magnifying-glass"></i> <span class="hidden md:inline">ম্যাগনিফায়ার</span>
+        <button id="btn-loupe" onclick="toggleLoupe()" title="ম্যাগনিফায়িং গ্লাস" class="px-2.5 py-1 rounded-xl bg-cyan-500/20 text-cyan-300 border border-cyan-500/50 text-xs font-semibold transition flex items-center gap-1.5 shadow-sm">
+          <i class="fa-solid fa-magnifying-glass"></i> <span class="hidden sm:inline">ম্যাগনিফায়ার</span>
         </button>
         <!-- Quiz Mode Toggle -->
-        <button id="btn-quiz-toggle" onclick="toggleQuizMode()" class="px-3 py-1.5 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 text-xs font-bold border border-amber-500/40 transition flex items-center gap-1.5">
+        <button id="btn-quiz-toggle" onclick="toggleQuizMode()" class="px-2.5 py-1 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 text-xs font-bold border border-amber-500/40 transition flex items-center gap-1.5">
           <i class="fa-solid fa-brain"></i> <span id="quiz-btn-text">কুইজ মোড</span>
         </button>
-        <!-- Fullscreen -->
-        <button onclick="toggleFullscreen()" title="পূর্ণ পর্দা" class="w-8 h-8 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs flex items-center justify-center border border-slate-700 transition">
-          <i class="fa-solid fa-expand"></i>
+        <!-- Monitor Fullscreen Mode -->
+        <button onclick="toggleFullscreen()" title="মনিটর পূর্ণ পর্দা" class="px-2.5 py-1 rounded-xl bg-indigo-600/30 hover:bg-indigo-600/50 text-indigo-300 border border-indigo-500/40 text-xs font-bold flex items-center gap-1.5 transition shadow-sm">
+          <i class="fa-solid fa-expand"></i> <span class="hidden sm:inline">ফুলস্ক্রিন</span>
         </button>
       </div>
     </div>
   </header>
 
   <!-- Main Simulator Stage -->
-  <main class="max-w-7xl mx-auto px-2 sm:px-4 py-3 sm:py-4 w-full flex-1 space-y-3">
+  <main class="max-w-[1500px] mx-auto px-2 sm:px-4 py-2 sm:py-3 w-full flex-1 space-y-2.5">
 
     <!-- Simulator Canvas Area -->
-    <div class="relative w-full rounded-2xl overflow-hidden border border-slate-800/90 bg-[#070e1a] shadow-2xl">
+    <div class="relative w-full rounded-2xl overflow-hidden border border-slate-800/90 bg-[#060c18] shadow-2xl">
       
       <!-- Stage Overlay Toolbar (Top Left) -->
-      <div class="absolute top-3 left-3 z-20 flex flex-wrap items-center gap-2 pointer-events-auto">
-        <div class="bg-slate-900/90 backdrop-blur px-3 py-1.5 rounded-xl border border-slate-700/80 text-[11px] font-semibold text-slate-300 flex items-center gap-2 shadow-lg">
+      <div class="absolute top-2.5 left-2.5 z-20 flex flex-wrap items-center gap-1.5 sm:gap-2 pointer-events-auto">
+        <div class="bg-slate-900/90 backdrop-blur px-2.5 py-1 rounded-xl border border-slate-700/80 text-[11px] font-semibold text-slate-300 flex items-center gap-2 shadow-lg">
           <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-          <span>পরিমাপ পদ্ধতি:</span>
-          <span id="current-mode-label" class="text-cyan-400 font-bold">বহিঃস্থ ব্যাস (নিচের চোয়াল)</span>
+          <span class="hidden sm:inline">পদ্ধতি:</span>
+          <span id="current-mode-label" class="text-cyan-400 font-bold">বহিঃস্থ ব্যাস (চোয়াল)</span>
         </div>
 
-        <div class="bg-slate-900/90 backdrop-blur px-2.5 py-1.5 rounded-xl border border-slate-700/80 text-[11px] font-mono text-amber-300 hidden sm:flex items-center gap-1.5 shadow-lg">
-          <span>VC:</span>
+        <div class="bg-slate-900/90 backdrop-blur px-2.5 py-1 rounded-xl border border-slate-700/80 text-[11px] font-mono text-amber-300 flex items-center gap-1 shadow-lg">
+          <span class="text-slate-400 text-[10px]">VC:</span>
           <span id="badge-vc" class="font-bold text-white">0.1 mm</span>
+        </div>
+
+        <!-- Quick Current Measured Object Badge -->
+        <div id="badge-active-obj" class="bg-slate-900/90 backdrop-blur px-2.5 py-1 rounded-xl border border-cyan-500/40 text-[11px] text-cyan-300 hidden md:flex items-center gap-1.5 shadow-lg">
+          <i class="fa-solid fa-cube text-cyan-400 text-[10px]"></i>
+          <span>স্ক্রিনে সক্রিয়:</span>
+          <span id="badge-obj-name" class="font-bold text-white">ফাঁপা চোঙ</span>
         </div>
       </div>
 
       <!-- Stage Overlay Toolbar (Top Right) Zoom Controls -->
-      <div class="absolute top-3 right-3 z-20 flex items-center gap-1.5 pointer-events-auto">
-        <button onclick="zoomIn()" title="জুম বাড়াও" class="w-8 h-8 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-slate-200 border border-slate-700/80 text-xs flex items-center justify-center shadow-lg transition">
+      <div class="absolute top-2.5 right-2.5 z-20 flex items-center gap-1 pointer-events-auto">
+        <button onclick="zoomIn()" title="জুম বাড়াও" class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-slate-200 border border-slate-700/80 text-xs flex items-center justify-center shadow-lg transition">
           <i class="fa-solid fa-plus"></i>
         </button>
-        <button onclick="zoomOut()" title="জুম কমাও" class="w-8 h-8 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-slate-200 border border-slate-700/80 text-xs flex items-center justify-center shadow-lg transition">
+        <button onclick="zoomOut()" title="জুম কমাও" class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-slate-200 border border-slate-700/80 text-xs flex items-center justify-center shadow-lg transition">
           <i class="fa-solid fa-minus"></i>
         </button>
-        <button onclick="resetZoomPan()" title="রিসেট ভিউ" class="w-8 h-8 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-slate-200 border border-slate-700/80 text-xs flex items-center justify-center shadow-lg transition">
+        <button onclick="resetZoomPan()" title="রিসেট ভিউ" class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-slate-200 border border-slate-700/80 text-xs flex items-center justify-center shadow-lg transition">
           <i class="fa-solid fa-arrows-rotate"></i>
         </button>
       </div>
 
       <!-- Interactive Canvas -->
-      <canvas id="caliper-canvas" class="w-full h-[400px] sm:h-[480px] md:h-[530px] lg:h-[560px] block cursor-grab active:cursor-grabbing"></canvas>
+      <canvas id="caliper-canvas" class="w-full h-[380px] sm:h-[450px] md:h-[490px] lg:h-[530px] block cursor-grab active:cursor-grabbing"></canvas>
 
       <!-- Stage Bottom Hint -->
-      <div class="absolute bottom-2.5 left-1/2 -translate-x-1/2 z-20 pointer-events-none">
-        <div class="bg-slate-900/90 backdrop-blur px-3 py-1 rounded-full border border-slate-700/70 text-[11px] text-slate-300 text-center shadow-md flex items-center gap-2 whitespace-nowrap">
+      <div class="absolute bottom-2 left-1/2 -translate-x-1/2 z-20 pointer-events-none">
+        <div class="bg-slate-900/90 backdrop-blur px-3 py-0.5 rounded-full border border-slate-700/70 text-[10px] sm:text-[11px] text-slate-300 text-center shadow-md flex items-center gap-2 whitespace-nowrap">
           <i class="fa-solid fa-hand-pointer text-cyan-400"></i>
-          <span>স্ক্রিনের বস্তু টেনে চোয়ালে লাগাও • ভার্নিয়ার স্লাইডার বা মাউস হুইল ঘুরিয়ে মাপো</span>
+          <span>ট্রে-এর যেকোনো ছোট বস্তুতে টাচ করলে তা চোয়ালে যাবে • স্লাইডার টেনে মাপুন</span>
         </div>
       </div>
     </div>
 
-    <!-- On-Screen Multi-Object Tray & Quick Selector -->
-    <div class="bg-[#091524] border border-slate-800/80 p-3 rounded-2xl space-y-2.5 shadow-xl">
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800/80 pb-2">
+    <!-- On-Screen Specimen Tray & Quick Action HUD -->
+    <div class="bg-[#081220] border border-slate-800/90 p-2.5 sm:p-3 rounded-2xl space-y-2 shadow-xl">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800/80 pb-1.5">
         <div class="flex items-center gap-2">
           <i class="fa-solid fa-box-open text-amber-400 text-xs"></i>
-          <h2 class="text-xs sm:text-sm font-bold text-slate-200">পরিমাপের জন্য নির্ধারিত বস্তুসমূহ (ক্লিক করে নির্বাচন বা টেনে নিন)</h2>
+          <h2 class="text-xs sm:text-sm font-bold text-slate-200">বস্তু ট্রে (ট্রে-তে ছোট বস্তু থাকবে; টাচ করলে কেবলমাত্র ওই বস্তুটিই চোয়ালে পরিমাপের জন্য যাবে)</h2>
         </div>
         <div class="flex items-center gap-2">
           <button onclick="autoClampToCurrentObject()" class="px-3 py-1 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white text-[11px] font-bold border border-cyan-400 transition flex items-center gap-1.5 shadow-sm">
-            <i class="fa-solid fa-compress"></i> <span>চোয়াল আঁটসাঁট করো (Clamp)</span>
+            <i class="fa-solid fa-compress"></i> <span>বস্তুর গায়ে লাগাও (Clamp)</span>
           </button>
-          <button onclick="resetObjectsToTray()" class="px-2.5 py-1 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] font-semibold border border-slate-700 transition flex items-center gap-1">
+          <button onclick="returnObjectToTray()" class="px-2.5 py-1 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] font-semibold border border-slate-700 transition flex items-center gap-1">
             <i class="fa-solid fa-rotate-left"></i> <span>ট্রে-তে ফেরত</span>
           </button>
         </div>
       </div>
 
-      <!-- 4 Selectable Object Cards -->
+      <!-- 4 Compact Object Selection Cards -->
       <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
         <!-- Object 1: Brass Cylinder -->
-        <button id="card-obj-cylinder" onclick="selectObjectById('cylinder')" class="obj-active-card p-2.5 rounded-xl bg-[#0d1c2e] border border-slate-700 text-left transition flex items-center gap-2.5 group hover:border-cyan-400">
-          <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-amber-400 to-amber-700 flex items-center justify-center text-slate-950 font-bold text-sm shadow-md flex-shrink-0">
+        <button id="card-obj-cylinder" onclick="selectObjectById('cylinder')" class="obj-active-card p-2 rounded-xl bg-[#0c1828] border border-slate-700 text-left transition flex items-center gap-2.5 group hover:border-cyan-400">
+          <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-400 to-amber-700 flex items-center justify-center text-slate-950 font-bold text-xs shadow-md flex-shrink-0">
             <i class="fa-solid fa-ring"></i>
           </div>
           <div class="min-w-0">
@@ -163,13 +196,13 @@
               <span class="text-xs font-bold text-slate-100 truncate">ফাঁপা চোঙ</span>
               <span class="text-[10px] text-amber-400 font-mono font-bold">18.4 mm</span>
             </div>
-            <p class="text-[10px] text-slate-400 truncate">বাইরের/ভিতরের ব্যাস ও গভীরতা</p>
+            <p class="text-[10px] text-slate-400 truncate">বাইরের ও ভিতরের ব্যাস</p>
           </div>
         </button>
 
         <!-- Object 2: Steel Sphere -->
-        <button id="card-obj-sphere" onclick="selectObjectById('sphere')" class="p-2.5 rounded-xl bg-[#0d1c2e] border border-slate-700/80 text-left transition flex items-center gap-2.5 group hover:border-cyan-400">
-          <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-slate-200 via-slate-400 to-slate-700 flex items-center justify-center text-slate-900 font-bold text-sm shadow-md flex-shrink-0">
+        <button id="card-obj-sphere" onclick="selectObjectById('sphere')" class="p-2 rounded-xl bg-[#0c1828] border border-slate-700/80 text-left transition flex items-center gap-2.5 group hover:border-cyan-400">
+          <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-slate-200 via-slate-400 to-slate-700 flex items-center justify-center text-slate-900 font-bold text-xs shadow-md flex-shrink-0">
             <i class="fa-solid fa-circle"></i>
           </div>
           <div class="min-w-0">
@@ -177,13 +210,13 @@
               <span class="text-xs font-bold text-slate-100 truncate">স্টিল মার্বেল</span>
               <span class="text-[10px] text-cyan-300 font-mono font-bold">24.6 mm</span>
             </div>
-            <p class="text-[10px] text-slate-400 truncate">গোলাকার বলের বাহ্যিক ব্যাস</p>
+            <p class="text-[10px] text-slate-400 truncate">গোলকের বাহ্যিক ব্যাস</p>
           </div>
         </button>
 
         <!-- Object 3: Blue Block -->
-        <button id="card-obj-block" onclick="selectObjectById('block')" class="p-2.5 rounded-xl bg-[#0d1c2e] border border-slate-700/80 text-left transition flex items-center gap-2.5 group hover:border-cyan-400">
-          <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-cyan-400 to-blue-700 flex items-center justify-center text-slate-950 font-bold text-sm shadow-md flex-shrink-0">
+        <button id="card-obj-block" onclick="selectObjectById('block')" class="p-2 rounded-xl bg-[#0c1828] border border-slate-700/80 text-left transition flex items-center gap-2.5 group hover:border-cyan-400">
+          <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-400 to-blue-700 flex items-center justify-center text-slate-950 font-bold text-xs shadow-md flex-shrink-0">
             <i class="fa-solid fa-cube"></i>
           </div>
           <div class="min-w-0">
@@ -196,8 +229,8 @@
         </button>
 
         <!-- Object 4: Copper Coin -->
-        <button id="card-obj-coin" onclick="selectObjectById('coin')" class="p-2.5 rounded-xl bg-[#0d1c2e] border border-slate-700/80 text-left transition flex items-center gap-2.5 group hover:border-cyan-400">
-          <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-rose-400 to-amber-800 flex items-center justify-center text-slate-950 font-bold text-sm shadow-md flex-shrink-0">
+        <button id="card-obj-coin" onclick="selectObjectById('coin')" class="p-2 rounded-xl bg-[#0c1828] border border-slate-700/80 text-left transition flex items-center gap-2.5 group hover:border-cyan-400">
+          <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-rose-400 to-amber-800 flex items-center justify-center text-slate-950 font-bold text-xs shadow-md flex-shrink-0">
             <i class="fa-solid fa-coins"></i>
           </div>
           <div class="min-w-0">
@@ -212,42 +245,42 @@
     </div>
 
     <!-- Quick Action / Fine Step Controller Bar -->
-    <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-2 bg-[#091524] border border-slate-800/80 p-2.5 rounded-2xl items-center">
+    <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-2 bg-[#081220] border border-slate-800/80 p-2 sm:p-2.5 rounded-2xl items-center">
       <!-- Fine steps -->
       <div class="col-span-2 sm:col-span-4 lg:col-span-3 flex items-center justify-between gap-1 sm:gap-2">
-        <button onclick="nudgeVernier(-10)" class="flex-1 py-2 px-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold rounded-xl border border-slate-700 transition flex items-center justify-center gap-1">
+        <button onclick="nudgeVernier(-10)" class="flex-1 py-1.5 px-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold rounded-xl border border-slate-700 transition flex items-center justify-center gap-1">
           <i class="fa-solid fa-backward-step"></i> -১ মিমি
         </button>
-        <button onclick="nudgeVernier(-1)" class="flex-1 py-2 px-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold rounded-xl border border-slate-700 transition flex items-center justify-center gap-1">
+        <button onclick="nudgeVernier(-1)" class="flex-1 py-1.5 px-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold rounded-xl border border-slate-700 transition flex items-center justify-center gap-1">
           <i class="fa-solid fa-caret-left"></i> -০.১
         </button>
-        <button onclick="nudgeVernier(1)" class="flex-1 py-2 px-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold rounded-xl border border-slate-700 transition flex items-center justify-center gap-1">
+        <button onclick="nudgeVernier(1)" class="flex-1 py-1.5 px-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold rounded-xl border border-slate-700 transition flex items-center justify-center gap-1">
           +০.১ <i class="fa-solid fa-caret-right"></i>
         </button>
-        <button onclick="nudgeVernier(10)" class="flex-1 py-2 px-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold rounded-xl border border-slate-700 transition flex items-center justify-center gap-1">
+        <button onclick="nudgeVernier(10)" class="flex-1 py-1.5 px-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold rounded-xl border border-slate-700 transition flex items-center justify-center gap-1">
           +১ মিমি <i class="fa-solid fa-forward-step"></i>
         </button>
       </div>
 
       <!-- Quick Snap / Fit Button -->
-      <button onclick="autoClampToCurrentObject()" class="py-2 px-3 bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-bold rounded-xl border border-cyan-400 transition flex items-center justify-center gap-1.5 shadow-sm">
+      <button onclick="autoClampToCurrentObject()" class="py-1.5 px-3 bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-bold rounded-xl border border-cyan-400 transition flex items-center justify-center gap-1.5 shadow-sm">
         <i class="fa-solid fa-compress"></i> <span>বস্তুর গায়ে লাগাও</span>
       </button>
 
       <!-- Zero Jaws -->
-      <button onclick="closeJawsFully()" class="py-2 px-3 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold rounded-xl border border-slate-700 transition flex items-center justify-center gap-1.5">
+      <button onclick="closeJawsFully()" class="py-1.5 px-3 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold rounded-xl border border-slate-700 transition flex items-center justify-center gap-1.5">
         <i class="fa-solid fa-align-left"></i> <span>চোয়াল বন্ধ</span>
       </button>
 
       <!-- Random Object -->
-      <button onclick="newRandomObject()" class="py-2 px-3 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl border border-emerald-400 transition flex items-center justify-center gap-1.5 shadow-sm">
+      <button onclick="newRandomObject()" class="py-1.5 px-3 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl border border-emerald-400 transition flex items-center justify-center gap-1.5 shadow-sm">
         <i class="fa-solid fa-shuffle"></i> <span>নতুন মাপ</span>
       </button>
     </div>
 
     <!-- Live Reading & Calculation Breakdown Card -->
-    <div id="panel-readings" class="bg-[#091524] border border-slate-800/80 rounded-2xl p-3 sm:p-4 shadow-xl">
-      <div class="flex items-center justify-between border-b border-slate-800/80 pb-2 mb-3">
+    <div id="panel-readings" class="bg-[#081220] border border-slate-800/80 rounded-2xl p-2.5 sm:p-3.5 shadow-xl">
+      <div class="flex items-center justify-between border-b border-slate-800/80 pb-1.5 mb-2.5">
         <div class="flex items-center gap-2">
           <i class="fa-solid fa-calculator text-cyan-400 text-sm"></i>
           <h2 class="text-xs sm:text-sm font-bold text-slate-200">লাইভ পাঠ ও গাণিতিক হিসাব</h2>
@@ -258,9 +291,9 @@
       </div>
 
       <!-- Key Readouts Grid -->
-      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mb-3">
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-2.5">
         <!-- Main Scale Reading (M) -->
-        <div class="p-2.5 rounded-xl bg-[#0e1d30] border border-slate-800/90 space-y-0.5">
+        <div class="p-2 sm:p-2.5 rounded-xl bg-[#0b1726] border border-slate-800/90 space-y-0.5">
           <span class="text-[11px] text-slate-400 block font-medium">মূল স্কেল পাঠ (M)</span>
           <div class="flex items-baseline gap-1">
             <span id="val-msr" class="text-base sm:text-lg font-bold font-mono text-cyan-300">0.0</span>
@@ -270,7 +303,7 @@
         </div>
 
         <!-- Vernier Coincidence (V) -->
-        <div class="p-2.5 rounded-xl bg-[#0e1d30] border border-slate-800/90 space-y-0.5">
+        <div class="p-2 sm:p-2.5 rounded-xl bg-[#0b1726] border border-slate-800/90 space-y-0.5">
           <span class="text-[11px] text-slate-400 block font-medium">ভার্নিয়ার সমপাতন (V)</span>
           <div class="flex items-baseline gap-1">
             <span id="val-vsr" class="text-base sm:text-lg font-bold font-mono text-amber-300">0</span>
@@ -279,7 +312,7 @@
         </div>
 
         <!-- Vernier Constant (VC) -->
-        <div class="p-2.5 rounded-xl bg-[#0e1d30] border border-slate-800/90 space-y-0.5">
+        <div class="p-2 sm:p-2.5 rounded-xl bg-[#0b1726] border border-slate-800/90 space-y-0.5">
           <span class="text-[11px] text-slate-400 block font-medium">ভার্নিয়ার ধ্রুবক (VC)</span>
           <div class="flex items-baseline gap-1">
             <span id="val-vc" class="text-base sm:text-lg font-bold font-mono text-emerald-300">0.01</span>
@@ -289,7 +322,7 @@
         </div>
 
         <!-- Total Corrected Reading -->
-        <div class="p-2.5 rounded-xl bg-gradient-to-br from-cyan-950/40 to-blue-950/40 border border-cyan-800/60 space-y-0.5">
+        <div class="p-2 sm:p-2.5 rounded-xl bg-gradient-to-br from-cyan-950/40 to-blue-950/40 border border-cyan-800/60 space-y-0.5">
           <span class="text-[11px] text-cyan-300 block font-bold">মোট পাঠ (L)</span>
           <div class="flex items-baseline gap-1">
             <span id="val-total" class="text-lg sm:text-xl font-extrabold font-mono text-cyan-200">0.00</span>
@@ -299,13 +332,13 @@
         </div>
       </div>
 
-      <!-- Step-by-Step Formula Card (Expandable) -->
-      <div id="calc-step-details" class="p-3 rounded-xl bg-[#070f1a] border border-slate-800 font-mono text-xs text-slate-300 space-y-1.5 leading-relaxed">
+      <!-- Step-by-Step Formula Card -->
+      <div id="calc-step-details" class="p-2.5 rounded-xl bg-[#050b16] border border-slate-800 font-mono text-xs text-slate-300 space-y-1 leading-relaxed">
         <div class="text-[11px] text-slate-400 font-sans font-semibold border-b border-slate-800/70 pb-1 flex items-center justify-between">
           <span>পরিমাপ সমীকরণ:</span>
-          <span class="text-cyan-400 font-mono">L = M + (V × VC) − e</span>
+          <span class="text-cyan-400 font-mono font-bold">L = M + (V × VC) − e</span>
         </div>
-        <div class="flex flex-wrap items-center gap-2 pt-1">
+        <div class="flex flex-wrap items-center gap-2 pt-0.5">
           <span class="text-slate-400">পাঠ হিসাব:</span>
           <span id="calc-breakdown-math" class="text-cyan-300 font-bold">0.0 + (0 × 0.01) - 0.00 = 0.00 cm</span>
         </div>
@@ -315,9 +348,9 @@
       </div>
     </div>
 
-    <!-- Quiz / Challenge Modal Area (Hidden by Default) -->
-    <div id="panel-quiz" class="hidden bg-[#0c1829] border border-amber-500/40 rounded-2xl p-4 shadow-2xl space-y-3">
-      <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+    <!-- Quiz Modal Area -->
+    <div id="panel-quiz" class="hidden bg-[#0a1525] border border-amber-500/40 rounded-2xl p-3.5 shadow-2xl space-y-2.5">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-1.5">
         <div class="flex items-center gap-2">
           <span class="px-2 py-0.5 rounded-md bg-amber-500/20 text-amber-300 text-xs font-bold font-mono">QUIZ</span>
           <h3 class="text-xs sm:text-sm font-bold text-slate-100">নিজে পরিমাপ করে উত্তর জমা দাও</h3>
@@ -326,133 +359,93 @@
       </div>
 
       <p class="text-xs text-slate-300 leading-relaxed">
-        চোয়ালে আবদ্ধ অজানা বস্তুর পরিমাপটি স্কেল ও ভার্নিয়ারের দাগ দেখে নির্ণয় করো। তোমার হিসাব নিচে লিখে <strong>'যাচাই করুন'</strong> বাটনে চাপ দাও:
+        চোয়ালে আবদ্ধ বস্তুর পরিমাপটি স্কেল ও ভার্নিয়ারের দাগ দেখে নির্ণয় করো। হিসাব লিখে <strong>'যাচাই করুন'</strong> চাপো:
       </p>
 
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
         <div>
           <label class="block text-[11px] text-slate-400 mb-1">১. মূল স্কেল পাঠ M (cm):</label>
-          <input type="number" step="0.1" id="quiz-input-m" placeholder="উদা: 2.3" class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-slate-100 text-xs font-mono focus:border-amber-400 focus:outline-none">
+          <input type="number" step="0.1" id="quiz-input-m" placeholder="উদা: 1.8" class="w-full px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-700 text-slate-100 text-xs font-mono focus:border-amber-400 focus:outline-none">
         </div>
         <div>
           <label class="block text-[11px] text-slate-400 mb-1">২. ভার্নিয়ার সমপাতন V (দাগ নং):</label>
-          <input type="number" step="1" id="quiz-input-v" placeholder="উদা: 6" class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-slate-100 text-xs font-mono focus:border-amber-400 focus:outline-none">
+          <input type="number" step="1" id="quiz-input-v" placeholder="উদা: 4" class="w-full px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-700 text-slate-100 text-xs font-mono focus:border-amber-400 focus:outline-none">
         </div>
         <div>
           <label class="block text-[11px] text-slate-400 mb-1">৩. মোট নির্ণীত দৈর্ঘ্য L (cm):</label>
-          <input type="number" step="0.01" id="quiz-input-total" placeholder="উদা: 2.36" class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-slate-100 text-xs font-mono focus:border-amber-400 focus:outline-none">
+          <input type="number" step="0.01" id="quiz-input-total" placeholder="উদা: 1.84" class="w-full px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-700 text-slate-100 text-xs font-mono focus:border-amber-400 focus:outline-none">
         </div>
       </div>
 
-      <div class="flex items-center gap-2 pt-1">
-        <button onclick="checkQuizAnswer()" class="px-5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs transition shadow-md">
+      <div class="flex items-center gap-2 pt-0.5">
+        <button onclick="checkQuizAnswer()" class="px-4 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs transition shadow-md">
           যাচাই করুন
         </button>
-        <button onclick="generateQuizProblem()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition">
+        <button onclick="generateQuizProblem()" class="px-3.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition">
           পরবর্তী প্রশ্ন ›
         </button>
         <span id="quiz-result-msg" class="text-xs font-semibold ml-2"></span>
       </div>
     </div>
 
-    <!-- Interactive Settings & Physics Controls Panels -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-3">
+    <!-- Secondary Settings & Specs Grid (Hidden or neat at bottom) -->
+    <div class="landscape-hide grid grid-cols-1 lg:grid-cols-3 gap-2.5">
       
-      <!-- Panel 1: Measurement Mode -->
-      <div class="bg-[#091524] border border-slate-800/80 p-3 sm:p-4 rounded-2xl space-y-3">
-        <div class="flex items-center gap-2 border-b border-slate-800/80 pb-2">
+      <!-- Panel 1: Jaw Mode -->
+      <div class="bg-[#081220] border border-slate-800/80 p-3 rounded-2xl space-y-2">
+        <div class="flex items-center gap-2 border-b border-slate-800/80 pb-1.5">
           <i class="fa-solid fa-shapes text-cyan-400 text-xs"></i>
-          <h3 class="text-xs font-bold text-slate-200">পরিমাপের অংশ ও চোয়াল মোড</h3>
+          <h3 class="text-xs font-bold text-slate-200">চোয়াল পরিমাপ মোড</h3>
         </div>
 
-        <!-- Mode Buttons -->
-        <div class="space-y-1.5">
-          <span class="text-[11px] text-slate-400 block font-medium">ক্যালিপার্সের চোয়াল নির্বাচন:</span>
-          <div class="grid grid-cols-3 gap-1.5">
-            <button id="btn-mode-0" onclick="setMeasureMode(0)" class="btn-active py-2 px-1 rounded-xl text-[11px] font-bold border border-transparent transition text-center">
-              নিচের চোয়াল (বহিঃস্থ)
-            </button>
-            <button id="btn-mode-1" onclick="setMeasureMode(1)" class="bg-slate-800 hover:bg-slate-700 text-slate-300 py-2 px-1 rounded-xl text-[11px] font-bold border border-slate-700 transition text-center">
-              উপরের চোয়াল (অভ্যন্তরীণ)
-            </button>
-            <button id="btn-mode-2" onclick="setMeasureMode(2)" class="bg-slate-800 hover:bg-slate-700 text-slate-300 py-2 px-1 rounded-xl text-[11px] font-bold border border-slate-700 transition text-center">
-              টেইল রড (গভীরতা)
-            </button>
-          </div>
+        <div class="grid grid-cols-3 gap-1.5">
+          <button id="btn-mode-0" onclick="setMeasureMode(0)" class="btn-active py-1.5 px-1 rounded-xl text-[11px] font-bold border border-transparent transition text-center">
+            নিচের চোয়াল (বহিঃস্থ)
+          </button>
+          <button id="btn-mode-1" onclick="setMeasureMode(1)" class="bg-slate-800 hover:bg-slate-700 text-slate-300 py-1.5 px-1 rounded-xl text-[11px] font-bold border border-slate-700 transition text-center">
+            উপরের চোয়াল (অভ্যন্তরীণ)
+          </button>
+          <button id="btn-mode-2" onclick="setMeasureMode(2)" class="bg-slate-800 hover:bg-slate-700 text-slate-300 py-1.5 px-1 rounded-xl text-[11px] font-bold border border-slate-700 transition text-center">
+            টেইল রড (গভীরতা)
+          </button>
         </div>
-
-        <p class="text-[11px] text-slate-400 leading-relaxed pt-1">
-          * বস্তুটিকে মাউস বা হাত দিয়ে সরাসরি টেনে যেকোনো চোয়ালে ছেড়ে দিন অথবা উপরের কার্ডে ক্লিক করে অবিলম্বে লক করুন।
-        </p>
       </div>
 
-      <!-- Panel 2: Caliper Specifications -->
-      <div class="bg-[#091524] border border-slate-800/80 p-3 sm:p-4 rounded-2xl space-y-3">
-        <div class="flex items-center gap-2 border-b border-slate-800/80 pb-2">
+      <!-- Panel 2: Divisions and Zero Error -->
+      <div class="bg-[#081220] border border-slate-800/80 p-3 rounded-2xl space-y-2">
+        <div class="flex items-center gap-2 border-b border-slate-800/80 pb-1.5">
           <i class="fa-solid fa-sliders text-cyan-400 text-xs"></i>
-          <h3 class="text-xs font-bold text-slate-200">যন্ত্রের বিবরণ ও ধ্রুবক</h3>
+          <h3 class="text-xs font-bold text-slate-200">যন্ত্রের বিবরণ ও শূন্য ত্রুটি</h3>
         </div>
 
-        <!-- Vernier Scale Divisions -->
-        <div class="space-y-1.5">
-          <div class="flex items-center justify-between text-[11px]">
-            <span class="text-slate-400 font-medium">ভার্নিয়ার স্কেলের ভাগ সংখ্যা (n):</span>
-            <span id="label-vsd-count" class="font-mono text-cyan-300 font-bold">১০ ভাগ</span>
-          </div>
-          <div class="grid grid-cols-3 gap-1.5">
-            <button id="btn-vsd-10" onclick="setVernierDivisions(10)" class="btn-active py-1.5 px-1 rounded-xl text-[11px] font-bold border border-transparent transition text-center">
-              ১০ ভাগ (0.1 mm)
-            </button>
-            <button id="btn-vsd-20" onclick="setVernierDivisions(20)" class="bg-slate-800 hover:bg-slate-700 text-slate-300 py-1.5 px-1 rounded-xl text-[11px] font-bold border border-slate-700 transition text-center">
-              ২০ ভাগ (0.05 mm)
-            </button>
-            <button id="btn-vsd-50" onclick="setVernierDivisions(50)" class="bg-slate-800 hover:bg-slate-700 text-slate-300 py-1.5 px-1 rounded-xl text-[11px] font-bold border border-slate-700 transition text-center">
-              ৫০ ভাগ (0.02 mm)
-            </button>
+        <div class="flex items-center justify-between text-[11px]">
+          <span class="text-slate-400">ভার্নিয়ার স্কেলের ভাগ:</span>
+          <div class="flex items-center gap-1">
+            <button id="btn-vsd-10" onclick="setVernierDivisions(10)" class="btn-active py-1 px-2 rounded-lg text-[10px] font-bold transition">১০ ভাগ</button>
+            <button id="btn-vsd-20" onclick="setVernierDivisions(20)" class="bg-slate-800 text-slate-300 py-1 px-2 rounded-lg text-[10px] font-bold transition">২০ ভাগ</button>
+            <button id="btn-vsd-50" onclick="setVernierDivisions(50)" class="bg-slate-800 text-slate-300 py-1 px-2 rounded-lg text-[10px] font-bold transition">৫০ ভাগ</button>
           </div>
         </div>
 
-        <!-- Zero Error -->
-        <div class="space-y-1.5 pt-1">
-          <div class="flex items-center justify-between text-[11px]">
-            <span class="text-slate-400 font-medium">যান্ত্রিক শূন্য ত্রুটি (e):</span>
-            <span id="label-zero-error" class="font-mono text-amber-300 font-bold">০.০০ mm</span>
-          </div>
-          <div class="grid grid-cols-4 gap-1">
-            <button onclick="setZeroError(0)" class="py-1.5 px-1 bg-slate-800 hover:bg-slate-700 text-slate-300 text-[10px] font-bold rounded-xl border border-slate-700 transition text-center">
-              ত্রুটিমুক্ত (0)
-            </button>
-            <button onclick="setZeroError(1)" class="py-1.5 px-1 bg-slate-800 hover:bg-slate-700 text-slate-300 text-[10px] font-bold rounded-xl border border-slate-700 transition text-center">
-              +১ ভাগ
-            </button>
-            <button onclick="setZeroError(-1)" class="py-1.5 px-1 bg-slate-800 hover:bg-slate-700 text-slate-300 text-[10px] font-bold rounded-xl border border-slate-700 transition text-center">
-              -১ ভাগ
-            </button>
-            <button onclick="randomizeZeroError()" class="py-1.5 px-1 bg-slate-800 hover:bg-slate-700 text-slate-300 text-[10px] font-bold rounded-xl border border-slate-700 transition text-center">
-              র‍্যান্ডম
-            </button>
+        <div class="flex items-center justify-between text-[11px] pt-1">
+          <span class="text-slate-400">যান্ত্রিক শূন্য ত্রুটি:</span>
+          <div class="flex items-center gap-1">
+            <button onclick="setZeroError(0)" class="py-1 px-1.5 bg-slate-800 text-slate-300 text-[10px] font-bold rounded-lg transition">০</button>
+            <button onclick="setZeroError(1)" class="py-1 px-1.5 bg-slate-800 text-slate-300 text-[10px] font-bold rounded-lg transition">+১</button>
+            <button onclick="setZeroError(-1)" class="py-1 px-1.5 bg-slate-800 text-slate-300 text-[10px] font-bold rounded-lg transition">-১</button>
+            <button onclick="randomizeZeroError()" class="py-1 px-1.5 bg-slate-800 text-slate-300 text-[10px] font-bold rounded-lg transition">র‍্যান্ডম</button>
           </div>
         </div>
       </div>
 
-      <!-- Panel 3: Theory & Formula Summary -->
-      <div class="bg-[#091524] border border-slate-800/80 p-3 sm:p-4 rounded-2xl space-y-2.5">
-        <div class="flex items-center gap-2 border-b border-slate-800/80 pb-2">
+      <!-- Panel 3: Formula Summary -->
+      <div class="bg-[#081220] border border-slate-800/80 p-3 rounded-2xl space-y-1.5 text-[11px] text-slate-300">
+        <div class="flex items-center gap-2 border-b border-slate-800/80 pb-1.5">
           <i class="fa-solid fa-graduation-cap text-cyan-400 text-xs"></i>
           <h3 class="text-xs font-bold text-slate-200">তত্ত্ব ও কার্যপদ্ধতি</h3>
         </div>
-
-        <ul class="text-[11px] text-slate-300 space-y-1.5 list-disc list-inside leading-relaxed">
-          <li><strong>ভার্নিয়ার ধ্রুবক (VC):</strong> মূল স্কেলের ১ ভাগের চেয়ে ভার্নিয়ারের ১ ভাগ যতটুকু ছোট। <code class="text-cyan-300 font-mono">VC = s / n</code></li>
-          <li><strong>সমপাতন (V):</strong> ভার্নিয়ার স্কেলের যে দাগটি মূল স্কেলের দাগের সাথে নিখুঁত মিলে যায়।</li>
-          <li><strong>শূন্য ত্রুটি সংশোধন:</strong> চোয়াল দুটি পুরোপুরি লাগালে যদি ভার্নিয়ারের ০ দাগ মূলের ০ এর ডানে থাকে তবে তা <em>ধনাত্মক</em> এবং বামে থাকলে <em>ঋণাত্মক</em>।</li>
-        </ul>
-
-        <div class="pt-1">
-          <a href="study.html" target="_blank" class="w-full py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-slate-700 text-xs font-semibold flex items-center justify-center gap-1.5 transition">
-            <span>পদার্থবিজ্ঞান স্টাডি পোর্টালে বিস্তারিত পড়ুন</span> <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
-          </a>
-        </div>
+        <p><strong>ভার্নিয়ার ধ্রুবক (VC):</strong> <code class="text-cyan-300 font-mono">VC = s / n = 1 mm / 10 = 0.1 mm</code></p>
+        <p><strong>ভার্নিয়ার সমপাতন (V):</strong> ভার্নিয়ারের যে দাগটি মূল স্কেলের দাগের সাথে হুবহু মিলে একটি সরলরেখা তৈরি করে।</p>
       </div>
 
     </div>
@@ -460,7 +453,7 @@
   </main>
 
   <!-- Footer -->
-  <footer class="border-t border-slate-800/80 py-3 text-center text-[11px] text-slate-500 bg-[#040913] mt-4">
+  <footer class="landscape-hide border-t border-slate-800/80 py-2.5 text-center text-[11px] text-slate-500 bg-[#040810] mt-2">
     আল-আমিন ফিজিক্স • ভার্চুয়াল ল্যাবরেটরি • ভার্নিয়ার ক্যালিপার্স সিমুলেটর
   </footer>
 
@@ -475,18 +468,14 @@
         id: 'cylinder',
         name: 'ফাঁপা ব্রাস চোঙ',
         type: 'cylinder',
-        // mm dimensions
         outerDia: 18.4, // 18.4 mm
         innerDia: 9.6,  // 9.6 mm
         depth: 14.0,    // 14.0 mm
-        // 10 px per mm
         R2: 92,
         R1: 48,
         h2: 140,
         h1: 90,
         color: 'brass',
-        benchX: 60,
-        benchY: 375,
         w: 184,
         h: 140
       },
@@ -502,8 +491,6 @@
         h2: 246,
         h1: 0,
         color: 'chrome',
-        benchX: 280,
-        benchY: 375,
         w: 246,
         h: 246
       },
@@ -519,8 +506,6 @@
         h2: 260,
         h1: 0,
         color: 'cyan',
-        benchX: 560,
-        benchY: 375,
         w: 138,
         h: 260
       },
@@ -536,8 +521,6 @@
         h2: 50,
         h1: 0,
         color: 'copper',
-        benchX: 740,
-        benchY: 375,
         w: 200,
         h: 50
       }
@@ -549,8 +532,8 @@
       loaded: false,
       scale: 1,
       xOffset: 30,
-      yOffset: 35,
-      dragMode: 0, // 0: none, 1: world pan, 2: vernier slider, 3: object dragging
+      yOffset: 30,
+      dragMode: 0, // 0: none, 1: world pan, 2: vernier slider, 3: active object dragging
       draggedObjectId: null,
       mx: 0,
       my: 0,
@@ -582,9 +565,13 @@
       zeroError: 0,
 
       measureMode: 0, // 0: External, 1: Internal, 2: Depth
-      selectedObjectId: 'cylinder', // active object id
+      selectedObjectId: 'cylinder', // active object currently measured
       
-      // All objects state dictionary
+      // Tray layout geometry
+      trayScale: 0.35, // Objects in tray are drawn small
+      trayBounds: [], // Click/touch hotspots for mini objects in tray
+
+      // Object state dictionary
       objects: {}
     };
 
@@ -592,16 +579,16 @@
     const canvas = document.getElementById('caliper-canvas');
     const ctx = canvas.getContext('2d');
 
-    // Initialize all multi-objects state
+    // Initialize all objects
     Object.keys(OBJECT_PRESETS).forEach(key => {
       const p = OBJECT_PRESETS[key];
       S.objects[key] = {
         id: p.id,
         name: p.name,
         type: p.type,
-        state: key === 'cylinder' ? 2 : 1, // 1: on bench tray, 2: snapped in jaws, 0: hidden
-        x: p.benchX,
-        y: p.benchY,
+        state: key === 'cylinder' ? 2 : 1, // 2: active on stage, 1: resting in tray
+        x: 0,
+        y: 0,
         w: p.w,
         h: p.h,
         th: 0,
@@ -614,7 +601,7 @@
       };
     });
 
-    // Synthesized Click/Tick Audio
+    // Synthesized Click/Tick Sound Generator
     let audioCtx = null;
     function playTickSound() {
       if (!S.soundEnabled) return;
@@ -665,13 +652,21 @@
       S.images[k] = img;
     });
 
-    // Snap the active object to the chosen jaws mode
+    // Snap the single active object to the chosen jaws mode
     function snapActiveObjectToJaws() {
-      const obj = S.objects[S.selectedObjectId];
+      const activeId = S.selectedObjectId;
+      const obj = S.objects[activeId];
       if (!obj) return;
 
-      obj.state = 2; // Snapped
-      
+      // Ensure ONLY this object is on stage (state = 2); all others stay in tray (state = 1)
+      Object.keys(S.objects).forEach(id => {
+        if (id === activeId) {
+          S.objects[id].state = 2; // Active on stage
+        } else {
+          S.objects[id].state = 1; // Mini in tray
+        }
+      });
+
       if (S.measureMode === 0) {
         // Lower External Jaws
         obj.w = 2 * obj.R2;
@@ -698,44 +693,34 @@
         obj.length = obj.h1 || obj.h2;
       }
 
-      // Re-position other objects on workbench tray
-      resetOtherObjectsToBench();
+      const badgeName = document.getElementById('badge-obj-name');
+      if (badgeName) badgeName.textContent = obj.name;
     }
 
-    function resetOtherObjectsToBench() {
-      let trayIndex = 0;
-      const spacing = 190;
-      const startX = 60;
-      const benchY = 370;
-
-      Object.keys(S.objects).forEach(id => {
-        const obj = S.objects[id];
-        if (id !== S.selectedObjectId || obj.state !== 2) {
-          obj.state = 1; // On bench
-          obj.th = 0;
-          obj.x = startX + trayIndex * spacing;
-          obj.y = benchY;
-          obj.w = OBJECT_PRESETS[id].w;
-          obj.h = OBJECT_PRESETS[id].h;
-          trayIndex++;
-        }
-      });
-    }
-
-    // Canvas Resize with High-DPI Crispness
+    // Canvas Resize with High-DPI Crispness and Monitor Optimization
     function resizeCanvas() {
       const rect = canvas.getBoundingClientRect();
       const dpr = window.devicePixelRatio || 1;
       canvas.width = Math.round(rect.width * dpr);
       canvas.height = Math.round(rect.height * dpr);
 
-      // Auto-fit caliper scale
-      S.scale = (canvas.width / dpr) / 1080;
-      if (S.scale < 0.42) S.scale = 0.42;
-      if (S.scale > 1.25) S.scale = 1.25;
-
-      S.xOffset = Math.max(15, (canvas.width / dpr - 960 * S.scale) / 2);
-      S.yOffset = Math.max(15, (canvas.height / dpr - 490 * S.scale) / 2);
+      // Auto-fit caliper scale according to canvas dimensions
+      const aspect = rect.width / rect.height;
+      if (aspect > 1.8) {
+        // Widescreen monitor / phone landscape
+        S.scale = (canvas.width / dpr) / 1060;
+        if (S.scale > 1.35) S.scale = 1.35;
+        if (S.scale < 0.5) S.scale = 0.5;
+        S.xOffset = Math.max(20, (canvas.width / dpr - 960 * S.scale) / 2);
+        S.yOffset = Math.max(10, (canvas.height / dpr - 470 * S.scale) / 2);
+      } else {
+        // Portrait mobile
+        S.scale = (canvas.width / dpr) / 1020;
+        if (S.scale < 0.40) S.scale = 0.40;
+        if (S.scale > 1.15) S.scale = 1.15;
+        S.xOffset = Math.max(12, (canvas.width / dpr - 940 * S.scale) / 2);
+        S.yOffset = Math.max(15, (canvas.height / dpr - 480 * S.scale) / 2);
+      }
 
       render();
     }
@@ -833,7 +818,7 @@
       ctx.scale(S.scale * dpr, S.scale * dpr);
       ctx.translate(S.xOffset, S.yOffset);
 
-      // 0. Draw Technical Blueprint Workbench Tray at Bottom
+      // 0. Draw Technical Blueprint Workbench Tray (with compact miniatures)
       drawWorkbenchTray();
 
       const msd_px = S.mainScaleLength / S.mainScaleDivisions; // 10 px / mm
@@ -910,8 +895,8 @@
       ctx.fillText('1 MSD = 1 mm', S.mainScaleLength - 60, -28);
       ctx.restore();
 
-      // 4. Draw All Multiple Objects (Both snapped and resting in tray)
-      drawAllObjects();
+      // 4. Draw ONLY the single active object on the stage / between jaws
+      drawActiveObjectOnStage();
 
       // 5. Draw Sliding Vernier Scale Assembly (vernier1, stretched vernier2, vernier3)
       const vLeft = S.scaleOriginX - S.offsetOriginX + shift_px - S.vernierOriginX;
@@ -975,7 +960,7 @@
         if (i === S.vsr && !S.quizMode) {
           ctx.save();
           ctx.strokeStyle = '#0284c7';
-          ctx.lineWidth = 1.8;
+          ctx.lineWidth = 2.0;
           ctx.beginPath();
           ctx.moveTo(vTickX, vTickY - 2);
           ctx.lineTo(vTickX, vTickY + vLen + 2);
@@ -995,55 +980,78 @@
         drawSnapTargetHighlights();
       }
 
-      // 9. Floating Magnifier Loupe Lens
+      // 9. Floating Magnifier Loupe Lens (Mathematical precision alignment)
       if (S.showLoupe && !S.quizMode) {
-        drawMagnifyingLoupe(vLeft + S.vernierOriginX + S.vsr * vsd_px, S.scaleOriginY);
+        // EXACT mathematical coordinate of the coincident vernier mark:
+        const coincidenceX = S.scaleOriginX + shift_px + S.offsetOriginX + S.vsr * vsd_px;
+        drawMagnifyingLoupe(coincidenceX, S.scaleOriginY);
       }
 
       ctx.restore();
     }
 
-    // Draw On-Screen Workbench Tray
+    // Draw On-Screen Workbench Tray with Compact Small Specimen Pods
     function drawWorkbenchTray() {
       ctx.save();
-      const trayY = 350;
-      const trayW = 920;
-      const trayH = 120;
+      const trayY = 375;
+      const trayW = 880;
+      const trayH = 80;
 
-      // Tray background
+      // Elegant brushed aluminum specimen dish tray
       const trayGrad = ctx.createLinearGradient(0, trayY, 0, trayY + trayH);
-      trayGrad.addColorStop(0, 'rgba(15, 23, 42, 0.7)');
-      trayGrad.addColorStop(1, 'rgba(30, 41, 59, 0.4)');
+      trayGrad.addColorStop(0, 'rgba(15, 23, 42, 0.85)');
+      trayGrad.addColorStop(1, 'rgba(30, 41, 59, 0.6)');
       ctx.fillStyle = trayGrad;
-      ctx.roundRect ? ctx.roundRect(40, trayY, trayW, trayH, 14) : ctx.rect(40, trayY, trayW, trayH);
+      ctx.roundRect ? ctx.roundRect(40, trayY, trayW, trayH, 12) : ctx.rect(40, trayY, trayW, trayH);
       ctx.fill();
 
-      // Tray border
-      ctx.strokeStyle = 'rgba(56, 189, 248, 0.2)';
-      ctx.lineWidth = 1.5;
-      ctx.setLineDash([4, 4]);
+      ctx.strokeStyle = 'rgba(56, 189, 248, 0.25)';
+      ctx.lineWidth = 1.2;
+      ctx.setLineDash([3, 3]);
       ctx.stroke();
       ctx.setLineDash([]);
 
       // Tray Header Label
-      ctx.font = '600 11px "Hind Siliguri", sans-serif';
+      ctx.font = '600 10px "Hind Siliguri", sans-serif';
       ctx.fillStyle = '#94a3b8';
-      ctx.fillText('পরিমাপের বস্তু ট্রে (WORKBENCH TRAY) — যেকোনো বস্তু টেনে সরাসরি চোয়ালে স্থাপন করুন', 55, trayY + 18);
+      ctx.fillText('পরিমাপের নমুনা ট্রে (SPECIMEN TRAY) — যেকোনো বস্তুতে টাচ করলে তা সরাসরি পরিমাপের জন্য চোয়ালে যাবে', 55, trayY + 16);
 
-      ctx.restore();
-    }
+      // Reset touch hotspots
+      S.trayBounds = [];
 
-    // Draw All 4 Available Objects
-    function drawAllObjects() {
-      Object.keys(S.objects).forEach(id => {
+      // Render the 4 compact mini objects inside individual circular dishes
+      const objKeys = ['cylinder', 'sphere', 'block', 'coin'];
+      const podW = 195;
+      const startX = 65;
+
+      objKeys.forEach((id, idx) => {
         const obj = S.objects[id];
-        if (obj.state === 0) return;
+        const podX = startX + idx * podW;
+        const podY = trayY + 22;
+        const isSelected = S.selectedObjectId === id && obj.state === 2;
 
+        // Circular specimen pedestal dish
         ctx.save();
-        ctx.translate(obj.x, obj.y);
-        ctx.rotate(obj.th);
+        ctx.beginPath();
+        ctx.ellipse(podX + 45, podY + 26, 42, 18, 0, 0, Math.PI * 2);
+        ctx.fillStyle = isSelected ? 'rgba(56, 189, 248, 0.25)' : 'rgba(15, 23, 42, 0.9)';
+        ctx.fill();
+        ctx.strokeStyle = isSelected ? '#38bdf8' : 'rgba(100, 116, 139, 0.35)';
+        ctx.lineWidth = isSelected ? 2 : 1;
+        ctx.stroke();
+        ctx.restore();
 
-        // Object visual gradient based on type
+        // Mini Object Render (Scale = 0.35x)
+        ctx.save();
+        ctx.translate(podX + 45, podY + 20);
+        ctx.scale(0.35, 0.35);
+
+        // Center the mini object on the dish
+        const halfW = obj.w / 2;
+        const halfH = obj.h / 2;
+        ctx.translate(-halfW, -halfH);
+
+        // Object gradient
         let grad;
         if (obj.color === 'brass') {
           grad = ctx.createLinearGradient(0, 0, obj.w, obj.h);
@@ -1054,7 +1062,7 @@
         } else if (obj.color === 'chrome') {
           grad = ctx.createRadialGradient(obj.R2 * 0.7, obj.R2 * 0.7, 5, obj.R2, obj.R2, obj.R2);
           grad.addColorStop(0, '#ffffff');
-          grad.addColorStop(0.35, '#cbd5e1');
+          grad.addColorStop(0.4, '#cbd5e1');
           grad.addColorStop(0.8, '#64748b');
           grad.addColorStop(1, '#1e293b');
         } else if (obj.color === 'cyan') {
@@ -1064,7 +1072,6 @@
           grad.addColorStop(0.8, '#0284c7');
           grad.addColorStop(1, '#075985');
         } else {
-          // copper coin
           grad = ctx.createLinearGradient(0, 0, obj.w, obj.h);
           grad.addColorStop(0, '#fb7185');
           grad.addColorStop(0.4, '#fed7aa');
@@ -1074,10 +1081,9 @@
 
         ctx.fillStyle = grad;
         ctx.strokeStyle = '#0f172a';
-        ctx.lineWidth = 1.4;
+        ctx.lineWidth = 1.6;
 
         if (obj.type === 'cylinder') {
-          // Flanged Hollow Cylinder with inner cavity
           ctx.beginPath();
           ctx.moveTo(0, 0);
           ctx.lineTo(obj.w, 0);
@@ -1090,30 +1096,18 @@
           ctx.closePath();
           ctx.fill();
           ctx.stroke();
-
-          // Cavity inner shadow
-          ctx.fillStyle = 'rgba(0,0,0,0.3)';
+          ctx.fillStyle = 'rgba(0,0,0,0.35)';
           ctx.fillRect(obj.R2 - obj.R1, obj.h - obj.h1, 2 * obj.R1, obj.h1);
-
         } else if (obj.type === 'sphere') {
           ctx.beginPath();
           ctx.arc(obj.R2, obj.R2, obj.R2, 0, Math.PI * 2);
           ctx.fill();
           ctx.stroke();
-
         } else if (obj.type === 'block') {
           ctx.beginPath();
           ctx.rect(0, 0, obj.w, obj.h);
           ctx.fill();
           ctx.stroke();
-
-          // Chamfer line
-          ctx.strokeStyle = 'rgba(255,255,255,0.4)';
-          ctx.beginPath();
-          ctx.moveTo(2, 2);
-          ctx.lineTo(obj.w - 2, 2);
-          ctx.stroke();
-
         } else if (obj.type === 'coin') {
           ctx.beginPath();
           ctx.roundRect ? ctx.roundRect(0, 0, obj.w, obj.h, 6) : ctx.rect(0, 0, obj.w, obj.h);
@@ -1121,19 +1115,117 @@
           ctx.stroke();
         }
 
-        // Object label below object when resting in tray
-        if (obj.state === 1) {
-          ctx.font = '600 10px "Hind Siliguri", sans-serif';
-          ctx.fillStyle = '#cbd5e1';
-          const nameW = ctx.measureText(obj.name).width;
-          ctx.fillText(obj.name, (obj.w - nameW) / 2, obj.h + 14);
-        }
-
         ctx.restore();
+
+        // Mini Specimen Name and Dimension Tag
+        ctx.font = isSelected ? '700 11px "Hind Siliguri", sans-serif' : '600 10px "Hind Siliguri", sans-serif';
+        ctx.fillStyle = isSelected ? '#38bdf8' : '#e2e8f0';
+        ctx.fillText(obj.name, podX + 96, podY + 16);
+
+        ctx.font = '600 9px "JetBrains Mono", monospace';
+        ctx.fillStyle = isSelected ? '#7dd3fc' : '#94a3b8';
+        ctx.fillText(`${OBJECT_PRESETS[id].outerDia} mm`, podX + 96, podY + 31);
+
+        // Record hotspot bounds for direct canvas touch/click
+        S.trayBounds.push({
+          id: id,
+          x: podX,
+          y: podY,
+          w: podW - 10,
+          h: 50
+        });
       });
+
+      ctx.restore();
     }
 
-    // Draw Snap Target Visual Hotspots when Dragging
+    // Draw ONLY the Active Single Object on the Measurement Stage
+    function drawActiveObjectOnStage() {
+      const activeId = S.selectedObjectId;
+      const obj = S.objects[activeId];
+      if (!obj || obj.state === 0) return;
+
+      ctx.save();
+      ctx.translate(obj.x, obj.y);
+      ctx.rotate(obj.th);
+
+      let grad;
+      if (obj.color === 'brass') {
+        grad = ctx.createLinearGradient(0, 0, obj.w, obj.h);
+        grad.addColorStop(0, '#f59e0b');
+        grad.addColorStop(0.3, '#fef3c7');
+        grad.addColorStop(0.7, '#d97706');
+        grad.addColorStop(1, '#92400e');
+      } else if (obj.color === 'chrome') {
+        grad = ctx.createRadialGradient(obj.R2 * 0.7, obj.R2 * 0.7, 5, obj.R2, obj.R2, obj.R2);
+        grad.addColorStop(0, '#ffffff');
+        grad.addColorStop(0.35, '#cbd5e1');
+        grad.addColorStop(0.8, '#64748b');
+        grad.addColorStop(1, '#1e293b');
+      } else if (obj.color === 'cyan') {
+        grad = ctx.createLinearGradient(0, 0, obj.w, obj.h);
+        grad.addColorStop(0, '#38bdf8');
+        grad.addColorStop(0.4, '#e0f2fe');
+        grad.addColorStop(0.8, '#0284c7');
+        grad.addColorStop(1, '#075985');
+      } else {
+        grad = ctx.createLinearGradient(0, 0, obj.w, obj.h);
+        grad.addColorStop(0, '#fb7185');
+        grad.addColorStop(0.4, '#fed7aa');
+        grad.addColorStop(0.8, '#e11d48');
+        grad.addColorStop(1, '#881337');
+      }
+
+      ctx.fillStyle = grad;
+      ctx.strokeStyle = '#0f172a';
+      ctx.lineWidth = 1.4;
+
+      if (obj.type === 'cylinder') {
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.lineTo(obj.w, 0);
+        ctx.lineTo(obj.w, obj.h);
+        ctx.lineTo(obj.R1 + obj.R2, obj.h);
+        ctx.lineTo(obj.R2 + obj.R1, obj.h - obj.h1);
+        ctx.lineTo(obj.R2 - obj.R1, obj.h - obj.h1);
+        ctx.lineTo(obj.R2 - obj.R1, obj.h);
+        ctx.lineTo(0, obj.h);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = 'rgba(0,0,0,0.3)';
+        ctx.fillRect(obj.R2 - obj.R1, obj.h - obj.h1, 2 * obj.R1, obj.h1);
+
+      } else if (obj.type === 'sphere') {
+        ctx.beginPath();
+        ctx.arc(obj.R2, obj.R2, obj.R2, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+
+      } else if (obj.type === 'block') {
+        ctx.beginPath();
+        ctx.rect(0, 0, obj.w, obj.h);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.strokeStyle = 'rgba(255,255,255,0.4)';
+        ctx.beginPath();
+        ctx.moveTo(2, 2);
+        ctx.lineTo(obj.w - 2, 2);
+        ctx.stroke();
+
+      } else if (obj.type === 'coin') {
+        ctx.beginPath();
+        ctx.roundRect ? ctx.roundRect(0, 0, obj.w, obj.h, 6) : ctx.rect(0, 0, obj.w, obj.h);
+        ctx.fill();
+        ctx.stroke();
+      }
+
+      ctx.restore();
+    }
+
+    // Draw Snap Target Hotspots when Dragging
     function drawSnapTargetHighlights() {
       ctx.save();
       ctx.lineWidth = 2;
@@ -1156,62 +1248,99 @@
       ctx.restore();
     }
 
-    // Floating Magnifier Loupe Lens
-    function drawMagnifyingLoupe(focusX, focusY) {
-      const loupeRadius = 46;
-      const loupeX = focusX;
-      const loupeY = focusY - 80;
+    // High-Precision Magnifier Loupe Lens
+    function drawMagnifyingLoupe(coincidenceX, baselineY) {
+      const loupeRadius = 48;
+      // Clamp coordinates so lens never gets cut off by canvas borders
+      const loupeX = Math.max(loupeRadius + 15, Math.min(S.rulerWidthPixel - loupeRadius - 15, coincidenceX));
+      const loupeY = Math.max(loupeRadius + 12, baselineY - 80);
 
       ctx.save();
+
+      // Dotted connector line from true coincidence point to magnifier lens center
+      ctx.strokeStyle = 'rgba(56, 189, 248, 0.45)';
+      ctx.lineWidth = 1.2;
+      ctx.setLineDash([3, 3]);
+      ctx.beginPath();
+      ctx.moveTo(coincidenceX, baselineY);
+      ctx.lineTo(loupeX, loupeY + loupeRadius);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Circular Lens Clipping
       ctx.beginPath();
       ctx.arc(loupeX, loupeY, loupeRadius, 0, Math.PI * 2);
-      ctx.shadowColor = 'rgba(0,0,0,0.6)';
-      ctx.shadowBlur = 16;
+      ctx.shadowColor = 'rgba(0, 0, 0, 0.7)';
+      ctx.shadowBlur = 18;
       ctx.fillStyle = '#f8fafc';
       ctx.fill();
       ctx.clip();
 
-      const zoom = 2.6;
+      const zoom = 2.7;
       ctx.save();
       ctx.translate(loupeX, loupeY);
       ctx.scale(zoom, zoom);
-      ctx.translate(-focusX, -focusY);
+      ctx.translate(-coincidenceX, -baselineY);
 
-      const msd_px = S.mainScaleLength / S.mainScaleDivisions;
+      const msd_px = S.mainScaleLength / S.mainScaleDivisions; // 10 px
       const shift_px = (S.msr + S.vsr / S.vernierDivisions) * msd_px;
       const vsd_px = msd_px * (1 - 1 / S.vernierDivisions);
 
-      // Main scale magnified
-      let mx = S.scaleOriginX + S.offsetOriginX - msd_px * S.zeroError / S.vernierDivisions;
+      // Draw Main Scale Graduations inside Magnifier
+      let mainStartX = S.scaleOriginX + S.offsetOriginX - msd_px * S.zeroError / S.vernierDivisions;
       ctx.lineWidth = 1.2;
       ctx.strokeStyle = '#0f172a';
-      for (let i = 0; i <= S.mainScaleDivisions; i++) {
-        if (Math.abs(mx - focusX) < 35) {
-          ctx.beginPath();
-          ctx.moveTo(mx, focusY);
-          ctx.lineTo(mx, focusY - 18);
-          ctx.stroke();
-        }
-        mx += msd_px;
-      }
+      ctx.fillStyle = '#0f172a';
+      ctx.font = '600 7.5px "JetBrains Mono", monospace';
 
-      // Vernier scale magnified
-      let vx = S.scaleOriginX + shift_px + S.offsetOriginX;
-      for (let i = 0; i <= S.vernierDivisions; i++) {
-        if (Math.abs(vx - focusX) < 35) {
+      for (let i = 0; i <= S.mainScaleDivisions; i++) {
+        const mx = mainStartX + i * msd_px;
+        if (Math.abs(mx - coincidenceX) < 32) {
+          const isMajor = (i % 10 === 0);
+          const isMid = (i % 5 === 0);
+          const tLen = isMajor ? 20 : (isMid ? 14 : 10);
+          
           ctx.beginPath();
-          ctx.moveTo(vx, focusY - 1);
-          ctx.lineTo(vx, focusY + 12);
+          ctx.moveTo(mx, baselineY);
+          ctx.lineTo(mx, baselineY - tLen);
           ctx.stroke();
-          if (i === S.vsr) {
-            ctx.fillStyle = '#0284c7';
-            ctx.beginPath();
-            ctx.arc(vx, focusY - 1, 2.5, 0, Math.PI * 2);
-            ctx.fill();
+
+          if (isMajor) {
+            const cmStr = (i / 10).toString();
+            ctx.fillText(cmStr, mx - 2.5, baselineY - tLen - 3);
           }
         }
-        vx += vsd_px;
       }
+
+      // Draw Vernier Scale Graduations inside Magnifier
+      let vernierStartX = S.scaleOriginX + shift_px + S.offsetOriginX;
+      ctx.font = '600 7px "JetBrains Mono", monospace';
+
+      for (let i = 0; i <= S.vernierDivisions; i++) {
+        const vx = vernierStartX + i * vsd_px;
+        if (Math.abs(vx - coincidenceX) < 32) {
+          const isMajor = (i % (S.vernierDivisions >= 50 ? 5 : (S.vernierDivisions >= 20 ? 2 : 1)) === 0);
+          const vLen = isMajor ? 12 : 8;
+
+          ctx.beginPath();
+          ctx.moveTo(vx, baselineY - 1);
+          ctx.lineTo(vx, baselineY + vLen);
+          ctx.stroke();
+
+          if (isMajor) {
+            ctx.fillText(i.toString(), vx - 2, baselineY + vLen + 8);
+          }
+        }
+      }
+
+      // Collinear Coincidence Alignment Glow Line
+      ctx.strokeStyle = '#ef4444'; // Bright Red Laser Line
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(coincidenceX, baselineY - 26);
+      ctx.lineTo(coincidenceX, baselineY + 22);
+      ctx.stroke();
+
       ctx.restore();
 
       // Chrome Loupe Bezel Ring
@@ -1219,28 +1348,30 @@
       ctx.arc(loupeX, loupeY, loupeRadius, 0, Math.PI * 2);
       const ringGrad = ctx.createLinearGradient(loupeX - loupeRadius, loupeY - loupeRadius, loupeX + loupeRadius, loupeY + loupeRadius);
       ringGrad.addColorStop(0, '#ffffff');
-      ringGrad.addColorStop(0.5, '#64748b');
+      ringGrad.addColorStop(0.3, '#cbd5e1');
+      ringGrad.addColorStop(0.7, '#64748b');
       ringGrad.addColorStop(1, '#0f172a');
       ctx.strokeStyle = ringGrad;
-      ctx.lineWidth = 4;
+      ctx.lineWidth = 4.5;
       ctx.stroke();
 
-      // Red alignment crosshair
-      ctx.strokeStyle = 'rgba(239, 68, 68, 0.7)';
-      ctx.lineWidth = 1;
+      // Red alignment center hair-line
+      ctx.strokeStyle = 'rgba(239, 68, 68, 0.75)';
+      ctx.lineWidth = 1.2;
       ctx.beginPath();
-      ctx.moveTo(loupeX, loupeY - loupeRadius + 5);
-      ctx.lineTo(loupeX, loupeY + loupeRadius - 5);
+      ctx.moveTo(loupeX, loupeY - loupeRadius + 4);
+      ctx.lineTo(loupeX, loupeY + loupeRadius - 4);
       ctx.stroke();
 
-      // Connecting pointer line
-      ctx.strokeStyle = 'rgba(56, 189, 248, 0.5)';
-      ctx.setLineDash([3, 3]);
-      ctx.beginPath();
-      ctx.moveTo(focusX, focusY);
-      ctx.lineTo(loupeX, loupeY + loupeRadius);
-      ctx.stroke();
-      ctx.setLineDash([]);
+      // Lens Coincidence Label Badge
+      ctx.font = '700 9px "Hind Siliguri", sans-serif';
+      ctx.fillStyle = '#0284c7';
+      const coincText = `সমপাতন V = ${S.vsr}`;
+      const ctw = ctx.measureText(coincText).width;
+      ctx.fillStyle = 'rgba(15, 23, 42, 0.85)';
+      ctx.fillRect(loupeX - ctw / 2 - 4, loupeY + loupeRadius - 16, ctw + 8, 14);
+      ctx.fillStyle = '#38bdf8';
+      ctx.fillText(coincText, loupeX - ctw / 2, loupeY + loupeRadius - 5);
 
       ctx.restore();
     }
@@ -1264,36 +1395,37 @@
       S.mx = cx;
       S.my = cy;
 
+      // 1. Check if user tapped one of the mini objects in the tray
+      for (let i = 0; i < S.trayBounds.length; i++) {
+        const b = S.trayBounds[i];
+        if (wx >= b.x && wx <= b.x + b.w && wy >= b.y - 10 && wy <= b.y + b.h + 10) {
+          selectObjectById(b.id);
+          S.dragMode = 0;
+          return;
+        }
+      }
+
+      // 2. Check if user clicked the active object between jaws to drag it
+      const activeObj = S.objects[S.selectedObjectId];
+      if (activeObj && activeObj.state === 2 && 
+          wx >= activeObj.x - 15 && wx <= activeObj.x + activeObj.w + 15 && 
+          wy >= activeObj.y - 15 && wy <= activeObj.y + activeObj.h + 15) {
+        S.dragMode = 3; // Drag active object
+        S.draggedObjectId = S.selectedObjectId;
+        return;
+      }
+
+      // 3. Check if clicked on vernier slider assembly
       const msd_px = S.mainScaleLength / S.mainScaleDivisions;
       const shift_px = (S.msr + S.vsr / S.vernierDivisions) * msd_px;
       const vLeft = S.scaleOriginX - S.offsetOriginX + shift_px - S.vernierOriginX;
 
-      // 1. Check if an object was clicked
-      let clickedObjId = null;
-      Object.keys(S.objects).forEach(id => {
-        const obj = S.objects[id];
-        if (wx >= obj.x - 15 && wx <= obj.x + obj.w + 15 && wy >= obj.y - 15 && wy <= obj.y + obj.h + 15) {
-          clickedObjId = id;
-        }
-      });
-
-      if (clickedObjId) {
-        S.dragMode = 3; // Drag object
-        S.draggedObjectId = clickedObjId;
-        S.selectedObjectId = clickedObjId;
-        S.objects[clickedObjId].state = 1; // Unsnap while dragging
-        updateObjectCardUI();
-        render();
-        return;
-      }
-
-      // 2. Check if clicked on vernier slider assembly
       if (wx >= vLeft && wx <= vLeft + 290 && wy >= 0 && wy <= 350) {
         S.dragMode = 2; // Drag Vernier slider
         return;
       }
 
-      // 3. Otherwise Pan scene
+      // 4. Otherwise Pan Canvas
       S.dragMode = 1;
     });
 
@@ -1313,7 +1445,7 @@
           translateVernier(stepChange);
         }
       } else if (S.dragMode === 3 && S.draggedObjectId) {
-        // Dragging Object
+        // Dragging Active Object
         const obj = S.objects[S.draggedObjectId];
         obj.x += dx;
         obj.y += dy;
@@ -1332,9 +1464,6 @@
 
       if (S.dragMode === 3 && S.draggedObjectId) {
         const obj = S.objects[S.draggedObjectId];
-        
-        // Snapping check (Mahesh Kurmi zone matching)
-        // Center of object
         const cx = obj.x + obj.w / 2;
         const cy = obj.y + obj.h / 2;
 
@@ -1357,8 +1486,8 @@
           autoClampToCurrentObject();
         }
         else {
-          // If dropped elsewhere, keep it on workbench
-          obj.state = 1;
+          // If dropped in tray area or outside, return to tray
+          snapActiveObjectToJaws();
         }
 
         render();
@@ -1402,9 +1531,9 @@
         const card = document.getElementById('card-obj-' + id);
         if (card) {
           if (id === S.selectedObjectId) {
-            card.className = 'obj-active-card p-2.5 rounded-xl bg-[#0d1c2e] border border-cyan-400 text-left transition flex items-center gap-2.5 group shadow-lg';
+            card.className = 'obj-active-card p-2 rounded-xl bg-[#0c1828] border border-cyan-400 text-left transition flex items-center gap-2.5 group shadow-lg';
           } else {
-            card.className = 'p-2.5 rounded-xl bg-[#0d1c2e] border border-slate-700/80 text-left transition flex items-center gap-2.5 group hover:border-cyan-400';
+            card.className = 'p-2 rounded-xl bg-[#0c1828] border border-slate-700/80 text-left transition flex items-center gap-2.5 group hover:border-cyan-400';
           }
         }
       });
@@ -1424,11 +1553,11 @@
       playTickSound();
     };
 
-    window.resetObjectsToTray = function() {
+    window.returnObjectToTray = function() {
+      // Put all objects into tray (free caliper mode)
       Object.keys(S.objects).forEach(id => {
         S.objects[id].state = 1;
       });
-      resetOtherObjectsToBench();
       closeJawsFully();
     };
 
@@ -1471,9 +1600,9 @@
       for (let i = 0; i < 3; i++) {
         const btn = document.getElementById('btn-mode-' + i);
         if (i === mode) {
-          btn.className = 'btn-active py-2 px-1 rounded-xl text-[11px] font-bold border border-transparent transition text-center';
+          btn.className = 'btn-active py-1.5 px-1 rounded-xl text-[11px] font-bold border border-transparent transition text-center';
         } else {
-          btn.className = 'bg-slate-800 hover:bg-slate-700 text-slate-300 py-2 px-1 rounded-xl text-[11px] font-bold border border-slate-700 transition text-center';
+          btn.className = 'bg-slate-800 hover:bg-slate-700 text-slate-300 py-1.5 px-1 rounded-xl text-[11px] font-bold border border-slate-700 transition text-center';
         }
       }
 
@@ -1488,9 +1617,9 @@
       [10, 20, 50].forEach(d => {
         const btn = document.getElementById('btn-vsd-' + d);
         if (d === divs) {
-          btn.className = 'btn-active py-1.5 px-1 rounded-xl text-[11px] font-bold border border-transparent transition text-center';
+          btn.className = 'btn-active py-1 px-2 rounded-lg text-[10px] font-bold transition';
         } else {
-          btn.className = 'bg-slate-800 hover:bg-slate-700 text-slate-300 py-1.5 px-1 rounded-xl text-[11px] font-bold border border-slate-700 transition text-center';
+          btn.className = 'bg-slate-800 text-slate-300 py-1 px-2 rounded-lg text-[10px] font-bold transition';
         }
       });
 
@@ -1586,7 +1715,6 @@
     };
 
     window.generateQuizProblem = function() {
-      // Pick random object and random dimension
       const objIds = ['cylinder', 'sphere', 'block', 'coin'];
       const randId = objIds[Math.floor(Math.random() * objIds.length)];
       selectObjectById(randId);
