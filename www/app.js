@@ -493,6 +493,9 @@ function switchTab(tabKey) {
     if (tabKey === 'simulation') {
         renderChapterSimulation();
     }
+    if (tabKey === 'exam') {
+        renderChapterExamSets();
+    }
 
     // Mark progress when opening a section
     addProgress(getCurrentChap().id, tabKey);
@@ -905,21 +908,8 @@ function renderChapterData() {
     /* ── 10. CHAPTER SIMULATION ── */
     renderChapterSimulation();
 
-    /* ── 11. EXAM reset ── */
-    document.getElementById('exam-start-screen').classList.remove('hidden');
-    document.getElementById('exam-active-screen').classList.add('hidden');
-    document.getElementById('exam-result-screen').classList.add('hidden');
-    initExamQuestions();
-
-    // Show previous exam score if exists
-    const prevScore = examScoresStore[chap.id];
-    if (prevScore !== undefined) {
-        const scoreHint = document.getElementById('exam-prev-score');
-        if (scoreHint) {
-            scoreHint.textContent = `গত পরীক্ষায় আপনি পেয়েছিলেন: ${prevScore}/${EXAM_BANK.length}`;
-            scoreHint.classList.remove('hidden');
-        }
-    }
+    /* ── 11. EXAM reset (5-Set Board Standard Exam Hub) ── */
+    renderChapterExamSets();
 
     /* ── 9. PAID COURSE ── */
     const isEnrolled = enrolledCourses[chap.id];
@@ -1478,74 +1468,416 @@ function runPhysicsCalculator() {
 }
 
 /* ===================================================
-   EXAM ENGINE
+   5-SET BOARD STANDARD EXAM ENGINE
 =================================================== */
-function initExamQuestions() {
-    const container = document.getElementById('exam-questions-container');
-    if (!container) return;
-    container.innerHTML = '';
-    EXAM_BANK.forEach((item, qIdx) => {
-        const qBox = document.createElement('div');
-        qBox.className = "p-5 rounded-2xl border border-slate-200 bg-slate-50/60 space-y-3";
-        qBox.innerHTML = `
-            <h5 class="font-bold text-sm">${item.q}</h5>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-                ${item.options.map((opt, oi) => `
-                    <label class="p-3 bg-white rounded-xl border border-slate-200 hover:border-blue-400 flex items-center gap-3 cursor-pointer transition">
-                        <input type="radio" name="eq_${qIdx}" value="${oi}" onchange="recordExamAnswer(${qIdx},${oi})" class="accent-blue-600">
-                        <span class="font-medium">${opt}</span>
-                    </label>`).join('')}
-            </div>`;
-        container.appendChild(qBox);
-    });
+let currentActiveExamSet = null;
+let currentActiveExamQuestions = [];
+let examActiveStartTime = 0;
+
+function renderChapterExamSets() {
+    const chapNum = currentChapterIndex + 1;
+    const chapData = (window.SSC_EXAM_BANK && window.SSC_EXAM_BANK[chapNum]) || null;
+    
+    const titleEl = document.getElementById('exam-chapter-title-header');
+    const gridEl = document.getElementById('exam-sets-grid');
+    const totalBadge = document.getElementById('exam-sets-total-q-badge');
+    if (!gridEl) return;
+
+    // Show sets screen, hide active & result screens
+    const setsScr = document.getElementById('exam-sets-screen');
+    const activeScr = document.getElementById('exam-active-screen');
+    const resultScr = document.getElementById('exam-result-screen');
+    if (setsScr) setsScr.classList.remove('hidden');
+    if (activeScr) activeScr.classList.add('hidden');
+    if (resultScr) resultScr.classList.add('hidden');
+
+    if (examTimerInterval) {
+        clearInterval(examTimerInterval);
+        examTimerInterval = null;
+    }
+
+    const chap = getCurrentChap();
+    const chapName = chap ? chap.title : `অধ্যায় ${chapNum}`;
+    if (titleEl) titleEl.textContent = `${chapName} — ৫-সেট MCQ পরীক্ষা`;
+
+    let sets = [];
+    if (chapData && chapData.sets && chapData.sets.length) {
+        sets = chapData.sets;
+    } else {
+        // Structured placeholder sets for upcoming chapters
+        sets = [
+            { id: "set1", setNum: 1, title: "সেট ০১: সহজ (জ্ঞান ও অনুধাবন)", difficulty: "সহজ", badgeColor: "emerald", qCount: 15, timeMinutes: 15, fullMarks: 15, desc: "মৌলিক সংজ্ঞা, একক ও সূত্রের প্রাথমিক ধারণা।" },
+            { id: "set2", setNum: 2, title: "সেট ০২: সহজ-মাঝারি (বেসিক প্রয়োগ)", difficulty: "সহজ-মাঝারি", badgeColor: "blue", qCount: 15, timeMinutes: 15, fullMarks: 15, desc: "সাধারণ গাণিতিক সমস্যা ও সম্পর্ক যাচাই।" },
+            { id: "set3", setNum: 3, title: "সেট ০৩: বোর্ড স্ট্যান্ডার্ড (সমন্বিত টেস্ট)", difficulty: "বোর্ড স্ট্যান্ডার্ড", badgeColor: "purple", qCount: 25, timeMinutes: 25, fullMarks: 25, desc: "বিগত বছরের বোর্ড পরীক্ষার অনুরূপ স্ট্যান্ডার্ড প্রশ্ন।" },
+            { id: "set4", setNum: 4, title: "সেট ০৪: কঠিন (উচ্চতর দক্ষতা)", difficulty: "কঠিন", badgeColor: "amber", qCount: 25, timeMinutes: 25, fullMarks: 25, desc: "জটিল গাণিতিক ও চিন্তনদক্ষতামূলক সমন্বিত সমস্যা।" },
+            { id: "set5", setNum: 5, title: "সেট ০৫: চ্যালেঞ্জ (মাস্টার মক টেস্ট)", difficulty: "চ্যালেঞ্জ", badgeColor: "rose", qCount: 25, timeMinutes: 25, fullMarks: 25, desc: "পূর্ণাঙ্গ ২৫ নম্বরের চূড়ান্ত বোর্ড মক টেস্ট।" }
+        ];
+    }
+
+    const totalQs = sets.reduce((acc, s) => acc + (s.questions ? s.questions.length : s.qCount), 0);
+    if (totalBadge) totalBadge.textContent = `${totalQs}টি MCQ`;
+
+    const colorClasses = {
+        emerald: { bg: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
+        blue:    { bg: 'bg-blue-50 text-blue-700 border-blue-200' },
+        purple:  { bg: 'bg-purple-50 text-purple-700 border-purple-200' },
+        amber:   { bg: 'bg-amber-50 text-amber-700 border-amber-200' },
+        rose:    { bg: 'bg-rose-50 text-rose-700 border-rose-200' }
+    };
+
+    gridEl.innerHTML = sets.map((s) => {
+        const c = colorClasses[s.badgeColor] || colorClasses.blue;
+        const savedScoreKey = `ssc_exam_score_ch${chapNum}_${s.id}`;
+        const savedScore = localStorage.getItem(savedScoreKey);
+
+        return `
+            <div class="p-5 rounded-3xl bg-slate-50/70 hover:bg-white border border-slate-200 hover:border-blue-400 hover:shadow-md transition space-y-4 flex flex-col justify-between group">
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span class="px-2.5 py-0.5 rounded-lg text-xs font-bold ${c.bg} border">
+                            ${s.difficulty}
+                        </span>
+                        ${savedScore !== null ? `
+                            <span class="text-[11px] font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-md border border-blue-200">
+                                সেরা স্কোর: ${savedScore}/${s.fullMarks}
+                            </span>
+                        ` : `
+                            <span class="text-[11px] text-slate-400 font-semibold">নতুন সেট</span>
+                        `}
+                    </div>
+
+                    <div>
+                        <h4 class="text-sm font-bold text-slate-900 group-hover:text-blue-700 transition leading-snug">${s.title}</h4>
+                        <p class="text-xs text-slate-500 mt-1.5 leading-relaxed">${s.desc}</p>
+                    </div>
+
+                    <div class="flex items-center gap-2 pt-1 flex-wrap">
+                        <span class="px-2 py-1 rounded-lg bg-white border border-slate-200 text-[11px] font-bold text-slate-700">
+                            <i class="fa-regular fa-circle-question text-blue-500"></i> ${s.qCount} প্রশ্ন
+                        </span>
+                        <span class="px-2 py-1 rounded-lg bg-white border border-slate-200 text-[11px] font-bold text-slate-700">
+                            <i class="fa-regular fa-clock text-amber-500"></i> ${s.timeMinutes} মিনিট
+                        </span>
+                        <span class="px-2 py-1 rounded-lg bg-white border border-slate-200 text-[11px] font-bold text-slate-700">
+                            <i class="fa-solid fa-star text-purple-500"></i> ${s.fullMarks} নম্বর
+                        </span>
+                    </div>
+                </div>
+
+                <button onclick="startChapterExamSet('${s.id}')" class="w-full py-2.5 px-4 bg-white group-hover:bg-blue-600 group-hover:text-white border border-slate-200 group-hover:border-blue-600 rounded-xl text-xs font-bold text-slate-800 transition flex items-center justify-center gap-2 shadow-sm">
+                    <span>পরীক্ষা শুরু করুন</span> <i class="fa-solid fa-arrow-right text-[11px]"></i>
+                </button>
+            </div>
+        `;
+    }).join('');
 }
 
-function recordExamAnswer(qIdx, optIdx) { examUserAnswers[qIdx] = optIdx; }
+function startChapterExamSet(setId) {
+    const chapNum = currentChapterIndex + 1;
+    const chapData = (window.SSC_EXAM_BANK && window.SSC_EXAM_BANK[chapNum]) || null;
+    let targetSet = null;
 
-function startExamSession() {
-    document.getElementById('exam-start-screen').classList.add('hidden');
+    if (chapData && chapData.sets) {
+        targetSet = chapData.sets.find(s => s.id === setId);
+    }
+
+    if (!targetSet || !targetSet.questions || !targetSet.questions.length) {
+        alert("এই সেটের প্রশ্ন প্রস্তুত হচ্ছে। খুব শীঘ্রই উন্মুক্ত করা হবে!");
+        return;
+    }
+
+    currentActiveExamSet = targetSet;
+    currentActiveExamQuestions = targetSet.questions;
+    examUserAnswers = {};
+    examTimeLeft = (targetSet.timeMinutes || 15) * 60;
+    examActiveStartTime = Date.now();
+
+    document.getElementById('exam-sets-screen').classList.add('hidden');
     document.getElementById('exam-active-screen').classList.remove('hidden');
     document.getElementById('exam-result-screen').classList.add('hidden');
-    examTimeLeft = 300; examUserAnswers = {};
-    initExamQuestions();
+
+    const titleEl = document.getElementById('exam-active-set-title');
+    const chapSubEl = document.getElementById('exam-active-chap-subtitle');
+    if (titleEl) titleEl.textContent = targetSet.title;
+    if (chapSubEl) chapSubEl.textContent = getCurrentChap()?.title || `অধ্যায় ${chapNum}`;
+
+    updateExamProgressStat();
+
+    const container = document.getElementById('exam-questions-container');
+    if (container) {
+        const letters = ['ক', 'খ', 'গ', 'ঘ'];
+        container.innerHTML = currentActiveExamQuestions.map((item, qIdx) => `
+            <div class="p-5 rounded-2xl border border-slate-200 bg-white shadow-sm space-y-3" id="exam-qbox-${qIdx}">
+                <div class="flex items-start gap-2.5">
+                    <span class="w-6 h-6 rounded-lg bg-blue-100 text-blue-700 text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">
+                        ${qIdx + 1}
+                    </span>
+                    <div class="font-bold text-sm text-slate-900 leading-relaxed whitespace-pre-line flex-1">
+                        ${item.q}
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs pt-1">
+                    ${item.options.map((opt, oi) => `
+                        <label class="p-3 bg-slate-50 hover:bg-blue-50/60 rounded-xl border border-slate-200 hover:border-blue-400 flex items-center gap-3 cursor-pointer transition select-none" id="exam-opt-lbl-${qIdx}-${oi}">
+                            <input type="radio" name="eq_${qIdx}" value="${oi}" onchange="recordSetExamAnswer(${qIdx}, ${oi})" class="accent-blue-600 w-4 h-4 cursor-pointer">
+                            <span class="font-bold text-slate-500 mr-1">${letters[oi]})</span>
+                            <span class="font-medium text-slate-800 leading-normal flex-1">${opt}</span>
+                        </label>
+                    `).join('')}
+                </div>
+            </div>
+        `).join('');
+
+        if (window.renderMathInElement) {
+            try {
+                window.renderMathInElement(container, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$', right: '$', display: false}
+                    ],
+                    throwOnError: false
+                });
+            } catch(e) {}
+        }
+    }
+
+    // Scroll smoothly to active exam container
+    const activeScreenEl = document.getElementById('exam-active-screen');
+    if (activeScreenEl) {
+        activeScreenEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
     if (examTimerInterval) clearInterval(examTimerInterval);
+    updateExamTimerDisplay();
     examTimerInterval = setInterval(() => {
         examTimeLeft--;
-        const m = String(Math.floor(examTimeLeft/60)).padStart(2,'0');
-        const s = String(examTimeLeft%60).padStart(2,'0');
-        document.getElementById('exam-timer-display').textContent = `${m}:${s}`;
-        if (examTimeLeft <= 0) { clearInterval(examTimerInterval); submitExamAnswers(); }
+        updateExamTimerDisplay();
+        if (examTimeLeft <= 0) {
+            clearInterval(examTimerInterval);
+            examTimerInterval = null;
+            alert("সময় শেষ! আপনার পরীক্ষা স্বয়ংক্রিয়ভাবে জমা নেওয়া হচ্ছে।");
+            submitExamAnswers();
+        }
     }, 1000);
 }
 
-function submitExamAnswers() {
-    if (examTimerInterval) clearInterval(examTimerInterval);
-    let score = 0;
-    EXAM_BANK.forEach((item, idx) => { if (examUserAnswers[idx] === item.correct) score++; });
+function recordSetExamAnswer(qIdx, optIdx) {
+    examUserAnswers[qIdx] = optIdx;
 
-    // Persist score
-    const chapId = getCurrentChap().id;
-    examScoresStore[chapId] = score;
-    lsSet(LS.EXAM_SCORES, examScoresStore);
-    addProgress(chapId, 'exam');
+    // Visual selection highlight
+    const letters = [0, 1, 2, 3];
+    letters.forEach(oi => {
+        const lbl = document.getElementById(`exam-opt-lbl-${qIdx}-${oi}`);
+        if (lbl) {
+            if (oi === optIdx) {
+                lbl.className = "p-3 bg-blue-50 border-2 border-blue-600 rounded-xl flex items-center gap-3 cursor-pointer transition select-none shadow-sm";
+            } else {
+                lbl.className = "p-3 bg-slate-50 hover:bg-blue-50/60 rounded-xl border border-slate-200 hover:border-blue-400 flex items-center gap-3 cursor-pointer transition select-none";
+            }
+        }
+    });
 
-    document.getElementById('exam-active-screen').classList.add('hidden');
-    document.getElementById('exam-result-screen').classList.remove('hidden');
-    document.getElementById('exam-score-display').textContent = `${score} / ${EXAM_BANK.length}`;
-    document.getElementById('exam-percent-display').textContent = `সফলতার হার: ${Math.round(score/EXAM_BANK.length*100)}%`;
+    updateExamProgressStat();
 }
 
-function restartExamSession() { startExamSession(); }
+function updateExamProgressStat() {
+    const answered = Object.keys(examUserAnswers).length;
+    const total = currentActiveExamQuestions.length;
+    const statEl = document.getElementById('exam-answered-stat');
+    if (statEl) {
+        statEl.textContent = `${answered} / ${total} উত্তর`;
+    }
+}
+
+function updateExamTimerDisplay() {
+    const timerEl = document.getElementById('exam-timer-display');
+    const timerWrapper = document.getElementById('exam-timer-wrapper');
+    if (!timerEl) return;
+
+    const m = String(Math.floor(Math.max(0, examTimeLeft) / 60)).padStart(2, '0');
+    const s = String(Math.max(0, examTimeLeft) % 60).padStart(2, '0');
+    timerEl.textContent = `${m}:${s}`;
+
+    if (examTimeLeft < 120 && timerWrapper) {
+        timerWrapper.className = "flex items-center gap-2 bg-red-600 text-white border border-red-700 px-3.5 py-1.5 rounded-xl font-mono font-bold text-sm shadow-md animate-pulse";
+    } else if (timerWrapper) {
+        timerWrapper.className = "flex items-center gap-2 bg-red-50 border border-red-200 px-3.5 py-1.5 rounded-xl text-red-600 font-mono font-bold text-sm shadow-sm";
+    }
+}
+
+function confirmExitExam() {
+    const answered = Object.keys(examUserAnswers).length;
+    if (answered > 0 && examTimeLeft > 0) {
+        if (!confirm("আপনি কি পরীক্ষা মাঝপথে ত্যাগ করতে চান? আপনার উত্তরসমূহ মুছে যাবে।")) {
+            return;
+        }
+    }
+    if (examTimerInterval) {
+        clearInterval(examTimerInterval);
+        examTimerInterval = null;
+    }
+    backToExamSets();
+}
+
+function backToExamSets() {
+    if (examTimerInterval) {
+        clearInterval(examTimerInterval);
+        examTimerInterval = null;
+    }
+    document.getElementById('exam-sets-screen').classList.remove('hidden');
+    document.getElementById('exam-active-screen').classList.add('hidden');
+    document.getElementById('exam-result-screen').classList.add('hidden');
+    renderChapterExamSets();
+}
+
+function submitExamAnswers() {
+    if (examTimerInterval) {
+        clearInterval(examTimerInterval);
+        examTimerInterval = null;
+    }
+
+    const total = currentActiveExamQuestions.length;
+    let score = 0;
+    currentActiveExamQuestions.forEach((item, idx) => {
+        if (examUserAnswers[idx] === item.correct) {
+            score++;
+        }
+    });
+
+    const elapsedSeconds = Math.max(0, Math.floor((Date.now() - examActiveStartTime) / 1000));
+    const spentM = String(Math.floor(elapsedSeconds / 60)).padStart(2, '0');
+    const spentS = String(elapsedSeconds % 60).padStart(2, '0');
+
+    // Save score in localStorage
+    const chapNum = currentChapterIndex + 1;
+    const setId = currentActiveExamSet ? currentActiveExamSet.id : 'set1';
+    const scoreKey = `ssc_exam_score_ch${chapNum}_${setId}`;
+    const prevBest = localStorage.getItem(scoreKey);
+    if (!prevBest || score > parseInt(prevBest)) {
+        localStorage.setItem(scoreKey, score);
+    }
+
+    // Persist chapter progress
+    const chap = getCurrentChap();
+    if (chap) {
+        examScoresStore[chap.id] = score;
+        lsSet(LS.EXAM_SCORES, examScoresStore);
+        addProgress(chap.id, 'exam');
+    }
+
+    // UI Updates
+    document.getElementById('exam-sets-screen').classList.add('hidden');
+    document.getElementById('exam-active-screen').classList.add('hidden');
+    document.getElementById('exam-result-screen').classList.remove('hidden');
+
+    const scoreDisplay = document.getElementById('exam-score-display');
+    const percentDisplay = document.getElementById('exam-percent-display');
+    const timeDisplay = document.getElementById('exam-time-spent-display');
+    const badgeEl = document.getElementById('exam-result-badge');
+    const feedbackEl = document.getElementById('exam-result-feedback');
+
+    if (scoreDisplay) scoreDisplay.textContent = `${score} / ${total}`;
+    const percent = Math.round((score / total) * 100);
+    if (percentDisplay) percentDisplay.textContent = `${percent}%`;
+    if (timeDisplay) timeDisplay.textContent = `${spentM}:${spentS}`;
+    if (badgeEl && currentActiveExamSet) badgeEl.textContent = `${currentActiveExamSet.title} সম্পন্ন`;
+
+    let feedback = "";
+    if (percent >= 80) {
+        feedback = "অসাধারণ প্রস্তুতি! আপনি বোর্ড পরীক্ষায় A+ পাওয়ার উপযোগী দক্ষতা অর্জন করেছেন।";
+    } else if (percent >= 60) {
+        feedback = "ভালো প্রস্তুতি! আরেকটু রিভিশন দিলে আপনি সহজেই পূর্ণ নম্বর নিশ্চিত করতে পারবেন।";
+    } else {
+        feedback = "অধ্যায়টির লেকচার নোট ও গাণিতিক সমস্যাগুলো আরেকবার পড়ে পুনরায় পরীক্ষা দিন।";
+    }
+    if (feedbackEl) feedbackEl.textContent = feedback;
+
+    // Reset review box visibility
+    const reviewBox = document.getElementById('exam-review-box');
+    if (reviewBox) {
+        reviewBox.classList.add('hidden');
+        reviewBox.innerHTML = '';
+    }
+
+    const resScr = document.getElementById('exam-result-screen');
+    if (resScr) resScr.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function restartExamSession() {
+    if (currentActiveExamSet) {
+        startChapterExamSet(currentActiveExamSet.id);
+    }
+}
 
 function reviewExamAnswers() {
     const box = document.getElementById('exam-review-box');
+    if (!box) return;
     box.classList.toggle('hidden');
-    box.innerHTML = EXAM_BANK.map(item => `
-        <div class="p-3 bg-white rounded-xl border border-slate-200 text-xs">
-            <p class="font-bold">${item.q}</p>
-            <p class="text-blue-700 font-semibold mt-1">সঠিক উত্তর: ${item.options[item.correct]}</p>
-            <p class="text-slate-500 mt-0.5">ব্যাখ্যা: ${item.exp}</p>
-        </div>`).join('');
+
+    if (box.classList.contains('hidden')) return;
+
+    const letters = ['ক', 'খ', 'গ', 'ঘ'];
+    box.innerHTML = `
+        <div class="flex items-center justify-between pb-2 border-b border-slate-200">
+            <h4 class="font-bold text-slate-900 text-sm flex items-center gap-2">
+                <i class="fa-solid fa-clipboard-check text-blue-600"></i> প্রতিটি প্রশ্নের পূর্ণাঙ্গ উত্তর ও ব্যাখ্যা
+            </h4>
+            <span class="text-xs text-slate-500">মোট প্রশ্ন: ${currentActiveExamQuestions.length}টি</span>
+        </div>
+        <div class="space-y-4 pt-2">
+            ${currentActiveExamQuestions.map((item, idx) => {
+                const userAns = examUserAnswers[idx];
+                const isCorrect = userAns === item.correct;
+                const isSkipped = userAns === undefined;
+
+                return `
+                    <div class="p-4 sm:p-5 rounded-2xl border ${isCorrect ? 'border-emerald-200 bg-emerald-50/30' : isSkipped ? 'border-amber-200 bg-amber-50/30' : 'border-rose-200 bg-rose-50/30'} space-y-3">
+                        <div class="flex items-start gap-2.5">
+                            <span class="w-6 h-6 rounded-lg ${isCorrect ? 'bg-emerald-600 text-white' : isSkipped ? 'bg-amber-500 text-white' : 'bg-rose-600 text-white'} text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">
+                                ${isCorrect ? '✓' : isSkipped ? '−' : '✗'}
+                            </span>
+                            <div class="font-bold text-sm text-slate-900 leading-relaxed whitespace-pre-line flex-1">
+                                <span class="text-slate-500 font-normal">প্রশ্ন ${idx + 1}:</span> ${item.q}
+                            </div>
+                        </div>
+
+                        <!-- Answer Comparison -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs pt-1">
+                            <div class="p-2.5 rounded-xl ${isCorrect ? 'bg-emerald-100/70 border border-emerald-300 text-emerald-900' : isSkipped ? 'bg-amber-100/70 border border-amber-300 text-amber-900' : 'bg-rose-100/70 border border-rose-300 text-rose-900'}">
+                                <span class="font-bold block text-[10px] uppercase tracking-wider mb-0.5">আপনার উত্তর:</span>
+                                <span>${isSkipped ? 'উত্তর দেননি' : `${letters[userAns]}) ${item.options[userAns]}`}</span>
+                            </div>
+                            <div class="p-2.5 rounded-xl bg-emerald-100/70 border border-emerald-300 text-emerald-900">
+                                <span class="font-bold block text-[10px] uppercase tracking-wider mb-0.5">সঠিক উত্তর:</span>
+                                <span>${letters[item.correct]}) ${item.options[item.correct]}</span>
+                            </div>
+                        </div>
+
+                        <!-- Explanation Box -->
+                        <div class="p-3 bg-white rounded-xl border border-slate-200 text-xs space-y-1">
+                            <span class="font-bold text-blue-700 flex items-center gap-1.5">
+                                <i class="fa-solid fa-lightbulb text-amber-500"></i> বৈজ্ঞানিক ব্যাখ্যা ও সমাধান:
+                            </span>
+                            <p class="text-slate-600 leading-relaxed">${item.exp || 'কোনো ব্যাখ্যা দেওয়া হয়নি।'}</p>
+                        </div>
+                    </div>
+                `;
+            }).join('')}
+        </div>
+    `;
+
+    if (window.renderMathInElement) {
+        try {
+            window.renderMathInElement(box, {
+                delimiters: [
+                    {left: '$$', right: '$$', display: true},
+                    {left: '$', right: '$', display: false}
+                ],
+                throwOnError: false
+            });
+        } catch(e) {}
+    }
 }
 
 /* ===================================================
