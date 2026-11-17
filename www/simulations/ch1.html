@@ -51,6 +51,10 @@
           <span class="w-5 h-5 rounded-md bg-white/10 text-slate-300 text-[10px] flex items-center justify-center font-mono font-bold">০২</span>
           <span>ঘনত্ব অনুসন্ধান</span>
         </button>
+        <button id="tab-lab-3" onclick="switchLab('micrometer', 3)" class="px-3.5 py-2 rounded-xl text-xs font-bold text-slate-300 bg-[#112133] hover:bg-[#162c45] hover:text-white transition flex items-center gap-2 whitespace-nowrap border border-slate-700/60">
+          <span class="w-5 h-5 rounded-md bg-white/10 text-slate-300 text-[10px] flex items-center justify-center font-mono font-bold">০৩</span>
+          <span>স্ক্রু গজ ও মাইক্রোমিটার</span>
+        </button>
       </div>
 
       <div class="flex items-center gap-2">
@@ -134,6 +138,10 @@
         iframe.src = 'vernier-caliper.html';
         btnFsTop.href = 'vernier-caliper.html';
         btnFsMain.href = 'vernier-caliper.html';
+      } else if (labId === 'micrometer') {
+        iframe.src = 'micrometer.html';
+        btnFsTop.href = 'micrometer.html';
+        btnFsMain.href = 'micrometer.html';
       } else {
         iframe.src = '../physics-labs/index.html?lab=' + labId + '&embed=1';
         btnFsTop.href = '../physics-labs/index.html?lab=' + labId;
