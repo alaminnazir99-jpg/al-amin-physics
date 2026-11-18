@@ -1766,6 +1766,66 @@
 </div>
 
 <!-- ====================================================
+     MODAL 8: ALL 26 INTERACTIVE PHYSICS LABS CATALOG
+==================================================== -->
+<div id="all-labs-catalog-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-[100] flex items-center justify-center p-3 sm:p-5 hidden">
+    <div class="bg-white rounded-3xl max-w-5xl w-full max-h-[92vh] flex flex-col shadow-2xl border border-slate-100 overflow-hidden">
+        <!-- Header -->
+        <div class="p-5 sm:p-6 border-b border-slate-100 flex items-center justify-between gap-4 bg-gradient-to-r from-slate-900 via-[#0d1f33] to-slate-900 text-white">
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-2xl bg-teal-500/20 border border-teal-500/30 text-teal-300 flex items-center justify-center text-2xl font-bold">
+                    <i class="fa-solid fa-flask"></i>
+                </div>
+                <div>
+                    <h3 class="font-black text-white text-base sm:text-xl">ভার্চুয়াল পদার্থবিজ্ঞান ল্যাবরেটরি সুইট</h3>
+                    <p class="text-xs text-teal-200/80">এসএসসি ও এইচএসসি পদার্থবিজ্ঞানের মোট ২৬টি হ্যান্ডস-অন সিমুলেশন ল্যাব</p>
+                </div>
+            </div>
+            <button onclick="closeAllLabsCatalogModal()" class="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition cursor-pointer">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+        </div>
+
+        <!-- Category Filters -->
+        <div class="px-5 sm:px-6 py-3 bg-slate-50 border-b border-slate-200 flex items-center gap-2 overflow-x-auto">
+            <span class="text-xs font-bold text-slate-500 whitespace-nowrap mr-1">ফিল্টার:</span>
+            <button id="cat-filter-all" onclick="filterAllLabsModal('all')" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-teal-600 text-white shadow-xs transition">সবগুলো (২৬টি)</button>
+            <button id="cat-filter-পরিমাপ" onclick="filterAllLabsModal('পরিমাপ')" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 transition">পরিমাপ</button>
+            <button id="cat-filter-গতি" onclick="filterAllLabsModal('গতি')" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 transition">গতি ও বল</button>
+            <button id="cat-filter-কাজ" onclick="filterAllLabsModal('কাজ')" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 transition">কাজ ও শক্তি</button>
+            <button id="cat-filter-তাপ" onclick="filterAllLabsModal('তাপ')" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 transition">তাপ ও তাপগতিবিদ্যা</button>
+            <button id="cat-filter-তরঙ্গ" onclick="filterAllLabsModal('তরঙ্গ')" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 transition">তরঙ্গ ও শব্দ</button>
+            <button id="cat-filter-আলো" onclick="filterAllLabsModal('আলো')" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 transition">আলোকবিজ্ঞান</button>
+            <button id="cat-filter-তড়িৎ" onclick="filterAllLabsModal('তড়িৎ')" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 transition">তড়িৎ ও চুম্বক</button>
+            <button id="cat-filter-আধুনিক" onclick="filterAllLabsModal('আধুনিক')" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 transition">আধুনিক পদার্থবিজ্ঞান</button>
+        </div>
+
+        <!-- Scrollable Grid Container -->
+        <div class="p-5 sm:p-6 overflow-y-auto flex-1 bg-slate-50/50">
+            <div id="all-labs-grid-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <!-- Dynamically populated by renderAllLabsCatalogGrid -->
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="p-4 border-t border-slate-200 bg-white flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-circle-info text-teal-600"></i>
+                <span>যেকোনো ল্যাবে "স্ক্রিনে চালু" চাপলেই স্টাডি রুমে সিমুলেশন চালু হবে।</span>
+            </div>
+            <div class="flex items-center gap-2 w-full sm:w-auto">
+                <a href="physics-labs/index.html" target="_blank" class="w-full sm:w-auto px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl transition text-center">
+                    আলাদা উইন্ডোতে ফুল ল্যাব সুইট ↗
+                </a>
+                <button onclick="closeAllLabsCatalogModal()" class="w-full sm:w-auto px-5 py-2 bg-teal-600 hover:bg-teal-500 text-white font-bold rounded-xl transition">
+                    বন্ধ করুন
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ====================================================
      FLOATING 24/7 WHATSAPP INSTANT DOUBT BUTTON
 ==================================================== -->
 <div class="fixed bottom-6 right-6 z-40 flex flex-col items-end gap-2 group">

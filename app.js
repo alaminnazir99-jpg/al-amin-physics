@@ -948,26 +948,108 @@ function renderChapterData() {
 }
 
 /* ===================================================
-   CHAPTER SIMULATION (26 ChatGPT-crafted Labs)
+   CHAPTER SIMULATION (26 ChatGPT-crafted Labs + Precision Tools)
+   Unified Multi-Class Engine (SSC, HSC 1, HSC 2, Class 8)
 =================================================== */
+const ALL_PHYSICS_LABS = {
+    caliper:      { id: "caliper",      num: 1,  title: "ভার্নিয়ার ক্যালিপার্স",              cat: "পরিমাপ",          sub: "বাস্তবসম্মত স্লাইড ক্যালিপার্স দিয়ে সূক্ষ্ম দৈর্ঘ্য ও অভ্যন্তরীণ ব্যাস পরিমাপ।" },
+    micrometer:   { id: "micrometer",   num: 2,  title: "স্ক্রু গজ ও মাইক্রোমিটার",          cat: "পরিমাপ",          sub: "বাস্তবসম্মত স্ক্রু গজ দিয়ে তারের ব্যাস ও পাতের সূক্ষ্ম পুরুত্ব নির্ণয়।" },
+    density:      { id: "density",      num: 3,  title: "ঘনত্ব অনুসন্ধান",                   cat: "পদার্থ ও পরিমাপ", sub: "কঠিন ও তরলের ভর, আয়তন ও ঘনত্বের সম্পর্ক অনুসন্ধান ও বস্তু সনাক্তকরণ।" },
+    motion:       { id: "motion",       num: 4,  title: "গাড়ি, গতি ও লেখচিত্র",              cat: "গতি ও বল",        sub: "চলন্ত গাড়ির প্রতিটি মুহূর্তকে অবস্থান-সময় ও বেগ-সময় লাইভ গ্রাফে ধরো।" },
+    fall:         { id: "fall",         num: 5,  title: "মুক্তপতন পরীক্ষাগার",               cat: "গতি ও মহাকর্ষ",   sub: "ভিন্ন ভর, একই মহাকর্ষ—বায়ুশূন্য স্থান ও বায়ুপ্রতিরোধের প্রভাব পরীক্ষা।" },
+    friction:     { id: "friction",     num: 6,  title: "বল ও ঘর্ষণ",                      cat: "গতি ও বল",        sub: "কখন বাক্স নড়বে, কখন থামবে—স্থিত ঘর্ষণ ও চল ঘর্ষণের লাইভ পরীক্ষা।" },
+    collision:    { id: "collision",    num: 7,  title: "ট্রলির সংঘর্ষ",                    cat: "গতি ও বল",        sub: "ভরবেগ কোথায় যায়? স্থিতিস্থাপক ও অস্থিতিস্থাপক ট্রলি সংঘর্ষে খুঁজে দেখো।" },
+    energy:       { id: "energy",       num: 8,  title: "রোলার কোস্টার ও শক্তি",             cat: "কাজ ও শক্তি",     sub: "উঁচু–নিচু পথে গতিশক্তি ও মহাকর্ষীয় বিভব শক্তির পারস্পরিক রূপান্তর ও নিত্যতা।" },
+    crane:        { id: "crane",        num: 9,  title: "ক্রেন, কাজ ও ক্ষমতা",              cat: "কাজ ও শক্তি",     sub: "একই কাজ, ভিন্ন সময়—মোটরের ক্ষমতা ও কার্যকর দক্ষতার পার্থক্য হিসাব।" },
+    buoyancy:     { id: "buoyancy",     num: 10, title: "ভাসা–ডোবা ও প্লবতা",              cat: "পদার্থের অবস্থা", sub: "ওজন আর পানির ঊর্ধ্বমুখী প্লবতা বলের লড়াই—আর্কিমিডিসের সূত্র যাচাই।" },
+    pressure:     { id: "pressure",     num: 11, title: "চাপ ও হাইড্রলিক লিফট",             cat: "পদার্থের অবস্থা", sub: "প্যাসকেলের সূত্র—অল্প বল প্রয়োগ করে বিশাল ভার উত্তোলনের জাদু।" },
+    heat:         { id: "heat",         num: 12, title: "বরফ থেকে বাষ্প (তাপীয় প্রক্রিয়া)",    cat: "তাপ ও তাপগতিবিদ্যা", sub: "তাপ দিলেও কখন তাপমাত্রা বাড়ে না? অবস্থার পরিবর্তন, আপেক্ষিক তাপ ও সুপ্ততাপ।" },
+    expansion:    { id: "expansion",    num: 13, title: "তাপে ধাতুর প্রসারণ ও কৃতকাজ",       cat: "তাপ ও তাপগতিবিদ্যা", sub: "তাপমাত্রা বৃদ্ধিতে পদার্থের রৈখিক প্রসারণ ও গ্যাসীয় সিস্টেমের প্রসারণে কাজ।" },
+    wave:         { id: "wave",         num: 14, title: "দড়িতে তরঙ্গ ও স্পন্দন",             cat: "তরঙ্গ ও শব্দ",    sub: "একটি দোলন, ছড়িয়ে পড়ে পুরো দড়িতে—তরঙ্গমুখ, বিস্তার ও তরঙ্গ সমীকরণ।" },
+    sound:        { id: "sound",        num: 15, title: "শব্দ ও প্রতিধ্বনি",                cat: "তরঙ্গ ও শব্দ",    sub: "শব্দ পাঠাও, ফিরে আসার সময় মেপে দেয়ালের দূরত্ব ও শব্দের বেগ নির্ণয়।" },
+    reflection:   { id: "reflection",   num: 16, title: "দর্পণ ও লেজার প্রতিফলন",            cat: "আলোকবিজ্ঞান",     sub: "আলোর আপতন কোণ ও প্রতিফলন কোণ মেপে প্রতিফলনের মৌলিক সূত্র যাচাই।" },
+    mirror:       { id: "mirror",       num: 17, title: "গোলীয় দর্পণে প্রতিবিম্ব",           cat: "আলোকবিজ্ঞান",     sub: "বাস্তব না অবাস্তব—অবতল ও উত্তল দর্পণে বস্তু সরিয়ে প্রতিবিম্বের গঠন দেখো।" },
+    refraction:   { id: "refraction",   num: 18, title: "প্রতিসরণ ও সংকট কোণ",              cat: "আলোকবিজ্ঞান",     sub: "মাধ্যম বদলালে আলোর দিক পরিবর্তন ও পূর্ণ অভ্যন্তরীণ প্রতিফলনের কোণ।" },
+    lens:         { id: "lens",         num: 19, title: "লেন্স ও দৃষ্টি সংশোধন",            cat: "আলোকবিজ্ঞান",     sub: "উত্তল ও অবতল লেন্সে আলোর রশ্মি মিলিয়ে বাস্তব ও অবাস্তব প্রতিবিম্ব গঠন।" },
+    charges:      { id: "charges",      num: 20, title: "আধান ও তড়িৎক্ষেত্র",               cat: "তড়িৎ ও চুম্বক",   sub: "কুলম্বের সূত্র ও বিন্দু আধানের চতুর্দিকে অদৃশ্য তড়িৎ বলরেখা দৃশ্যমান করো।" },
+    electroscope: { id: "electroscope", num: 21, title: "তড়িৎ আবেশ ও ইলেকট্রোস্কোপ",       cat: "তড়িৎ ও চুম্বক",   sub: "ঘর্ষণ ছাড়াই চার্জ সঞ্চার—আবেশ, স্পর্শ এবং আর্থিং প্রক্রিয়ার বাস্তব পরীক্ষা।" },
+    circuit:      { id: "circuit",      num: 22, title: "নিজের সার্কিট তৈরি করো",           cat: "তড়িৎ ও চুম্বক",   sub: "তার জোড়া দাও, সুইচ চালাও—ওহমের সূত্রে লাইভ সিরিজ ও প্যারালাল বর্তনী।" },
+    house:        { id: "house",        num: 23, title: "বাড়ির বিদ্যুৎ ও ফিউজ",             cat: "তড়িৎ ও চুম্বক",   sub: "কত লোড নিরাপদ? সমান্তরাল সংযোগে ভোল্টেজ, লোড পাওয়ার ও ফিউজ কাটঅফ।" },
+    motor:        { id: "motor",        num: 24, title: "তড়িৎচুম্বক ও ডিসি মোটর",           cat: "তড়িৎ ও চুম্বক",   sub: "বিদ্যুৎ থেকে ঘূর্ণন—চৌম্বক ক্ষেত্রে কারেন্টবাহী তারের বল ও মোটর নীতি।" },
+    induction:    { id: "induction",    num: 25, title: "চুম্বক, কয়েল ও জেনারেটর",          cat: "তড়িৎ ও চুম্বক",   sub: "ফ্যারাডের তাড়িতচৌম্বক আবেশ—হাতের গতিতে চুম্বক চালিয়ে বিদ্যুৎ উৎপাদন।" },
+    decay:        { id: "decay",        num: 26, title: "তেজস্ক্রিয় ক্ষয় ও অর্ধায়ু",         cat: "আধুনিক পদার্থবিজ্ঞান", sub: "পরমাণুর ভাঙন—অর্ধায়ুর সূচকীয় সূত্র ও শত শত পরমাণুর ক্ষয়ের লাইভ সিমুলেশন।" },
+    electronics:  { id: "electronics",  num: 27, title: "ডায়োড ও ট্রানজিস্টর",              cat: "আধুনিক পদার্থবিজ্ঞান", sub: "একদিকে কারেন্ট, ক্ষুদ্র সংকেতে বড় নিয়ন্ত্রণ—সেমিকন্ডাক্টর ইলেকট্রনিক্স।" }
+};
+
+// Curriculum Mapping for Every Single Class and Chapter:
+const LEVEL_CHAPTER_LAB_MAP = {
+    // ---------------- SSC (13 Chapters) ----------------
+    ssc: {
+        0:  ["caliper", "micrometer", "density"],              // অধ্যায় ১: ভৌত রাশি ও পরিমাপ
+        1:  ["motion", "fall"],                                // অধ্যায় ২: গতি
+        2:  ["friction", "collision"],                         // অধ্যায় ৩: বল
+        3:  ["energy", "crane"],                               // অধ্যায় ৪: কাজ, ক্ষমতা ও শক্তি
+        4:  ["buoyancy", "pressure"],                          // অধ্যায় ৫: পদার্থের অবস্থা ও চাপ
+        5:  ["heat", "expansion"],                             // অধ্যায় ৬: বস্তুর উপর তাপের প্রভাব
+        6:  ["wave", "sound"],                                 // অধ্যায় ৭: তরঙ্গ ও শব্দ
+        7:  ["reflection", "mirror"],                          // অধ্যায় ৮: আলোর প্রতিফলন
+        8:  ["refraction", "lens"],                            // অধ্যায় ৯: আলোর প্রতিসরণ
+        9:  ["charges", "electroscope"],                       // অধ্যায় ১০: স্থির তড়িৎ
+        10: ["circuit", "house"],                              // অধ্যায় ১১: চল তড়িৎ
+        11: ["motor", "induction"],                            // অধ্যায় ১২: বিদ্যুতের চৌম্বক ক্রিয়া
+        12: ["decay", "electronics"]                           // অধ্যায় ১৩: আধুনিক পদার্থবিজ্ঞান ও ইলেকট্রনিক্স
+    },
+    // ---------------- HSC 1st Paper (10 Chapters) ----------------
+    hsc1: {
+        0:  ["caliper", "micrometer", "density"],              // অধ্যায় ১: ভৌত জগৎ ও পরিমাপ
+        1:  ["motion", "friction"],                            // অধ্যায় ২: ভেক্টর
+        2:  ["motion", "fall"],                                // অধ্যায় ৩: গতিবিদ্যা
+        3:  ["friction", "collision"],                         // অধ্যায় ৪: নিউটনিয়ান বলবিদ্যা
+        4:  ["energy", "crane"],                               // অধ্যায় ৫: কাজ, শক্তি ও ক্ষমতা
+        5:  ["fall", "energy"],                                // অধ্যায় ৬: মহাকর্ষ ও অভিকর্ষ
+        6:  ["buoyancy", "pressure", "expansion"],             // অধ্যায় ৭: পদার্থের গাঠনিক ধর্ম
+        7:  ["wave", "fall"],                                  // অধ্যায় ৮: পর্যাবৃত্ত গতি
+        8:  ["wave", "sound"],                                 // অধ্যায় ৯: তরঙ্গ
+        9:  ["heat", "pressure"]                               // অধ্যায় ১০: আদর্শ গ্যাস ও গ্যাসের গতিতত্ত্ব
+    },
+    // ---------------- HSC 2nd Paper (11 Chapters) ----------------
+    hsc2: {
+        0:  ["heat", "expansion", "energy"],                   // অধ্যায় ১: তাপগতিবিদ্যা (Thermodynamics)
+        1:  ["charges", "electroscope"],                       // অধ্যায় ২: স্থির তড়িৎ
+        2:  ["circuit", "house"],                              // অধ্যায় ৩: চল তড়িৎ
+        3:  ["motor", "induction"],                            // অধ্যায় ৪: তড়িৎ প্রবাহের চৌম্বক ক্রিয়া ও চুম্বকত্ব
+        4:  ["induction", "circuit"],                          // অধ্যায় ৫: তাড়িতচৌম্বক আবেশ ও পরিবর্তী প্রবাহ
+        5:  ["reflection", "mirror", "refraction", "lens"],    // অধ্যায় ৬: জ্যামিতিক আলোকবিজ্ঞান
+        6:  ["wave", "reflection", "refraction"],              // অধ্যায় ৭: ভৌত আলোকবিজ্ঞান
+        7:  ["decay", "electronics"],                          // অধ্যায় ৮: আধুনিক পদার্থবিজ্ঞানের সূচনা
+        8:  ["decay", "charges"],                              // অধ্যায় ৯: পরমাণু মডেল ও নিউক্লিয়ার পদার্থবিজ্ঞান
+        9:  ["electronics", "circuit"],                        // অধ্যায় ১০: সেমিকন্ডাক্টর ও ইলেকট্রনিক্স
+        10: ["fall", "energy"]                                 // অধ্যায় ১১: জ্যোতির্বিজ্ঞান
+    },
+    // ---------------- Class 8 Science (4 Chapters) ----------------
+    class8: {
+        0:  ["fall", "friction"],                              // অধ্যায় ৭: পৃথিবী ও মহাকর্ষ
+        1:  ["circuit", "house"],                              // অধ্যায় ৯: বর্তনী ও চলবিদ্যুৎ
+        2:  ["reflection", "refraction", "lens"],              // অধ্যায় ১১: আলো
+        3:  ["fall", "energy"]                                 // অধ্যায় ১২: মহাকাশ ও উপগ্রহ
+    }
+};
+
+// Backward-compatible CHAPTER_LAB_MAP for SSC legacy calls
 const CHAPTER_LAB_MAP = {
-    1:  { name: "ভৌত রাশি ও পরিমাপ", labs: [ 
-        { id: "caliper", num: 1, title: "ভার্নিয়ার ক্যালিপার্স", sub: "বাস্তবসম্মত স্লাইড ক্যালিপার্স দিয়ে সূক্ষ্ম দৈর্ঘ্য পরিমাপ।" }, 
-        { id: "micrometer", num: 2, title: "স্ক্রু গজ ও মাইক্রোমিটার", sub: "বাস্তবসম্মত স্ক্রু গজ দিয়ে তারের ব্যাস ও পাতের পুরুত্ব নির্ণয়।" }, 
-        { id: "density", num: 3, title: "ঘনত্ব অনুসন্ধান", sub: "কঠিন ও তরলের ভর, আয়তন ও ঘনত্বের সম্পর্ক অনুসন্ধান।" } 
-    ] },
-    2:  { name: "গতি", labs: [ { id: "motion", num: 3, title: "গাড়ি, গতি ও লেখচিত্র", sub: "চলন্ত গাড়ির প্রতিটি মুহূর্তকে গ্রাফে ধরো।" }, { id: "fall", num: 4, title: "মুক্তপতন পরীক্ষাগার", sub: "ভিন্ন ভর, একই মহাকর্ষ—ফল কী হবে?" } ] },
-    3:  { name: "বল", labs: [ { id: "friction", num: 5, title: "বল ও ঘর্ষণ", sub: "কখন বাক্স নড়বে, কখন থামবে—নিজে পরীক্ষা করো।" }, { id: "collision", num: 6, title: "ট্রলির সংঘর্ষ", sub: "ভরবেগ কোথায় যায়? সংঘর্ষে খুঁজে দেখো।" } ] },
-    4:  { name: "কাজ, ক্ষমতা ও শক্তি", labs: [ { id: "energy", num: 7, title: "রোলার কোস্টার ও শক্তি", sub: "উঁচু–নিচু পথে শক্তির রূপান্তর দেখো।" }, { id: "crane", num: 8, title: "ক্রেন, কাজ ও ক্ষমতা", sub: "একই কাজ, ভিন্ন সময়—ক্ষমতার পার্থক্য।" } ] },
-    5:  { name: "পদার্থের অবস্থা ও চাপ", labs: [ { id: "buoyancy", num: 9, title: "ভাসা–ডোবা ও প্লবতা", sub: "ওজন আর পানির ঊর্ধ্বমুখী বলের লড়াই।" }, { id: "pressure", num: 10, title: "চাপ ও হাইড্রলিক লিফট", sub: "অল্প বল দিয়ে বড় ভার—কীভাবে সম্ভব?" } ] },
-    6:  { name: "বস্তুর ওপর তাপের প্রভাব", labs: [ { id: "heat", num: 11, title: "বরফ থেকে বাষ্প", sub: "তাপ দিলেও কখন তাপমাত্রা বাড়ে না?" }, { id: "expansion", num: 12, title: "তাপে ধাতুর প্রসারণ", sub: "ক্ষুদ্র পরিবর্তন, বড় প্রকৌশল সিদ্ধান্ত।" } ] },
-    7:  { name: "তরঙ্গ ও শব্দ", labs: [ { id: "wave", num: 13, title: "দড়িতে তরঙ্গ", sub: "একটি দোলন, ছড়িয়ে পড়ে পুরো দড়িতে।" }, { id: "sound", num: 14, title: "শব্দ ও প্রতিধ্বনি", sub: "শব্দ পাঠাও, ফিরে আসার সময় মাপো।" } ] },
-    8:  { name: "আলোর প্রতিফলন", labs: [ { id: "reflection", num: 15, title: "দর্পণ ও লেজার", sub: "আলোর কোণ নিজে মেপে সূত্র যাচাই করো।" }, { id: "mirror", num: 16, title: "গোলীয় দর্পণে প্রতিবিম্ব", sub: "বাস্তব না অবাস্তব—দর্পণ সরিয়ে খুঁজে দেখো।" } ] },
-    9:  { name: "আলোর প্রতিসরণ", labs: [ { id: "refraction", num: 17, title: "প্রতিসরণ ও সংকট কোণ", sub: "মাধ্যম বদলালে আলোর পথ কোথায় যায়?" }, { id: "lens", num: 18, title: "লেন্স ও দৃষ্টি সংশোধন", sub: "আলোর রশ্মি মিলিয়ে স্পষ্ট প্রতিবিম্ব তৈরি করো।" } ] },
-    10: { name: "স্থির বিদ্যুৎ", labs: [ { id: "charges", num: 19, title: "আধান ও তড়িৎক্ষেত্র", sub: "অদৃশ্য বলকে দৃশ্যমান করো।" }, { id: "electroscope", num: 20, title: "তড়িৎ আবেশ ও ইলেকট্রোস্কোপ", sub: "কাছে আনা, ছোঁয়ানো ও আর্থিং পরীক্ষা করো।" } ] },
-    11: { name: "চল বিদ্যুৎ", labs: [ { id: "circuit", num: 21, title: "নিজের সার্কিট তৈরি করো", sub: "তার জোড়া দাও। সুইচ চালাও। বিদ্যুৎকে বুঝে নাও।" }, { id: "house", num: 22, title: "বাড়ির বিদ্যুৎ ও ফিউজ", sub: "কত লোড নিরাপদ? হিসাব করে চালাও।" } ] },
-    12: { name: "বিদ্যুতের চৌম্বক ক্রিয়া", labs: [ { id: "motor", num: 23, title: "তড়িৎচুম্বক ও মোটর", sub: "বিদ্যুৎ থেকে ঘূর্ণন—ভেতরের প্রক্রিয়া দেখো।" }, { id: "induction", num: 24, title: "চুম্বক, কয়েল ও জেনারেটর", sub: "হাতের গতিতে তৈরি করো বিদ্যুৎ।" } ] },
-    13: { name: "আধুনিক পদার্থবিজ্ঞান ও ইলেকট্রনিক্স", labs: [ { id: "decay", num: 25, title: "তেজস্ক্রিয় ক্ষয় ও অর্ধায়ু", sub: "প্রতিটি পরমাণু অনিশ্চিত, সমষ্টিতে একটি নিয়ম।" }, { id: "electronics", num: 26, title: "ডায়োড ও ট্রানজিস্টর", sub: "একদিকে কারেন্ট, ক্ষুদ্র সংকেতে বড় নিয়ন্ত্রণ।" } ] }
+    1:  { name: "ভৌত রাশি ও পরিমাপ", labs: [ ALL_PHYSICS_LABS.caliper, ALL_PHYSICS_LABS.micrometer, ALL_PHYSICS_LABS.density ] },
+    2:  { name: "গতি", labs: [ ALL_PHYSICS_LABS.motion, ALL_PHYSICS_LABS.fall ] },
+    3:  { name: "বল", labs: [ ALL_PHYSICS_LABS.friction, ALL_PHYSICS_LABS.collision ] },
+    4:  { name: "কাজ, ক্ষমতা ও শক্তি", labs: [ ALL_PHYSICS_LABS.energy, ALL_PHYSICS_LABS.crane ] },
+    5:  { name: "পদার্থের অবস্থা ও চাপ", labs: [ ALL_PHYSICS_LABS.buoyancy, ALL_PHYSICS_LABS.pressure ] },
+    6:  { name: "বস্তুর ওপর তাপের প্রভাব", labs: [ ALL_PHYSICS_LABS.heat, ALL_PHYSICS_LABS.expansion ] },
+    7:  { name: "তরঙ্গ ও শব্দ", labs: [ ALL_PHYSICS_LABS.wave, ALL_PHYSICS_LABS.sound ] },
+    8:  { name: "আলোর প্রতিফলন", labs: [ ALL_PHYSICS_LABS.reflection, ALL_PHYSICS_LABS.mirror ] },
+    9:  { name: "আলোর প্রতিসরণ", labs: [ ALL_PHYSICS_LABS.refraction, ALL_PHYSICS_LABS.lens ] },
+    10: { name: "স্থির বিদ্যুৎ", labs: [ ALL_PHYSICS_LABS.charges, ALL_PHYSICS_LABS.electroscope ] },
+    11: { name: "চল বিদ্যুৎ", labs: [ ALL_PHYSICS_LABS.circuit, ALL_PHYSICS_LABS.house ] },
+    12: { name: "বিদ্যুতের চৌম্বক ক্রিয়া", labs: [ ALL_PHYSICS_LABS.motor, ALL_PHYSICS_LABS.induction ] },
+    13: { name: "আধুনিক পদার্থবিজ্ঞান ও ইলেকট্রনিক্স", labs: [ ALL_PHYSICS_LABS.decay, ALL_PHYSICS_LABS.electronics ] }
 };
 
 function getLabSimulationUrl(labId, embed = false) {
@@ -980,111 +1062,153 @@ function getLabSimulationUrl(labId, embed = false) {
     return embed ? `physics-labs/index.html?lab=${labId}&embed=1` : `physics-labs/index.html?lab=${labId}`;
 }
 
-function renderChapterSimulation() {
+function getLabsForChapter(level, chapterIdx) {
+    const levelMap = LEVEL_CHAPTER_LAB_MAP[level] || LEVEL_CHAPTER_LAB_MAP['ssc'];
+    const labIds = levelMap[chapterIdx] || ["motion", "energy"];
+    return labIds.map(id => ALL_PHYSICS_LABS[id]).filter(Boolean);
+}
+
+let activeViewingLabId = null;
+
+function renderChapterSimulation(preferredLabId = null) {
     const container = document.getElementById('simulation-tab-content');
     if (!container) return;
 
-    if (currentLevel === 'ssc') {
-        const chapNum = currentChapterIndex + 1;
-        const chapData = CHAPTER_LAB_MAP[chapNum];
-        if (!chapData || !chapData.labs || !chapData.labs.length) return;
+    const chap = getCurrentChap();
+    const levelInfo = APP_DATA[currentLevel] || APP_DATA['ssc'];
+    const assignedLabs = getLabsForChapter(currentLevel, currentChapterIndex);
 
-        const firstLab = chapData.labs[0];
-        const tabsHtml = chapData.labs.map((lab, idx) => {
-            const isActive = idx === 0;
-            const activeClass = "px-3.5 py-2 rounded-xl text-xs font-bold bg-teal-600 text-white shadow-sm transition flex items-center gap-2 whitespace-nowrap";
-            const inactiveClass = "px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 transition flex items-center gap-2 whitespace-nowrap";
-            const numBg = isActive ? "bg-white/20 text-white" : "bg-white text-slate-600 border border-slate-200";
-            return `
-                <button id="study-sim-tab-${idx + 1}" onclick="switchStudySimulationLab('${lab.id}', ${idx + 1})" class="${isActive ? activeClass : inactiveClass}">
-                    <span class="w-5 h-5 rounded-md ${numBg} text-[10px] flex items-center justify-center font-mono font-bold">${String(lab.num).padStart(2, '0')}</span>
-                    <span>${lab.title}</span>
-                </button>
-            `;
-        }).join('');
+    let displayLabs = [...assignedLabs];
+    if (preferredLabId && ALL_PHYSICS_LABS[preferredLabId]) {
+        if (!displayLabs.some(l => l.id === preferredLabId)) {
+            displayLabs.unshift(ALL_PHYSICS_LABS[preferredLabId]);
+        }
+        activeViewingLabId = preferredLabId;
+    } else if (!activeViewingLabId || !displayLabs.some(l => l.id === activeViewingLabId)) {
+        activeViewingLabId = displayLabs[0].id;
+    }
 
-        const gridCols = chapData.labs.length >= 3 ? 'grid-cols-1 md:grid-cols-3' : 'grid-cols-1 md:grid-cols-2';
+    const activeLab = ALL_PHYSICS_LABS[activeViewingLabId] || displayLabs[0];
 
-        const cardsHtml = chapData.labs.map((lab, idx) => {
-            const labUrl = getLabSimulationUrl(lab.id, false);
-            return `
-                <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2 flex flex-col justify-between">
-                    <div class="space-y-1.5">
-                        <div class="flex items-center justify-between">
-                            <span class="text-xs font-bold text-teal-800 flex items-center gap-1.5">
-                                <span class="w-5 h-5 rounded bg-teal-100 text-teal-700 text-[10px] flex items-center justify-center font-mono">${String(lab.num).padStart(2, '0')}</span>
-                                ${lab.title}
-                            </span>
+    // Build tab buttons for the current chapter's labs
+    const tabsHtml = displayLabs.map((lab, idx) => {
+        const isActive = lab.id === activeLab.id;
+        const activeClass = "px-3.5 py-2 rounded-xl text-xs font-bold bg-teal-600 text-white shadow-sm transition flex items-center gap-2 whitespace-nowrap";
+        const inactiveClass = "px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 transition flex items-center gap-2 whitespace-nowrap";
+        const numBg = isActive ? "bg-white/20 text-white" : "bg-white text-slate-600 border border-slate-200";
+        return `
+            <button id="study-sim-tab-${idx + 1}" onclick="switchStudySimulationLab('${lab.id}', ${idx + 1})" class="${isActive ? activeClass : inactiveClass}">
+                <span class="w-5 h-5 rounded-md ${numBg} text-[10px] flex items-center justify-center font-mono font-bold">${String(lab.num).padStart(2, '0')}</span>
+                <span>${lab.title}</span>
+            </button>
+        `;
+    }).join('');
+
+    // Quick-chapter jump options inside current level
+    const chapterOptionsHtml = (levelInfo.chapters || []).map((c, i) => {
+        return `<option value="${i}" ${i === currentChapterIndex ? 'selected' : ''}>${c.title}</option>`;
+    }).join('');
+
+    const gridCols = displayLabs.length >= 3 ? 'grid-cols-1 md:grid-cols-3' : 'grid-cols-1 md:grid-cols-2';
+
+    const cardsHtml = displayLabs.map((lab, idx) => {
+        const labUrl = getLabSimulationUrl(lab.id, false);
+        const isCurrent = lab.id === activeLab.id;
+        return `
+            <div class="p-4 rounded-2xl ${isCurrent ? 'bg-teal-50/50 border-teal-300 ring-1 ring-teal-300' : 'bg-slate-50 border-slate-200'} border space-y-2 flex flex-col justify-between transition">
+                <div class="space-y-1.5">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold ${isCurrent ? 'text-teal-900' : 'text-slate-800'} flex items-center gap-1.5">
+                            <span class="w-5 h-5 rounded bg-teal-100 text-teal-700 text-[10px] flex items-center justify-center font-mono font-bold">${String(lab.num).padStart(2, '0')}</span>
+                            ${lab.title}
+                        </span>
+                        <div class="flex items-center gap-2">
+                            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-200 text-slate-700">${lab.cat}</span>
                             <a href="${labUrl}" target="_blank" class="text-[11px] font-bold text-teal-600 hover:underline">নতুন ট্যাব ↗</a>
                         </div>
-                        <p class="text-xs text-slate-500">${lab.sub}</p>
                     </div>
-                    <button onclick="switchStudySimulationLab('${lab.id}', ${idx + 1})" class="w-full py-1.5 px-3 rounded-xl bg-white hover:bg-teal-50 border border-slate-200 text-xs font-bold text-slate-700 transition">
-                        এই ল্যাবটি স্ক্রিনে চালু করুন
+                    <p class="text-xs text-slate-500">${lab.sub}</p>
+                </div>
+                <button onclick="switchStudySimulationLab('${lab.id}', ${idx + 1})" class="w-full py-1.5 px-3 rounded-xl ${isCurrent ? 'bg-teal-600 text-white font-black' : 'bg-white hover:bg-teal-50 border border-slate-200 text-slate-700 font-bold'} text-xs transition">
+                    ${isCurrent ? '✓ বর্তমানে চলছে' : 'এই ল্যাবটি স্ক্রিনে চালু করুন'}
+                </button>
+            </div>
+        `;
+    }).join('');
+
+    container.innerHTML = `
+        <div class="bg-white p-5 sm:p-6 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+            <!-- Top Header & Level/Chapter Navigation -->
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-slate-100 pb-4">
+                <div class="space-y-1">
+                    <div class="flex flex-wrap items-center gap-2">
+                        <span class="px-2.5 py-0.5 rounded-md bg-blue-50 text-blue-700 font-bold text-[11px] border border-blue-200">${levelInfo.gradeTag}</span>
+                        <span class="px-2.5 py-0.5 rounded-md bg-teal-50 text-teal-700 font-bold text-[11px] border border-teal-200">${chap.title.split(':')[0]}</span>
+                        <span class="text-xs font-bold text-slate-400">ভার্চুয়াল ল্যাবরেটরি</span>
+                    </div>
+                    <h3 class="text-lg sm:text-xl font-bold text-slate-900">${chap.title} — ইন্টারেক্টিভ সিমুলেশন ল্যাব</h3>
+                </div>
+
+                <div class="flex flex-wrap items-center gap-2">
+                    <!-- Chapter Dropdown within sim tab -->
+                    <div class="flex items-center gap-1.5 bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-1.5">
+                        <span class="text-[11px] font-bold text-slate-500 hidden sm:inline">অন্যান্য অধ্যায়:</span>
+                        <select onchange="jumpToChapterSimulation(this.value)" class="bg-transparent text-xs font-bold text-slate-800 outline-none cursor-pointer max-w-[180px] sm:max-w-[220px]">
+                            ${chapterOptionsHtml}
+                        </select>
+                    </div>
+
+                    <a id="study-sim-fs-btn" href="${getLabSimulationUrl(activeLab.id, false)}" target="_blank" class="px-3.5 py-2 rounded-xl bg-teal-50 hover:bg-teal-100 text-teal-700 text-xs font-bold border border-teal-200 transition flex items-center gap-1.5 shadow-sm">
+                        <i class="fa-solid fa-up-right-and-down-left-from-center"></i> <span>পূর্ণ পর্দায় খুলুন ↗</span>
+                    </a>
+                    
+                    <button onclick="openAllLabsCatalogModal()" class="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
+                        <i class="fa-solid fa-flask text-teal-400"></i> <span>সকল ২৬টি ল্যাব 🔍</span>
                     </button>
                 </div>
-            `;
-        }).join('');
+            </div>
 
-        container.innerHTML = `
-            <div class="bg-white p-5 sm:p-6 rounded-3xl border border-slate-200 shadow-sm space-y-4">
-                <!-- Top Header & Tabs -->
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
+            <!-- Lab Switcher Buttons -->
+            <div class="flex items-center gap-2 overflow-x-auto pb-1">
+                ${tabsHtml}
+            </div>
+
+            <!-- Interactive Iframe -->
+            <div class="relative w-full rounded-2xl overflow-hidden border border-slate-200 bg-[#08111d] shadow-inner">
+                <iframe id="study-simulation-iframe" src="${getLabSimulationUrl(activeLab.id, true)}" title="${activeLab.title}" class="w-full h-[600px] sm:h-[700px] lg:h-[760px] border-0 bg-[#08111d]" allow="fullscreen; clipboard-write"></iframe>
+            </div>
+
+            <!-- Labs Details Grid -->
+            <div class="grid ${gridCols} gap-4 pt-2">
+                ${cardsHtml}
+            </div>
+
+            <!-- Bottom Exploration Callout -->
+            <div class="p-4 rounded-2xl bg-gradient-to-r from-teal-50 to-blue-50 border border-teal-100 flex flex-col sm:flex-row items-center justify-between gap-3">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-teal-600 text-white flex items-center justify-center font-bold text-lg flex-shrink-0">
+                        <i class="fa-solid fa-atom"></i>
+                    </div>
                     <div>
-                        <div class="flex items-center gap-2 mb-1">
-                            <span class="px-2.5 py-0.5 rounded-md bg-teal-50 text-teal-700 font-bold text-[11px] border border-teal-200">অধ্যায় ${String(chapNum).padStart(2, '0')}</span>
-                            <span class="text-xs font-bold text-slate-400">ভার্চুয়াল ল্যাবরেটরি</span>
-                        </div>
-                        <h3 class="text-lg sm:text-xl font-bold text-slate-900">${chapData.name} — ইন্টারেক্টিভ সিমুলেশন</h3>
-                    </div>
-
-                    <div class="flex items-center gap-2">
-                        <a id="study-sim-fs-btn" href="${getLabSimulationUrl(firstLab.id, false)}" target="_blank" class="px-3.5 py-2 rounded-xl bg-teal-50 hover:bg-teal-100 text-teal-700 text-xs font-bold border border-teal-200 transition flex items-center gap-1.5 shadow-sm">
-                            <i class="fa-solid fa-up-right-and-down-left-from-center"></i> <span>পূর্ণ পর্দায় খুলুন ↗</span>
-                        </a>
-                        <a href="simulations/index.html" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition flex items-center gap-1.5">
-                            <i class="fa-solid fa-flask text-teal-600"></i> <span>সকল সিমুলেশন</span>
-                        </a>
+                        <h4 class="text-xs sm:text-sm font-bold text-slate-900">সকল অধ্যায়ের ২৬টি হ্যান্ডস-অন ল্যাবরেটরি লাইব্রেরি</h4>
+                        <p class="text-[11px] text-slate-500">মেকানিক্স, তাপগতিবিদ্যা, আলো, আধুনিক পদার্থবিজ্ঞান ও ইলেকট্রনিক্সের সব সিমুলেশন ফ্রি ব্যবহার করুন।</p>
                     </div>
                 </div>
-
-                <!-- Lab Switcher Buttons -->
-                <div class="flex items-center gap-2 overflow-x-auto pb-1">
-                    ${tabsHtml}
-                </div>
-
-                <!-- Interactive Iframe -->
-                <div class="relative w-full rounded-2xl overflow-hidden border border-slate-200 bg-[#08111d] shadow-inner">
-                    <iframe id="study-simulation-iframe" src="${getLabSimulationUrl(firstLab.id, true)}" title="${firstLab.title}" class="w-full h-[600px] sm:h-[700px] lg:h-[760px] border-0 bg-[#08111d]" allow="fullscreen; clipboard-write"></iframe>
-                </div>
-
-                <!-- Labs Details Grid -->
-                <div class="grid ${gridCols} gap-4 pt-2">
-                    ${cardsHtml}
-                </div>
+                <button onclick="openAllLabsCatalogModal()" class="px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white font-bold rounded-xl text-xs transition whitespace-nowrap shadow-sm">
+                    সব ল্যাব দেখুন ও চালান ➔
+                </button>
             </div>
-        `;
-    } else {
-        container.innerHTML = `
-            <div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm text-center max-w-xl mx-auto my-6 space-y-4">
-                <div class="w-16 h-16 rounded-2xl bg-teal-50 text-teal-600 border border-teal-100 flex items-center justify-center text-2xl mx-auto mb-2">
-                    <i class="fa-solid fa-flask"></i>
-                </div>
-                <h3 class="text-xl font-bold text-slate-900">ভার্চুয়াল পদার্থবিজ্ঞান ল্যাবরেটরি</h3>
-                <p class="text-xs sm:text-sm text-slate-500 leading-relaxed">
-                    বর্তমানে এসএসসি পদার্থবিজ্ঞানের ১৩টি অধ্যায়ের জন্য মোট ২৬টি হ্যান্ডস-অন ইন্টারেক্টিভ ল্যাব প্রস্তুত রয়েছে। এইচএসসি শিক্ষার্থীদের জন্যও এই মৌলিক ল্যাবগুলো অত্যন্ত কার্যকর।
-                </p>
-                <div class="pt-2">
-                    <a href="simulations/index.html" class="inline-flex items-center gap-2 px-6 py-3 bg-teal-600 hover:bg-teal-500 text-white font-bold rounded-2xl text-xs sm:text-sm shadow-lg shadow-teal-600/25 transition">
-                        <i class="fa-solid fa-atom"></i> ল্যাবরেটরি এক্সপ্লোর করুন <i class="fa-solid fa-arrow-right"></i>
-                    </a>
-                </div>
-            </div>
-        `;
-    }
+        </div>
+    `;
+}
+
+function jumpToChapterSimulation(chapterIdx) {
+    changeChapter(chapterIdx);
+    switchTab('simulation');
 }
 
 function switchStudySimulationLab(labId, tabNum) {
+    activeViewingLabId = labId;
     const iframe = document.getElementById('study-simulation-iframe');
     const btnFs = document.getElementById('study-sim-fs-btn');
     if (iframe) {
@@ -1106,6 +1230,90 @@ function switchStudySimulationLab(labId, tabNum) {
                 : 'w-5 h-5 rounded-md bg-white text-slate-600 border border-slate-200 text-[10px] flex items-center justify-center font-mono font-bold';
         }
     });
+}
+
+function loadLabDirectlyInScreen(labId) {
+    closeAllLabsCatalogModal();
+    openClassroomView();
+    switchTab('simulation');
+    renderChapterSimulation(labId);
+    setTimeout(() => {
+        const target = document.getElementById('section-simulation');
+        if (target) {
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }, 150);
+}
+
+let activeCatalogCategory = 'all';
+
+function openAllLabsCatalogModal() {
+    const modal = document.getElementById('all-labs-catalog-modal');
+    if (modal) {
+        modal.classList.remove('hidden');
+        renderAllLabsCatalogGrid('all');
+    }
+}
+
+function closeAllLabsCatalogModal() {
+    const modal = document.getElementById('all-labs-catalog-modal');
+    if (modal) modal.classList.add('hidden');
+}
+
+function filterAllLabsModal(cat) {
+    activeCatalogCategory = cat;
+    renderAllLabsCatalogGrid(cat);
+}
+
+function renderAllLabsCatalogGrid(category) {
+    const container = document.getElementById('all-labs-grid-container');
+    if (!container) return;
+
+    const allLabsList = Object.values(ALL_PHYSICS_LABS);
+    const filteredLabs = category === 'all' 
+        ? allLabsList 
+        : allLabsList.filter(l => l.cat.includes(category));
+
+    // Update category filter pill styles
+    const cats = ['all', 'পরিমাপ', 'গতি', 'কাজ', 'তাপ', 'তরঙ্গ', 'আলো', 'তড়িৎ', 'আধুনিক'];
+    cats.forEach(c => {
+        const btn = document.getElementById(`cat-filter-${c}`);
+        if (btn) {
+            if (c === category) {
+                btn.className = "px-3 py-1.5 rounded-xl text-xs font-bold bg-teal-600 text-white shadow-xs transition";
+            } else {
+                btn.className = "px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 transition";
+            }
+        }
+    });
+
+    container.innerHTML = filteredLabs.map(lab => {
+        const labUrl = getLabSimulationUrl(lab.id, false);
+        return `
+            <div class="p-4 rounded-2xl bg-white border border-slate-200 hover:border-teal-400 hover:shadow-md transition flex flex-col justify-between space-y-3 group">
+                <div class="space-y-1.5">
+                    <div class="flex items-center justify-between">
+                        <span class="w-6 h-6 rounded-lg bg-teal-100 text-teal-800 text-[11px] font-mono font-bold flex items-center justify-center">
+                            ${String(lab.num).padStart(2, '0')}
+                        </span>
+                        <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200">
+                            ${lab.cat}
+                        </span>
+                    </div>
+                    <h4 class="font-bold text-slate-900 text-sm group-hover:text-teal-700 transition">${lab.title}</h4>
+                    <p class="text-xs text-slate-500 leading-relaxed">${lab.sub}</p>
+                </div>
+                <div class="grid grid-cols-2 gap-2 pt-2 border-t border-slate-100">
+                    <button onclick="loadLabDirectlyInScreen('${lab.id}')" class="w-full py-1.5 px-2 bg-teal-600 hover:bg-teal-500 text-white text-xs font-bold rounded-xl transition shadow-xs flex items-center justify-center gap-1">
+                        <i class="fa-solid fa-play text-[10px]"></i> স্ক্রিনে চালু
+                    </button>
+                    <a href="${labUrl}" target="_blank" class="w-full py-1.5 px-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition text-center flex items-center justify-center gap-1">
+                        <span>নতুন ট্যাব ↗</span>
+                    </a>
+                </div>
+            </div>
+        `;
+    }).join('');
 }
 
 /* ===================================================
@@ -2154,21 +2362,16 @@ function goToSpecificChapterAndTab(lvl, chapIdx, tabKey) {
 }
 
 function openSimulationDirectly(simId) {
-    if (simId) {
-        window.location.href = `physics-labs/index.html?lab=${simId}`;
-        return;
-    }
-    if (currentLevel !== 'ssc') {
-        currentLevel = 'ssc';
-        const lvlSelect = document.getElementById('class-level-select');
-        if (lvlSelect) lvlSelect.value = 'ssc';
-    }
     // Switch to classroom view mode so the content display area is visible
     openClassroomView();
     // Switch to simulation tab
     switchTab('simulation');
-    // Render the chapter's simulations
-    renderChapterSimulation();
+    // If a specific lab slug is provided, render that lab directly in screen; otherwise render current chapter's labs
+    if (simId) {
+        renderChapterSimulation(simId);
+    } else {
+        renderChapterSimulation();
+    }
     // Scroll smoothly to the simulation container
     setTimeout(() => {
         const target = document.getElementById('section-simulation');
