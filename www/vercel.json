@@ -15,6 +15,9 @@
     { "source": "/ch12", "destination": "/simulations/ch12.html", "permanent": false },
     { "source": "/ch13", "destination": "/simulations/ch13.html", "permanent": false },
     { "source": "/caliper", "destination": "/simulations/vernier-caliper.html", "permanent": false },
-    { "source": "/vernier", "destination": "/simulations/vernier-caliper.html", "permanent": false }
+    { "source": "/vernier", "destination": "/simulations/vernier-caliper.html", "permanent": false },
+    { "source": "/thermo-answer", "destination": "/hsc-thermodynamics-answer.html", "permanent": false },
+    { "source": "/thermodynamics-answer", "destination": "/hsc-thermodynamics-answer.html", "permanent": false },
+    { "source": "/hsc-thermo", "destination": "/hsc-thermodynamics-answer.html", "permanent": false }
   ]
 }

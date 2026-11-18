@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>উত্তরপত্র — তাপগতিবিদ্যা | Al amin Physics</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- KaTeX Math Rendering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eff6ff', 100: '#dbeafe', 200: '#bfdbfe', 300: '#93c5fd',
+                            400: '#60a5fa', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8',
+                            800: '#1e40af', 900: '#1e3a8a', 950: '#172554'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['"Hind Siliguri"', 'sans-serif'],
+                        siliguri: ['"Hind Siliguri"', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Hind Siliguri', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .tab-active {
+            background-color: #2563eb !important;
+            color: #ffffff !important;
+            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+        }
+        .filter-chip-active {
+            background-color: #1e40af !important;
+            color: #ffffff !important;
+            border-color: #1e40af !important;
+        }
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white !important; color: black !important; }
+            .print-full { width: 100% !important; margin: 0 !important; box-shadow: none !important; }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col antialiased selection:bg-blue-600 selection:text-white">
+
+    <!-- ====================================================
+         TOP NAVIGATION BAR
+    ==================================================== -->
+    <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-xs no-print">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <a href="index.html" class="flex items-center gap-2 group">
+                    <img src="logo.jpg" alt="Logo" class="h-10 w-auto rounded-lg shadow-xs group-hover:scale-105 transition"
+                         onerror="this.style.display='none'; document.getElementById('fb-logo').style.display='flex';">
+                    <div id="fb-logo" class="hidden w-10 h-10 rounded-xl bg-blue-600 text-white font-bold items-center justify-center text-lg">
+                        <i class="fa-solid fa-atom"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-base sm:text-lg font-bold text-slate-900 leading-tight">Al amin <span class="text-blue-600">Physics</span></h1>
+                        <p class="text-[10px] text-slate-500 font-medium">HSC ২য় পত্র • অধ্যায় ১</p>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Header Actions -->
+            <div class="flex items-center gap-2 sm:gap-3">
+                <a href="study.html" class="px-3 py-1.5 rounded-xl text-xs font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-graduation-cap text-blue-600"></i>
+                    <span class="hidden sm:inline">ক্লাসরুম LMS</span>
+                </a>
+                <button onclick="window.print()" class="px-3 py-1.5 rounded-xl text-xs font-bold text-white bg-slate-800 hover:bg-slate-900 transition flex items-center gap-1.5 shadow-xs">
+                    <i class="fa-solid fa-print"></i>
+                    <span class="hidden sm:inline">প্রিন্ট</span>
+                </button>
+                <a href="Al-Amin-Physics-HSC-Thermodynamics-Answer-Key.pdf" download class="px-3 py-1.5 rounded-xl text-xs font-bold text-white bg-red-600 hover:bg-red-500 transition flex items-center gap-1.5 shadow-sm shadow-red-200">
+                    <i class="fa-solid fa-file-pdf"></i>
+                    <span>PDF</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- ====================================================
+         HERO BANNER
+    ==================================================== -->
+    <section class="bg-gradient-to-br from-blue-950 via-slate-900 to-indigo-950 text-white py-8 sm:py-10 px-4 relative overflow-hidden">
+        <div class="max-w-6xl mx-auto relative z-10">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div class="space-y-3 max-w-2xl">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/20 text-blue-300 text-xs font-bold border border-blue-400/30">
+                        <i class="fa-solid fa-qrcode text-amber-400 animate-pulse"></i>
+                        <span>লেকচার শিটের কিউআর কোড ভেরিফায়েড উত্তরপত্র</span>
+                    </div>
+                    <h1 class="text-2xl sm:text-4xl font-black tracking-tight text-white leading-tight">
+                        উত্তরপত্র — <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300">তাপগতিবিদ্যা</span>
+                    </h1>
+                    <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                        সমন্বিত শিটের (লেকচার শিট + গাণিতিক সমস্যা অনুশীলনী) সব প্রশ্নের সঠিক উত্তরমালা ও পূর্ণাঙ্গ ব্যাখ্যামূলক সমাধান। নিচে টাইপ অনুযায়ী বা সার্চ করে প্রতিটি উত্তর মিলিয়ে নাও।
+                    </p>
+                    <div class="flex flex-wrap gap-2 pt-1 text-[11px] text-slate-300">
+                        <span class="px-2.5 py-1 rounded-lg bg-white/10 border border-white/15"><i class="fa-solid fa-file-lines text-amber-400"></i> লেকচার শিট: ২৫টি MCQ</span>
+                        <span class="px-2.5 py-1 rounded-lg bg-white/10 border border-white/15"><i class="fa-solid fa-calculator text-emerald-400"></i> গাণিতিক সমস্যা: ৬০টি</span>
+                        <span class="px-2.5 py-1 rounded-lg bg-white/10 border border-white/15"><i class="fa-solid fa-list-check text-cyan-400"></i> অনুশীলনীর MCQ: ১৮০টি</span>
+                        <span class="px-2.5 py-1 rounded-lg bg-blue-600/40 border border-blue-400/40 font-bold text-white">সর্বমোট ২৬৫টি প্রশ্নের উত্তর</span>
+                    </div>
+                </div>
+
+                <!-- Teacher Card / Download Button -->
+                <div class="p-4 sm:p-5 rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 text-xs space-y-3 shrink-0">
+                    <div class="flex items-center gap-3">
+                        <img src="teacher.png" alt="Al amin Sir" class="w-12 h-12 rounded-xl object-cover object-top border-2 border-blue-400/50 shadow-md"
+                             onerror="this.src='logo.jpg'">
+                        <div>
+                            <h4 class="font-bold text-white text-sm">আল আমিন স্যার</h4>
+                            <p class="text-slate-300 text-[11px]">বি.এসসি (অনার্স), এম.এসসি (পদার্থবিজ্ঞান)</p>
+                            <p class="text-blue-300 text-[10px]"><i class="fa-solid fa-location-dot"></i> জলেশ্বরীতলা, বগুড়া • ০১৭৯৬ ৪৩১৭৯৫</p>
+                        </div>
+                    </div>
+                    <div class="pt-2 border-t border-white/10 flex flex-col gap-2">
+                        <a href="Al-Amin-Physics-HSC-Thermodynamics-Complete-Sheet.pdf" target="_blank" class="w-full py-2 px-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-center transition flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-book-open"></i> মূল লেকচার শিট (৩৫ পৃষ্ঠা)
+                        </a>
+                        <a href="Al-Amin-Physics-HSC-Thermodynamics-Answer-Key.pdf" target="_blank" class="w-full py-2 px-3 rounded-xl bg-white/15 hover:bg-white/25 text-white font-bold text-center transition flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-download"></i> মূল উত্তরপত্র PDF ডাউনলোড
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ====================================================
+         MAIN CONTENT CONTAINER
+    ==================================================== -->
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8 flex-1 w-full space-y-6">
+
+        <!-- Search & Quick Navigation Controls (Sticky) -->
+        <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-xs space-y-4 no-print">
+            <!-- Search bar -->
+            <div class="relative">
+                <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                <input type="text" id="answer-search-input" oninput="handleSearch(this.value)"
+                       placeholder="যেকোনো প্রশ্ন নম্বর বা শব্দ লিখুন (যেমন: ১.৩, η, এন্ট্রপি, 298 K, COP, কার্নো)..."
+                       class="w-full pl-11 pr-10 py-3 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-blue-600 focus:bg-white transition font-medium">
+                <button onclick="clearSearch()" id="clear-search-btn" class="hidden absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-sm">
+                    <i class="fa-solid fa-circle-xmark"></i>
+                </button>
+            </div>
+
+            <!-- View Mode Switcher -->
+            <div class="flex flex-wrap items-center justify-between gap-3 pt-1">
+                <div class="flex items-center gap-1.5 p-1 bg-slate-100 rounded-xl">
+                    <button onclick="setViewTab('all')" id="tab-btn-all" class="tab-active px-3.5 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-layer-group"></i> সব একসাথে
+                    </button>
+                    <button onclick="setViewTab('sheet')" id="tab-btn-sheet" class="px-3.5 py-1.5 rounded-lg text-xs font-bold text-slate-600 hover:text-slate-900 transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-file-lines text-amber-600"></i> লেকচার শিট (২৫টি)
+                    </button>
+                    <button onclick="setViewTab('math')" id="tab-btn-math" class="px-3.5 py-1.5 rounded-lg text-xs font-bold text-slate-600 hover:text-slate-900 transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-calculator text-emerald-600"></i> গাণিতিক সমাধান (৬০টি)
+                    </button>
+                    <button onclick="setViewTab('mcq')" id="tab-btn-mcq" class="px-3.5 py-1.5 rounded-lg text-xs font-bold text-slate-600 hover:text-slate-900 transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-list-check text-blue-600"></i> অনুশীলনী MCQ (১৮০টি)
+                    </button>
+                </div>
+
+                <!-- Type Selector Dropdown for Fast Jump -->
+                <div class="flex items-center gap-2">
+                    <label for="type-select" class="text-xs font-bold text-slate-600 whitespace-nowrap hidden sm:inline">টাইপ নির্বাচন:</label>
+                    <select id="type-select" onchange="filterByType(this.value)" class="text-xs font-bold bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-700 focus:outline-none focus:border-blue-600">
+                        <option value="all">সব ১২টি সূত্র-টাইপ</option>
+                        <option value="১">টোইপ ১: তাপমাত্রা রূপান্তর</option>
+                        <option value="২">টোইপ ২: তাপ Q = mcΔT ও mL</option>
+                        <option value="৩">টোইপ ৩: প্রথম সূত্র (ΔQ=ΔU+W)</option>
+                        <option value="৪">টোইপ ৪: অভ্যন্তরীণ শক্তি (ΔU)</option>
+                        <option value="৫">টোইপ ৫: সমোষ্ণ প্রক্রিয়া</option>
+                        <option value="৬">টোইপ ৬: রুদ্ধতাপীয় প্রক্রিয়া</option>
+                        <option value="৭">টোইপ ৭: সমচাপ প্রক্রিয়া</option>
+                        <option value="৮">টোইপ ৮: সমআয়তন প্রক্রিয়া</option>
+                        <option value="৯">টোইপ ৯: Cp, Cv, γ ও মেয়ার</option>
+                        <option value="১০">টোইপ ১০: কার্নো দক্ষতা (η)</option>
+                        <option value="১১">টোইপ ১১: রেফ্রিজারেটরের COP</option>
+                        <option value="১২">টোইপ ১২: এন্ট্রপি (ΔS)</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- SEARCH RESULTS CONTAINER (Shown only when searching) -->
+        <div id="search-results-section" class="hidden space-y-4">
+            <div class="flex items-center justify-between">
+                <h3 class="font-bold text-sm text-slate-700 flex items-center gap-2">
+                    <i class="fa-solid fa-magnifying-glass text-blue-600"></i> সার্চ ফলাফল
+                </h3>
+                <span id="search-count" class="text-xs font-bold text-blue-600 bg-blue-50 px-2.5 py-0.5 rounded-full"></span>
+            </div>
+            <div id="search-results-grid" class="space-y-3"></div>
+        </div>
+
+        <!-- REGULAR CONTENT CONTAINER -->
+        <div id="main-content-flow" class="space-y-8">
+
+            <!-- ================================================
+                 SECTION 1: লেকচার শিট MCQ উত্তরমালা (25 ANSWERS)
+            ================================================ -->
+            <section id="section-sheet-mcqs" class="bg-white rounded-3xl border border-slate-200 shadow-xs p-5 sm:p-7 space-y-5">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-100">
+                    <div>
+                        <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-800 text-[11px] font-bold border border-amber-200 mb-1">
+                            অংশ ১ • লেকচার শিট
+                        </div>
+                        <h2 class="text-lg sm:text-xl font-bold text-slate-900 flex items-center gap-2">
+                            <i class="fa-solid fa-clipboard-check text-amber-500"></i>
+                            লেকচার শিটের MCQ উত্তরমালা (SHEET MCQS — 25 ANSWERS)
+                        </h2>
+                        <p class="text-xs text-slate-500 mt-0.5">
+                            শিটের পড়া শেষে ২০ পৃষ্ঠায় দেওয়া ২৫টি মূল্যায়ন এমসিকিউ-এর সঠিক উত্তর
+                        </p>
+                    </div>
+                    <span class="self-start sm:self-auto px-3 py-1 rounded-xl bg-amber-50 text-amber-700 font-bold text-xs">
+                        ২৫টি উত্তর
+                    </span>
+                </div>
+
+                <div class="p-3 bg-amber-50/60 rounded-xl border border-amber-200/80 text-xs text-amber-900 flex items-start gap-2.5">
+                    <i class="fa-solid fa-lightbulb text-amber-600 mt-0.5 text-sm"></i>
+                    <span><strong>পড়ার পরামর্শ:</strong> নিজে আগে সবগুলো সমাধান করো, তারপর মেলাও। ভুল হলে সেই টপিকের অংশটি শিট থেকে আবার পড়ে নাও — এটাই এই অধ্যায়ে ফুল মার্কস পাওয়ার সবচেয়ে সহজ রুটিন।</span>
+                </div>
+
+                <!-- 25 Sheet MCQs Grid -->
+                <div class="grid grid-cols-2 sm:grid-cols-5 md:grid-cols-7 lg:grid-cols-9 gap-2.5" id="sheet-mcq-grid">
+                    <!-- Populated dynamically -->
+                </div>
+            </section>
+
+            <!-- ================================================
+                 SECTION 2: অনুশীলনী উত্তরমালা — ১২টি সূত্র-টাইপ
+            ================================================ -->
+            <section id="section-types-flow" class="space-y-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-800 text-[11px] font-bold border border-blue-200 mb-1">
+                            অংশ ২ • গাণিতিক সমস্যা ও বহুনির্বাচনী অনুশীলনী
+                        </div>
+                        <h2 class="text-xl sm:text-2xl font-bold text-slate-900 flex items-center gap-2">
+                            <i class="fa-solid fa-list-ol text-blue-600"></i>
+                            অনুশীলনীর পূর্ণাঙ্গ উত্তরমালা (১২টি টাইপভিত্তিক)
+                        </h2>
+                    </div>
+                </div>
+
+                <!-- Type Blocks Container -->
+                <div id="types-container" class="space-y-6">
+                    <!-- Dynamic Type Accordions / Cards populated via JS -->
+                </div>
+            </section>
+        </div>
+
+        <!-- ====================================================
+             BOTTOM FLOATING HELP & CONTACT
+        ==================================================== -->
+        <div class="p-6 rounded-3xl bg-gradient-to-r from-blue-900 to-indigo-900 text-white flex flex-col sm:flex-row items-center justify-between gap-4 shadow-lg no-print">
+            <div class="space-y-1 text-center sm:text-left">
+                <h3 class="text-base sm:text-lg font-bold">কোনো অংক বা প্রশ্নে কনফিউশন আছে?</h3>
+                <p class="text-xs text-blue-200">সরাসরি স্যারের সাথে কথা বলো অথবা আল আমিন ফিজিক্স লার্নিং প্ল্যাটফর্মে জিজ্ঞাসা করো।</p>
+            </div>
+            <div class="flex items-center gap-2">
+                <a href="https://wa.me/8801796431795?text=Hello%20Sir%2C%20HSC%20Thermodynamics%20Answer%20Sheet" target="_blank"
+                   class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 rounded-xl text-xs font-bold transition flex items-center gap-2 shadow-sm">
+                    <i class="fa-brands fa-whatsapp text-sm"></i> হোয়াটসঅ্যাপে সাহায্য
+                </a>
+                <a href="study.html" class="px-4 py-2.5 bg-white text-blue-900 hover:bg-blue-50 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
+                    <i class="fa-solid fa-laptop-code"></i> ক্লাসরুম অ্যাপ
+                </a>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-500 space-y-1">
+        <p class="font-bold text-slate-700">Al amin Physics • আল আমিন স্যার (০১৭৯৬ ৪৩১৭৯৫)</p>
+        <p>জলেশ্বরীতলা, বগুড়া | এইচএসসি ও মেডিকেল ভর্তি ফিজিক্স বিশেষ কেয়ার</p>
+        <p class="text-[11px] text-slate-400">© 2026 Al amin Physics. সর্বস্বত্ব সংরক্ষিত।</p>
+    </footer>
+
+    <!-- Load the Extracted Answer Key Dataset -->
+    <script src="data/hsc2_ch1_answer.js"></script>
+
+    <!-- Interactive App Logic -->
+    <script>
+        let currentTabMode = 'all';
+        let currentSelectedType = 'all';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderSheetMCQs();
+            renderTypes();
+
+            // Auto-render KaTeX if available
+            if (window.renderMathInElement) {
+                renderMathInElement(document.body, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$', right: '$', display: false}
+                    ],
+                    throwOnError: false
+                });
+            }
+        });
+
+        /* ── Render 25 Sheet MCQs ── */
+        function renderSheetMCQs() {
+            const container = document.getElementById('sheet-mcq-grid');
+            if (!container || !window.HSC2_CH1_ANSWER_KEY) return;
+
+            const mcqs = HSC2_CH1_ANSWER_KEY.sheet_mcqs;
+            container.innerHTML = mcqs.map(item => `
+                <div class="p-2.5 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-between hover:border-amber-400 hover:bg-amber-50/40 transition group">
+                    <span class="text-xs font-bold text-slate-600 group-hover:text-amber-800">${item.num}.</span>
+                    <span class="w-7 h-7 rounded-xl bg-white shadow-xs border border-slate-200 text-amber-700 font-extrabold text-sm flex items-center justify-center group-hover:bg-amber-600 group-hover:text-white group-hover:border-amber-600 transition">
+                        ${item.ans}
+                    </span>
+                </div>
+            `).join('');
+        }
+
+        /* ── Render 12 Types ── */
+        function renderTypes() {
+            const container = document.getElementById('types-container');
+            if (!container || !window.HSC2_CH1_ANSWER_KEY) return;
+
+            const types = HSC2_CH1_ANSWER_KEY.types;
+            let filteredTypes = types;
+
+            if (currentSelectedType !== 'all') {
+                filteredTypes = types.filter(t => t.type_num === currentSelectedType);
+            }
+
+            container.innerHTML = filteredTypes.map((t, idx) => {
+                const showMath = currentTabMode === 'all' || currentTabMode === 'math';
+                const showMcq = currentTabMode === 'all' || currentTabMode === 'mcq';
+
+                return `
+                <div class="bg-white rounded-3xl border border-slate-200 shadow-xs overflow-hidden transition" id="type-card-${t.type_num}">
+                    <!-- Type Header Banner -->
+                    <div class="bg-gradient-to-r from-slate-900 to-blue-950 p-4 sm:p-5 text-white flex items-center justify-between gap-3">
+                        <div class="flex items-center gap-3">
+                            <span class="w-9 h-9 rounded-xl bg-blue-600 text-white font-extrabold text-sm flex items-center justify-center shadow-md">
+                                ${t.type_num}
+                            </span>
+                            <div>
+                                <h3 class="font-bold text-sm sm:text-base text-white">${t.title}</h3>
+                                <p class="text-[11px] text-blue-200">৫টি গাণিতিক প্রশ্ন ও ১৫টি বহুনির্বাচনী প্রশ্ন (MCQ)</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-1.5 text-xs">
+                            <span class="px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-400/30">
+                                ৫টি গণিত
+                            </span>
+                            <span class="px-2.5 py-1 rounded-lg bg-blue-500/20 text-blue-300 font-bold border border-blue-400/30">
+                                ১৫টি MCQ
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="p-5 sm:p-6 space-y-6">
+                        <!-- 1. Math Problems of this Type -->
+                        ${showMath ? `
+                        <div class="space-y-3">
+                            <h4 class="font-bold text-xs uppercase tracking-wider text-emerald-700 flex items-center gap-2">
+                                <i class="fa-solid fa-calculator"></i> গাণিতিক প্রশ্নের চূড়ান্ত উত্তর ও মূল ধাপ
+                            </h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                ${t.math.map(m => `
+                                    <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 hover:border-emerald-400 hover:bg-emerald-50/20 transition space-y-1.5">
+                                        <div class="flex items-center justify-between">
+                                            <span class="font-black text-emerald-800 text-xs px-2 py-0.5 rounded-md bg-emerald-100/80">প্রশ্ন ${m.id}</span>
+                                            <span class="text-[10px] text-slate-400 font-medium">সমাধান ধাপ</span>
+                                        </div>
+                                        <p class="font-mono text-xs sm:text-sm font-bold text-slate-900 break-words leading-relaxed">${escapeHtml(m.ans)}</p>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                        ` : ''}
+
+                        <!-- Divider if both visible -->
+                        ${showMath && showMcq ? `<hr class="border-slate-100">` : ''}
+
+                        <!-- 2. MCQ Solutions of this Type -->
+                        ${showMcq ? `
+                        <div class="space-y-3">
+                            <h4 class="font-bold text-xs uppercase tracking-wider text-blue-700 flex items-center gap-2">
+                                <i class="fa-solid fa-list-check"></i> বহুনির্বাচনী প্রশ্ন (MCQ) — সঠিক অপশন ও ব্যাখ্যা
+                            </h4>
+                            <div class="space-y-2">
+                                ${t.mcq.map(q => `
+                                    <div class="p-3 rounded-2xl bg-blue-50/30 border border-blue-100 hover:border-blue-300 hover:bg-blue-50/70 transition flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+                                        <div class="flex items-start gap-2.5 flex-1">
+                                            <span class="font-black text-slate-700 text-xs mt-0.5 min-w-[28px]">${q.id}</span>
+                                            <span class="w-6 h-6 rounded-lg bg-blue-600 text-white font-black text-xs flex items-center justify-center shrink-0 shadow-xs">
+                                                ${q.opt}
+                                            </span>
+                                            <div class="text-xs text-slate-800 leading-relaxed font-medium">
+                                                ${escapeHtml(q.explanation)}
+                                            </div>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                        ` : ''}
+                    </div>
+                </div>
+                `;
+            }).join('');
+
+            // Math rendering re-trigger
+            if (window.renderMathInElement) {
+                renderMathInElement(container, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$', right: '$', display: false}
+                    ],
+                    throwOnError: false
+                });
+            }
+        }
+
+        /* ── Tab Switcher ── */
+        function setViewTab(tab) {
+            currentTabMode = tab;
+            ['all', 'sheet', 'math', 'mcq'].forEach(t => {
+                const btn = document.getElementById(`tab-btn-${t}`);
+                if (btn) {
+                    if (t === tab) {
+                        btn.className = 'tab-active px-3.5 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5';
+                    } else {
+                        btn.className = 'px-3.5 py-1.5 rounded-lg text-xs font-bold text-slate-600 hover:text-slate-900 transition flex items-center gap-1.5';
+                    }
+                }
+            });
+
+            const sheetSec = document.getElementById('section-sheet-mcqs');
+            if (sheetSec) {
+                if (tab === 'math' || tab === 'mcq') {
+                    sheetSec.classList.add('hidden');
+                } else {
+                    sheetSec.classList.remove('hidden');
+                }
+            }
+
+            renderTypes();
+        }
+
+        /* ── Type Filter ── */
+        function filterByType(typeNum) {
+            currentSelectedType = typeNum;
+            renderTypes();
+        }
+
+        /* ── Search Handler ── */
+        function handleSearch(query) {
+            const clearBtn = document.getElementById('clear-search-btn');
+            const searchSec = document.getElementById('search-results-section');
+            const searchGrid = document.getElementById('search-results-grid');
+            const searchCount = document.getElementById('search-count');
+            const mainFlow = document.getElementById('main-content-flow');
+
+            const q = query.trim().toLowerCase();
+            if (!q) {
+                clearSearch();
+                return;
+            }
+
+            clearBtn.classList.remove('hidden');
+            searchSec.classList.remove('hidden');
+            mainFlow.classList.add('hidden');
+
+            const results = [];
+
+            // 1. Check sheet mcqs
+            if (window.HSC2_CH1_ANSWER_KEY?.sheet_mcqs) {
+                HSC2_CH1_ANSWER_KEY.sheet_mcqs.forEach(m => {
+                    if (m.num.includes(q) || ('লেকচার শিট ' + m.num).includes(q)) {
+                        results.push({
+                            category: 'লেকচার শিট MCQ',
+                            id: `শিট MCQ ${m.num}`,
+                            ans: `সঠিক উত্তর: (${m.ans})`,
+                            type: 'sheet'
+                        });
+                    }
+                });
+            }
+
+            // 2. Check types (Math & MCQ)
+            if (window.HSC2_CH1_ANSWER_KEY?.types) {
+                HSC2_CH1_ANSWER_KEY.types.forEach(t => {
+                    // Math
+                    t.math.forEach(m => {
+                        if (m.id.includes(q) || m.ans.toLowerCase().includes(q) || t.title.toLowerCase().includes(q)) {
+                            results.push({
+                                category: `${t.title} • গাণিতিক`,
+                                id: `প্রশ্ন ${m.id}`,
+                                ans: m.ans,
+                                type: 'math'
+                            });
+                        }
+                    });
+
+                    // MCQ
+                    t.mcq.forEach(qItem => {
+                        if (qItem.id.includes(q) || qItem.explanation.toLowerCase().includes(q) || qItem.opt.includes(q) || t.title.toLowerCase().includes(q)) {
+                            results.push({
+                                category: `${t.title} • MCQ`,
+                                id: `MCQ ${qItem.id}`,
+                                ans: `(${qItem.opt}) — ${qItem.explanation}`,
+                                type: 'mcq'
+                            });
+                        }
+                    });
+                });
+            }
+
+            searchCount.textContent = `${results.length}টি ফলাফল`;
+
+            if (results.length === 0) {
+                searchGrid.innerHTML = `
+                    <div class="p-8 text-center bg-white rounded-2xl border border-slate-200 space-y-2">
+                        <i class="fa-solid fa-face-frown text-3xl text-slate-300"></i>
+                        <p class="text-sm font-bold text-slate-700">কোনো ফলাফল পাওয়া যায়নি!</p>
+                        <p class="text-xs text-slate-400">বানান বা প্রশ্ন নম্বর ঠিকভাবে লিখে পুনরায় চেষ্টা করুন।</p>
+                    </div>
+                `;
+            } else {
+                searchGrid.innerHTML = results.slice(0, 50).map(r => `
+                    <div class="p-4 rounded-2xl bg-white border border-slate-200 shadow-xs hover:border-blue-400 transition space-y-1.5">
+                        <div class="flex items-center justify-between text-xs">
+                            <span class="font-extrabold ${r.type === 'math' ? 'text-emerald-700' : (r.type === 'sheet' ? 'text-amber-700' : 'text-blue-700')}">
+                                ${r.id}
+                            </span>
+                            <span class="text-[10px] text-slate-400 bg-slate-100 px-2 py-0.5 rounded-md">${r.category}</span>
+                        </div>
+                        <p class="text-xs sm:text-sm text-slate-900 font-medium leading-relaxed font-mono">${escapeHtml(r.ans)}</p>
+                    </div>
+                `).join('');
+            }
+
+            if (window.renderMathInElement) {
+                renderMathInElement(searchGrid, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$', right: '$', display: false}
+                    ],
+                    throwOnError: false
+                });
+            }
+        }
+
+        function clearSearch() {
+            const input = document.getElementById('answer-search-input');
+            const clearBtn = document.getElementById('clear-search-btn');
+            const searchSec = document.getElementById('search-results-section');
+            const mainFlow = document.getElementById('main-content-flow');
+
+            if (input) input.value = '';
+            if (clearBtn) clearBtn.classList.add('hidden');
+            if (searchSec) searchSec.classList.add('hidden');
+            if (mainFlow) mainFlow.classList.remove('hidden');
+        }
+
+        function escapeHtml(str) {
+            return str
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+    </script>
+</body>
+</html>

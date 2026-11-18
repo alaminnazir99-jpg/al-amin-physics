@@ -774,7 +774,7 @@ function renderChapterData() {
                         <i class="fa-solid fa-atom text-blue-600"></i> Al amin Physics
                     </h2>
                     <p class="text-sm font-bold text-slate-700">${chap.title} • এক্সক্লুসিভ স্টাডি শিট ও হ্যান্ডনোট</p>
-                    <p class="text-xs text-slate-500">সিলেবাস: NCTB ২০২৬ | নবম-দশম ও এসএসসি পরীক্ষার্থী</p>
+                    <p class="text-xs text-slate-500">সিলেবাস: NCTB ২০২৬ | ${levelInfo.gradeTag}</p>
                 </div>
                 <div class="sm:text-right text-xs text-slate-600">
                     <p class="font-bold text-blue-700 text-sm">প্রভাষক: আল আমিন স্যার</p>
@@ -782,6 +782,33 @@ function renderChapterData() {
                     <p class="text-[11px] text-slate-400">al-amin-physics.vercel.app</p>
                 </div>
             </div>
+
+            <!-- Special Verified Answer Sheet Banner for HSC 2nd Paper Chapter 1 (Thermodynamics) -->
+            ${chap.id === 'hsc2_c1' ? `
+            <div class="p-5 bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 text-white rounded-2xl border border-blue-500/30 shadow-md space-y-3 mb-6">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div class="space-y-1">
+                        <span class="inline-block px-2.5 py-0.5 rounded-full bg-amber-400 text-slate-950 text-[10px] font-black uppercase tracking-wider">
+                            <i class="fa-solid fa-qrcode"></i> লেকচার শিটের কিউআর কোড লিংক
+                        </span>
+                        <h4 class="text-base sm:text-lg font-black text-white flex items-center gap-2">
+                            <i class="fa-solid fa-square-check text-emerald-400"></i> তাপগতিবিদ্যা — অফিসিয়াল সমন্বিত উত্তরপত্র
+                        </h4>
+                        <p class="text-xs text-blue-200">
+                            লেকচার শিটের ২৫টি মূল্যায়ন MCQ, অনুশীলনী ৬০টি গাণিতিক প্রশ্নের মূল সমাধান ধাপ এবং ১৮০টি টাইপভিত্তিক MCQ-এর ব্যাখ্যাসহ উত্তরমালা।
+                        </p>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <a href="hsc-thermodynamics-answer.html" class="px-4 py-2 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white font-bold text-xs rounded-xl shadow-md transition flex items-center gap-1.5 whitespace-nowrap">
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i> পূর্ণাঙ্গ উত্তরপত্র দেখুন
+                        </a>
+                        <a href="Al-Amin-Physics-HSC-Thermodynamics-Answer-Key.pdf" download class="px-3.5 py-2 bg-white/15 hover:bg-white/25 text-white font-bold text-xs rounded-xl transition flex items-center gap-1.5 whitespace-nowrap">
+                            <i class="fa-solid fa-file-pdf text-red-400"></i> PDF
+                        </a>
+                    </div>
+                </div>
+            </div>
+            ` : ''}
 
             <!-- 1. Chapter Summary -->
             <div class="p-5 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
