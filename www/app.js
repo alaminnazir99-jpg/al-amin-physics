@@ -124,7 +124,25 @@ let tempSelectedRole    = 'student';
 let enrolledCourses  = lsGet(LS.ENROLLED,    { ssc_c2: true });
 let examScoresStore  = lsGet(LS.EXAM_SCORES,  {});
 let chapterProgress  = lsGet(LS.PROGRESS,     {});   // { chapId: percent 0-100 }
-let studentUser      = lsGet(LS.STUDENT_USER, null); // { name, phone, class, streak: 7, joinedAt }
+let studentUser      = lsGet(LS.STUDENT_USER, null) || (() => {
+    try {
+        const raw = localStorage.getItem('alamin_active_student_session');
+        if (raw) {
+            const p = JSON.parse(raw);
+            return {
+                id: p.id,
+                name: p.name,
+                phone: p.phone,
+                classKey: p.classKey,
+                classLevel: p.classKey === '8' ? 'class8' : (p.classKey === '11' ? 'hsc1' : (p.classKey === '12' ? 'hsc2' : 'ssc')),
+                institution: p.institution || '',
+                streak: 7,
+                joinedAt: p.createdAt || 'আজ'
+            };
+        }
+    } catch {}
+    return null;
+})();
 let proSimUnlocked   = lsGet(LS.PRO_SIM_PASS, false);
 let adminPermsStore  = lsGet(LS.ADMIN_PERMS,  { paymentApprove: true, examCreate: true, contentUpload: true, viewRevenue: false });
 let customExamsStore = lsGet(LS.CUSTOM_EXAMS, {});
@@ -368,6 +386,11 @@ function openClassroomView(isPop = false) {
 }
 
 function showStudentProfileView(isPop = false) {
+    const student = getActiveStudentSession() || studentUser;
+    if (!student) {
+        enforceStudentAuth();
+        return;
+    }
     setAppView('profile', {}, isPop);
 }
 
@@ -417,7 +440,7 @@ function closeQrModal() { document.getElementById('qr-code-modal')?.classList.ad
 // Hardware Back Button Handler called by Android Capacitor Bridge
 window.handleAppHardwareBack = function() {
     // 1. Check if any modal is currently visible
-    const modalIds = ['qr-code-modal', 'phone-auth-modal', 'auth-modal', 'ask-modal', 'pro-sim-modal', 'exam-studio-modal', 'payment-modal'];
+    const modalIds = ['qr-code-modal', 'student-auth-modal', 'auth-modal', 'ask-modal', 'pro-sim-modal', 'exam-studio-modal', 'payment-modal'];
     for (let id of modalIds) {
         const el = document.getElementById(id);
         if (el && !el.classList.contains('hidden') && el.style.display !== 'none') {
@@ -2355,7 +2378,23 @@ async function handleWallRegisterSubmit(e) {
 function getActiveStudentSession() {
     try {
         const raw = localStorage.getItem('alamin_active_student_session');
-        return raw ? JSON.parse(raw) : null;
+        if (raw) {
+            const parsed = JSON.parse(raw);
+            if (!studentUser) {
+                studentUser = {
+                    id: parsed.id,
+                    name: parsed.name,
+                    phone: parsed.phone,
+                    classKey: parsed.classKey,
+                    classLevel: parsed.classKey === '8' ? 'class8' : (parsed.classKey === '11' ? 'hsc1' : (parsed.classKey === '12' ? 'hsc2' : 'ssc')),
+                    institution: parsed.institution || '',
+                    streak: 7,
+                    joinedAt: parsed.createdAt || 'আজ'
+                };
+            }
+            return parsed;
+        }
+        return null;
     } catch {
         return null;
     }
@@ -2364,16 +2403,32 @@ function getActiveStudentSession() {
 function setActiveStudentSession(student) {
     try {
         localStorage.setItem('alamin_active_student_session', JSON.stringify(student));
+        studentUser = {
+            id: student.id,
+            name: student.name,
+            phone: student.phone,
+            classKey: student.classKey,
+            classLevel: student.classKey === '8' ? 'class8' : (student.classKey === '11' ? 'hsc1' : (student.classKey === '12' ? 'hsc2' : 'ssc')),
+            institution: student.institution || '',
+            streak: 7,
+            joinedAt: student.createdAt || 'আজ'
+        };
+        lsSet(LS.STUDENT_USER, studentUser);
     } catch {}
     updateStudentHeaderSessionUI();
     enforceStudentAuth();
 }
 
 function logoutStudent() {
-    localStorage.removeItem('alamin_active_student_session');
-    updateStudentHeaderSessionUI();
-    enforceStudentAuth();
-    alert('আপনি সফলভাবে লগআউট করেছেন।');
+    if (confirm('আপনি কি সত্যিই লগআউট করতে চান?')) {
+        localStorage.removeItem('alamin_active_student_session');
+        studentUser = null;
+        lsSet(LS.STUDENT_USER, null);
+        updateStudentHeaderSessionUI();
+        showLMSDashboard();
+        enforceStudentAuth();
+        alert('লগআউট সম্পন্ন হয়েছে।');
+    }
 }
 
 function updateStudentHeaderSessionUI() {
@@ -3038,42 +3093,7 @@ let authPendingAction = null;
 let generatedOtp = "1234";
 
 function openPhoneAuthModal(triggerReason = 'header') {
-    const modal = document.getElementById('phone-auth-modal');
-    if (!modal) {
-        console.error('phone-auth-modal element not found!');
-        return;
-    }
-    authPendingAction = triggerReason;
-    
-    const reasonEl = document.getElementById('phone-auth-reason');
-    const descEl = document.getElementById('phone-auth-desc');
-    if (reasonEl && descEl) {
-        if (triggerReason === 'video') {
-            reasonEl.textContent = "ভিডিও ক্লাস প্রিভিউ শেষ!";
-            descEl.textContent = "পরবর্তী সকল ভিডিও লেকচার ও ক্লাস আনলক করতে মোবাইল নম্বর দিয়ে এক ক্লিকে লগইন করুন।";
-        } else if (triggerReason === 'exam') {
-            reasonEl.textContent = "পরীক্ষার রেজাল্ট সেভ করুন!";
-            descEl.textContent = "আপনার মেধা তালিকা ও অভিভাবকের কাছে অটোমেটিক রেজাল্ট পাঠাতে ফোন নম্বর দিন।";
-        } else if (triggerReason === 'doubt') {
-            reasonEl.textContent = "স্যারের সাথে সরাসরি আলোচনা!";
-            descEl.textContent = "আপনার প্রশ্নের উত্তর ও নোটিফিকেশন পেতে ফোন নম্বর দিয়ে লগইন করুন।";
-        } else {
-            reasonEl.textContent = "আল আমিন ফিজিক্সে স্বাগতম!";
-            descEl.textContent = "মোবাইল নম্বর ও নাম দিয়ে সহজে নিজের স্টুডেন্ট প্রোফাইল ও লিডারবোর্ডে যুক্ত হোন।";
-        }
-    }
-
-    const step1 = document.getElementById('phone-step-1');
-    const step2 = document.getElementById('phone-step-2');
-    if (step1) step1.classList.remove('hidden');
-    if (step2) step2.classList.add('hidden');
-    
-    modal.classList.remove('hidden');
-    modal.style.display = 'flex';
-
-    setTimeout(() => {
-        document.getElementById('auth-input-name')?.focus();
-    }, 100);
+    enforceStudentAuth();
 }
 
 function closePhoneAuthModal() {
@@ -3084,74 +3104,13 @@ function closePhoneAuthModal() {
     }
 }
 
-function requestPhoneOtp() {
-    const name = document.getElementById('auth-input-name').value.trim();
-    const phone = document.getElementById('auth-input-phone').value.trim();
-    const lvl = document.getElementById('auth-input-class').value;
-
-    if (!name) { alert('অনুগ্রহ করে আপনার পুরো নাম লিখুন!'); return; }
-    if (!phone || phone.length < 10) { alert('অনুগ্রহ করে সঠিক ১১ ডিজিটের মোবাইল নম্বর দিন!'); return; }
-
-    document.getElementById('otp-phone-display').textContent = `+88 ${phone}`;
-    document.getElementById('phone-step-1').classList.add('hidden');
-    document.getElementById('phone-step-2').classList.remove('hidden');
-    document.getElementById('otp-1').focus();
-}
-
-function editAuthPhone() {
-    document.getElementById('phone-step-1').classList.remove('hidden');
-    document.getElementById('phone-step-2').classList.add('hidden');
-}
-
-function focusNextOtp(idx) {
-    const val = document.getElementById(`otp-${idx}`).value;
-    if (val && idx < 4) {
-        document.getElementById(`otp-${idx+1}`).focus();
-    }
-}
-
-function verifyPhoneOtp() {
-    const o1 = document.getElementById('otp-1').value;
-    const o2 = document.getElementById('otp-2').value;
-    const o3 = document.getElementById('otp-3').value;
-    const o4 = document.getElementById('otp-4').value;
-    const entered = `${o1}${o2}${o3}${o4}`;
-
-    if (entered !== "1234" && entered.length < 4) {
-        alert('সঠিক ওটিপি দিন (ডেমো কোড: 1 2 3 4)');
-        return;
-    }
-
-    const name = document.getElementById('auth-input-name').value.trim();
-    const phone = document.getElementById('auth-input-phone').value.trim();
-    const lvl = document.getElementById('auth-input-class').value;
-
-    studentUser = {
-        name: name,
-        phone: phone,
-        classLevel: lvl,
-        streak: 7,
-        joinedAt: "আজ"
-    };
-    lsSet(LS.STUDENT_USER, studentUser);
-
-    updateUserSessionUI();
-    closePhoneAuthModal();
-    alert(`অভিনন্দন ${name}! আপনি সফলভাবে লগইন হয়েছেন।`);
-
-    if (authPendingAction === 'profile') {
-        showStudentProfileView();
-    }
-}
+function requestPhoneOtp() {}
+function editAuthPhone() {}
+function focusNextOtp(idx) {}
+function verifyPhoneOtp() {}
 
 function logoutStudentSession() {
-    if (confirm('আপনি কি সত্যিই লগআউট করতে চান?')) {
-        studentUser = null;
-        lsSet(LS.STUDENT_USER, null);
-        updateUserSessionUI();
-        showLMSDashboard();
-        alert('লগআউট সম্পন্ন হয়েছে।');
-    }
+    logoutStudent();
 }
 
 function updateUserSessionUI() {
@@ -3162,21 +3121,36 @@ function updateUserSessionUI() {
    STUDENT PROFILE DASHBOARD RENDERER
 =================================================== */
 function renderStudentProfileData() {
-    if (!studentUser) {
-        openPhoneAuthModal('profile');
+    const student = getActiveStudentSession() || studentUser;
+    if (!student) {
+        enforceStudentAuth();
         return;
     }
 
-    document.getElementById('profile-display-name').textContent = studentUser.name;
-    document.getElementById('profile-display-phone').textContent = `ফোন: ${studentUser.phone} (ভেরিফায়েড)`;
+    const nameEl = document.getElementById('profile-display-name');
+    const phoneEl = document.getElementById('profile-display-phone');
+    const classEl = document.getElementById('profile-display-class');
+
+    if (nameEl) nameEl.textContent = student.name;
+    if (phoneEl) {
+        phoneEl.innerHTML = `<span class="font-medium text-blue-200">মোবাইল: ${student.phone}</span> <span class="mx-1 opacity-60">|</span> <span class="font-mono font-bold text-amber-300">স্টুডেন্ট আইডি: ${student.id || 'N/A'}</span>`;
+    }
     
     const classNames = {
+        '8': "অষ্টম শ্রেণি বিজ্ঞান (NCTB ২০২৬)",
+        '9': "নবম শ্রেণি (SSC Physics)",
+        '10': "দশম শ্রেণি (SSC Physics)",
+        '11': "একাদশ শ্রেণি — ১ম পত্র",
+        '12': "দ্বাদশ শ্রেণি — ২য় পত্র",
         ssc: "নবম-দশম শ্রেণি (SSC Physics)",
         hsc1: "একাদশ-দ্বাদশ শ্রেণি — ১ম পত্র",
         hsc2: "একাদশ-দ্বাদশ শ্রেণি — ২য় পত্র",
-        class8: "অষ্টম শ্রেণি বিজ্ঞান (NCTB 2026)"
+        class8: "অষ্টম শ্রেণি বিজ্ঞান (NCTB ২০২৬)"
     };
-    document.getElementById('profile-display-class').textContent = classNames[studentUser.classLevel] || "নবম-দশম শ্রেণি";
+    const cKey = student.classKey || student.classLevel || 'ssc';
+    const classLabel = classNames[cKey] || "নবম-দশম শ্রেণি";
+    const instText = student.institution ? ` • প্রতিষ্ঠান: ${student.institution}` : '';
+    if (classEl) classEl.textContent = `${classLabel}${instText}`;
 
     // Exam History List
     const examList = document.getElementById('profile-exam-history-list');
