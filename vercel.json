@@ -1,5 +1,9 @@
 {
   "cleanUrls": true,
+  "rewrites": [
+    { "source": "/director", "destination": "/director.html" },
+    { "source": "/admin", "destination": "/admin.html" }
+  ],
   "redirects": [
     { "source": "/ch1", "destination": "/simulations/ch1.html", "permanent": false },
     { "source": "/ch2", "destination": "/simulations/ch2.html", "permanent": false },

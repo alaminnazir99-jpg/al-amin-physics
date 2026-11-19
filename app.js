@@ -2158,52 +2158,230 @@ function handleQuestionSubmit(e) {
 }
 
 /* ===================================================
-   ROLE MANAGEMENT
+   STUDENT AUTHENTICATION & SINGLE BULKSMSBD DISPATCH
 =================================================== */
-function openAuthModal()  { document.getElementById('auth-modal').classList.remove('hidden'); }
-function closeAuthModal() { document.getElementById('auth-modal').classList.add('hidden'); }
-
-function selectUserRole(role) {
-    tempSelectedRole = role;
-    ['student','teacher','admin','director'].forEach(r => {
-        const opt  = document.getElementById(`role-opt-${r}`);
-        const icon = opt.querySelector('i:last-child');
-        if (r === role) {
-            opt.className  = "p-3 rounded-2xl border-2 border-blue-500 bg-blue-50/50 flex items-center justify-between cursor-pointer transition";
-            icon.className = "fa-solid fa-circle-check text-blue-600 text-lg";
-        } else {
-            opt.className  = "p-3 rounded-2xl border-2 border-slate-200 hover:border-slate-300 flex items-center justify-between cursor-pointer transition";
-            icon.className = "fa-regular fa-circle text-slate-300 text-lg";
-        }
-    });
+function openStudentAuthModal(initialTab = 'login') {
+    const modal = document.getElementById('student-auth-modal');
+    if (modal) {
+        modal.classList.remove('hidden');
+        switchStudentAuthTab(initialTab);
+    }
 }
 
-function applyUserRole() {
-    currentUserRole = tempSelectedRole;
-    closeAuthModal();
-    const labels = { student:'স্টুডেন্ট মোড', teacher:'টিচার মোড', admin:'এডমিন মোড', director:'ডিরেক্টর মোড' };
-    document.getElementById('current-user-role-label').textContent = labels[currentUserRole];
+function closeStudentAuthModal() {
+    const modal = document.getElementById('student-auth-modal');
+    if (modal) modal.classList.add('hidden');
+}
 
-    const banner  = document.getElementById('role-dashboard-banner');
-    const actions = document.getElementById('role-dashboard-actions');
-    if (currentUserRole === 'director') {
-        banner.classList.remove('hidden');
-        document.getElementById('role-dashboard-title').textContent    = "ডিরেক্টর অ্যানালিটিক্স প্যানেল";
-        document.getElementById('role-dashboard-subtitle').textContent = "প্ল্যাটফর্মের আয়-ব্যয়, এনরোলমেন্ট ও শিক্ষার্থী গ্রোথ";
-        actions.innerHTML = `<div class="px-3 py-1.5 bg-blue-500/20 text-blue-300 rounded-lg border border-blue-500/30 font-bold">মোট আয়: ৳ ৮৫,৪০০</div><div class="px-3 py-1.5 bg-indigo-500/20 text-indigo-300 rounded-lg border border-indigo-500/30 font-bold">মোট শিক্ষার্থী: ১,৪৫০ জন</div>`;
-    } else if (currentUserRole === 'admin') {
-        banner.classList.remove('hidden');
-        document.getElementById('role-dashboard-title').textContent    = "এডমিন কন্ট্রোল প্যানেল";
-        document.getElementById('role-dashboard-subtitle').textContent = "পেমেন্ট ভেরিফিকেশন, ইউজার পারমিশন ও কোর্স কন্ট্রোল";
-        actions.innerHTML = `<button onclick="alert('৫টি পেন্ডিং পেমেন্ট ভেরিফাই হয়েছে!')" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-bold">পেন্ডিং পেমেন্ট (৫)</button><button onclick="alert('সকল ইউজার অ্যাক্টিভ')" class="px-3 py-1.5 bg-slate-800 text-white rounded-lg font-bold">ইউজার লিস্ট</button>`;
-    } else if (currentUserRole === 'teacher') {
-        banner.classList.remove('hidden');
-        document.getElementById('role-dashboard-title').textContent    = "শিক্ষক ড্যাশবোর্ড";
-        document.getElementById('role-dashboard-subtitle').textContent = "নতুন ক্লাস আপলোড, প্রশ্ন তৈরি ও উত্তর দিন";
-        actions.innerHTML = `<button onclick="alert('ক্লাস আপলোড উইন্ডো খুলেছে')" class="px-3 py-1.5 bg-blue-600 text-white rounded-lg font-bold">+ ক্লাস আপলোড</button><button onclick="switchTab('qa')" class="px-3 py-1.5 bg-indigo-600 text-white rounded-lg font-bold">জিজ্ঞাসা উত্তর দিন</button>`;
+function openAuthModal() {
+    openStudentAuthModal('login');
+}
+function closeAuthModal() {
+    closeStudentAuthModal();
+}
+
+function switchStudentAuthTab(tab) {
+    const btnLogin = document.getElementById('btn-tab-student-login');
+    const btnReg = document.getElementById('btn-tab-student-register');
+    const paneLogin = document.getElementById('student-pane-login');
+    const paneReg = document.getElementById('student-pane-register');
+    const headerTitle = document.getElementById('student-modal-header-title');
+
+    if (tab === 'login') {
+        if (btnLogin) btnLogin.className = "py-2 rounded-xl transition bg-white text-blue-600 shadow-sm";
+        if (btnReg) btnReg.className = "py-2 rounded-xl transition text-slate-600 hover:text-slate-900";
+        if (paneLogin) paneLogin.classList.remove('hidden');
+        if (paneReg) paneReg.classList.add('hidden');
+        if (headerTitle) headerTitle.textContent = "শিক্ষার্থী লগইন";
     } else {
-        banner.classList.add('hidden');
+        if (btnLogin) btnLogin.className = "py-2 rounded-xl transition text-slate-600 hover:text-slate-900";
+        if (btnReg) btnReg.className = "py-2 rounded-xl transition bg-white text-emerald-600 shadow-sm";
+        if (paneLogin) paneLogin.classList.add('hidden');
+        if (paneReg) paneReg.classList.remove('hidden');
+        if (headerTitle) headerTitle.textContent = "নতুন অ্যাকাউন্ট রেজিস্ট্রেশন";
     }
+}
+
+function getActiveStudentSession() {
+    try {
+        const raw = localStorage.getItem('alamin_active_student_session');
+        return raw ? JSON.parse(raw) : null;
+    } catch {
+        return null;
+    }
+}
+
+function setActiveStudentSession(student) {
+    try {
+        localStorage.setItem('alamin_active_student_session', JSON.stringify(student));
+    } catch {}
+    updateStudentHeaderSessionUI();
+}
+
+function logoutStudent() {
+    localStorage.removeItem('alamin_active_student_session');
+    updateStudentHeaderSessionUI();
+    alert('আপনি সফলভাবে লগআউট করেছেন।');
+}
+
+function updateStudentHeaderSessionUI() {
+    const container = document.getElementById('user-session-container');
+    const activeStudent = getActiveStudentSession();
+
+    if (!container) return;
+
+    if (activeStudent) {
+        container.innerHTML = `
+            <div class="flex items-center gap-2 p-1 pl-2.5 bg-blue-50 border border-blue-200 rounded-full shadow-xs">
+                <span class="font-mono text-[11px] font-bold text-blue-800 bg-blue-200/70 px-2 py-0.5 rounded-full">${activeStudent.id}</span>
+                <span class="text-xs font-bold text-slate-800 hidden sm:inline max-w-[110px] truncate">${activeStudent.name}</span>
+                <button onclick="logoutStudent()" class="w-6 h-6 rounded-full bg-slate-200 hover:bg-red-100 hover:text-red-600 text-slate-600 text-[11px] flex items-center justify-center transition" title="লগআউট">
+                    <i class="fa-solid fa-power-off"></i>
+                </button>
+            </div>
+        `;
+        const drawerBtn = document.getElementById('drawer-student-auth-btn');
+        if (drawerBtn) {
+            drawerBtn.innerHTML = `<i class="fa-solid fa-user-check text-emerald-600"></i> <span>${activeStudent.name} (${activeStudent.id}) - লগআউট</span>`;
+            drawerBtn.onclick = () => { logoutStudent(); toggleNavDrawer(false); };
+        }
+    } else {
+        container.innerHTML = `
+            <button onclick="openStudentAuthModal('login')" id="header-login-btn" class="interactive-btn flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white px-3.5 py-1.5 rounded-xl text-xs font-bold shadow-sm shadow-blue-200">
+                <i class="fa-solid fa-user-graduate"></i>
+                <span>শিক্ষার্থী লগইন / একাউন্ট</span>
+            </button>
+        `;
+        const drawerBtn = document.getElementById('drawer-student-auth-btn');
+        if (drawerBtn) {
+            drawerBtn.innerHTML = `<i class="fa-solid fa-user-graduate text-blue-600"></i> <span>শিক্ষার্থী লগইন / একাউন্ট</span>`;
+            drawerBtn.onclick = () => { openStudentAuthModal(); toggleNavDrawer(false); };
+        }
+    }
+}
+
+function handleStudentLoginSubmit(e) {
+    e.preventDefault();
+    const idOrPhone = document.getElementById('stu-login-id').value.trim();
+    const pass = document.getElementById('stu-login-pass').value.trim();
+    const errBox = document.getElementById('stu-login-err');
+
+    let students = [];
+    try {
+        const raw = localStorage.getItem('alamin_registered_students');
+        if (raw) students = JSON.parse(raw);
+    } catch {}
+
+    const cleanInput = (typeof cleanBanglaPhone === 'function') ? cleanBanglaPhone(idOrPhone) : idOrPhone;
+
+    const matched = students.find(s => 
+        (s.id.toLowerCase() === idOrPhone.toLowerCase() || s.phone === cleanInput || s.phone === idOrPhone) &&
+        String(s.password) === String(pass)
+    );
+
+    if (matched) {
+        setActiveStudentSession(matched);
+        closeStudentAuthModal();
+        if (errBox) errBox.classList.add('hidden');
+        alert(`স্বাগতম, ${matched.name}!\nআপনার স্টুডেন্ট আইডি: ${matched.id}`);
+    } else {
+        if (errBox) errBox.classList.remove('hidden');
+    }
+}
+
+async function handleStudentRegisterSubmit(e) {
+    e.preventDefault();
+    const name = document.getElementById('stu-reg-name').value.trim();
+    const rawPhone = document.getElementById('stu-reg-phone').value.trim();
+    const classKey = document.getElementById('stu-reg-class').value;
+    const institute = document.getElementById('stu-reg-institute').value.trim();
+    const pass = document.getElementById('stu-reg-pass').value.trim();
+    const errBox = document.getElementById('stu-reg-err');
+    const submitBtn = document.getElementById('btn-submit-register');
+
+    const phone = (typeof cleanBanglaPhone === 'function') ? cleanBanglaPhone(rawPhone) : rawPhone;
+
+    if (!phone || phone.length !== 11 || !phone.startsWith('01')) {
+        if (errBox) {
+            errBox.textContent = 'সঠিক ১১ ডিজিটের মোবাইল নম্বর লিখুন (যেমন: 017XXXXXXXX)।';
+            errBox.classList.remove('hidden');
+        }
+        return;
+    }
+
+    if (pass.length < 4) {
+        if (errBox) {
+            errBox.textContent = 'পাসওয়ার্ড কমপক্ষে ৪ ক্যারেক্টার হতে হবে।';
+            errBox.classList.remove('hidden');
+        }
+        return;
+    }
+
+    let students = [];
+    try {
+        const raw = localStorage.getItem('alamin_registered_students');
+        if (raw) students = JSON.parse(raw);
+    } catch {}
+
+    // Check if phone already registered
+    const existing = students.find(s => s.phone === phone);
+    if (existing) {
+        if (errBox) {
+            errBox.textContent = `এই মোবাইল নম্বরটি দিয়ে ইতোমধ্যে আইডি (${existing.id}) খোলা হয়েছে! অনুগ্রহ করে লগইন করুন।`;
+            errBox.classList.remove('hidden');
+        }
+        return;
+    }
+
+    // Generate Class-based serial ID: AP-26-8001, 9001, 10001, 1101, 1201
+    const studentId = (typeof getNextStudentId === 'function')
+        ? getNextStudentId(classKey)
+        : `AP-26-${classKey}001`;
+
+    const newStudent = {
+        id: studentId,
+        name: name,
+        phone: phone,
+        classKey: classKey,
+        institution: institute,
+        password: pass,
+        createdAt: new Date().toISOString()
+    };
+
+    students.push(newStudent);
+    try {
+        localStorage.setItem('alamin_registered_students', JSON.stringify(students));
+    } catch {}
+
+    if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> SMS পাঠানো হচ্ছে...`;
+    }
+
+    // Dispatch Single English SMS via BulkSMSBD (Strictly <= 160 chars)
+    const smsMessage = (typeof makeStudentSmsMessage === 'function')
+        ? makeStudentSmsMessage(name, studentId)
+        : `Al amin Physics: Welcome ${name.split(' ')[0]}! Your Student ID is ${studentId}. Keep it safe to login at al-amin-physics.vercel.app`;
+
+    if (typeof sendSmsNotification === 'function') {
+        await sendSmsNotification({
+            to: phone,
+            message: smsMessage,
+            purpose: 'Student Registration ID',
+            recipientName: name
+        });
+    }
+
+    // Automatically set active student session
+    setActiveStudentSession(newStudent);
+    closeStudentAuthModal();
+
+    if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = `<i class="fa-solid fa-user-plus"></i> অ্যাকাউন্ট তৈরি করুন ও SMS পান`;
+    }
+
+    alert(`অভিনন্দন, ${name}!\nআপনার রেজিস্ট্রেশন সফল হয়েছে এবং আপনার মোবাইলে (${phone}) স্টুডেন্ট আইডি প্রেরণ করা হয়েছে।\nআপনার স্টুডেন্ট আইডি: ${studentId}`);
 }
 
 /* ===================================================
@@ -2825,24 +3003,7 @@ function logoutStudentSession() {
 }
 
 function updateUserSessionUI() {
-    const container = document.getElementById('user-session-container');
-    if (!container) return;
-
-    if (studentUser) {
-        container.innerHTML = `
-            <div onclick="showStudentProfileView()" class="cursor-pointer flex items-center gap-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 px-3 py-1.5 rounded-xl text-xs font-bold transition shadow-sm" title="প্রোফাইলে যান">
-                <i class="fa-solid fa-user-graduate text-emerald-600"></i>
-                <span class="max-w-[90px] truncate hidden sm:inline">${studentUser.name}</span>
-            </div>
-        `;
-    } else {
-        container.innerHTML = `
-            <button onclick="openPhoneAuthModal('header')" id="header-login-btn" class="interactive-btn flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-xl text-xs font-bold shadow-sm shadow-blue-200">
-                <i class="fa-solid fa-right-to-bracket"></i>
-                <span>লগইন</span>
-            </button>
-        `;
-    }
+    updateStudentHeaderSessionUI();
 }
 
 /* ===================================================

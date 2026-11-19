@@ -1,0 +1,1083 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Director Command Center — Al amin Physics</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <!-- Google Fonts (Hind Siliguri) -->
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Hind Siliguri', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Hind Siliguri', sans-serif; }
+        .tab-btn-active {
+            background-color: #2563eb;
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col antialiased selection:bg-blue-600 selection:text-white">
+
+    <!-- ====================================================
+         1. DIRECTOR LOGIN WALL (Shown if not logged in)
+    ==================================================== -->
+    <div id="director-login-screen" class="fixed inset-0 z-50 bg-slate-950 flex items-center justify-center p-4">
+        <div class="max-w-md w-full bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden">
+            <!-- Decorative Glow -->
+            <div class="absolute -top-16 -right-16 w-36 h-36 bg-blue-600/20 rounded-full blur-3xl pointer-events-none"></div>
+
+            <div class="text-center mb-6">
+                <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-blue-700 to-indigo-600 text-white flex items-center justify-center text-2xl mx-auto shadow-lg shadow-blue-600/30 mb-3 border border-blue-400/30">
+                    <i class="fa-solid fa-crown text-amber-300"></i>
+                </div>
+                <h2 class="text-2xl font-black tracking-tight text-white">Al amin Physics</h2>
+                <p class="text-xs text-blue-400 font-bold uppercase tracking-wider mt-0.5">Director Command Portal</p>
+                <p class="text-xs text-slate-400 mt-1">শুধুমাত্র ডিরেক্টর (আল আমিন স্যার)-এর জন্য সুরক্ষিত</p>
+            </div>
+
+            <form onsubmit="handleDirectorLogin(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 mb-1.5">ডিরেক্টর মোবাইল / ইউজারনেম:</label>
+                    <div class="relative">
+                        <i class="fa-solid fa-user-tie absolute left-3.5 top-3.5 text-slate-500 text-sm"></i>
+                        <input type="text" id="dir-login-user" required value="01796431795" class="w-full pl-10 pr-4 py-2.5 bg-slate-800/90 border border-slate-700 rounded-xl text-sm text-white font-mono focus:border-blue-500 outline-none transition">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 mb-1.5">ডিরেক্টর মাস্টার পাসওয়ার্ড:</label>
+                    <div class="relative">
+                        <i class="fa-solid fa-key absolute left-3.5 top-3.5 text-slate-500 text-sm"></i>
+                        <input type="password" id="dir-login-pass" required placeholder="পাসওয়ার্ড লিখুন" class="w-full pl-10 pr-4 py-2.5 bg-slate-800/90 border border-slate-700 rounded-xl text-sm text-white font-mono focus:border-blue-500 outline-none transition">
+                    </div>
+                    <p class="text-[11px] text-slate-500 mt-1">ডিফল্ট পাসওয়ার্ড: <code class="text-blue-400">alamin#director2026</code> (পরে বদলাতে পারবেন)</p>
+                </div>
+
+                <div id="dir-login-error" class="hidden p-3 bg-red-950/70 border border-red-800/50 rounded-xl text-xs text-red-300 font-semibold flex items-center gap-2">
+                    <i class="fa-solid fa-triangle-exclamation text-red-400"></i>
+                    <span id="dir-login-error-text">ভুল পাসওয়ার্ড! পুনরায় চেষ্টা করুন।</span>
+                </div>
+
+                <button type="submit" class="w-full py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold rounded-xl text-sm transition shadow-lg shadow-blue-600/30 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-arrow-right-to-bracket"></i>
+                    <span>কমান্ড সেন্টারে প্রবেশ করুন</span>
+                </button>
+            </form>
+
+            <div class="mt-6 pt-4 border-t border-slate-800 flex items-center justify-between text-[11px] text-slate-400">
+                <a href="study.html" class="hover:text-blue-400 transition flex items-center gap-1">
+                    <i class="fa-solid fa-arrow-left"></i> মূল ওয়েবসাইট
+                </a>
+                <span>জলেশ্বরীতলা, বগুড়া</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ====================================================
+         2. DIRECTOR DASHBOARD MAIN VIEW
+    ==================================================== -->
+    <div id="director-dashboard" class="hidden flex-1 flex flex-col">
+        <!-- Top Navbar -->
+        <header class="bg-slate-900 border-b border-slate-800 sticky top-0 z-40">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-blue-600/20 text-blue-400 border border-blue-500/30 flex items-center justify-center font-bold text-lg">
+                        <i class="fa-solid fa-crown text-amber-400"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h1 class="text-base sm:text-lg font-black text-white">Al amin Physics</h1>
+                            <span class="px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-400 border border-amber-500/30 text-[10px] font-bold">Director</span>
+                        </div>
+                        <p class="text-[11px] text-slate-400">আল আমিন স্যার • জলেশ্বরীতলা, বগুড়া</p>
+                    </div>
+                </div>
+
+                <!-- Right Action Buttons -->
+                <div class="flex items-center gap-2.5">
+                    <a href="study.html" target="_blank" class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold border border-slate-700 transition">
+                        <i class="fa-solid fa-globe text-blue-400"></i>
+                        <span>লাইভ সাইট</span>
+                    </a>
+                    <a href="admin.html" target="_blank" class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold border border-slate-700 transition">
+                        <i class="fa-solid fa-user-shield text-indigo-400"></i>
+                        <span>অ্যাডমিন পোর্টাল</span>
+                    </a>
+                    <button onclick="handleDirectorLogout()" class="px-3 py-1.5 rounded-xl bg-red-950/80 hover:bg-red-900 text-red-300 text-xs font-bold border border-red-800/60 transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-power-off"></i>
+                        <span>লগআউট</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full space-y-6 flex-1">
+            
+            <!-- Statistics Metric Cards -->
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                <!-- 1. Total Students -->
+                <div class="p-4 sm:p-5 rounded-2xl bg-slate-900 border border-slate-800 shadow-sm relative overflow-hidden">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs text-slate-400 font-semibold">নিবন্ধিত শিক্ষার্থী</span>
+                        <div class="w-8 h-8 rounded-lg bg-blue-500/10 text-blue-400 flex items-center justify-center text-sm">
+                            <i class="fa-solid fa-user-graduate"></i>
+                        </div>
+                    </div>
+                    <h3 id="stat-total-students" class="text-2xl sm:text-3xl font-black text-white font-mono">০</h3>
+                    <p class="text-[11px] text-emerald-400 font-semibold mt-1 flex items-center gap-1">
+                        <i class="fa-solid fa-arrow-trend-up"></i> অটো সিরিয়াল জেনারেটেড
+                    </p>
+                </div>
+
+                <!-- 2. Active Admins -->
+                <div class="p-4 sm:p-5 rounded-2xl bg-slate-900 border border-slate-800 shadow-sm relative overflow-hidden">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs text-slate-400 font-semibold">নিযুক্ত অ্যাডমিন</span>
+                        <div class="w-8 h-8 rounded-lg bg-indigo-500/10 text-indigo-400 flex items-center justify-center text-sm">
+                            <i class="fa-solid fa-user-shield"></i>
+                        </div>
+                    </div>
+                    <h3 id="stat-total-admins" class="text-2xl sm:text-3xl font-black text-white font-mono">০</h3>
+                    <p class="text-[11px] text-indigo-300 font-semibold mt-1">ডিরেক্টর নিয়ন্ত্রিত রোল</p>
+                </div>
+
+                <!-- 3. Total Revenue -->
+                <div class="p-4 sm:p-5 rounded-2xl bg-slate-900 border border-slate-800 shadow-sm relative overflow-hidden">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs text-slate-400 font-semibold">মোট কোর্স কালেকশন</span>
+                        <div class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-sm">
+                            <i class="fa-solid fa-bangladeshi-taka-sign"></i>
+                        </div>
+                    </div>
+                    <h3 id="stat-total-revenue" class="text-2xl sm:text-3xl font-black text-emerald-400 font-mono">৳ ০</h3>
+                    <p class="text-[11px] text-slate-400 font-semibold mt-1">বিকাশ / নগদ / ক্যাশ</p>
+                </div>
+
+                <!-- 4. Total SMS Dispatched -->
+                <div class="p-4 sm:p-5 rounded-2xl bg-slate-900 border border-slate-800 shadow-sm relative overflow-hidden">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs text-slate-400 font-semibold">BulkSMSBD মোট প্রেরণ</span>
+                        <div class="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-400 flex items-center justify-center text-sm">
+                            <i class="fa-solid fa-comment-sms"></i>
+                        </div>
+                    </div>
+                    <h3 id="stat-total-sms" class="text-2xl sm:text-3xl font-black text-amber-400 font-mono">০</h3>
+                    <p class="text-[11px] text-amber-300 font-semibold mt-1">১টি SMS প্রতি মেসেজ (≤১৬০ chars)</p>
+                </div>
+            </div>
+
+            <!-- Director Tab Navigation -->
+            <div class="flex overflow-x-auto p-1.5 bg-slate-900 rounded-2xl border border-slate-800 space-x-2 text-xs scrollbar-hide">
+                <button onclick="switchDirectorTab('admins')" id="dir-tab-admins" class="tab-btn-active px-4 py-2.5 rounded-xl font-bold flex items-center gap-2 whitespace-nowrap transition">
+                    <i class="fa-solid fa-users-gear"></i> অ্যাডমিন তৈরি ও পারমিশন
+                </button>
+                <button onclick="switchDirectorTab('students')" id="dir-tab-students" class="px-4 py-2.5 rounded-xl font-bold text-slate-400 hover:text-white flex items-center gap-2 whitespace-nowrap transition">
+                    <i class="fa-solid fa-graduation-cap"></i> শিক্ষার্থী ডাটাবেজ
+                </button>
+                <button onclick="switchDirectorTab('finance')" id="dir-tab-finance" class="px-4 py-2.5 rounded-xl font-bold text-slate-400 hover:text-white flex items-center gap-2 whitespace-nowrap transition">
+                    <i class="fa-solid fa-wallet"></i> ফাইন্যান্স ও ফি হিসাব
+                </button>
+                <button onclick="switchDirectorTab('exams')" id="dir-tab-exams" class="px-4 py-2.5 rounded-xl font-bold text-slate-400 hover:text-white flex items-center gap-2 whitespace-nowrap transition">
+                    <i class="fa-solid fa-file-signature"></i> অনলাইন পরীক্ষা ও ওএমআর
+                </button>
+                <button onclick="switchDirectorTab('sms')" id="dir-tab-sms" class="px-4 py-2.5 rounded-xl font-bold text-slate-400 hover:text-white flex items-center gap-2 whitespace-nowrap transition">
+                    <i class="fa-solid fa-tower-broadcast"></i> BulkSMSBD সেটিংস ও লগ
+                </button>
+                <button onclick="switchDirectorTab('settings')" id="dir-tab-settings" class="px-4 py-2.5 rounded-xl font-bold text-slate-400 hover:text-white flex items-center gap-2 whitespace-nowrap transition">
+                    <i class="fa-solid fa-lock"></i> পাসওয়ার্ড ও সিকিউরিটি
+                </button>
+            </div>
+
+            <!-- ==============================================
+                 TAB 1: ADMIN MANAGEMENT (Create Admin & SMS)
+            ============================================== -->
+            <div id="dir-pane-admins" class="space-y-6">
+                <!-- Action Header Card -->
+                <div class="p-6 rounded-3xl bg-slate-900 border border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-user-plus text-blue-500"></i> নতুন সহকারী অ্যাডমিন নিয়োগ
+                        </h3>
+                        <p class="text-xs text-slate-400 mt-0.5">নতুন অ্যাডমিন তৈরি করলেই তার ফোনে স্বয়ংক্রিয়ভাবে আইডি ও পাসওয়ার্ডের এসএমএস চলে যাবে।</p>
+                    </div>
+                    <button onclick="openCreateAdminModal()" class="px-4 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold shadow-lg shadow-blue-600/30 transition flex items-center gap-2">
+                        <i class="fa-solid fa-plus"></i> অ্যাডমিন তৈরি করুন
+                    </button>
+                </div>
+
+                <!-- Existing Admins Table -->
+                <div class="bg-slate-900 border border-slate-800 rounded-3xl overflow-hidden shadow-sm">
+                    <div class="p-4 border-b border-slate-800 flex items-center justify-between">
+                        <h4 class="font-bold text-sm text-white">বিদ্যমান অ্যাডমিনদের তালিকা</h4>
+                        <span id="active-admins-count-tag" class="text-xs text-slate-400 font-mono">০ জন সক্রিয়</span>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs">
+                            <thead class="bg-slate-800/60 text-slate-400 font-semibold uppercase text-[10px] tracking-wider border-b border-slate-800">
+                                <tr>
+                                    <th class="p-4">অ্যাডমিন আইডি</th>
+                                    <th class="p-4">নাম ও ফোন</th>
+                                    <th class="p-4">পদবি</th>
+                                    <th class="p-4">অনুমোদিত পারমিশনসমূহ</th>
+                                    <th class="p-4">স্ট্যাটাস</th>
+                                    <th class="p-4 text-right">অ্যাকশন</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admins-table-body" class="divide-y divide-slate-800 text-slate-300">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==============================================
+                 TAB 2: STUDENT DIRECTORY
+            ============================================== -->
+            <div id="dir-pane-students" class="hidden space-y-6">
+                <div class="p-6 rounded-3xl bg-slate-900 border border-slate-800 space-y-4">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div>
+                            <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                                <i class="fa-solid fa-users text-blue-500"></i> সকল নিবন্ধিত শিক্ষার্থী
+                            </h3>
+                            <p class="text-xs text-slate-400">প্রতিটি শিক্ষার্থীর জন্য নির্ধারিত শ্রেণিভিত্তিক ইউনিক আইডি (AP-26-XXXX)।</p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs text-slate-400">শ্রেণি ফিল্টার:</span>
+                            <select id="student-class-filter" onchange="filterStudentList()" class="bg-slate-800 border border-slate-700 text-xs text-white rounded-xl px-3 py-1.5 outline-none font-semibold">
+                                <option value="all">সকল শ্রেণি</option>
+                                <option value="8">অষ্টম শ্রেণি (AP-26-8001+)</option>
+                                <option value="9">নবম শ্রেণি (AP-26-9001+)</option>
+                                <option value="10">দশম শ্রেণি (AP-26-10001+)</option>
+                                <option value="11">একাদশ শ্রেণি (AP-26-1101+)</option>
+                                <option value="12">দ্বাদশ শ্রেণি (AP-26-1201+)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Search Input -->
+                    <div class="relative">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3.5 text-slate-500 text-sm"></i>
+                        <input type="text" id="student-search-input" oninput="filterStudentList()" placeholder="নাম, মোবাইল নম্বর বা স্টুডেন্ট আইডি দিয়ে খুঁজুন..." class="w-full pl-10 pr-4 py-2.5 bg-slate-800/80 border border-slate-700 rounded-xl text-xs text-white outline-none focus:border-blue-500 transition">
+                    </div>
+                </div>
+
+                <!-- Students Table -->
+                <div class="bg-slate-900 border border-slate-800 rounded-3xl overflow-hidden shadow-sm">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs">
+                            <thead class="bg-slate-800/60 text-slate-400 font-semibold uppercase text-[10px] tracking-wider border-b border-slate-800">
+                                <tr>
+                                    <th class="p-4">স্টুডেন্ট আইডি</th>
+                                    <th class="p-4">নাম</th>
+                                    <th class="p-4">মোবাইল নম্বর</th>
+                                    <th class="p-4">শ্রেণি</th>
+                                    <th class="p-4">প্রতিষ্ঠান / স্কুল</th>
+                                    <th class="p-4">রেজিস্ট্রেশন তারিখ</th>
+                                    <th class="p-4 text-right">অ্যাকশন</th>
+                                </tr>
+                            </thead>
+                            <tbody id="students-table-body" class="divide-y divide-slate-800 text-slate-300">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==============================================
+                 TAB 3: FINANCE & FEES
+            ============================================== -->
+            <div id="dir-pane-finance" class="hidden space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="p-5 rounded-2xl bg-pink-950/20 border border-pink-500/30 text-white space-y-1">
+                        <span class="text-xs text-pink-400 font-bold uppercase">বিকাশ কালেকশন</span>
+                        <h4 id="fin-bkash-total" class="text-2xl font-black font-mono text-pink-300">৳ ০</h4>
+                        <p class="text-[11px] text-slate-400">০১৭৯৬৪৩১৭৯৫</p>
+                    </div>
+                    <div class="p-5 rounded-2xl bg-orange-950/20 border border-orange-500/30 text-white space-y-1">
+                        <span class="text-xs text-orange-400 font-bold uppercase">নগদ কালেকশন</span>
+                        <h4 id="fin-nagad-total" class="text-2xl font-black font-mono text-orange-300">৳ ০</h4>
+                        <p class="text-[11px] text-slate-400">০১৫২১৪৪৩০৬৫</p>
+                    </div>
+                    <div class="p-5 rounded-2xl bg-emerald-950/20 border border-emerald-500/30 text-white space-y-1">
+                        <span class="text-xs text-emerald-400 font-bold uppercase">ক্যাশ / অফলাইন</span>
+                        <h4 id="fin-cash-total" class="text-2xl font-black font-mono text-emerald-300">৳ ০</h4>
+                        <p class="text-[11px] text-slate-400">জলেশ্বরীতলা অফিস</p>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 space-y-4">
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+                        <h4 class="font-bold text-sm text-white flex items-center gap-2">
+                            <i class="fa-solid fa-receipt text-emerald-400"></i> সাম্প্রতিক পেমেন্ট ট্রানজ্যাকশন হিস্ট্রি
+                        </h4>
+                        <button onclick="loadFinancialData()" class="text-xs text-blue-400 font-semibold hover:underline">
+                            <i class="fa-solid fa-rotate-right"></i> রিফ্রেশ
+                        </button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs">
+                            <thead class="bg-slate-800/60 text-slate-400 font-semibold uppercase text-[10px] tracking-wider border-b border-slate-800">
+                                <tr>
+                                    <th class="p-3">তারিখ ও সময়</th>
+                                    <th class="p-3">শিক্ষার্থী / প্রেরক</th>
+                                    <th class="p-3">মেথড</th>
+                                    <th class="p-3">Transaction ID (TrxID)</th>
+                                    <th class="p-3">পরিমাণ</th>
+                                    <th class="p-3">স্ট্যাটাস</th>
+                                </tr>
+                            </thead>
+                            <tbody id="transactions-table-body" class="divide-y divide-slate-800 text-slate-300">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==============================================
+                 TAB 4: ONLINE EXAM & OMR CONTROL
+            ============================================== -->
+            <div id="dir-pane-exams" class="hidden space-y-6">
+                <div class="p-6 rounded-3xl bg-slate-900 border border-slate-800 space-y-4">
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                        <div>
+                            <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                                <i class="fa-solid fa-file-pen text-indigo-400"></i> অনলাইন পরীক্ষা ও ওএমআর মাস্টার প্যানেল
+                            </h3>
+                            <p class="text-xs text-slate-400">যেকোনো কপি করা প্রশ্ন পেস্ট করে অটো সাজানো বা সরাসরি ওএমআর কি সেট করার সুবিধা।</p>
+                        </div>
+                    </div>
+
+                    <!-- Quick Add Question / OMR Form -->
+                    <div class="bg-slate-800/40 border border-slate-800 p-5 rounded-2xl space-y-4">
+                        <h4 class="text-sm font-bold text-white">নতুন ওএমআর টেস্ট তৈরি করুন</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-xs text-slate-300 mb-1">পরীক্ষার নাম:</label>
+                                <input type="text" id="exam-create-title" placeholder="যেমন: অধ্যায় ২ গতি স্পেশাল টেস্ট" class="w-full p-2.5 bg-slate-800 border border-slate-700 rounded-xl text-xs text-white outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-slate-300 mb-1">শ্রেণি:</label>
+                                <select id="exam-create-class" class="w-full p-2.5 bg-slate-800 border border-slate-700 rounded-xl text-xs text-white outline-none">
+                                    <option value="ssc">নবম-দশম শ্রেণি (SSC)</option>
+                                    <option value="hsc1">একাদশ শ্রেণি (HSC 1st)</option>
+                                    <option value="hsc2">দ্বাদশ শ্রেণি (HSC 2nd)</option>
+                                    <option value="class8">অষ্টম শ্রেণি</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs text-slate-300 mb-1">সময়সীমা (মিনিট):</label>
+                                <input type="number" id="exam-create-duration" value="25" class="w-full p-2.5 bg-slate-800 border border-slate-700 rounded-xl text-xs text-white outline-none">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs text-slate-300 mb-1">কপি করা প্রশ্ন পেস্ট করুন (বা ওএমআর কি তৈরি করুন):</label>
+                            <textarea id="exam-create-text" rows="5" placeholder="১. কোনো বস্তুর অবস্থানের পরিবর্তনের হারকে কী বলে?&#10;ক) ত্বরণ  খ) বেগ  গ) মন্দন  ঘ) সরণ&#10;উত্তর: খ" class="w-full p-3 bg-slate-800 border border-slate-700 rounded-xl text-xs text-white font-sans outline-none leading-relaxed"></textarea>
+                        </div>
+
+                        <button onclick="handleSaveNewExam()" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold transition flex items-center gap-2 shadow-md">
+                            <i class="fa-solid fa-cloud-arrow-up"></i> পরীক্ষাটি পাবলিশ করুন
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==============================================
+                 TAB 5: BULKSMSBD SETTINGS & SMS LOGS
+            ============================================== -->
+            <div id="dir-pane-sms" class="hidden space-y-6">
+                <!-- BulkSMSBD API Config Form -->
+                <div class="p-6 rounded-3xl bg-slate-900 border border-slate-800 space-y-4">
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                        <div class="flex items-center gap-2.5">
+                            <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold text-lg">
+                                <i class="fa-solid fa-tower-cell"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-base font-bold text-white">BulkSMSBD API কনফিগারেশন</h3>
+                                <p class="text-xs text-slate-400">প্রতিটি এসএমএস সর্বোচ্চ ১৬০ ক্যারেক্টারের ভেতরে রাখা হবে (Single SMS Billing)।</p>
+                            </div>
+                        </div>
+                        <span class="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-400 text-xs font-bold border border-emerald-500/30">
+                            Strict 1-SMS Policy
+                        </span>
+                    </div>
+
+                    <form onsubmit="handleSaveSmsConfig(event)" class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-300 mb-1">BulkSMSBD API Key:</label>
+                            <input type="text" id="sms-config-apikey" placeholder="e.g. 5x7f29... (আপনার এপিআই কি)" class="w-full p-2.5 bg-slate-800 border border-slate-700 rounded-xl text-xs text-white font-mono outline-none focus:border-amber-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-300 mb-1">Sender ID (অনুমোদিত হলে):</label>
+                            <input type="text" id="sms-config-senderid" value="8809617621111" class="w-full p-2.5 bg-slate-800 border border-slate-700 rounded-xl text-xs text-white font-mono outline-none focus:border-amber-500">
+                        </div>
+                        <div class="flex items-end">
+                            <button type="submit" class="w-full py-2.5 bg-amber-600 hover:bg-amber-500 text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-floppy-disk"></i> API সেটিংস সেভ করুন
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Live SMS Delivery Logs -->
+                <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 space-y-4">
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                        <h4 class="font-bold text-sm text-white flex items-center gap-2">
+                            <i class="fa-solid fa-list-check text-blue-400"></i> এসএমএস ডেলিভারি ও অডিট হিস্ট্রি (English SMS Log)
+                        </h4>
+                        <button onclick="clearSmsLogs()" class="text-xs text-slate-400 hover:text-red-400 transition">
+                            <i class="fa-solid fa-trash-can"></i> লগ ক্লিয়ার করুন
+                        </button>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs">
+                            <thead class="bg-slate-800/60 text-slate-400 font-semibold uppercase text-[10px] tracking-wider border-b border-slate-800">
+                                <tr>
+                                    <th class="p-3">সময়</th>
+                                    <th class="p-3">প্রাপক</th>
+                                    <th class="p-3">মেসেজ (English)</th>
+                                    <th class="p-3">দৈর্ঘ্য / SMS সংখ্যা</th>
+                                    <th class="p-3">স্ট্যাটাস</th>
+                                </tr>
+                            </thead>
+                            <tbody id="sms-logs-table-body" class="divide-y divide-slate-800 text-slate-300">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==============================================
+                 TAB 6: DIRECTOR PASSWORD & SECURITY
+            ============================================== -->
+            <div id="dir-pane-settings" class="hidden space-y-6">
+                <div class="p-6 rounded-3xl bg-slate-900 border border-slate-800 max-w-xl mx-auto space-y-5">
+                    <div class="flex items-center gap-3 border-b border-slate-800 pb-3">
+                        <div class="w-10 h-10 rounded-xl bg-blue-600/20 text-blue-400 flex items-center justify-center font-bold text-lg">
+                            <i class="fa-solid fa-shield-halved"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-base font-bold text-white">ডিরেক্টর পাসওয়ার্ড পরিবর্তন</h3>
+                            <p class="text-xs text-slate-400">ভবিষ্যতে ডিরেক্টর পোর্টালে প্রবেশের গোপন পাসওয়ার্ড এখান থেকে পরিবর্তন করুন।</p>
+                        </div>
+                    </div>
+
+                    <form onsubmit="handleChangeDirectorPassword(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1">বর্তমান পাসওয়ার্ড:</label>
+                            <input type="password" id="dir-curr-pass" required class="w-full p-2.5 bg-slate-800 border border-slate-700 rounded-xl text-xs text-white font-mono outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1">নতুন পাসওয়ার্ড:</label>
+                            <input type="password" id="dir-new-pass" required placeholder="কমপক্ষে ৬ ক্যারেক্টার" class="w-full p-2.5 bg-slate-800 border border-slate-700 rounded-xl text-xs text-white font-mono outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1">নতুন পাসওয়ার্ড নিশ্চিত করুন:</label>
+                            <input type="password" id="dir-confirm-pass" required class="w-full p-2.5 bg-slate-800 border border-slate-700 rounded-xl text-xs text-white font-mono outline-none">
+                        </div>
+
+                        <div id="dir-pass-change-alert" class="hidden p-3 rounded-xl text-xs font-bold"></div>
+
+                        <button type="submit" class="w-full py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold transition">
+                            পাসওয়ার্ড পরিবর্তন সম্পন্ন করুন
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- ====================================================
+         3. MODAL: CREATE NEW ADMIN & SEND AUTO SMS
+    ==================================================== -->
+    <div id="modal-create-admin" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-lg w-full p-6 sm:p-7 shadow-2xl space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-blue-600/20 text-blue-400 flex items-center justify-center font-bold">
+                        <i class="fa-solid fa-user-shield"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-white text-sm">নতুন সহকারী অ্যাডমিন নিয়োগ</h4>
+                        <p class="text-[11px] text-slate-400">নিয়োগের সাথে সাথে তার ফোনে অটো এসএমএস যাবে।</p>
+                    </div>
+                </div>
+                <button onclick="closeCreateAdminModal()" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-400 flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <form onsubmit="handleCreateAdminSubmit(event)" class="space-y-3.5">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">অ্যাডমিনের পূর্ণ নাম:</label>
+                    <input type="text" id="new-admin-name" required placeholder="যেমন: তানভীর আহমেদ" class="w-full p-2.5 bg-slate-800 border border-slate-700 rounded-xl text-xs text-white outline-none focus:border-blue-500">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">মোবাইল নম্বর (যেখানে এসএমএস যাবে):</label>
+                    <input type="text" id="new-admin-phone" required placeholder="017XXXXXXXX" class="w-full p-2.5 bg-slate-800 border border-slate-700 rounded-xl text-xs text-white font-mono outline-none focus:border-blue-500">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">পদবি / দায়িত্ব:</label>
+                    <select id="new-admin-role" class="w-full p-2.5 bg-slate-800 border border-slate-700 rounded-xl text-xs text-white outline-none">
+                        <option value="সহকারী শিক্ষক (ফিজিক্স)">সহকারী শিক্ষক (ফিজিক্স)</option>
+                        <option value="সিনিয়র মডারেটর">সিনিয়র মডারেটর</option>
+                        <option value="পরীক্ষা ও ওএমআর নিয়ন্ত্রক">পরীক্ষা ও ওএমআর নিয়ন্ত্রক</option>
+                        <option value="কোর্স কো-অর্ডিনেটর">কোর্স কো-অর্ডিনেটর</option>
+                    </select>
+                </div>
+
+                <div class="space-y-2 pt-2 border-t border-slate-800">
+                    <label class="block text-xs font-bold text-blue-400">এই অ্যাডমিনকে যে যে কাজের অ্যাক্সেস দিবেন (টিক দিন):</label>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-slate-300">
+                        <label class="flex items-center gap-2 p-2 bg-slate-800/60 rounded-xl border border-slate-700/60 cursor-pointer">
+                            <input type="checkbox" id="perm-students" checked class="rounded text-blue-600">
+                            <span>শিক্ষার্থী তালিকা ও ভেরিফিকেশন</span>
+                        </label>
+                        <label class="flex items-center gap-2 p-2 bg-slate-800/60 rounded-xl border border-slate-700/60 cursor-pointer">
+                            <input type="checkbox" id="perm-exams" checked class="rounded text-blue-600">
+                            <span>অনলাইন পরীক্ষা ও ওএমআর কি</span>
+                        </label>
+                        <label class="flex items-center gap-2 p-2 bg-slate-800/60 rounded-xl border border-slate-700/60 cursor-pointer">
+                            <input type="checkbox" id="perm-qa" checked class="rounded text-blue-600">
+                            <span>প্রশ্নোত্তর (Q&A) মডারেশন</span>
+                        </label>
+                        <label class="flex items-center gap-2 p-2 bg-slate-800/60 rounded-xl border border-slate-700/60 cursor-pointer">
+                            <input type="checkbox" id="perm-resources" class="rounded text-blue-600">
+                            <span>লেকচার শিট ও কনটেন্ট এডিট</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="p-3 bg-blue-950/40 border border-blue-800/50 rounded-xl text-[11px] text-blue-300 flex items-start gap-2">
+                    <i class="fa-solid fa-circle-info text-blue-400 mt-0.5"></i>
+                    <span>সাবমিট করলেই স্বয়ংক্রিয়ভাবে একটি ইউনিক অ্যাডমিন আইডি ও ৬-সংখ্যার পাসওয়ার্ড জেনারেট হয়ে অ্যাডমিনের ফোনে এসএমএস আকারে চলে যাবে (Single SMS)।</span>
+                </div>
+
+                <div class="flex items-center justify-end gap-2 pt-2">
+                    <button type="button" onclick="closeCreateAdminModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-semibold">বাতিল</button>
+                    <button type="submit" class="px-5 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-md">
+                        <i class="fa-solid fa-paper-plane"></i> নিয়োগ ও SMS প্রেরণ
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="sms_service.js"></script>
+    <script>
+        /* ── Director Authentication & Logic ── */
+        const DIRECTOR_CREDENTIALS = {
+            user: "01796431795",
+            defaultPass: "alamin#director2026"
+        };
+
+        function getDirectorPassword() {
+            return localStorage.getItem(SMS_STORAGE_KEYS.DIRECTOR_PASS) || DIRECTOR_CREDENTIALS.defaultPass;
+        }
+
+        function checkDirectorSession() {
+            const isAuth = sessionStorage.getItem('is_director_logged_in') === 'true';
+            const loginScreen = document.getElementById('director-login-screen');
+            const dashboard = document.getElementById('director-dashboard');
+
+            if (isAuth) {
+                loginScreen.classList.add('hidden');
+                dashboard.classList.remove('hidden');
+                refreshAllDirectorData();
+            } else {
+                loginScreen.classList.remove('hidden');
+                dashboard.classList.add('hidden');
+            }
+        }
+
+        function handleDirectorLogin(e) {
+            e.preventDefault();
+            const userInput = document.getElementById('dir-login-user').value.trim();
+            const passInput = document.getElementById('dir-login-pass').value.trim();
+            const errBox = document.getElementById('dir-login-error');
+            const masterPass = getDirectorPassword();
+
+            if ((userInput === DIRECTOR_CREDENTIALS.user || userInput === 'director' || userInput === 'admin') && passInput === masterPass) {
+                sessionStorage.setItem('is_director_logged_in', 'true');
+                errBox.classList.add('hidden');
+                checkDirectorSession();
+            } else {
+                errBox.classList.remove('hidden');
+            }
+        }
+
+        function handleDirectorLogout() {
+            sessionStorage.removeItem('is_director_logged_in');
+            checkDirectorSession();
+        }
+
+        function switchDirectorTab(tabName) {
+            const tabs = ['admins', 'students', 'finance', 'exams', 'sms', 'settings'];
+            tabs.forEach(t => {
+                const btn = document.getElementById(`dir-tab-${t}`);
+                const pane = document.getElementById(`dir-pane-${t}`);
+                if (btn) {
+                    if (t === tabName) {
+                        btn.className = "tab-btn-active px-4 py-2.5 rounded-xl font-bold flex items-center gap-2 whitespace-nowrap transition";
+                    } else {
+                        btn.className = "px-4 py-2.5 rounded-xl font-bold text-slate-400 hover:text-white flex items-center gap-2 whitespace-nowrap transition";
+                    }
+                }
+                if (pane) {
+                    if (t === tabName) pane.classList.remove('hidden');
+                    else pane.classList.add('hidden');
+                }
+            });
+        }
+
+        /* ── Data Refreshers ── */
+        function refreshAllDirectorData() {
+            loadAdminList();
+            loadStudentList();
+            loadFinancialData();
+            loadSmsLogs();
+            loadSmsConfigIntoForm();
+        }
+
+        /* ── Admins Management ── */
+        function getRegisteredAdmins() {
+            try {
+                const raw = localStorage.getItem(SMS_STORAGE_KEYS.ADMINS);
+                return raw ? JSON.parse(raw) : [];
+            } catch {
+                return [];
+            }
+        }
+
+        function saveRegisteredAdmins(admins) {
+            localStorage.setItem(SMS_STORAGE_KEYS.ADMINS, JSON.stringify(admins));
+        }
+
+        function openCreateAdminModal() {
+            document.getElementById('modal-create-admin').classList.remove('hidden');
+        }
+
+        function closeCreateAdminModal() {
+            document.getElementById('modal-create-admin').classList.add('hidden');
+        }
+
+        async function handleCreateAdminSubmit(e) {
+            e.preventDefault();
+            const name = document.getElementById('new-admin-name').value.trim();
+            const phone = document.getElementById('new-admin-phone').value.trim();
+            const role = document.getElementById('new-admin-role').value;
+            const perms = {
+                canManageStudents: document.getElementById('perm-students').checked,
+                canManageExams: document.getElementById('perm-exams').checked,
+                canModerateQA: document.getElementById('perm-qa').checked,
+                canManageResources: document.getElementById('perm-resources').checked
+            };
+
+            const admins = getRegisteredAdmins();
+            const adminId = 'ADM-' + (100 + admins.length + 1);
+            const rawPass = Math.floor(100000 + Math.random() * 900000).toString(); // 6 digit secure code
+
+            const newAdmin = {
+                id: adminId,
+                name: name,
+                phone: phone,
+                role: role,
+                password: rawPass,
+                permissions: perms,
+                isActive: true,
+                createdAt: new Date().toISOString()
+            };
+
+            admins.push(newAdmin);
+            saveRegisteredAdmins(admins);
+
+            // Send Single English SMS via BulkSMSBD (<= 160 chars)
+            const smsText = makeAdminSmsMessage(name, adminId, rawPass);
+            await sendSmsNotification({
+                to: phone,
+                message: smsText,
+                purpose: 'Admin Appointment',
+                recipientName: name
+            });
+
+            closeCreateAdminModal();
+            refreshAllDirectorData();
+            alert(`অভিনন্দন! ${name}-কে অ্যাডমিন হিসেবে নিয়োগ দেওয়া হয়েছে এবং তার ফোনে SMS পাঠানো হয়েছে।\nঅ্যাডমিন আইডি: ${adminId}\nপাসওয়ার্ড: ${rawPass}`);
+        }
+
+        function loadAdminList() {
+            const admins = getRegisteredAdmins();
+            document.getElementById('stat-total-admins').textContent = admins.length;
+            const tag = document.getElementById('active-admins-count-tag');
+            if (tag) tag.textContent = `${admins.filter(a => a.isActive).length} জন সক্রিয়`;
+
+            const tbody = document.getElementById('admins-table-body');
+            if (!tbody) return;
+
+            if (admins.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-500">এখনো কোনো অ্যাডমিন নিয়োগ দেওয়া হয়নি। "অ্যাডমিন তৈরি করুন" বাটনে চাপ দিয়ে সহকারী শিক্ষক নিয়োগ দিন।</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = admins.map(a => `
+                <tr class="hover:bg-slate-800/40 transition">
+                    <td class="p-4 font-mono font-bold text-blue-400">${a.id}</td>
+                    <td class="p-4">
+                        <p class="font-bold text-white">${a.name}</p>
+                        <p class="text-[11px] text-slate-400 font-mono">${a.phone}</p>
+                    </td>
+                    <td class="p-4 text-slate-300 font-semibold">${a.role}</td>
+                    <td class="p-4">
+                        <div class="flex flex-wrap gap-1 max-w-xs">
+                            ${a.permissions.canManageStudents ? '<span class="px-2 py-0.5 rounded bg-blue-900/60 text-blue-300 text-[10px]">ছাত্র তালিকা</span>' : ''}
+                            ${a.permissions.canManageExams ? '<span class="px-2 py-0.5 rounded bg-indigo-900/60 text-indigo-300 text-[10px]">ওএমআর/পরীক্ষা</span>' : ''}
+                            ${a.permissions.canModerateQA ? '<span class="px-2 py-0.5 rounded bg-amber-900/60 text-amber-300 text-[10px]">প্রশ্নোত্তর</span>' : ''}
+                            ${a.permissions.canManageResources ? '<span class="px-2 py-0.5 rounded bg-emerald-900/60 text-emerald-300 text-[10px]">রিসোর্স</span>' : ''}
+                        </div>
+                    </td>
+                    <td class="p-4">
+                        <span class="px-2.5 py-1 rounded-full ${a.isActive ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-red-500/20 text-red-400'} text-[10px] font-bold">
+                            ${a.isActive ? 'সক্রিয়' : 'স্থগিত'}
+                        </span>
+                    </td>
+                    <td class="p-4 text-right space-x-1">
+                        <button onclick="resendAdminSms('${a.id}')" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-blue-400 rounded-lg text-xs" title="পুনরায় ফোনে SMS পাঠান">
+                            <i class="fa-solid fa-paper-plane"></i>
+                        </button>
+                        <button onclick="toggleAdminStatus('${a.id}')" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-amber-400 rounded-lg text-xs" title="অ্যাক্টিভ/স্থগিত করুন">
+                            <i class="fa-solid fa-power-off"></i>
+                        </button>
+                        <button onclick="deleteAdmin('${a.id}')" class="px-2.5 py-1 bg-slate-800 hover:bg-red-900 text-red-400 rounded-lg text-xs" title="মুছে ফেলুন">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        async function resendAdminSms(adminId) {
+            const admins = getRegisteredAdmins();
+            const a = admins.find(adm => adm.id === adminId);
+            if (!a) return;
+
+            const smsText = makeAdminSmsMessage(a.name, a.id, a.password);
+            await sendSmsNotification({
+                to: a.phone,
+                message: smsText,
+                purpose: 'Admin Password Resend',
+                recipientName: a.name
+            });
+            alert(`${a.name}-এর ফোনে পুনরায় এসএমএস পাঠানো হয়েছে!`);
+            loadSmsLogs();
+        }
+
+        function toggleAdminStatus(adminId) {
+            const admins = getRegisteredAdmins();
+            const a = admins.find(adm => adm.id === adminId);
+            if (!a) return;
+            a.isActive = !a.isActive;
+            saveRegisteredAdmins(admins);
+            loadAdminList();
+        }
+
+        function deleteAdmin(adminId) {
+            if (!confirm('আপনি কি নিশ্চিতভাবে এই অ্যাডমিনকে রিমুভ করতে চান?')) return;
+            let admins = getRegisteredAdmins();
+            admins = admins.filter(a => a.id !== adminId);
+            saveRegisteredAdmins(admins);
+            loadAdminList();
+        }
+
+        /* ── Students Management ── */
+        function getRegisteredStudents() {
+            try {
+                const raw = localStorage.getItem(SMS_STORAGE_KEYS.STUDENTS);
+                return raw ? JSON.parse(raw) : [];
+            } catch {
+                return [];
+            }
+        }
+
+        function loadStudentList() {
+            const students = getRegisteredStudents();
+            document.getElementById('stat-total-students').textContent = students.length;
+            renderStudentsTable(students);
+        }
+
+        function filterStudentList() {
+            const allStudents = getRegisteredStudents();
+            const classFilter = document.getElementById('student-class-filter').value;
+            const searchKeyword = document.getElementById('student-search-input').value.toLowerCase().trim();
+
+            const filtered = allStudents.filter(s => {
+                const matchesClass = (classFilter === 'all') || (String(s.classKey) === String(classFilter));
+                const matchesSearch = !searchKeyword || 
+                    (s.name && s.name.toLowerCase().includes(searchKeyword)) ||
+                    (s.phone && s.phone.includes(searchKeyword)) ||
+                    (s.id && s.id.toLowerCase().includes(searchKeyword)) ||
+                    (s.institution && s.institution.toLowerCase().includes(searchKeyword));
+                return matchesClass && matchesSearch;
+            });
+
+            renderStudentsTable(filtered);
+        }
+
+        function renderStudentsTable(students) {
+            const tbody = document.getElementById('students-table-body');
+            if (!tbody) return;
+
+            if (students.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-slate-500">কোনো শিক্ষার্থী পাওয়া যায়নি। শিক্ষার্থীরা ওয়েবসাইটে গিয়ে সরাসরি অ্যাকাউন্ট তৈরি করতে পারবে।</td></tr>`;
+                return;
+            }
+
+            const classLabels = {
+                '8': 'অষ্টম শ্রেণি',
+                '9': 'নবম শ্রেণি',
+                '10': 'দশম শ্রেণি',
+                '11': 'একাদশ শ্রেণি',
+                '12': 'দ্বাদশ শ্রেণি'
+            };
+
+            tbody.innerHTML = students.map(s => `
+                <tr class="hover:bg-slate-800/40 transition">
+                    <td class="p-4 font-mono font-bold text-blue-400 whitespace-nowrap">${s.id}</td>
+                    <td class="p-4 font-bold text-white">${s.name}</td>
+                    <td class="p-4 font-mono text-slate-300">${s.phone}</td>
+                    <td class="p-4"><span class="px-2 py-0.5 rounded bg-slate-800 text-slate-300 font-semibold text-[11px]">${classLabels[s.classKey] || s.classKey}</span></td>
+                    <td class="p-4 text-slate-400 text-xs">${s.institution || '—'}</td>
+                    <td class="p-4 text-slate-500 text-[11px]">${s.createdAt ? new Date(s.createdAt).toLocaleDateString('bn-BD') : '—'}</td>
+                    <td class="p-4 text-right">
+                        <button onclick="resendStudentIdSms('${s.id}')" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-blue-400 rounded-lg text-xs" title="ফোনে পুনরায় Student ID পাঠান">
+                            <i class="fa-solid fa-comment-sms"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        async function resendStudentIdSms(studentId) {
+            const students = getRegisteredStudents();
+            const s = students.find(st => st.id === studentId);
+            if (!s) return;
+
+            const smsText = makeStudentSmsMessage(s.name, s.id);
+            await sendSmsNotification({
+                to: s.phone,
+                message: smsText,
+                purpose: 'Student ID Resend',
+                recipientName: s.name
+            });
+            alert(`${s.name}-এর ফোনে Student ID (${s.id}) এসএমএস আকারে পাঠানো হয়েছে!`);
+            loadSmsLogs();
+        }
+
+        /* ── Finance & Revenue Data ── */
+        function loadFinancialData() {
+            let total = 0;
+            let bkash = 0;
+            let nagad = 0;
+            let cash = 0;
+
+            try {
+                const rawTx = localStorage.getItem('alamin_transactions_log');
+                const txList = rawTx ? JSON.parse(rawTx) : [];
+                txList.forEach(t => {
+                    const amt = parseInt(t.amount || 0);
+                    total += amt;
+                    if (t.method === 'bkash') bkash += amt;
+                    else if (t.method === 'nagad') nagad += amt;
+                    else cash += amt;
+                });
+
+                document.getElementById('stat-total-revenue').textContent = `৳ ${total.toLocaleString('bn-BD')}`;
+                document.getElementById('fin-bkash-total').textContent = `৳ ${bkash.toLocaleString('bn-BD')}`;
+                document.getElementById('fin-nagad-total').textContent = `৳ ${nagad.toLocaleString('bn-BD')}`;
+                document.getElementById('fin-cash-total').textContent = `৳ ${cash.toLocaleString('bn-BD')}`;
+
+                const tbody = document.getElementById('transactions-table-body');
+                if (tbody) {
+                    if (txList.length === 0) {
+                        tbody.innerHTML = `<tr><td colspan="6" class="p-5 text-center text-slate-500">এখনো কোনো পেমেন্ট রেকর্ড নেই। শিক্ষার্থীরা কোর্স ফি প্রদান করলে এখানে তাৎক্ষণিক প্রদর্শিত হবে।</td></tr>`;
+                    } else {
+                        tbody.innerHTML = txList.map(tx => `
+                            <tr class="hover:bg-slate-800/40">
+                                <td class="p-3 text-slate-400">${new Date(tx.time || Date.now()).toLocaleDateString('bn-BD')}</td>
+                                <td class="p-3 font-semibold text-white">${tx.studentName || tx.phone}</td>
+                                <td class="p-3 uppercase font-bold text-xs ${tx.method === 'bkash' ? 'text-pink-400' : tx.method === 'nagad' ? 'text-orange-400' : 'text-emerald-400'}">${tx.method}</td>
+                                <td class="p-3 font-mono text-slate-300 font-bold">${tx.trxId || '—'}</td>
+                                <td class="p-3 font-mono text-emerald-400 font-bold">৳ ${tx.amount}</td>
+                                <td class="p-3"><span class="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 text-[10px] font-bold">সফল</span></td>
+                            </tr>
+                        `).join('');
+                    }
+                }
+            } catch(e) {}
+        }
+
+        /* ── SMS Logs & Config ── */
+        function loadSmsLogs() {
+            try {
+                const raw = localStorage.getItem(SMS_STORAGE_KEYS.SMS_LOGS);
+                const logs = raw ? JSON.parse(raw) : [];
+                document.getElementById('stat-total-sms').textContent = logs.length;
+
+                const tbody = document.getElementById('sms-logs-table-body');
+                if (!tbody) return;
+
+                if (logs.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-slate-500">কোনো এসএমএস হিস্ট্রি নেই। নতুন স্টুডেন্ট বা অ্যাডমিন যুক্ত হলেই এখানে লাইভ লগ প্রদর্শিত হবে।</td></tr>`;
+                    return;
+                }
+
+                tbody.innerHTML = logs.map(l => `
+                    <tr class="hover:bg-slate-800/40 transition">
+                        <td class="p-3 text-[11px] text-slate-400 whitespace-nowrap">${new Date(l.timestamp).toLocaleTimeString('bn-BD')}</td>
+                        <td class="p-3">
+                            <span class="font-mono text-blue-400 font-bold">${l.phone}</span>
+                            <span class="block text-[10px] text-slate-500">${l.recipientName} • ${l.purpose}</span>
+                        </td>
+                        <td class="p-3 font-sans text-xs text-slate-200 max-w-md">${l.message}</td>
+                        <td class="p-3 whitespace-nowrap">
+                            <span class="px-2 py-0.5 rounded bg-emerald-950 text-emerald-400 font-mono text-[10px] font-bold border border-emerald-800">
+                                ${l.charCount} chars (${l.smsCount} SMS)
+                            </span>
+                        </td>
+                        <td class="p-3 text-[11px] font-semibold text-slate-400 whitespace-nowrap">${l.status}</td>
+                    </tr>
+                `).join('');
+            } catch {}
+        }
+
+        function clearSmsLogs() {
+            if (confirm('সকল এসএমএস হিস্ট্রি ক্লিয়ার করতে চান?')) {
+                localStorage.removeItem(SMS_STORAGE_KEYS.SMS_LOGS);
+                loadSmsLogs();
+            }
+        }
+
+        function loadSmsConfigIntoForm() {
+            const config = getBulkSmsConfig();
+            const apiKeyInput = document.getElementById('sms-config-apikey');
+            const senderIdInput = document.getElementById('sms-config-senderid');
+            if (apiKeyInput) apiKeyInput.value = config.apiKey || '';
+            if (senderIdInput) senderIdInput.value = config.senderId || '8809617621111';
+        }
+
+        function handleSaveSmsConfig(e) {
+            e.preventDefault();
+            const apiKey = document.getElementById('sms-config-apikey').value.trim();
+            const senderId = document.getElementById('sms-config-senderid').value.trim();
+            saveBulkSmsConfig({
+                apiKey: apiKey,
+                senderId: senderId,
+                apiUrl: 'https://bulksmsbd.net/api/smsapi',
+                providerName: 'BulkSMSBD'
+            });
+            alert('BulkSMSBD API সেটিংস সফলভাবে সংরক্ষিত হয়েছে!');
+        }
+
+        /* ── Director Password Change ── */
+        function handleChangeDirectorPassword(e) {
+            e.preventDefault();
+            const curr = document.getElementById('dir-curr-pass').value.trim();
+            const n1 = document.getElementById('dir-new-pass').value.trim();
+            const n2 = document.getElementById('dir-confirm-pass').value.trim();
+            const alertBox = document.getElementById('dir-pass-change-alert');
+            const masterPass = getDirectorPassword();
+
+            if (curr !== masterPass) {
+                alertBox.className = "p-3 rounded-xl text-xs font-bold bg-red-950/80 text-red-300 border border-red-800";
+                alertBox.textContent = "বর্তমান পাসওয়ার্ড ভুল!";
+                alertBox.classList.remove('hidden');
+                return;
+            }
+
+            if (n1.length < 6) {
+                alertBox.className = "p-3 rounded-xl text-xs font-bold bg-amber-950/80 text-amber-300 border border-amber-800";
+                alertBox.textContent = "নতুন পাসওয়ার্ড কমপক্ষে ৬ ক্যারেক্টার হতে হবে।";
+                alertBox.classList.remove('hidden');
+                return;
+            }
+
+            if (n1 !== n2) {
+                alertBox.className = "p-3 rounded-xl text-xs font-bold bg-red-950/80 text-red-300 border border-red-800";
+                alertBox.textContent = "নতুন দুটি পাসওয়ার্ড মিলছে না!";
+                alertBox.classList.remove('hidden');
+                return;
+            }
+
+            localStorage.setItem(SMS_STORAGE_KEYS.DIRECTOR_PASS, n1);
+            alertBox.className = "p-3 rounded-xl text-xs font-bold bg-emerald-950/80 text-emerald-300 border border-emerald-800";
+            alertBox.textContent = "অভিনন্দন! আপনার ডিরেক্টর পাসওয়ার্ড সফলভাবে পরিবর্তিত হয়েছে।";
+            alertBox.classList.remove('hidden');
+            document.getElementById('dir-curr-pass').value = '';
+            document.getElementById('dir-new-pass').value = '';
+            document.getElementById('dir-confirm-pass').value = '';
+        }
+
+        /* ── Exam Save Handler ── */
+        function handleSaveNewExam() {
+            const title = document.getElementById('exam-create-title').value.trim();
+            const cls = document.getElementById('exam-create-class').value;
+            const dur = document.getElementById('exam-create-duration').value;
+            const text = document.getElementById('exam-create-text').value.trim();
+
+            if (!title) {
+                alert('পরীক্ষার নাম লিখুন!');
+                return;
+            }
+
+            let exams = [];
+            try {
+                const raw = localStorage.getItem('alamin_custom_exams');
+                if (raw) exams = JSON.parse(raw);
+            } catch {}
+
+            exams.push({
+                id: 'exam_' + Date.now(),
+                title: title,
+                classKey: cls,
+                duration: dur,
+                content: text,
+                createdAt: new Date().toISOString()
+            });
+
+            localStorage.setItem('alamin_custom_exams', JSON.stringify(exams));
+            alert(`"${title}" পরীক্ষাটি সফলভাবে তৈরি ও সংরক্ষণ করা হয়েছে!`);
+            document.getElementById('exam-create-title').value = '';
+            document.getElementById('exam-create-text').value = '';
+        }
+
+        // Initialize on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            checkDirectorSession();
+        });
+    </script>
+</body>
+</html>
