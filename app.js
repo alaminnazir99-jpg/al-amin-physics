@@ -242,6 +242,7 @@ function updateDarkToggleUI(isDark) {
 =================================================== */
 document.addEventListener('DOMContentLoaded', () => {
     initDarkMode();
+    enforceStudentAuth();
     updateUserSessionUI();
     initSimulation();
     runPhysicsCalculator();
@@ -2202,6 +2203,155 @@ function switchStudentAuthTab(tab) {
     }
 }
 
+function enforceStudentAuth() {
+    const activeStudent = getActiveStudentSession();
+    const wall = document.getElementById('student-login-wall');
+    if (!wall) return;
+
+    if (!activeStudent) {
+        wall.classList.remove('hidden');
+    } else {
+        wall.classList.add('hidden');
+    }
+}
+
+function switchWallTab(tab) {
+    const btnLogin = document.getElementById('wall-tab-login-btn');
+    const btnReg = document.getElementById('wall-tab-reg-btn');
+    const paneLogin = document.getElementById('wall-pane-login');
+    const paneReg = document.getElementById('wall-pane-register');
+
+    if (tab === 'login') {
+        if (btnLogin) btnLogin.className = "py-2.5 rounded-xl transition bg-white text-blue-600 shadow-sm";
+        if (btnReg) btnReg.className = "py-2.5 rounded-xl transition text-slate-600 hover:text-slate-900";
+        if (paneLogin) paneLogin.classList.remove('hidden');
+        if (paneReg) paneReg.classList.add('hidden');
+    } else {
+        if (btnLogin) btnLogin.className = "py-2.5 rounded-xl transition text-slate-600 hover:text-slate-900";
+        if (btnReg) btnReg.className = "py-2.5 rounded-xl transition bg-white text-emerald-600 shadow-sm";
+        if (paneLogin) paneLogin.classList.add('hidden');
+        if (paneReg) paneReg.classList.remove('hidden');
+    }
+}
+
+function handleWallLoginSubmit(e) {
+    e.preventDefault();
+    const idOrPhone = document.getElementById('wall-login-id').value.trim();
+    const pass = document.getElementById('wall-login-pass').value.trim();
+    const errBox = document.getElementById('wall-login-err');
+
+    let students = [];
+    try {
+        const raw = localStorage.getItem('alamin_registered_students');
+        if (raw) students = JSON.parse(raw);
+    } catch {}
+
+    const cleanInput = (typeof cleanBanglaPhone === 'function') ? cleanBanglaPhone(idOrPhone) : idOrPhone;
+
+    const matched = students.find(s => 
+        (s.id.toLowerCase() === idOrPhone.toLowerCase() || s.phone === cleanInput || s.phone === idOrPhone) &&
+        String(s.password) === String(pass)
+    );
+
+    if (matched) {
+        setActiveStudentSession(matched);
+        if (errBox) errBox.classList.add('hidden');
+        alert(`স্বাগতম, ${matched.name}!\nআপনার স্টুডেন্ট আইডি: ${matched.id}`);
+    } else {
+        if (errBox) errBox.classList.remove('hidden');
+    }
+}
+
+async function handleWallRegisterSubmit(e) {
+    e.preventDefault();
+    const name = document.getElementById('wall-reg-name').value.trim();
+    const rawPhone = document.getElementById('wall-reg-phone').value.trim();
+    const classKey = document.getElementById('wall-reg-class').value;
+    const institute = document.getElementById('wall-reg-institute').value.trim();
+    const pass = document.getElementById('wall-reg-pass').value.trim();
+    const errBox = document.getElementById('wall-reg-err');
+    const submitBtn = document.getElementById('wall-reg-btn-submit');
+
+    const phone = (typeof cleanBanglaPhone === 'function') ? cleanBanglaPhone(rawPhone) : rawPhone;
+
+    if (!phone || phone.length !== 11 || !phone.startsWith('01')) {
+        if (errBox) {
+            errBox.textContent = 'সঠিক ১১ ডিজিটের মোবাইল নম্বর লিখুন (যেমন: 017XXXXXXXX)।';
+            errBox.classList.remove('hidden');
+        }
+        return;
+    }
+
+    if (pass.length < 4) {
+        if (errBox) {
+            errBox.textContent = 'পাসওয়ার্ড কমপক্ষে ৪ ক্যারেক্টার হতে হবে।';
+            errBox.classList.remove('hidden');
+        }
+        return;
+    }
+
+    let students = [];
+    try {
+        const raw = localStorage.getItem('alamin_registered_students');
+        if (raw) students = JSON.parse(raw);
+    } catch {}
+
+    const existing = students.find(s => s.phone === phone);
+    if (existing) {
+        if (errBox) {
+            errBox.textContent = `এই মোবাইল নম্বরটি দিয়ে ইতোমধ্যে আইডি (${existing.id}) খোলা হয়েছে! অনুগ্রহ করে লগইন করুন।`;
+            errBox.classList.remove('hidden');
+        }
+        return;
+    }
+
+    const studentId = (typeof getNextStudentId === 'function')
+        ? getNextStudentId(classKey)
+        : `AP-26-${classKey}001`;
+
+    const newStudent = {
+        id: studentId,
+        name: name,
+        phone: phone,
+        classKey: classKey,
+        institution: institute,
+        password: pass,
+        createdAt: new Date().toISOString()
+    };
+
+    students.push(newStudent);
+    try {
+        localStorage.setItem('alamin_registered_students', JSON.stringify(students));
+    } catch {}
+
+    if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> SMS পাঠানো হচ্ছে...`;
+    }
+
+    const smsMessage = (typeof makeStudentSmsMessage === 'function')
+        ? makeStudentSmsMessage(name, studentId)
+        : `Al amin Physics: Welcome ${name.split(' ')[0]}! Your Student ID is ${studentId}. Keep it safe to login at al-amin-physics.vercel.app`;
+
+    if (typeof sendSmsNotification === 'function') {
+        await sendSmsNotification({
+            to: phone,
+            message: smsMessage,
+            purpose: 'Student Registration ID',
+            recipientName: name
+        });
+    }
+
+    setActiveStudentSession(newStudent);
+
+    if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = `<i class="fa-solid fa-user-plus"></i> অ্যাকাউন্ট তৈরি করুন ও SMS পান`;
+    }
+
+    alert(`অভিনন্দন, ${name}!\nআপনার রেজিস্ট্রেশন সফল হয়েছে এবং আপনার মোবাইলে (${phone}) স্টুডেন্ট আইডি প্রেরণ করা হয়েছে।\nআপনার স্টুডেন্ট আইডি: ${studentId}`);
+}
+
 function getActiveStudentSession() {
     try {
         const raw = localStorage.getItem('alamin_active_student_session');
@@ -2216,11 +2366,13 @@ function setActiveStudentSession(student) {
         localStorage.setItem('alamin_active_student_session', JSON.stringify(student));
     } catch {}
     updateStudentHeaderSessionUI();
+    enforceStudentAuth();
 }
 
 function logoutStudent() {
     localStorage.removeItem('alamin_active_student_session');
     updateStudentHeaderSessionUI();
+    enforceStudentAuth();
     alert('আপনি সফলভাবে লগআউট করেছেন।');
 }
 
