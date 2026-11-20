@@ -109,14 +109,22 @@
                 </div>
 
                 <!-- Right Action Buttons -->
-                <div class="flex items-center gap-2.5">
-                    <a href="study.html" target="_blank" class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold border border-slate-700 transition">
-                        <i class="fa-solid fa-globe text-blue-400"></i>
-                        <span>লাইভ সাইট</span>
+                <div class="flex items-center gap-2">
+                    <a href="study.html" target="_blank" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-blue-600/20 hover:bg-blue-600/30 text-blue-300 text-xs font-bold border border-blue-500/30 transition shadow-xs">
+                        <i class="fa-solid fa-graduation-cap"></i>
+                        <span>স্টুডেন্ট ক্লাসরুম</span>
                     </a>
-                    <a href="admin.html" target="_blank" class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold border border-slate-700 transition">
-                        <i class="fa-solid fa-user-shield text-indigo-400"></i>
+                    <a href="admin.html" target="_blank" class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-300 text-xs font-bold border border-indigo-500/30 transition shadow-xs">
+                        <i class="fa-solid fa-user-shield"></i>
                         <span>অ্যাডমিন পোর্টাল</span>
+                    </a>
+                    <a href="simulations/gati-3d-lab.html" target="_blank" class="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-teal-600/20 hover:bg-teal-600/30 text-teal-300 text-xs font-bold border border-teal-500/30 transition shadow-xs">
+                        <i class="fa-solid fa-cube"></i>
+                        <span>৩ডি ল্যাব</span>
+                    </a>
+                    <a href="index.html" target="_blank" class="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold border border-slate-700 transition">
+                        <i class="fa-solid fa-globe text-amber-400"></i>
+                        <span>হোমপেজ</span>
                     </a>
                     <button onclick="handleDirectorLogout()" class="px-3 py-1.5 rounded-xl bg-red-950/80 hover:bg-red-900 text-red-300 text-xs font-bold border border-red-800/60 transition flex items-center gap-1.5">
                         <i class="fa-solid fa-power-off"></i>
@@ -128,6 +136,117 @@
 
         <!-- Main Content Area -->
         <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full space-y-6 flex-1">
+
+            <!-- ====================================================
+                 UNIVERSAL PORTAL NAVIGATOR & LIVE ACCESS HUB
+            ==================================================== -->
+            <div class="p-5 sm:p-6 rounded-3xl bg-gradient-to-r from-slate-900 via-blue-950/50 to-slate-900 border border-blue-500/30 shadow-2xl space-y-4">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-3.5">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-2xl bg-amber-500/20 text-amber-400 border border-amber-500/30 flex items-center justify-center text-lg font-bold shadow-lg shadow-amber-500/10">
+                            <i class="fa-solid fa-compass"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-sm sm:text-base font-black text-white flex items-center gap-2">
+                                <span>সম্পূর্ণ ওয়েবসাইট ও পোর্টাল নেভিগেটর</span>
+                                <span class="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 text-[10px] font-bold border border-emerald-500/30">Master Access Active</span>
+                            </h3>
+                            <p class="text-xs text-slate-400">ডিরেক্টর হিসেবে যেকোনো পেজে এক ক্লিকে ভিজিট করুন — সব কন্টেন্ট ও প্রিমিয়াম ফিচার আপনার জন্য আনলকড</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-[11px] text-slate-400 font-semibold hidden md:inline">ডিরেক্টর সুবিধা:</span>
+                        <span class="px-2.5 py-1 rounded-xl bg-blue-600/20 text-blue-300 border border-blue-500/30 text-xs font-mono font-bold">লগইন-ওয়াল মুক্ত ভিজিট</span>
+                    </div>
+                </div>
+
+                <!-- 4 Navigation Action Cards -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+                    <!-- 1. Student Classroom Portal -->
+                    <a href="study.html" target="_blank" class="p-4 rounded-2xl bg-slate-900/90 hover:bg-slate-850 border border-slate-800 hover:border-blue-500/50 transition group flex flex-col justify-between gap-3 shadow-sm hover:shadow-blue-500/10">
+                        <div class="flex items-start justify-between">
+                            <div class="w-10 h-10 rounded-xl bg-blue-500/15 text-blue-400 flex items-center justify-center text-lg group-hover:scale-110 transition">
+                                <i class="fa-solid fa-graduation-cap"></i>
+                            </div>
+                            <span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-blue-500/10 text-blue-400 border border-blue-500/20">ক্লাসরুম পোর্টাল</span>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-white text-sm group-hover:text-blue-300 transition flex items-center gap-1.5">
+                                <span>শিক্ষার্থী পোর্টাল ও ক্লাস</span>
+                                <i class="fa-solid fa-arrow-up-right-from-square text-[10px] opacity-60"></i>
+                            </h4>
+                            <p class="text-[11px] text-slate-400 mt-1">সব শ্রেণির অধ্যায়, ভিডিও লেকচার, হ্যান্ডনোট ও ওএমআর মডেল টেস্ট সরাসরি ডিরেক্টর মোডে পরীক্ষা করুন।</p>
+                        </div>
+                        <div class="pt-2 border-t border-slate-800/80 text-[11px] text-blue-400 font-bold flex items-center justify-between">
+                            <span>সরাসরি প্রবেশ করুন</span>
+                            <i class="fa-solid fa-arrow-right text-[10px] group-hover:translate-x-1 transition"></i>
+                        </div>
+                    </a>
+
+                    <!-- 2. Admin Operation Portal -->
+                    <a href="admin.html" target="_blank" class="p-4 rounded-2xl bg-slate-900/90 hover:bg-slate-850 border border-slate-800 hover:border-indigo-500/50 transition group flex flex-col justify-between gap-3 shadow-sm hover:shadow-indigo-500/10">
+                        <div class="flex items-start justify-between">
+                            <div class="w-10 h-10 rounded-xl bg-indigo-500/15 text-indigo-400 flex items-center justify-center text-lg group-hover:scale-110 transition">
+                                <i class="fa-solid fa-user-shield"></i>
+                            </div>
+                            <span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">অ্যাডমিন প্যানেল</span>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-white text-sm group-hover:text-indigo-300 transition flex items-center gap-1.5">
+                                <span>স্টাফ অ্যাডমিন পোর্টাল</span>
+                                <i class="fa-solid fa-arrow-up-right-from-square text-[10px] opacity-60"></i>
+                            </h4>
+                            <p class="text-[11px] text-slate-400 mt-1">পেমেন্ট অনুমোদন, ওএমআর প্রশ্ন তৈরি ও কন্টেন্ট আপলোডার স্টাফদের কাজের ইন্টারফেস পরিদর্শন করুন।</p>
+                        </div>
+                        <div class="pt-2 border-t border-slate-800/80 text-[11px] text-indigo-400 font-bold flex items-center justify-between">
+                            <span>অ্যাডমিন হিসেবে দেখুন</span>
+                            <i class="fa-solid fa-arrow-right text-[10px] group-hover:translate-x-1 transition"></i>
+                        </div>
+                    </a>
+
+                    <!-- 3. 3D Simulation Labs -->
+                    <a href="simulations/gati-3d-lab.html" target="_blank" class="p-4 rounded-2xl bg-slate-900/90 hover:bg-slate-850 border border-slate-800 hover:border-teal-500/50 transition group flex flex-col justify-between gap-3 shadow-sm hover:shadow-teal-500/10">
+                        <div class="flex items-start justify-between">
+                            <div class="w-10 h-10 rounded-xl bg-teal-500/15 text-teal-400 flex items-center justify-center text-lg group-hover:scale-110 transition">
+                                <i class="fa-solid fa-cube"></i>
+                            </div>
+                            <span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-teal-500/10 text-teal-400 border border-teal-500/20">ভার্চুয়াল ল্যাব</span>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-white text-sm group-hover:text-teal-300 transition flex items-center gap-1.5">
+                                <span>গতি ৩ডি ল্যাব & সিমুলেশন</span>
+                                <i class="fa-solid fa-arrow-up-right-from-square text-[10px] opacity-60"></i>
+                            </h4>
+                            <p class="text-[11px] text-slate-400 mt-1">গতির ৪টি সূত্রের থ্রি-ডি কার ও ডাবল-লেন রেস সিমুলেশন সরাসরি ওপেন করে পরীক্ষা করুন।</p>
+                        </div>
+                        <div class="pt-2 border-t border-slate-800/80 text-[11px] text-teal-400 font-bold flex items-center justify-between">
+                            <span>৩ডি ল্যাব রান করুন</span>
+                            <i class="fa-solid fa-arrow-right text-[10px] group-hover:translate-x-1 transition"></i>
+                        </div>
+                    </a>
+
+                    <!-- 4. Public Landing Homepage -->
+                    <a href="index.html" target="_blank" class="p-4 rounded-2xl bg-slate-900/90 hover:bg-slate-850 border border-slate-800 hover:border-amber-500/50 transition group flex flex-col justify-between gap-3 shadow-sm hover:shadow-amber-500/10">
+                        <div class="flex items-start justify-between">
+                            <div class="w-10 h-10 rounded-xl bg-amber-500/15 text-amber-400 flex items-center justify-center text-lg group-hover:scale-110 transition">
+                                <i class="fa-solid fa-globe"></i>
+                            </div>
+                            <span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-amber-500/10 text-amber-400 border border-amber-500/20">মূল ওয়েবসাইট</span>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-white text-sm group-hover:text-amber-300 transition flex items-center gap-1.5">
+                                <span>পাবলিক হোমপেজ</span>
+                                <i class="fa-solid fa-arrow-up-right-from-square text-[10px] opacity-60"></i>
+                            </h4>
+                            <p class="text-[11px] text-slate-400 mt-1">ভিজিটর ও অভিভাবকরা যেভাবে মূল ওয়েবসাইটটি দেখে তা সরাসরি পরিদর্শন করুন।</p>
+                        </div>
+                        <div class="pt-2 border-t border-slate-800/80 text-[11px] text-amber-400 font-bold flex items-center justify-between">
+                            <span>হোমপেজ পরিদর্শন</span>
+                            <i class="fa-solid fa-arrow-right text-[10px] group-hover:translate-x-1 transition"></i>
+                        </div>
+                    </a>
+                </div>
+            </div>
             
             <!-- Statistics Metric Cards -->
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -601,11 +720,14 @@
         }
 
         function checkDirectorSession() {
-            const isAuth = sessionStorage.getItem('is_director_logged_in') === 'true';
+            const isAuth = sessionStorage.getItem('is_director_logged_in') === 'true' || localStorage.getItem('is_director_logged_in') === 'true';
             const loginScreen = document.getElementById('director-login-screen');
             const dashboard = document.getElementById('director-dashboard');
 
             if (isAuth) {
+                // Ensure synced in both storages
+                sessionStorage.setItem('is_director_logged_in', 'true');
+                localStorage.setItem('is_director_logged_in', 'true');
                 loginScreen.classList.add('hidden');
                 dashboard.classList.remove('hidden');
                 refreshAllDirectorData();
@@ -624,6 +746,13 @@
 
             if ((userInput === DIRECTOR_CREDENTIALS.user || userInput === 'director' || userInput === 'admin') && passInput === masterPass) {
                 sessionStorage.setItem('is_director_logged_in', 'true');
+                localStorage.setItem('is_director_logged_in', 'true');
+                localStorage.setItem('alamin_director_session', JSON.stringify({
+                    role: 'director',
+                    name: 'আল আমিন স্যার',
+                    phone: '01796431795',
+                    loggedInAt: new Date().toISOString()
+                }));
                 errBox.classList.add('hidden');
                 checkDirectorSession();
             } else {
@@ -632,8 +761,12 @@
         }
 
         function handleDirectorLogout() {
-            sessionStorage.removeItem('is_director_logged_in');
-            checkDirectorSession();
+            if (confirm('আপনি কি নিশ্চিত যে ডিরেক্টর সেশন থেকে লগআউট করতে চান?')) {
+                sessionStorage.removeItem('is_director_logged_in');
+                localStorage.removeItem('is_director_logged_in');
+                localStorage.removeItem('alamin_director_session');
+                checkDirectorSession();
+            }
         }
 
         function switchDirectorTab(tabName) {

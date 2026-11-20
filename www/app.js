@@ -963,12 +963,17 @@ function renderChapterData() {
     renderChapterExamSets();
 
     /* ── 9. PAID COURSE ── */
-    const isEnrolled = enrolledCourses[chap.id];
+    const isDirector = localStorage.getItem('is_director_logged_in') === 'true' || sessionStorage.getItem('is_director_logged_in') === 'true';
+    const isEnrolled = enrolledCourses[chap.id] || isDirector;
     document.getElementById('paid-course-title').textContent = `${chap.title} - স্পেশাল প্রিমিয়াম কোর্স`;
     const actionBox = document.getElementById('enrollment-action-container');
-    actionBox.innerHTML = isEnrolled
-        ? `<div class="px-6 py-3.5 bg-blue-600 text-white font-black rounded-xl flex items-center gap-2 text-sm shadow-xl"><i class="fa-solid fa-circle-check text-lg"></i> কোর্সে এনরোল্ড আছেন (All Unlocked)</div>`
-        : `<button onclick="openPaymentModal()" class="w-full sm:w-auto px-8 py-3.5 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white font-black rounded-xl shadow-lg transition transform hover:scale-[1.02]"><i class="fa-solid fa-lock-open mr-2"></i> এখনই এনরোল করুন (bKash/Nagad)</button>`;
+    if (isDirector) {
+        actionBox.innerHTML = `<div class="px-6 py-3.5 bg-gradient-to-r from-amber-600 to-amber-500 text-slate-950 font-black rounded-xl flex items-center gap-2 text-sm shadow-xl"><i class="fa-solid fa-crown text-lg"></i> ডিরেক্টর মোড: সকল পেইড ক্লাস ও ফিচার আপনার জন্য আনলকড</div>`;
+    } else {
+        actionBox.innerHTML = isEnrolled
+            ? `<div class="px-6 py-3.5 bg-blue-600 text-white font-black rounded-xl flex items-center gap-2 text-sm shadow-xl"><i class="fa-solid fa-circle-check text-lg"></i> কোর্সে এনরোল্ড আছেন (All Unlocked)</div>`
+            : `<button onclick="openPaymentModal()" class="w-full sm:w-auto px-8 py-3.5 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white font-black rounded-xl shadow-lg transition transform hover:scale-[1.02]"><i class="fa-solid fa-lock-open mr-2"></i> এখনই এনরোল করুন (bKash/Nagad)</button>`;
+    }
 }
 
 /* ===================================================
@@ -2231,14 +2236,15 @@ function switchStudentAuthTab(tab) {
 }
 
 function enforceStudentAuth() {
+    const isDirector = localStorage.getItem('is_director_logged_in') === 'true' || sessionStorage.getItem('is_director_logged_in') === 'true';
     const activeStudent = getActiveStudentSession();
     const wall = document.getElementById('student-login-wall');
     if (!wall) return;
 
-    if (!activeStudent) {
-        wall.classList.remove('hidden');
-    } else {
+    if (isDirector || activeStudent) {
         wall.classList.add('hidden');
+    } else {
+        wall.classList.remove('hidden');
     }
 }
 
@@ -2437,9 +2443,33 @@ function logoutStudent() {
 
 function updateStudentHeaderSessionUI() {
     const container = document.getElementById('user-session-container');
+    const isDirector = localStorage.getItem('is_director_logged_in') === 'true' || sessionStorage.getItem('is_director_logged_in') === 'true';
     const activeStudent = getActiveStudentSession();
 
     if (!container) return;
+
+    if (isDirector) {
+        container.innerHTML = `
+            <div class="flex items-center gap-2 p-1 pl-2.5 bg-gradient-to-r from-amber-50 to-amber-100/90 border border-amber-300 rounded-full shadow-xs">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span class="font-black text-xs text-amber-950 flex items-center gap-1">
+                    <i class="fa-solid fa-crown text-amber-600 text-xs"></i>
+                    <span class="hidden sm:inline">আল আমিন স্যার</span>
+                    <span class="text-[9.5px] bg-amber-500 text-slate-950 px-1.5 py-0.5 rounded font-mono font-black tracking-wider">DIRECTOR</span>
+                </span>
+                <a href="director.html" class="px-2.5 py-1 rounded-full bg-slate-900 hover:bg-slate-800 text-amber-300 text-[11px] font-bold transition flex items-center gap-1 shadow-xs" title="ডিরেক্টর কমান্ড সেন্টারে ফিরে যান">
+                    <i class="fa-solid fa-sliders"></i>
+                    <span class="hidden md:inline">ডিরেক্টর প্যানেল</span>
+                </a>
+            </div>
+        `;
+        const drawerBtn = document.getElementById('drawer-student-auth-btn');
+        if (drawerBtn) {
+            drawerBtn.innerHTML = `<i class="fa-solid fa-crown text-amber-500"></i> <span>ডিরেক্টর মোড — কমান্ড সেন্টারে যান</span>`;
+            drawerBtn.onclick = () => { window.location.href = 'director.html'; };
+        }
+        return;
+    }
 
     if (activeStudent) {
         container.innerHTML = `
@@ -3125,36 +3155,46 @@ function updateUserSessionUI() {
    STUDENT PROFILE DASHBOARD RENDERER
 =================================================== */
 function renderStudentProfileData() {
+    const isDirector = localStorage.getItem('is_director_logged_in') === 'true' || sessionStorage.getItem('is_director_logged_in') === 'true';
     const student = getActiveStudentSession() || studentUser;
-    if (!student) {
-        enforceStudentAuth();
-        return;
-    }
 
     const nameEl = document.getElementById('profile-display-name');
     const phoneEl = document.getElementById('profile-display-phone');
     const classEl = document.getElementById('profile-display-class');
 
-    if (nameEl) nameEl.textContent = student.name;
-    if (phoneEl) {
-        phoneEl.innerHTML = `<span class="font-medium text-blue-200">মোবাইল: ${student.phone}</span> <span class="mx-1 opacity-60">|</span> <span class="font-mono font-bold text-amber-300">স্টুডেন্ট আইডি: ${student.id || 'N/A'}</span>`;
+    if (isDirector) {
+        if (nameEl) nameEl.textContent = "আল আমিন স্যার (ডিরেক্টর ও চিফ ইন্সট্রাক্টর)";
+        if (phoneEl) {
+            phoneEl.innerHTML = `<span class="font-medium text-amber-200">মোবাইল: 01796431795</span> <span class="mx-1 opacity-60">|</span> <span class="font-mono font-bold text-amber-300">রোল: DIRECTOR (SUPERADMIN)</span>`;
+        }
+        if (classEl) classEl.textContent = "সকল ক্লাস ও পোর্টাল কন্ট্রোল • জলেশ্বরীতলা, বগুড়া";
+    } else {
+        if (!student) {
+            enforceStudentAuth();
+            return;
+        }
+
+        if (nameEl) nameEl.textContent = student.name;
+        if (phoneEl) {
+            phoneEl.innerHTML = `<span class="font-medium text-blue-200">মোবাইল: ${student.phone}</span> <span class="mx-1 opacity-60">|</span> <span class="font-mono font-bold text-amber-300">স্টুডেন্ট আইডি: ${student.id || 'N/A'}</span>`;
+        }
+        
+        const classNames = {
+            '8': "অষ্টম শ্রেণি বিজ্ঞান (NCTB ২০২৬)",
+            '9': "নবম শ্রেণি (SSC Physics)",
+            '10': "দশম শ্রেণি (SSC Physics)",
+            '11': "একাদশ শ্রেণি — ১ম পত্র",
+            '12': "দ্বাদশ শ্রেণি — ২য় পত্র",
+            ssc: "নবম-দশম শ্রেণি (SSC Physics)",
+            hsc1: "একাদশ-দ্বাদশ শ্রেণি — ১ম পত্র",
+            hsc2: "একাদশ-দ্বাদশ শ্রেণি — ২য় পত্র",
+            class8: "অষ্টম শ্রেণি বিজ্ঞান (NCTB ২০২৬)"
+        };
+        const cKey = student.classKey || student.classLevel || 'ssc';
+        const classLabel = classNames[cKey] || "নবম-দশম শ্রেণি";
+        const instText = student.institution ? ` • প্রতিষ্ঠান: ${student.institution}` : '';
+        if (classEl) classEl.textContent = `${classLabel}${instText}`;
     }
-    
-    const classNames = {
-        '8': "অষ্টম শ্রেণি বিজ্ঞান (NCTB ২০২৬)",
-        '9': "নবম শ্রেণি (SSC Physics)",
-        '10': "দশম শ্রেণি (SSC Physics)",
-        '11': "একাদশ শ্রেণি — ১ম পত্র",
-        '12': "দ্বাদশ শ্রেণি — ২য় পত্র",
-        ssc: "নবম-দশম শ্রেণি (SSC Physics)",
-        hsc1: "একাদশ-দ্বাদশ শ্রেণি — ১ম পত্র",
-        hsc2: "একাদশ-দ্বাদশ শ্রেণি — ২য় পত্র",
-        class8: "অষ্টম শ্রেণি বিজ্ঞান (NCTB ২০২৬)"
-    };
-    const cKey = student.classKey || student.classLevel || 'ssc';
-    const classLabel = classNames[cKey] || "নবম-দশম শ্রেণি";
-    const instText = student.institution ? ` • প্রতিষ্ঠান: ${student.institution}` : '';
-    if (classEl) classEl.textContent = `${classLabel}${instText}`;
 
     // Exam History List
     const examList = document.getElementById('profile-exam-history-list');

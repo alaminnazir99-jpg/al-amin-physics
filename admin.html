@@ -106,10 +106,14 @@
                     </div>
                 </div>
 
-                <div class="flex items-center gap-2.5">
+                <div class="flex items-center gap-2">
+                    <a href="director.html" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 text-xs font-bold border border-amber-500/30 transition shadow-xs">
+                        <i class="fa-solid fa-crown text-amber-400"></i>
+                        <span>ডিরেক্টর প্যানেল</span>
+                    </a>
                     <a href="study.html" target="_blank" class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold border border-slate-700 transition">
-                        <i class="fa-solid fa-globe text-blue-400"></i>
-                        <span>ওয়েবসাইট</span>
+                        <i class="fa-solid fa-graduation-cap text-blue-400"></i>
+                        <span>স্টুডেন্ট পোর্টাল</span>
                     </a>
                     <button onclick="handleAdminLogout()" class="px-3 py-1.5 rounded-xl bg-red-950/80 hover:bg-red-900 text-red-300 text-xs font-bold border border-red-800/60 transition flex items-center gap-1.5">
                         <i class="fa-solid fa-power-off"></i>
@@ -236,20 +240,38 @@
 
         function checkAdminSession() {
             const rawSession = sessionStorage.getItem('active_admin_session');
+            const isDirector = localStorage.getItem('is_director_logged_in') === 'true' || sessionStorage.getItem('is_director_logged_in') === 'true';
             const loginScreen = document.getElementById('admin-login-screen');
             const dashboard = document.getElementById('admin-dashboard');
 
-            if (rawSession) {
+            if (isDirector && !rawSession) {
+                currentAdminSession = {
+                    id: "DIR-SUPER",
+                    name: "আল আমিন স্যার (ডিরেক্টর)",
+                    phone: "01796431795",
+                    role: "প্রধান পরিচালক (Master)",
+                    permissions: {
+                        canManageStudents: true,
+                        canManageExams: true,
+                        canModerateQA: true,
+                        canManageResources: true
+                    },
+                    isDirector: true
+                };
+                sessionStorage.setItem('active_admin_session', JSON.stringify(currentAdminSession));
+            } else if (rawSession) {
                 try {
                     currentAdminSession = JSON.parse(rawSession);
-                    loginScreen.classList.add('hidden');
-                    dashboard.classList.remove('hidden');
-                    setupAdminDashboardUI();
                 } catch(e) {
                     currentAdminSession = null;
                 }
             }
-            if (!currentAdminSession) {
+
+            if (currentAdminSession) {
+                loginScreen.classList.add('hidden');
+                dashboard.classList.remove('hidden');
+                setupAdminDashboardUI();
+            } else {
                 loginScreen.classList.remove('hidden');
                 dashboard.classList.add('hidden');
             }
@@ -260,6 +282,29 @@
             const idInput = document.getElementById('admin-login-id').value.trim();
             const passInput = document.getElementById('admin-login-pass').value.trim();
             const errBox = document.getElementById('admin-login-error');
+
+            // Allow Director master login directly from Admin portal as well
+            const dirPass = localStorage.getItem(SMS_STORAGE_KEYS.DIRECTOR_PASS) || 'alamin#director2026';
+            if ((idInput === '01796431795' || idInput.toLowerCase() === 'director' || idInput.toLowerCase() === 'admin') && passInput === dirPass) {
+                currentAdminSession = {
+                    id: "DIR-SUPER",
+                    name: "আল আমিন স্যার (ডিরেক্টর)",
+                    phone: "01796431795",
+                    role: "প্রধান পরিচালক (Master)",
+                    permissions: {
+                        canManageStudents: true,
+                        canManageExams: true,
+                        canModerateQA: true,
+                        canManageResources: true
+                    },
+                    isDirector: true
+                };
+                sessionStorage.setItem('active_admin_session', JSON.stringify(currentAdminSession));
+                localStorage.setItem('is_director_logged_in', 'true');
+                errBox.classList.add('hidden');
+                checkAdminSession();
+                return;
+            }
 
             const rawAdmins = localStorage.getItem(SMS_STORAGE_KEYS.ADMINS);
             const admins = rawAdmins ? JSON.parse(rawAdmins) : [];
@@ -295,9 +340,17 @@
         function setupAdminDashboardUI() {
             if (!currentAdminSession) return;
 
-            document.getElementById('active-admin-name').textContent = currentAdminSession.name;
-            document.getElementById('active-admin-id-badge').textContent = currentAdminSession.id;
-            document.getElementById('active-admin-role').textContent = `${currentAdminSession.role} • ${currentAdminSession.phone}`;
+            if (currentAdminSession.isDirector) {
+                document.getElementById('active-admin-name').innerHTML = `আল আমিন স্যার <span class="text-xs text-amber-400 font-bold">(প্রধান পরিচালক)</span>`;
+                document.getElementById('active-admin-id-badge').className = "px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[10px] font-mono font-bold";
+                document.getElementById('active-admin-id-badge').textContent = "DIRECTOR";
+                document.getElementById('active-admin-role').textContent = "মাস্টার ডিরেক্টর প্রিভিলেজ • সকল পারমিশন আনলকড";
+            } else {
+                document.getElementById('active-admin-name').textContent = currentAdminSession.name;
+                document.getElementById('active-admin-id-badge').className = "px-2 py-0.5 rounded-full bg-indigo-500/15 text-indigo-400 border border-indigo-500/30 text-[10px] font-mono font-bold";
+                document.getElementById('active-admin-id-badge').textContent = currentAdminSession.id;
+                document.getElementById('active-admin-role').textContent = `${currentAdminSession.role || 'সহকারী শিক্ষক'} • ${currentAdminSession.phone}`;
+            }
 
             const perms = currentAdminSession.permissions || {};
             const navContainer = document.getElementById('admin-nav-tabs');
