@@ -3,13 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>অধ্যায় ০২: গতি | আল-আমিন ফিজিক্স ল্যাব</title>
+  <title>অধ্যায় ০২: গতি (3D হাই-ক্লাস ল্যাব) | আল-আমিন ফিজিক্স ল্যাব</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700;800&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     body { font-family: "Hind Siliguri", sans-serif; }
-    .lab-tab-active { background: #0d9488 !important; color: #ffffff !important; border-color: #14b8a6 !important; }
   </style>
 </head>
 <body class="bg-[#070e17] text-slate-100 min-h-screen flex flex-col justify-between">
@@ -22,13 +21,13 @@
           <i class="fa-solid fa-arrow-left"></i> <span class="hidden sm:inline">ল্যাব তালিকা</span>
         </a>
         <span class="text-xs sm:text-sm font-bold text-slate-200 truncate">
-          অধ্যায় ০২: <span class="text-teal-400">গতি</span>
+          অধ্যায় ০২: <span class="text-teal-400">গতির ৪টি সমীকরণ (3D হাই-ক্লাস ল্যাব)</span>
         </span>
       </div>
 
       <div class="flex items-center gap-2">
-        <a href="../physics-labs/index.html?lab=motion" id="btn-fullscreen-top" target="_blank" class="px-3 py-1.5 rounded-xl bg-teal-500/15 hover:bg-teal-500/25 text-teal-300 text-xs font-bold border border-teal-500/40 transition flex items-center gap-1.5 shadow-sm">
-          <i class="fa-solid fa-up-right-and-down-left-from-center"></i> <span class="hidden sm:inline">পূর্ণ পর্দা</span>
+        <a href="gati-3d-lab.html" target="_blank" class="px-3 py-1.5 rounded-xl bg-gradient-to-r from-teal-500 to-cyan-500 hover:brightness-110 text-white text-xs font-bold transition flex items-center gap-1.5 shadow-md shadow-teal-500/20">
+          <i class="fa-solid fa-up-right-and-down-left-from-center"></i> <span class="hidden sm:inline">পূর্ণ পর্দায় ৩ডি ল্যাব খুলুন</span>
         </a>
         <a href="../study.html" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition flex items-center gap-1.5">
           <i class="fa-solid fa-graduation-cap text-blue-400"></i> <span class="hidden sm:inline">স্টাডি পোর্টাল</span>
@@ -40,74 +39,74 @@
   <!-- Main Simulation Stage -->
   <main class="max-w-7xl mx-auto px-3 sm:px-4 py-5 w-full flex-1 space-y-4">
 
-    <!-- Lab Selection Tabs Bar -->
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#0b1624] border border-slate-800 p-2.5 rounded-2xl">
-      <div class="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0">
-        <button id="tab-lab-1" onclick="switchLab('motion', 1)" class="lab-tab-active px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 whitespace-nowrap border border-transparent shadow-sm">
-          <span class="w-5 h-5 rounded-md bg-white/20 text-white text-[10px] flex items-center justify-center font-mono font-bold">০৩</span>
-          <span>গাড়ি, গতি ও লেখচিত্র</span>
-        </button>
-        <button id="tab-lab-2" onclick="switchLab('fall', 2)" class="px-3.5 py-2 rounded-xl text-xs font-bold text-slate-300 bg-[#112133] hover:bg-[#162c45] hover:text-white transition flex items-center gap-2 whitespace-nowrap border border-slate-700/60">
-          <span class="w-5 h-5 rounded-md bg-white/10 text-slate-300 text-[10px] flex items-center justify-center font-mono font-bold">০৪</span>
-          <span>মুক্তপতন পরীক্ষাগার</span>
-        </button>
+    <!-- Lab Subtitle Bar -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#0b1624] border border-slate-800 p-3 rounded-2xl">
+      <div class="flex items-center gap-2.5">
+        <span class="w-8 h-8 rounded-xl bg-teal-500/20 text-teal-300 font-black text-sm flex items-center justify-center font-mono">3D</span>
+        <div>
+          <h2 class="text-xs sm:text-sm font-bold text-white">গতির ৪টি সমীকরণ — থ্রি-ডি ইন্টারেক্টিভ সিমুলেশন ল্যাব</h2>
+          <p class="text-[11px] text-slate-400">v=u+at, s=ut+½at², v²=u²+2as এবং s=½(u+v)t — ফ্রি মোড, চ্যালেঞ্জ মোড ও বাস্তবসম্মত ৩ডি কার সিমুলেশন</p>
+        </div>
       </div>
 
-      <div class="flex items-center gap-2">
-        <span id="current-lab-sub" class="text-xs text-slate-400 hidden lg:inline truncate max-w-sm">বেগ-সময় ও দূরত্ব-সময় লেখচিত্র পর্যবেক্ষণ করে ত্বরণ বিশ্লেষণ।</span>
-        <a id="btn-fullscreen-main" href="../physics-labs/index.html?lab=motion" target="_blank" class="px-3 py-1.5 rounded-xl bg-[#112133] hover:bg-[#162c45] text-slate-200 text-xs font-semibold border border-slate-700 transition flex items-center gap-1.5 ml-auto">
-          <i class="fa-solid fa-arrow-up-right-from-square text-teal-400"></i> <span>নতুন ট্যাবে খুলুন ↗</span>
+      <div class="flex items-center gap-2 ml-auto">
+        <span class="px-2.5 py-1 rounded-lg bg-teal-500/10 text-teal-400 border border-teal-500/30 text-[11px] font-bold">
+          <i class="fa-solid fa-cube mr-1"></i> Three.js Powered
+        </span>
+        <a href="gati-3d-lab.html" target="_blank" class="px-3 py-1.5 rounded-xl bg-[#112133] hover:bg-[#162c45] text-slate-200 text-xs font-semibold border border-slate-700 transition flex items-center gap-1.5">
+          <i class="fa-solid fa-arrow-up-right-from-square text-teal-400"></i> <span>নতুন ট্যাবে চালান ↗</span>
         </a>
       </div>
     </div>
 
-    <!-- Interactive Lab Iframe -->
-    <div class="relative w-full rounded-2xl overflow-hidden border border-slate-800 bg-[#08111d] shadow-2xl">
+    <!-- Interactive 3D Lab Iframe -->
+    <div class="relative w-full rounded-2xl overflow-hidden border border-slate-800 bg-[#040914] shadow-2xl">
       <iframe 
         id="lab-iframe" 
-        src="../physics-labs/index.html?lab=motion&embed=1" 
-        title="গাড়ি, গতি ও লেখচিত্র" 
-        class="w-full h-[650px] sm:h-[750px] lg:h-[820px] border-0 bg-[#08111d]" 
+        src="gati-3d-lab.html" 
+        title="গতির ৪টি সমীকরণ 3D ল্যাব" 
+        class="w-full h-[650px] sm:h-[750px] lg:h-[840px] border-0 bg-[#040914]" 
         allow="fullscreen; clipboard-write">
       </iframe>
     </div>
 
-    <!-- Chapter Navigation & Labs Overview Footer -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
-      <div class="p-4 rounded-2xl bg-[#0b1624] border border-slate-800 space-y-1">
-        <div class="flex items-center justify-between">
-          <span class="flex items-center gap-2 text-xs font-bold text-teal-400">
-            <span class="w-5 h-5 rounded bg-teal-500/20 flex items-center justify-center font-mono">০৩</span>
-            <span>গাড়ি, গতি ও লেখচিত্র</span>
-          </span>
-          <a href="../physics-labs/index.html?lab=motion" target="_blank" class="text-[11px] font-bold text-teal-400 hover:underline">পূর্ণ পর্দা ↗</a>
+    <!-- Feature Overview Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+      <div class="p-4 rounded-2xl bg-[#0b1624] border border-slate-800 space-y-1.5">
+        <div class="flex items-center gap-2 text-xs font-bold text-teal-400">
+          <i class="fa-solid fa-gamepad"></i>
+          <span>ফ্রি মোড ও চ্যালেঞ্জ মোড</span>
         </div>
-        <p class="text-xs text-slate-400">বেগ-সময় ও দূরত্ব-সময় লেখচিত্র পর্যবেক্ষণ করে ত্বরণ বিশ্লেষণ।</p>
+        <p class="text-xs text-slate-400">u, a, t, v, s রাশিগুলোর যেকোনো একটি বদলালে বাকিগুলো নিজে নিজে ক্যালকুলেট হয়। চ্যালেঞ্জ মোডে প্রশ্ন সমাধান করে গাড়ি চালিয়ে যাচাই করা যায়।</p>
       </div>
-      <div class="p-4 rounded-2xl bg-[#0b1624] border border-slate-800 space-y-1">
-        <div class="flex items-center justify-between">
-          <span class="flex items-center gap-2 text-xs font-bold text-teal-400">
-            <span class="w-5 h-5 rounded bg-teal-500/20 flex items-center justify-center font-mono">০৪</span>
-            <span>মুক্তপতন পরীক্ষাগার</span>
-          </span>
-          <a href="../physics-labs/index.html?lab=fall" target="_blank" class="text-[11px] font-bold text-teal-400 hover:underline">পূর্ণ পর্দা ↗</a>
+
+      <div class="p-4 rounded-2xl bg-[#0b1624] border border-slate-800 space-y-1.5">
+        <div class="flex items-center gap-2 text-xs font-bold text-cyan-400">
+          <i class="fa-solid fa-car-side"></i>
+          <span>ডাবল লেন কার ও ট্রাক রেস</span>
         </div>
-        <p class="text-xs text-slate-400">বাতাসের বাধা বনাম শূন্যস্থানে বিভিন্ন ভরের পতন পরীক্ষা।</p>
+        <p class="text-xs text-slate-400">একই সাথে গাড়ি ও ট্রাককে ভিন্ন ত্বরণ ও বেগে চালিয়ে "কে আগে পৌঁছাবে?" কিংবা "কখন কাকে অতিক্রম করবে?" তুলনামূলক প্র্যাকটিস করা যায়।</p>
+      </div>
+
+      <div class="p-4 rounded-2xl bg-[#0b1624] border border-slate-800 space-y-1.5">
+        <div class="flex items-center gap-2 text-xs font-bold text-amber-400">
+          <i class="fa-solid fa-chart-line"></i>
+          <span>রিয়েল-টাইম v-t ও s-t লেখচিত্র</span>
+        </div>
+        <p class="text-xs text-slate-400">গাড়ির তাৎক্ষণিক অবস্থান ও বেগের সাথে সাথে লাইভ গ্রাফ আঁকা হয়। v-t গ্রাফের ঢাল কীভাবে ত্বরণ (a) নির্দেশ করে তা সরাসরি ভিজ্যুয়ালাইজ হয়।</p>
       </div>
     </div>
 
     <!-- Prev / Next Navigation -->
     <div class="flex items-center justify-between pt-4 border-t border-slate-800/80">
-      
       <a href="ch1.html" class="px-4 py-2 rounded-xl bg-[#0b1624] hover:bg-[#112133] text-slate-300 text-xs font-semibold border border-slate-800 transition flex items-center gap-2">
         <i class="fa-solid fa-arrow-left"></i> <span>পূর্ববর্তী: অধ্যায় ০১</span>
       </a>
 
       <a href="index.html" class="px-4 py-2 rounded-xl bg-[#0b1624] hover:bg-[#112133] text-slate-400 hover:text-slate-200 text-xs font-semibold border border-slate-800 transition">
-        ল্যাব তালিকা
+        সকল ল্যাব তালিকা
       </a>
 
-      
       <a href="ch3.html" class="px-4 py-2 rounded-xl bg-[#0b1624] hover:bg-[#112133] text-slate-300 text-xs font-semibold border border-slate-800 transition flex items-center gap-2">
         <span>পরবর্তী: অধ্যায় ০৩</span> <i class="fa-solid fa-arrow-right"></i>
       </a>
@@ -116,45 +115,8 @@
   </main>
 
   <footer class="border-t border-slate-800/80 py-4 text-center text-[11px] text-slate-500 mt-6 bg-[#070e17]">
-    Al Amin Physics • ভার্চুয়াল ল্যাবরেটরি • অধ্যায় ০২: গতি
+    Al Amin Physics • ভার্চুয়াল ল্যাবরেটরি • অধ্যায় ০২: গতি (3D ল্যাব)
   </footer>
 
-  <script>
-    const labInfo = {
-      'motion': { num: 1, title: 'গাড়ি, গতি ও লেখচিত্র', sub: 'বেগ-সময় ও দূরত্ব-সময় লেখচিত্র পর্যবেক্ষণ করে ত্বরণ বিশ্লেষণ।' },
-      'fall': { num: 2, title: 'মুক্তপতন পরীক্ষাগার', sub: 'বাতাসের বাধা বনাম শূন্যস্থানে বিভিন্ন ভরের পতন পরীক্ষা।' }
-    };
-
-    function switchLab(labId, tabNum) {
-      const iframe = document.getElementById('lab-iframe');
-      const tab1 = document.getElementById('tab-lab-1');
-      const tab2 = document.getElementById('tab-lab-2');
-      const btnFsTop = document.getElementById('btn-fullscreen-top');
-      const btnFsMain = document.getElementById('btn-fullscreen-main');
-      const subEl = document.getElementById('current-lab-sub');
-
-      iframe.src = '../physics-labs/index.html?lab=' + labId + '&embed=1';
-      btnFsTop.href = '../physics-labs/index.html?lab=' + labId;
-      btnFsMain.href = '../physics-labs/index.html?lab=' + labId;
-
-      if (tabNum === 1) {
-        tab1.className = 'lab-tab-active px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 whitespace-nowrap border border-transparent shadow-sm';
-        tab2.className = 'px-3.5 py-2 rounded-xl text-xs font-bold text-slate-300 bg-[#112133] hover:bg-[#162c45] hover:text-white transition flex items-center gap-2 whitespace-nowrap border border-slate-700/60';
-      } else {
-        tab2.className = 'lab-tab-active px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 whitespace-nowrap border border-transparent shadow-sm';
-        tab1.className = 'px-3.5 py-2 rounded-xl text-xs font-bold text-slate-300 bg-[#112133] hover:bg-[#162c45] hover:text-white transition flex items-center gap-2 whitespace-nowrap border border-slate-700/60';
-      }
-
-      if (labInfo[labId]) {
-        subEl.textContent = labInfo[labId].sub;
-      }
-    }
-
-    const urlParams = new URLSearchParams(window.location.search);
-    const targetLab = urlParams.get('lab');
-    if (targetLab === 'fall') {
-      switchLab('fall', 2);
-    }
-  </script>
 </body>
 </html>

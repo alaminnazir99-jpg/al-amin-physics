@@ -979,6 +979,7 @@ const ALL_PHYSICS_LABS = {
     caliper:      { id: "caliper",      num: 1,  title: "ভার্নিয়ার ক্যালিপার্স",              cat: "পরিমাপ",          sub: "বাস্তবসম্মত স্লাইড ক্যালিপার্স দিয়ে সূক্ষ্ম দৈর্ঘ্য ও অভ্যন্তরীণ ব্যাস পরিমাপ।" },
     micrometer:   { id: "micrometer",   num: 2,  title: "স্ক্রু গজ ও মাইক্রোমিটার",          cat: "পরিমাপ",          sub: "বাস্তবসম্মত স্ক্রু গজ দিয়ে তারের ব্যাস ও পাতের সূক্ষ্ম পুরুত্ব নির্ণয়।" },
     density:      { id: "density",      num: 3,  title: "ঘনত্ব অনুসন্ধান",                   cat: "পদার্থ ও পরিমাপ", sub: "কঠিন ও তরলের ভর, আয়তন ও ঘনত্বের সম্পর্ক অনুসন্ধান ও বস্তু সনাক্তকরণ।" },
+    gati3d:       { id: "gati3d",       num: 4,  title: "গতির ৪টি সমীকরণ (3D হাই-ক্লাস ল্যাব)", cat: "গতি ও মেকানিক্স", sub: "v=u+at, s=ut+½at², v²=u²+2as, s=½(u+v)t — ফ্রি মোড, চ্যালেঞ্জ মোড, রিয়েল-টাইম ৩ডি কার ও গ্রাফ।" },
     motion:       { id: "motion",       num: 4,  title: "গাড়ি, গতি ও লেখচিত্র",              cat: "গতি ও বল",        sub: "চলন্ত গাড়ির প্রতিটি মুহূর্তকে অবস্থান-সময় ও বেগ-সময় লাইভ গ্রাফে ধরো।" },
     fall:         { id: "fall",         num: 5,  title: "মুক্তপতন পরীক্ষাগার",               cat: "গতি ও মহাকর্ষ",   sub: "ভিন্ন ভর, একই মহাকর্ষ—বায়ুশূন্য স্থান ও বায়ুপ্রতিরোধের প্রভাব পরীক্ষা।" },
     friction:     { id: "friction",     num: 6,  title: "বল ও ঘর্ষণ",                      cat: "গতি ও বল",        sub: "কখন বাক্স নড়বে, কখন থামবে—স্থিত ঘর্ষণ ও চল ঘর্ষণের লাইভ পরীক্ষা।" },
@@ -1010,7 +1011,7 @@ const LEVEL_CHAPTER_LAB_MAP = {
     // ---------------- SSC (13 Chapters) ----------------
     ssc: {
         0:  ["caliper", "micrometer", "density"],              // অধ্যায় ১: ভৌত রাশি ও পরিমাপ
-        1:  ["motion", "fall"],                                // অধ্যায় ২: গতি
+        1:  ["gati3d"],                                        // অধ্যায় ২: গতি (একক 3D হাই-ক্লাস ল্যাব)
         2:  ["friction", "collision"],                         // অধ্যায় ৩: বল
         3:  ["energy", "crane"],                               // অধ্যায় ৪: কাজ, ক্ষমতা ও শক্তি
         4:  ["buoyancy", "pressure"],                          // অধ্যায় ৫: পদার্থের অবস্থা ও চাপ
@@ -1062,7 +1063,7 @@ const LEVEL_CHAPTER_LAB_MAP = {
 // Backward-compatible CHAPTER_LAB_MAP for SSC legacy calls
 const CHAPTER_LAB_MAP = {
     1:  { name: "ভৌত রাশি ও পরিমাপ", labs: [ ALL_PHYSICS_LABS.caliper, ALL_PHYSICS_LABS.micrometer, ALL_PHYSICS_LABS.density ] },
-    2:  { name: "গতি", labs: [ ALL_PHYSICS_LABS.motion, ALL_PHYSICS_LABS.fall ] },
+    2:  { name: "গতি", labs: [ ALL_PHYSICS_LABS.gati3d ] },
     3:  { name: "বল", labs: [ ALL_PHYSICS_LABS.friction, ALL_PHYSICS_LABS.collision ] },
     4:  { name: "কাজ, ক্ষমতা ও শক্তি", labs: [ ALL_PHYSICS_LABS.energy, ALL_PHYSICS_LABS.crane ] },
     5:  { name: "পদার্থের অবস্থা ও চাপ", labs: [ ALL_PHYSICS_LABS.buoyancy, ALL_PHYSICS_LABS.pressure ] },
@@ -1077,6 +1078,9 @@ const CHAPTER_LAB_MAP = {
 };
 
 function getLabSimulationUrl(labId, embed = false) {
+    if (labId === 'gati3d') {
+        return 'simulations/gati-3d-lab.html';
+    }
     if (labId === 'caliper') {
         return 'simulations/vernier-caliper.html';
     }
