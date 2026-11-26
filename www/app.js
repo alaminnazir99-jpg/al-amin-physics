@@ -2286,6 +2286,12 @@ function handleWallLoginSubmit(e) {
         String(s.password) === String(pass)
     );
 
+    if (!matched && (idOrPhone.toLowerCase() === 'ap-26-10001' || cleanInput === '01700000000' || idOrPhone === '01700000000') && pass === '123456') {
+        matched = DEMO_TEST_STUDENT;
+    }
+    if (!matched && (idOrPhone.toLowerCase() === 'ap-26-10001' || cleanInput === '01700000000' || idOrPhone === '01700000000') && pass === '123456') {
+        matched = DEMO_TEST_STUDENT;
+    }
     if (matched) {
         setActiveStudentSession(matched);
         if (errBox) errBox.classList.add('hidden');
@@ -2500,6 +2506,18 @@ function updateStudentHeaderSessionUI() {
         }
     }
 }
+
+
+const DEMO_TEST_STUDENT = {
+    id: 'AP-26-10001',
+    name: 'টেস্ট শিক্ষার্থী',
+    phone: '01700000000',
+    classKey: '10',
+    classLevel: 'ssc',
+    institution: 'আইডিয়াল স্কুল অ্যান্ড কলেজ',
+    password: '123456',
+    createdAt: '2026-01-01'
+};
 
 function handleStudentLoginSubmit(e) {
     e.preventDefault();
