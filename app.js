@@ -30,6 +30,33 @@ function lsSet(key, val) {
    CURRICULUM DATABASE
 =================================================== */
 const APP_DATA = {
+    class8: {
+        levelTitle: "অষ্টম শ্রেণি বিজ্ঞান (Physics Modules)",
+        gradeTag: "Class 8 Science - NCTB 2026 (Physics অংশ — ৪টি অধ্যায়)",
+        /* ── NCTB ২০২৬ অষ্টম শ্রেণি বিজ্ঞান বইয়ের পদার্থবিজ্ঞান সংশ্লিষ্ট অধ্যায়সমূহ ── */
+        chapters: [
+            {
+                id: "c8_c7",  num: 7,
+                title: "অধ্যায় ৭: পৃথিবী ও মহাকর্ষ",
+                desc:  "মহাকর্ষ বল, নিউটনের মহাকর্ষ সূত্র, অভিকর্ষজ ত্বরণ 'g' এর মান এবং ভর ও ওজনের পার্থক্য।"
+            },
+            {
+                id: "c8_c9",  num: 9,
+                title: "অধ্যায় ৯: বর্তনী ও চলবিদ্যুৎ",
+                desc:  "বৈদ্যুতিক বর্তনী, বিদ্যুৎ প্রবাহ, রোধ, সিরিজ ও সমান্তরাল সংযোগ, অ্যামিটার ও ভোল্টমিটার।"
+            },
+            {
+                id: "c8_c11", num: 11,
+                title: "অধ্যায় ১১: আলো",
+                desc:  "আলোর প্রতিফলন ও প্রতিসরণ, সংকট কোণ, পূর্ণ অভ্যন্তরীণ প্রতিফলন এবং অপটিক্যাল ফাইবার।"
+            },
+            {
+                id: "c8_c12", num: 12,
+                title: "অধ্যায় ১২: মহাকাশ ও উপগ্রহ",
+                desc:  "সৌরজগৎ, কৃত্রিম উপগ্রহ, কক্ষপথ, মুক্তিবেগ এবং মহাবিশ্বের গঠন সম্পর্কে প্রাথমিক ধারণা।"
+            }
+        ]
+    },
     ssc: {
         levelTitle: "নবম-দশম শ্রেণি",
         gradeTag: "SSC Physics (১৩টি অধ্যায়)",
@@ -80,33 +107,6 @@ const APP_DATA = {
             { id: "hsc2_c9",  num: 9,  title: "অধ্যায় ৯: পরমাণু মডেল ও নিউক্লিয়ার পদার্থবিজ্ঞান",   desc: "রাদারফোর্ড ও বোর মডেল, তেজস্ক্রিয় ক্ষয় সূত্র, অর্ধায়ু ও বন্ধন শক্তি।" },
             { id: "hsc2_c10", num: 10, title: "অধ্যায় ১০: সেমিকন্ডাক্টর ও ইলেকট্রনিক্স",             desc: "p-n জাংশন ডায়োড, রেকটিফায়ার, ট্রানজিস্টর ও লজিক গেট।" },
             { id: "hsc2_c11", num: 11, title: "অধ্যায় ১১: জ্যোতির্বিজ্ঞান",                          desc: "নক্ষত্রের জীবনচক্র, হাবলের সূত্র ও কৃষ্ণগহ্বর।" }
-        ]
-    },
-    class8: {
-        levelTitle: "অষ্টম শ্রেণি বিজ্ঞান (Physics Modules)",
-        gradeTag: "Class 8 Science - NCTB 2026 (Physics অংশ — ৪টি অধ্যায়)",
-        /* ── NCTB ২০২৬ অষ্টম শ্রেণি বিজ্ঞান বইয়ের পদার্থবিজ্ঞান সংশ্লিষ্ট অধ্যায়সমূহ ── */
-        chapters: [
-            {
-                id: "c8_c7",  num: 7,
-                title: "অধ্যায় ৭: পৃথিবী ও মহাকর্ষ",
-                desc:  "মহাকর্ষ বল, নিউটনের মহাকর্ষ সূত্র, অভিকর্ষজ ত্বরণ 'g' এর মান এবং ভর ও ওজনের পার্থক্য।"
-            },
-            {
-                id: "c8_c9",  num: 9,
-                title: "অধ্যায় ৯: বর্তনী ও চলবিদ্যুৎ",
-                desc:  "বৈদ্যুতিক বর্তনী, বিদ্যুৎ প্রবাহ, রোধ, সিরিজ ও সমান্তরাল সংযোগ, অ্যামিটার ও ভোল্টমিটার।"
-            },
-            {
-                id: "c8_c11", num: 11,
-                title: "অধ্যায় ১১: আলো",
-                desc:  "আলোর প্রতিফলন ও প্রতিসরণ, সংকট কোণ, পূর্ণ অভ্যন্তরীণ প্রতিফলন এবং অপটিক্যাল ফাইবার।"
-            },
-            {
-                id: "c8_c12", num: 12,
-                title: "অধ্যায় ১২: মহাকাশ ও উপগ্রহ",
-                desc:  "সৌরজগৎ, কৃত্রিম উপগ্রহ, কক্ষপথ, মুক্তিবেগ এবং মহাবিশ্বের গঠন সম্পর্কে প্রাথমিক ধারণা।"
-            }
         ]
     }
 };
@@ -2286,12 +2286,6 @@ function handleWallLoginSubmit(e) {
         String(s.password) === String(pass)
     );
 
-    if (!matched && (idOrPhone.toLowerCase() === 'ap-26-10001' || cleanInput === '01700000000' || idOrPhone === '01700000000') && pass === '123456') {
-        matched = DEMO_TEST_STUDENT;
-    }
-    if (!matched && (idOrPhone.toLowerCase() === 'ap-26-10001' || cleanInput === '01700000000' || idOrPhone === '01700000000') && pass === '123456') {
-        matched = DEMO_TEST_STUDENT;
-    }
     if (matched) {
         setActiveStudentSession(matched);
         if (errBox) errBox.classList.add('hidden');
@@ -2508,17 +2502,6 @@ function updateStudentHeaderSessionUI() {
 }
 
 
-const DEMO_TEST_STUDENT = {
-    id: 'AP-26-10001',
-    name: 'টেস্ট শিক্ষার্থী',
-    phone: '01700000000',
-    classKey: '10',
-    classLevel: 'ssc',
-    institution: 'আইডিয়াল স্কুল অ্যান্ড কলেজ',
-    password: '123456',
-    createdAt: '2026-01-01'
-};
-
 function handleStudentLoginSubmit(e) {
     e.preventDefault();
     const idOrPhone = document.getElementById('stu-login-id').value.trim();
@@ -2679,14 +2662,14 @@ function renderGlobalAggregatorContent() {
     container.innerHTML = '';
 
     const levelsToProcess = levelFilter === 'all' 
-        ? ['ssc', 'hsc1', 'hsc2', 'class8'] 
+        ? ['class8', 'ssc', 'hsc1', 'hsc2'] 
         : [levelFilter];
 
     const levelNames = {
+        class8: 'অষ্টম শ্রেণি বিজ্ঞান (NCTB 2026)',
         ssc: 'নবম-দশম শ্রেণি (SSC)',
         hsc1: 'একাদশ-দ্বাদশ শ্রেণি — ১ম পত্র (HSC-1)',
-        hsc2: 'একাদশ-দ্বাদশ শ্রেণি — ২য় পত্র (HSC-2)',
-        class8: 'অষ্টম শ্রেণি বিজ্ঞান (NCTB 2026)'
+        hsc2: 'একাদশ-দ্বাদশ শ্রেণি — ২য় পত্র (HSC-2)'
     };
 
     levelsToProcess.forEach(lvl => {
@@ -3262,12 +3245,6 @@ function renderStudentProfileData() {
             </div>
         `;
     }).join('');
-}
-
-function triggerParentSmsDemo() {
-    const phone = studentUser ? studentUser.phone : "০১৭১২-৩৪৫৬৭৮";
-    const name = studentUser ? studentUser.name : "শিক্ষার্থী";
-    alert(`[অটোমেটিক SMS সফলভাবে প্রেরিত হয়েছে]\n\nপ্রাপক: অভিভাবক (${phone})\nবার্তা: "শ্রদ্ধেয় অভিভাবক, আপনার সন্তান ${name} আল আমিন ফিজিক্সে 'বল ও গতি' পরীক্ষায় ৫-এ ৫ পেয়ে শীর্ষ স্থানে রয়েছে। অভিনন্দন!"`);
 }
 
 /* ===================================================
