@@ -507,7 +507,7 @@ function switchTab(tabKey) {
 
     const activeBtn = document.getElementById(`tab-${tabKey}`);
     if (activeBtn) {
-        activeBtn.classList.add(tabKey === 'paid' ? 'subtab-paid-active' : 'subtab-active');
+        activeBtn.classList.add(tabKey === 'mcq-master' || tabKey === 'paid' ? 'subtab-paid-active' : 'subtab-active');
     }
 
     document.querySelectorAll('.tab-pane').forEach(el => el.classList.add('hidden'));
@@ -519,6 +519,9 @@ function switchTab(tabKey) {
     }
     if (tabKey === 'exam') {
         renderChapterExamSets();
+    }
+    if (tabKey === 'mcq-master') {
+        initMasterCourseHub();
     }
 
     // Mark progress when opening a section
@@ -3509,3 +3512,369 @@ function publishExamFromStudio() {
     goToSpecificChapterAndTab('ssc', 1, 'exam');
 }
 
+
+
+/* ===================================================
+   SSC PHYSICS MCQ MASTER COURSE CONTROLLER & RUNNER
+=================================================== */
+let currentMasterExamFilter = 'all';
+let currentMasterExamAttempt = null;
+let antiCheatViolationCount = 0;
+let antiCheatHandlerBound = false;
+
+function initMasterCourseHub() {
+    if (!window.MCQ_MASTER) return;
+
+    const student = (typeof getActiveStudentSession === 'function') ? getActiveStudentSession() : null;
+    const isEnrolled = window.MCQ_MASTER.isStudentEnrolled(student ? student.id : null);
+
+    // Update status badge
+    const badge = document.getElementById('mcq-enrollment-status-badge');
+    const actionCard = document.getElementById('mcq-course-action-card');
+    if (badge) {
+        if (isEnrolled) {
+            badge.className = "px-2.5 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-bold flex items-center gap-1.5";
+            badge.innerHTML = '<i class="fa-solid fa-circle-check"></i> এনরোল্ড (৯০টি পরীক্ষা আনলকড)';
+        } else {
+            badge.className = "px-2.5 py-0.5 rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-bold flex items-center gap-1.5";
+            badge.innerHTML = '<i class="fa-solid fa-lock"></i> ফ্রি ট্রায়াল মোড (সেট ০১ উন্মুক্ত)';
+        }
+    }
+
+    if (actionCard && isEnrolled) {
+        actionCard.innerHTML = `
+            <div class="space-y-1">
+                <span class="text-xs text-emerald-400 font-bold block flex items-center gap-1.5">
+                    <i class="fa-solid fa-circle-check text-emerald-400"></i> কোর্স অ্যাক্টিভেশন সম্পন্ন
+                </span>
+                <p class="text-[11px] text-slate-300">আপনি সকল অধ্যায়, সমন্বিত টেস্ট ও ফাইনাল মক টেস্টে সম্পূর্ণ আনলিমিটেড অ্যাক্সেস পেয়েছেন।</p>
+            </div>
+            <div class="px-3 py-2 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-xs text-emerald-300 font-bold text-center">
+                Master Member Verified
+            </div>
+        `;
+    }
+
+    renderMasterExamsGrid(currentMasterExamFilter);
+}
+
+function filterMasterExams(filterKey) {
+    currentMasterExamFilter = filterKey;
+    ['all', 'free', 'chapter', 'part3', 'part2', 'full_book'].forEach(k => {
+        const btn = document.getElementById(`mf-btn-${k}`);
+        if (!btn) return;
+        if (k === filterKey) {
+            btn.className = "px-3 py-1.5 rounded-xl font-bold transition bg-blue-600 text-white shadow-xs";
+        } else {
+            btn.className = "px-3 py-1.5 rounded-xl font-bold transition bg-slate-100 text-slate-700 hover:bg-slate-200";
+        }
+    });
+    renderMasterExamsGrid(filterKey);
+}
+
+function renderMasterExamsGrid(filterKey) {
+    const grid = document.getElementById('mcq-master-exams-grid');
+    if (!grid || !window.MCQ_MASTER) return;
+
+    const student = (typeof getActiveStudentSession === 'function') ? getActiveStudentSession() : null;
+    const isEnrolled = window.MCQ_MASTER.isStudentEnrolled(student ? student.id : null);
+    const allExams = window.MCQ_MASTER.getAllExamDefinitions();
+
+    let filtered = allExams;
+    if (filterKey === 'free') {
+        filtered = allExams.filter(e => e.isFree);
+    } else if (filterKey === 'chapter') {
+        filtered = allExams.filter(e => e.type === 'chapter');
+    } else if (filterKey === 'part3') {
+        filtered = allExams.filter(e => e.type === 'part3');
+    } else if (filterKey === 'part2') {
+        filtered = allExams.filter(e => e.type === 'part2');
+    } else if (filterKey === 'full_book') {
+        filtered = allExams.filter(e => e.type === 'full_book');
+    }
+
+    grid.innerHTML = filtered.map(exam => {
+        const canAccess = isEnrolled || exam.isFree;
+        const savedScoreKey = `mcq_master_score_${exam.id}`;
+        const savedScore = localStorage.getItem(savedScoreKey);
+
+        const badgeColor = exam.isFree ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : (isEnrolled ? 'bg-blue-50 text-blue-700 border-blue-200' : 'bg-slate-100 text-slate-600 border-slate-300');
+
+        return `
+            <div class="p-5 rounded-3xl bg-slate-50/70 hover:bg-white border ${canAccess ? 'border-slate-200 hover:border-blue-400' : 'border-slate-200/80 opacity-90'} hover:shadow-md transition space-y-4 flex flex-col justify-between group">
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span class="px-2.5 py-0.5 rounded-lg text-xs font-bold border ${badgeColor}">
+                            ${exam.isFree ? '<i class="fa-solid fa-gift mr-1 text-emerald-600"></i> ফ্রি ট্রায়াল' : (isEnrolled ? '<i class="fa-solid fa-unlock mr-1 text-blue-600"></i> আনলকড' : '<i class="fa-solid fa-lock mr-1 text-slate-400"></i> এনরোল প্রয়োজন')}
+                        </span>
+                        ${savedScore !== null ? `
+                            <span class="text-[11px] font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-md border border-blue-200">
+                                সেরা: ${savedScore}/${exam.fullMarks}
+                            </span>
+                        ` : `
+                            <span class="text-[10px] text-slate-400 font-semibold">${exam.category}</span>
+                        `}
+                    </div>
+
+                    <div>
+                        <h4 class="text-sm font-bold text-slate-900 group-hover:text-blue-700 transition leading-snug">${exam.title}</h4>
+                        <p class="text-xs text-slate-500 mt-1 leading-relaxed">${exam.desc}</p>
+                    </div>
+
+                    <div class="flex items-center gap-2 pt-1 flex-wrap text-[11px] font-bold text-slate-700">
+                        <span class="px-2 py-1 rounded-lg bg-white border border-slate-200">
+                            <i class="fa-regular fa-circle-question text-blue-500"></i> ${exam.qCount} প্রশ্ন
+                        </span>
+                        <span class="px-2 py-1 rounded-lg bg-white border border-slate-200">
+                            <i class="fa-regular fa-clock text-amber-500"></i> ${exam.timeMinutes} মিনিট
+                        </span>
+                        <span class="px-2 py-1 rounded-lg bg-white border border-slate-200">
+                            <i class="fa-solid fa-dice text-purple-500"></i> র্যান্ডম প্রশ্ন
+                        </span>
+                    </div>
+                </div>
+
+                <div>
+                    ${canAccess ? `
+                        <button onclick="startMasterCourseExam('${exam.id}')" class="w-full py-2.5 px-4 bg-white group-hover:bg-blue-600 group-hover:text-white border border-slate-200 group-hover:border-blue-600 rounded-xl text-xs font-bold text-slate-800 transition flex items-center justify-center gap-2 shadow-xs">
+                            <i class="fa-solid fa-play text-[11px]"></i> <span>পরীক্ষা শুরু করুন</span>
+                        </button>
+                    ` : `
+                        <button onclick="openEnrollModal()" class="w-full py-2.5 px-4 bg-slate-100 hover:bg-amber-500 hover:text-slate-950 border border-slate-200 text-slate-600 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 shadow-xs">
+                            <i class="fa-solid fa-lock text-[11px]"></i> <span>আনলক করতে এনরোল করুন (৳ ১৯৯)</span>
+                        </button>
+                    `}
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+function startMasterCourseExam(examId) {
+    if (!window.MCQ_MASTER) return;
+
+    const student = (typeof getActiveStudentSession === 'function') ? getActiveStudentSession() : null;
+    const isEnrolled = window.MCQ_MASTER.isStudentEnrolled(student ? student.id : null);
+
+    const instance = window.MCQ_MASTER.generateExamInstance(examId);
+    if (!instance) {
+        alert('প্রশ্ন প্রস্তুত হচ্ছে। অনুগ্রহ করে একটু পর আবার চেষ্টা করুন।');
+        return;
+    }
+
+    if (!isEnrolled && !instance.examDef.isFree) {
+        openEnrollModal();
+        return;
+    }
+
+    currentMasterExamAttempt = instance;
+    currentActiveExamSet = instance.examDef;
+    currentActiveExamQuestions = instance.questions;
+    examUserAnswers = {};
+    examTimeLeft = (instance.examDef.timeMinutes || 15) * 60;
+    examActiveStartTime = Date.now();
+    antiCheatViolationCount = 0;
+
+    // Switch to active exam view
+    document.getElementById('exam-sets-screen').classList.add('hidden');
+    const masterHub = document.getElementById('section-mcq-master');
+    if (masterHub) masterHub.classList.add('hidden');
+
+    const activeScreen = document.getElementById('exam-active-screen');
+    activeScreen.classList.remove('hidden');
+    document.getElementById('exam-result-screen').classList.add('hidden');
+
+    const titleEl = document.getElementById('exam-active-set-title');
+    const chapSubEl = document.getElementById('exam-active-chap-subtitle');
+    if (titleEl) titleEl.textContent = instance.examDef.title;
+    if (chapSubEl) chapSubEl.textContent = `${instance.examDef.category} • স্বয়ংক্রিয় র্যান্ডম প্রশ্ন ইঞ্জিন`;
+
+    updateExamProgressStat();
+
+    // Render questions with anti-copy style
+    const container = document.getElementById('exam-questions-container');
+    if (container) {
+        container.style.userSelect = 'none';
+        container.style.webkitUserSelect = 'none';
+        container.oncontextmenu = (e) => { e.preventDefault(); return false; };
+        container.oncopy = (e) => { e.preventDefault(); alert('পরীক্ষার প্রশ্ন কপি করা নিষিদ্ধ!'); return false; };
+
+        const letters = ['ক', 'খ', 'গ', 'ঘ'];
+        container.innerHTML = currentActiveExamQuestions.map((item, qIdx) => `
+            <div class="p-5 rounded-2xl border border-slate-200 bg-white shadow-sm space-y-3 select-none" id="exam-qbox-${qIdx}">
+                <div class="flex items-start gap-2.5">
+                    <span class="w-6 h-6 rounded-lg bg-blue-100 text-blue-700 text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">
+                        ${qIdx + 1}
+                    </span>
+                    <div class="font-bold text-sm text-slate-900 leading-relaxed whitespace-pre-line flex-1">
+                        ${item.q}
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs pt-1">
+                    ${item.options.map((opt, oi) => `
+                        <label class="p-3 bg-slate-50 hover:bg-blue-50/60 rounded-xl border border-slate-200 hover:border-blue-400 flex items-center gap-3 cursor-pointer transition select-none" id="exam-opt-lbl-${qIdx}-${oi}">
+                            <input type="radio" name="eq_${qIdx}" value="${oi}" onchange="recordSetExamAnswer(${qIdx}, ${oi})" class="accent-blue-600 w-4 h-4 cursor-pointer">
+                            <span class="font-bold text-slate-500 mr-1">${letters[oi]})</span>
+                            <span class="font-medium text-slate-800 leading-normal flex-1">${opt}</span>
+                        </label>
+                    `).join('')}
+                </div>
+            </div>
+        `).join('');
+
+        if (window.renderMathInElement) {
+            try {
+                window.renderMathInElement(container, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$', right: '$', display: false}
+                    ],
+                    throwOnError: false
+                });
+            } catch(e) {}
+        }
+    }
+
+    // Scroll to top
+    activeScreen.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    if (examTimerInterval) clearInterval(examTimerInterval);
+    updateExamTimerDisplay();
+    examTimerInterval = setInterval(() => {
+        examTimeLeft--;
+        updateExamTimerDisplay();
+        if (examTimeLeft <= 0) {
+            clearInterval(examTimerInterval);
+            alert("সময় সমাপ্ত! আপনার পরীক্ষা স্বয়ংক্রিয়ভাবে জমা নেওয়া হচ্ছে।");
+            submitExamAnswers();
+        }
+    }, 1000);
+
+    // Bind Anti-Cheat Detection (Minimize / Tab Switch)
+    setupAntiCheatListener();
+}
+
+function setupAntiCheatListener() {
+    if (antiCheatHandlerBound) return;
+    antiCheatHandlerBound = true;
+
+    const handleCheatEvent = () => {
+        const activeScreen = document.getElementById('exam-active-screen');
+        if (!activeScreen || activeScreen.classList.contains('hidden')) return;
+
+        // Reset user answers
+        examUserAnswers = {};
+        antiCheatViolationCount++;
+
+        // Reset radio buttons
+        const radios = activeScreen.querySelectorAll('input[type="radio"]');
+        radios.forEach(r => { r.checked = false; });
+
+        // Update answered stat
+        updateExamProgressStat();
+
+        // Show security warning modal
+        const warningModal = document.getElementById('mcq-security-cheat-warning');
+        if (warningModal) warningModal.classList.remove('hidden');
+
+        // Log violation
+        const student = (typeof getActiveStudentSession === 'function') ? getActiveStudentSession() : null;
+        console.warn(`[AntiCheat Violation] Student: ${student?.name || 'Guest'}, Count: ${antiCheatViolationCount}`);
+    };
+
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'hidden') {
+            handleCheatEvent();
+        }
+    });
+
+    window.addEventListener('blur', () => {
+        handleCheatEvent();
+    });
+}
+
+// Enhance submitExamAnswers to generate Weak Topic notes, SMS log, and Printable Sheet
+const originalSubmitExamAnswers = submitExamAnswers;
+submitExamAnswers = function () {
+    originalSubmitExamAnswers();
+
+    if (!window.MCQ_MASTER || !currentMasterExamAttempt) return;
+
+    const questions = currentActiveExamQuestions || [];
+    const student = (typeof getActiveStudentSession === 'function') ? getActiveStudentSession() : null;
+    const studentName = student ? student.name : 'পরীক্ষার্থী';
+    const studentPhone = student ? student.phone : '০১৭০০০০০০০০';
+
+    // 1. Weak Topic Auto Revision Notes
+    const weakNotes = window.MCQ_MASTER.generateWeakTopicNotes(questions, examUserAnswers);
+    let weakNotesContainer = document.getElementById('mcq-weak-topic-notes-box');
+    if (!weakNotesContainer) {
+        weakNotesContainer = document.createElement('div');
+        weakNotesContainer.id = 'mcq-weak-topic-notes-box';
+        weakNotesContainer.className = 'text-left space-y-4 pt-6 border-t border-slate-200';
+        const resultScreen = document.getElementById('exam-result-screen');
+        if (resultScreen) resultScreen.appendChild(weakNotesContainer);
+    }
+
+    if (weakNotes.length > 0) {
+        weakNotesContainer.innerHTML = `
+            <div class="p-5 rounded-3xl bg-amber-50/70 border border-amber-200/80 space-y-3">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-xl bg-amber-500 text-slate-950 flex items-center justify-center font-bold text-sm">
+                        <i class="fa-solid fa-bolt"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-black text-slate-900 text-sm">দুর্বল টপিকের অটোমেটিক রিভিশন নোট</h4>
+                        <p class="text-[11px] text-slate-500">যেসব টপিকে ৫০% বা তার বেশি ভুল হয়েছে, তার সংক্ষিপ্ত রিভিশন পয়েন্ট:</p>
+                    </div>
+                </div>
+
+                <div class="space-y-3 pt-2">
+                    ${weakNotes.map(n => `
+                        <div class="p-4 rounded-2xl bg-white border border-amber-200/60 shadow-xs space-y-1.5 text-xs">
+                            <div class="flex items-center justify-between">
+                                <span class="font-extrabold text-blue-800 text-xs">${n.topic}</span>
+                                <span class="text-[10px] font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full">ভুল: ${n.wrongCount}/${n.totalCount}</span>
+                            </div>
+                            <ul class="space-y-1 text-slate-600 pl-1 text-[11.5px] leading-relaxed">
+                                ${n.lines.map(l => `<li>${l}</li>`).join('')}
+                            </ul>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+    } else {
+        weakNotesContainer.innerHTML = `
+            <div class="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-800 flex items-center gap-2">
+                <i class="fa-solid fa-circle-check text-emerald-600 text-base"></i>
+                <span>চমৎকার! কোনো নির্দিষ্ট টপিকে ৫০% এর বেশি ভুল পাওয়া যায়নি। আপনার সার্বিক প্রস্তুতি ভারসাম্যপূর্ণ।</span>
+            </div>
+        `;
+    }
+
+    // 2. Parent SMS Log Entry
+    const total = questions.length;
+    let score = 0;
+    questions.forEach((item, idx) => {
+        if (examUserAnswers[idx] === item.correct) score++;
+    });
+    window.MCQ_MASTER.recordParentSms(studentName, studentPhone, currentActiveExamSet?.title || 'মডেল টেস্ট', score, total);
+
+    // 3. Add Offline Printable Download Button to Result Screen if not added
+    let downloadBtn = document.getElementById('btn-mcq-download-sheet');
+    if (!downloadBtn) {
+        const actionBtnWrapper = document.querySelector('#exam-result-screen .flex.flex-wrap');
+        if (actionBtnWrapper) {
+            downloadBtn = document.createElement('button');
+            downloadBtn.id = 'btn-mcq-download-sheet';
+            downloadBtn.className = "px-5 py-3 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-2xl text-xs sm:text-sm transition flex items-center gap-2 shadow-md";
+            downloadBtn.innerHTML = '<i class="fa-solid fa-file-arrow-down text-blue-400"></i> <span>অফলাইন রিভিশন শিট (PDF)</span>';
+            downloadBtn.onclick = () => {
+                window.MCQ_MASTER.renderPrintableExamSheet(currentMasterExamAttempt);
+            };
+            actionBtnWrapper.appendChild(downloadBtn);
+        }
+    }
+};
