@@ -19,15 +19,16 @@
         regularPrice: 350,
         launchPrice: 149,
         merchantNumber: '01896464903',
-        totalExams: 32,
-        totalQuestionsPool: 630,
+        totalExams: 37,
+        totalQuestionsPool: 735,
         chapters: [
             { num: 1, id: 'c8_c1', name: 'প্রাণিজগতের শ্রেণিবিন্যাস', qCount: 105 },
             { num: 2, id: 'c8_c2', name: 'জীবের বৃদ্ধি ও বংশগতি', qCount: 105 },
             { num: 3, id: 'c8_c3', name: 'ব্যাপন, অভিস্রবণ ও প্রস্বেদন', qCount: 105 },
             { num: 4, id: 'c8_c4', name: 'উদ্ভিদের বংশ বৃদ্ধি', qCount: 105 },
             { num: 5, id: 'c8_c5', name: 'সমন্বয় ও নিঃসরণ', qCount: 105 },
-            { num: 6, id: 'c8_c6', name: 'পরমাণুর গঠন', qCount: 105 }
+            { num: 6, id: 'c8_c6', name: 'পরমাণুর গঠন', qCount: 105 },
+            { num: 7, id: 'c8_c7', name: 'পৃথিবী ও মহাকর্ষ', qCount: 105 }
         ]
     };
 
@@ -140,7 +141,8 @@
             { num: 3, name: "ব্যাপন, অভিস্রবণ ও প্রস্বেদন" },
             { num: 4, name: "উদ্ভিদের বংশ বৃদ্ধি" },
             { num: 5, name: "সমন্বয় ও নিঃসরণ" },
-            { num: 6, name: "পরমাণুর গঠন" }
+            { num: 6, name: "পরমাণুর গঠন" },
+            { num: 7, name: "পৃথিবী ও মহাকর্ষ" }
         ];
 
         // 5 Sets for Chapter 1, 5 Sets for Chapter 2 & 5 Sets for Chapter 3 = 15 exams
@@ -180,15 +182,15 @@
             id: 'c8_mcq_combined_ch1_to_ch3',
             type: 'part',
             grade: 'class8',
-            title: 'অধ্যায় ১ থেকে ৬ সমন্বিত রিভিশন টেস্ট',
-            desc: 'প্রথম ছয়টি অধ্যায় থেকে নির্বাচিত ৪৫টি গুরুত্বপূর্ণ বোর্ড স্ট্যান্ডার্ড প্রশ্নের সমন্বিত পরীক্ষা।',
-            qCount: 45,
-            timeMinutes: 45,
-            fullMarks: 45,
+            title: 'অধ্যায় ১ থেকে ৭ সমন্বিত হাফ-বুক টেস্ট',
+            desc: 'প্রথম সাতটি অধ্যায় থেকে নির্বাচিত ৫০টি গুরুত্বপূর্ণ বোর্ড স্ট্যান্ডার্ড প্রশ্নের সমন্বিত পরীক্ষা।',
+            qCount: 50,
+            timeMinutes: 50,
+            fullMarks: 50,
             difficulty: 'medium',
             difficultyLabel: 'সমন্বিত মডেল টেস্ট',
             category: 'সমন্বিত টেস্ট',
-            chapters: [1, 2, 3, 4, 5, 6],
+            chapters: [1, 2, 3, 4, 5, 6, 7],
             isFree: false
         });
 
@@ -198,14 +200,14 @@
             type: 'full_book',
             grade: 'class8',
             title: 'অষ্টম শ্রেণি বিজ্ঞান গ্র্যান্ড ফাইনাল মক টেস্ট',
-            desc: '৬৩০টি প্রশ্নের সম্পূর্ণ পুল থেকে নির্বাচিত ৫০টি প্রশ্নের চূড়ান্ত মডেল টেস্ট।',
+            desc: '৭৩৫টি প্রশ্নের সম্পূর্ণ পুল থেকে নির্বাচিত ৫০টি প্রশ্নের চূড়ান্ত মডেল টেস্ট।',
             qCount: 50,
             timeMinutes: 50,
             fullMarks: 50,
             difficulty: 'challenge',
             difficultyLabel: 'গ্র্যান্ড ফাইনাল মক',
             category: 'ফাইনাল মক',
-            chapters: [1, 2, 3, 4, 5, 6],
+            chapters: [1, 2, 3, 4, 5, 6, 7],
             isFree: false
         });
 
