@@ -171,7 +171,7 @@
             const chName = chapNames[ch - 1];
             // 6 Sets per chapter: 3 of 15 Qs, 3 of 25 Qs
             const setSpecs = [
-                { setNum: 1, qCount: 15, time: 15, diff: 'easy', diffLabel: 'সহজ (জ্ঞান ও অনুধাবন)', isFree: true },
+                { setNum: 1, qCount: 15, time: 15, diff: 'easy', diffLabel: 'সহজ (জ্ঞান ও অনুধাবন)', isFree: false },
                 { setNum: 2, qCount: 15, time: 15, diff: 'easy-medium', diffLabel: 'সহজ-মাঝারি (বেসিক প্রয়োগ)', isFree: false },
                 { setNum: 3, qCount: 15, time: 15, diff: 'medium', diffLabel: 'মাঝারি (সমন্বিত ধারণা)', isFree: false },
                 { setNum: 4, qCount: 25, time: 25, diff: 'hard', diffLabel: 'বোর্ড স্ট্যান্ডার্ড (পূর্ণ টেস্ট)', isFree: false },
@@ -193,7 +193,7 @@
                     fullMarks: spec.qCount,
                     difficulty: spec.diff,
                     difficultyLabel: spec.diffLabel,
-                    isFree: spec.isFree,
+                    isFree: false,
                     chapters: [ch]
                 });
             });
@@ -272,7 +272,7 @@
                 qCount: 15,
                 timeMinutes: 15,
                 fullMarks: 15,
-                isFree: true,
+                isFree: false,
                 chapters: [1, 2, 3]
             },
             {
@@ -284,7 +284,7 @@
                 qCount: 15,
                 timeMinutes: 15,
                 fullMarks: 15,
-                isFree: true,
+                isFree: false,
                 chapters: [1, 2, 3]
             }
         ];
