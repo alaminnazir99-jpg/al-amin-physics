@@ -1,0 +1,6 @@
+<USER_REQUEST>
+একইভাবে অষ্টম শ্রেণির জন্য আলাদা একটি mcq কোর্স তৈরি কর।১ম ২ অধ্যায়ের প্রশ্ন এখানে আছে
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-11-27T23:06:55+06:00.
+</ADDITIONAL_METADATA>

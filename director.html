@@ -31,6 +31,7 @@
         }
     </style>
     <script src="js/mcq-master-course.js"></script>
+    <script src="js/class8-mcq-master-course.js"></script>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col antialiased selection:bg-blue-600 selection:text-white">
 
@@ -891,7 +892,7 @@
         }
 
         function switchDirectorTab(tabName) {
-            const tabs = ['mcq-course', 'admins', 'students', 'finance', 'exams', 'sms', 'settings'];
+            const tabs = ['mcq-course', 'c8-mcq-course', 'admins', 'students', 'finance', 'exams', 'sms', 'settings'];
             tabs.forEach(t => {
                 const btn = document.getElementById(`dir-tab-${t}`);
                 const pane = document.getElementById(`dir-pane-${t}`);
@@ -907,6 +908,7 @@
                     else pane.classList.add('hidden');
                 }
             });
+            if (tabName === 'c8-mcq-course' && typeof renderClass8DirectorDashboard === 'function') { renderClass8DirectorDashboard(); }
             if (tabName === 'mcq-course' && typeof renderMcqDirectorDashboard === 'function') {
                 renderMcqDirectorDashboard();
             }
@@ -1340,7 +1342,73 @@
 /* ===================================================
    DIRECTOR MCQ MASTER COURSE CONTROLLER
 =================================================== */
-function renderMcqDirectorDashboard() {
+
+        function renderClass8DirectorDashboard() {
+            if (!window.C8_MCQ_MASTER) return;
+
+            const requests = window.C8_MCQ_MASTER.getStorage(window.C8_MCQ_MASTER.KEYS.ENROLL_REQUESTS, []);
+            const enrolled = window.C8_MCQ_MASTER.getStorage(window.C8_MCQ_MASTER.KEYS.ENROLLED_STUDENTS, []);
+
+            const pending = requests.filter(r => r.status === 'pending');
+
+            const statEnrolled = document.getElementById('c8-mcq-dir-stat-enrolled');
+            const statPending = document.getElementById('c8-mcq-dir-stat-pending');
+            const statRevenue = document.getElementById('c8-mcq-dir-stat-revenue');
+            const countTag = document.getElementById('c8-mcq-enrolled-count-tag');
+
+            if (statEnrolled) statEnrolled.textContent = `${enrolled.length} জন`;
+            if (statPending) statPending.textContent = `${pending.length}টি`;
+            if (statRevenue) statRevenue.textContent = `৳ ${(enrolled.length * 149).toLocaleString('bn-BD')}`;
+            if (countTag) countTag.textContent = `${enrolled.length} জন শিক্ষার্থী`;
+
+            const reqTbody = document.getElementById('c8-mcq-pending-requests-tbody');
+            if (reqTbody) {
+                if (pending.length === 0) {
+                    reqTbody.innerHTML = '<tr><td colspan="6" class="p-5 text-center text-slate-500">কোনো অপেক্ষমাণ রিকোয়েস্ট নেই।</td></tr>';
+                } else {
+                    reqTbody.innerHTML = pending.map(req => `
+                        <tr class="hover:bg-slate-800/40 transition">
+                            <td class="p-4 font-mono font-bold text-white">${req.senderPhone}</td>
+                            <td class="p-4 font-mono text-teal-400 font-bold">${req.transactionId}</td>
+                            <td class="p-4 font-bold text-emerald-400">৳ ${req.amount}</td>
+                            <td class="p-4 text-slate-400">${req.submittedAt}</td>
+                            <td class="p-4"><span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">অপেক্ষমাণ</span></td>
+                            <td class="p-4 text-right space-x-2">
+                                <button onclick="handleApproveC8McqReq('${req.id}')" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg font-bold text-xs transition shadow-sm">
+                                    <i class="fa-solid fa-check"></i> অ্যাক্টিভ করুন
+                                </button>
+                            </td>
+                        </tr>
+                    `).join('');
+                }
+            }
+
+            const enrTbody = document.getElementById('c8-mcq-enrolled-students-tbody');
+            if (enrTbody) {
+                if (enrolled.length === 0) {
+                    enrTbody.innerHTML = '<tr><td colspan="5" class="p-5 text-center text-slate-500">এখনো কোনো শিক্ষার্থী এনরোল করেনি।</td></tr>';
+                } else {
+                    enrTbody.innerHTML = enrolled.map(st => `
+                        <tr class="hover:bg-slate-800/40 transition">
+                            <td class="p-4 font-bold text-white">${st.name || 'শিক্ষার্থী'} (${st.studentId})</td>
+                            <td class="p-4 font-mono text-slate-300">${st.phone}</td>
+                            <td class="p-4 font-mono text-teal-400 font-bold">${st.trxId}</td>
+                            <td class="p-4 text-slate-400">${st.approvedAt}</td>
+                            <td class="p-4"><span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">অ্যাক্টিভ</span></td>
+                        </tr>
+                    `).join('');
+                }
+            }
+        }
+
+        function handleApproveC8McqReq(id) {
+            if (!confirm('আপনি কি নিশ্চিত যে পেমেন্ট যাচাই করে এই শিক্ষার্থীর জন্য অষ্টম শ্রেণি বিজ্ঞান কোর্সটি সক্রিয় করতে চান?')) return;
+            const res = window.C8_MCQ_MASTER.approveEnrollment(id);
+            alert(res.message);
+            renderClass8DirectorDashboard();
+        }
+
+        function renderMcqDirectorDashboard() {
     if (!window.MCQ_MASTER) return;
 
     const requests = window.MCQ_MASTER.getStorage(window.MCQ_MASTER.KEYS.ENROLL_REQUESTS, []);
