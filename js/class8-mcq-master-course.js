@@ -2,10 +2,10 @@
  * Class 8 Science MCQ Master Course Module
  * Al Amin Physics (Official)
  * 
- * Includes Chapters 1 & 2 (105 questions each, 210 questions total)
+ * Includes Chapters 1, 2 & 3 (105 questions each, 315 questions total)
  * Features:
- * - 12 Total Exams (5 Chapter Sets x 2 + 1 Combined Part Exam + 1 Final Mock)
- * - Free Access: Set 1 of Chapter 1 & Chapter 2 are completely free trial tests
+ * - 17 Total Exams (5 Chapter Sets x 3 + 1 Combined Part Exam + 1 Final Mock)
+ * - Free Access: Set 1 of Chapter 1, Chapter 2 & Chapter 3 are completely free trial tests
  * - Random Question Sampling engine
  * - Full Explanations, Timer, Score tracking, and Weak Topic Notes
  */
@@ -19,11 +19,12 @@
         regularPrice: 350,
         launchPrice: 149,
         merchantNumber: '01896464903',
-        totalExams: 12,
-        totalQuestionsPool: 210,
+        totalExams: 17,
+        totalQuestionsPool: 315,
         chapters: [
             { num: 1, id: 'c8_c1', name: 'প্রাণিজগতের শ্রেণিবিন্যাস', qCount: 105 },
-            { num: 2, id: 'c8_c2', name: 'জীবের বৃদ্ধি ও বংশগতি', qCount: 105 }
+            { num: 2, id: 'c8_c2', name: 'জীবের বৃদ্ধি ও বংশগতি', qCount: 105 },
+            { num: 3, id: 'c8_c3', name: 'ব্যাপন, অভিস্রবণ ও প্রস্বেদন', qCount: 105 }
         ]
     };
 
@@ -132,10 +133,11 @@
         const exams = [];
         const chaps = [
             { num: 1, name: "প্রাণিজগতের শ্রেণিবিন্যাস" },
-            { num: 2, name: "জীবের বৃদ্ধি ও বংশগতি" }
+            { num: 2, name: "জীবের বৃদ্ধি ও বংশগতি" },
+            { num: 3, name: "ব্যাপন, অভিস্রবণ ও প্রস্বেদন" }
         ];
 
-        // 5 Sets for Chapter 1 and 5 Sets for Chapter 2 = 10 exams
+        // 5 Sets for Chapter 1, 5 Sets for Chapter 2 & 5 Sets for Chapter 3 = 15 exams
         chaps.forEach(ch => {
             const setSpecs = [
                 { setNum: 1, qCount: 15, time: 15, diff: 'easy', diffLabel: 'সহজ (জ্ঞান ও মৌলিক ধারণা • ফ্রি ট্রায়াল)', isFree: true },
@@ -167,20 +169,20 @@
             });
         });
 
-        // Combined Exam 1: চ্যাপ্টার ১ ও ২ সমন্বিত হাফ-বুক টেস্ট (২৫ প্রশ্ন)
+        // Combined Exam 1: চ্যাপ্টার ১, ২ ও ৩ সমন্বিত রিভিশন টেস্ট (৩০ প্রশ্ন)
         exams.push({
-            id: 'c8_mcq_combined_ch1_ch2',
+            id: 'c8_mcq_combined_ch1_to_ch3',
             type: 'part',
             grade: 'class8',
-            title: 'অধ্যায় ১ ও ২ সমন্বিত টেস্ট (শ্রেণিবিন্যাস + বৃদ্ধি ও বংশগতি)',
-            desc: 'উভয় অধ্যায় থেকে নির্বাচিত ২৫টি গুরুত্বপূর্ণ বোর্ড স্ট্যান্ডার্ড প্রশ্নের সমন্বিত পরীক্ষা।',
-            qCount: 25,
-            timeMinutes: 25,
-            fullMarks: 25,
+            title: 'অধ্যায় ১, ২ ও ৩ সমন্বিত টেস্ট (শ্রেণিবিন্যাস + কোষ বিভাজন + ব্যাপন ও অভিস্রবণ)',
+            desc: 'তিনটি অধ্যায় থেকে নির্বাচিত ৩০টি গুরুত্বপূর্ণ বোর্ড স্ট্যান্ডার্ড প্রশ্নের সমন্বিত পরীক্ষা।',
+            qCount: 30,
+            timeMinutes: 30,
+            fullMarks: 30,
             difficulty: 'medium',
             difficultyLabel: 'সমন্বিত মডেল টেস্ট',
             category: 'সমন্বিত টেস্ট',
-            chapters: [1, 2],
+            chapters: [1, 2, 3],
             isFree: false
         });
 
@@ -190,14 +192,14 @@
             type: 'full_book',
             grade: 'class8',
             title: 'অষ্টম শ্রেণি বিজ্ঞান গ্র্যান্ড ফাইনাল মক টেস্ট',
-            desc: '২১০টি প্রশ্নের সম্পূর্ণ পুল থেকে নির্বাচিত ৫০টি প্রশ্নের চূড়ান্ত মডেল টেস্ট।',
+            desc: '৩১৫টি প্রশ্নের সম্পূর্ণ পুল থেকে নির্বাচিত ৫০টি প্রশ্নের চূড়ান্ত মডেল টেস্ট।',
             qCount: 50,
             timeMinutes: 50,
             fullMarks: 50,
             difficulty: 'challenge',
             difficultyLabel: 'গ্র্যান্ড ফাইনাল মক',
             category: 'ফাইনাল মক',
-            chapters: [1, 2],
+            chapters: [1, 2, 3],
             isFree: false
         });
 
