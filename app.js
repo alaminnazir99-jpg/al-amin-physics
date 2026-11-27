@@ -1,3 +1,19 @@
+
+// Auto-detect Director role from URL or existing session
+(function checkDirectorRole() {
+    try {
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('role') === 'director' || params.get('director') === '1') {
+            localStorage.setItem('is_director_logged_in', 'true');
+            sessionStorage.setItem('is_director_logged_in', 'true');
+            window.isDirector = true;
+        }
+        if (localStorage.getItem('is_director_logged_in') === 'true' || sessionStorage.getItem('is_director_logged_in') === 'true') {
+            window.isDirector = true;
+        }
+    } catch(e) {}
+})();
+
 /**
  * Al amin Physics - Complete Application Logic
  * Version 2.0 | Blue Theme | Dark Mode | KaTeX | LocalStorage
@@ -378,7 +394,13 @@ function closeHscChoiceModal() {
 
 function selectLevelAndOpen(lvl) {
     switchLevel(lvl);
+    switchTab('basic');
     openClassroomView(false);
+    // Ensure content display area is visible
+    const contentArea = document.getElementById('content-display-area');
+    if (contentArea) contentArea.classList.remove('hidden');
+    const headerCard = document.getElementById('classroom-chapter-header');
+    if (headerCard) headerCard.classList.remove('hidden');
 }
 
 function openClassroomView(isPop = false) {
@@ -490,6 +512,7 @@ function switchLevel(lvl) {
         select.value = 0;
     }
     renderChapterData();
+    switchTab('basic');
     openClassroomView();
 }
 
@@ -3662,7 +3685,12 @@ function startMasterCourseExam(examId) {
         return;
     }
 
-    if (!isEnrolled && !instance.examDef.isFree) {
+    // Free trial sets (Set 1 of any chapter and sample tests) are always open to everyone
+    const isFreeTrial = Boolean(instance.examDef.isFree) || 
+                        instance.examDef.id.endsWith('_set1') || 
+                        instance.examDef.id.startsWith('sample_');
+
+    if (!isEnrolled && !isFreeTrial) {
         openEnrollModal();
         return;
     }
@@ -3878,3 +3906,29 @@ submitExamAnswers = function () {
         }
     }
 };
+
+
+function isDirectorSessionActive() {
+    return Boolean(
+        window.isDirector || 
+        localStorage.getItem('is_director_logged_in') === 'true' || 
+        sessionStorage.getItem('is_director_logged_in') === 'true' || 
+        localStorage.getItem('alamin_director_session') !== null
+    );
+}
+
+function handleEnrollBtnClick() {
+    if (isDirectorSessionActive()) {
+        alert("স্বাগতম ডিরেক্টর স্যার! আপনার জন্য মাস্টারকোর্সের সকল ফিচার ও পরীক্ষা সরাসরি আনলক করা রয়েছে।");
+        switchTab('mcq-master');
+        const hub = document.getElementById('section-mcq-master');
+        if (hub) {
+            hub.classList.remove('hidden');
+            hub.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+        if (typeof initMasterCourseHub === 'function') initMasterCourseHub();
+        return;
+    }
+    const m = document.getElementById('mcq-enrollment-modal');
+    if (m) m.classList.remove('hidden');
+}

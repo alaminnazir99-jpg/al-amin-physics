@@ -66,10 +66,13 @@
         } catch (e) {}
     }
 
-    // Check if current student is enrolled in MCQ Master Course
+        // Check if current student is enrolled in MCQ Master Course
     function isStudentEnrolled(studentIdOrPhone) {
         // Director always has master access
-        if (window.isDirector || localStorage.getItem('alamin_director_session') === 'active') {
+        if (window.isDirector || 
+            localStorage.getItem('is_director_logged_in') === 'true' || 
+            sessionStorage.getItem('is_director_logged_in') === 'true' || 
+            localStorage.getItem('alamin_director_session') !== null) {
             return true;
         }
         if (!studentIdOrPhone) {
@@ -193,7 +196,7 @@
                     fullMarks: spec.qCount,
                     difficulty: spec.diff,
                     difficultyLabel: spec.diffLabel,
-                    isFree: false,
+                    isFree: (spec.setNum === 1),
                     chapters: [ch]
                 });
             });
