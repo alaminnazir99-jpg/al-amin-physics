@@ -394,13 +394,15 @@ function closeHscChoiceModal() {
 
 function selectLevelAndOpen(lvl) {
     switchLevel(lvl);
-    switchTab('basic');
     openClassroomView(false);
-    // Ensure content display area is visible
-    const contentArea = document.getElementById('content-display-area');
-    if (contentArea) contentArea.classList.remove('hidden');
+    switchTab('basic');
+    const subhome = document.getElementById('lms-subhomepage');
+    if (subhome) subhome.classList.add('hidden');
     const headerCard = document.getElementById('classroom-chapter-header');
     if (headerCard) headerCard.classList.remove('hidden');
+    const contentArea = document.getElementById('content-display-area');
+    if (contentArea) contentArea.classList.remove('hidden');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function openClassroomView(isPop = false) {
@@ -2018,6 +2020,15 @@ function backToExamSets() {
     if (examTimerInterval) {
         clearInterval(examTimerInterval);
         examTimerInterval = null;
+    }
+    if (currentMasterExamAttempt) {
+        currentMasterExamAttempt = null;
+        document.getElementById('exam-active-screen').classList.add('hidden');
+        document.getElementById('exam-result-screen').classList.add('hidden');
+        switchTab('mcq-master');
+        const hub = document.getElementById('section-mcq-master');
+        if (hub) hub.classList.remove('hidden');
+        return;
     }
     document.getElementById('exam-sets-screen').classList.remove('hidden');
     document.getElementById('exam-active-screen').classList.add('hidden');
@@ -3703,7 +3714,15 @@ function startMasterCourseExam(examId) {
     examActiveStartTime = Date.now();
     antiCheatViolationCount = 0;
 
-    // Switch to active exam view
+    // Switch to active exam view: ensure classroom & section-exam are unhidden
+    openClassroomView(false);
+    const subhomeEl = document.getElementById('lms-subhomepage');
+    if (subhomeEl) subhomeEl.classList.add('hidden');
+    const contentArea = document.getElementById('content-display-area');
+    if (contentArea) contentArea.classList.remove('hidden');
+    const secExam = document.getElementById('section-exam');
+    if (secExam) secExam.classList.remove('hidden');
+
     document.getElementById('exam-sets-screen').classList.add('hidden');
     const masterHub = document.getElementById('section-mcq-master');
     if (masterHub) masterHub.classList.add('hidden');
@@ -3920,6 +3939,11 @@ function isDirectorSessionActive() {
 function handleEnrollBtnClick() {
     if (isDirectorSessionActive()) {
         alert("স্বাগতম ডিরেক্টর স্যার! আপনার জন্য মাস্টারকোর্সের সকল ফিচার ও পরীক্ষা সরাসরি আনলক করা রয়েছে।");
+        openClassroomView(false);
+        const subhome = document.getElementById('lms-subhomepage');
+        if (subhome) subhome.classList.add('hidden');
+        const contentArea = document.getElementById('content-display-area');
+        if (contentArea) contentArea.classList.remove('hidden');
         switchTab('mcq-master');
         const hub = document.getElementById('section-mcq-master');
         if (hub) {
