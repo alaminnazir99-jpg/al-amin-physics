@@ -34,7 +34,7 @@
 <!-- ====================================================
      STUDENT MANDATORY LOGIN & REGISTRATION WALL
 ==================================================== -->
-<div id="student-login-wall" class="fixed inset-0 z-[999] bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4">
+<div id="student-login-wall" class="hidden fixed inset-0 z-[999] bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4">
     <div class="max-w-md w-full bg-white rounded-3xl p-6 sm:p-8 shadow-2xl border border-slate-100 relative overflow-hidden">
         <button type="button" id="btn-close-login-wall" onclick="document.getElementById('student-login-wall').classList.add('hidden')" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800 flex items-center justify-center transition" title="বন্ধ করুন ও অতিথি হিসেবে দেখুন">
             <i class="fa-solid fa-xmark text-sm"></i>
@@ -468,76 +468,171 @@
          SUB-HOMEPAGE / CLASSROOM DASHBOARD (Compact & High Legibility)
     ==================================================== -->
     <div id="lms-subhomepage" class="space-y-5 mb-8">
-        <!-- Compact Hero Banner -->
-        <div class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 p-4 sm:p-5 text-white shadow-lg border border-blue-500/20">
-            <div class="relative z-10 max-w-3xl space-y-2">
-                <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-blue-500/20 text-blue-300 text-[11px] font-bold border border-blue-400/30">
-                    <i class="fa-solid fa-graduation-cap"></i> আল আমিন ফিজিক্স ডিজিটাল ক্লাসরুম
-                </div>
-                <h1 class="text-xl sm:text-2xl lg:text-3xl font-black tracking-tight leading-snug">
-                    স্বাগতম! তোমার পদার্থবিজ্ঞান প্রস্তুতি শুরু করো
-                </h1>
-                <p class="text-xs sm:text-sm text-slate-300 leading-normal max-w-2xl">
-                    শ্রেণি নির্বাচন করে সরাসরি চ্যাপ্টারে প্রবেশ করো, অথবা সূত্র, ভিডিও ও সিমুলেশন একসাথে এক্সপ্লোর করো।
-                </p>
-                <div class="pt-1.5 flex flex-wrap items-center gap-2 text-xs">
-                    <span class="px-2.5 py-1 rounded-xl bg-white/10 backdrop-blur border border-white/10 flex items-center gap-1.5 font-medium"><i class="fa-solid fa-book-open text-blue-400"></i> SSC MCQ Master Course (৯০টি পরীক্ষা)</span>
-                    <span class="px-2.5 py-1 rounded-xl bg-white/10 backdrop-blur border border-white/10 flex items-center gap-1.5 font-medium"><i class="fa-solid fa-calculator text-amber-400"></i> চ্যাপ্টারভিত্তিক সমাধান</span>
-                    <!-- Interactive Simulation Button -->
-                    <button onclick="openSimulationDirectly()" class="cursor-pointer px-3 py-1 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-400/30 text-xs font-bold flex items-center gap-1.5 transition shadow-sm active:scale-95" title="সরাসরি সিমুলেশন ল্যাবে যান">
-                        <i class="fa-solid fa-flask text-emerald-400"></i> লাইভ সিমুলেশন ল্যাব ↗
-                    </button>
-                </div>
-            </div>
-            <!-- Background Decoration -->
-            <div class="absolute -right-8 -bottom-8 w-48 h-48 bg-blue-500/10 rounded-full blur-2xl pointer-events-none"></div>
-            <div class="absolute right-4 top-4 hidden lg:block opacity-20 text-blue-300 text-7xl pointer-events-none">
-                <i class="fa-solid fa-atom"></i>
-            </div>
-        </div>
 
-        
         <!-- ====================================================
-             FEATURED OFFICIAL COURSE: SSC PHYSICS MCQ MASTER COURSE
+             OFFICIAL COURSES CATALOG: CLASS 8, SSC & SIMULATION LAB
         ==================================================== -->
-        <div class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 rounded-3xl p-5 sm:p-7 border-2 border-amber-500/40 shadow-xl text-white relative overflow-hidden">
-            <div class="absolute -right-12 -bottom-12 w-48 h-48 bg-amber-500/10 rounded-full blur-2xl pointer-events-none"></div>
-            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-5 relative z-10">
-                <div class="space-y-2 max-w-2xl">
-                    <div class="flex items-center gap-2 flex-wrap">
-                        <span class="px-3 py-1 rounded-full text-xs font-black bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 uppercase tracking-wider shadow-sm flex items-center gap-1.5">
-                            <i class="fa-solid fa-crown"></i> মূল অফিশিয়াল কোর্স
-                        </span>
-                        <span class="px-2.5 py-0.5 rounded-md bg-blue-500/20 text-blue-300 border border-blue-500/30 text-xs font-bold">
-                            NCTB ২০২৬ বইয়ের লাইন-বাই-লাইন
-                        </span>
-                        <span class="px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 text-xs font-bold border border-emerald-500/30">
-                            ১ সেট ফ্রি ট্রায়াল উন্মুক্ত
-                        </span>
-                    </div>
-                    <h2 class="text-xl sm:text-2xl lg:text-3xl font-black text-white tracking-tight">
-                        SSC Physics MCQ Master Course
+        <div>
+            <div class="flex items-center justify-between mb-4">
+                <div>
+                    <h2 class="text-base sm:text-lg font-black text-slate-900 flex items-center gap-2">
+                        <i class="fa-solid fa-crown text-amber-500"></i> অফিসিয়াল মাস্টার কোর্সসমূহ
                     </h2>
-                    <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                        ১৩টি অধ্যায়ের মোট ১৩৬৫+ প্রশ্নের সম্পূর্ণ ব্যাংক। মোট ৯০টি ওএমআর পরীক্ষা, স্বয়ংক্রিয় র্যান্ডম প্রশ্ন এবং পরীক্ষা শেষে দুর্বল টপিকের অটোমেটিক রিভিশন নোট।
-                    </p>
+                    <p class="text-xs text-slate-500">ক্লাস ৮ বিজ্ঞান, এসএসসি পদার্থবিজ্ঞান ও ইন্টারেক্টিভ সিমুলেশন ল্যাব কোর্স</p>
                 </div>
+            </div>
 
-                <div class="flex flex-col sm:flex-row lg:flex-col items-start sm:items-center lg:items-end justify-between gap-4 p-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm min-w-[260px]">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+                <!-- Course 1: Class 8 Science MCQ Master Course -->
+                <div class="bg-gradient-to-br from-slate-900 via-teal-950 to-slate-900 rounded-3xl p-5 sm:p-6 border-2 border-teal-500/40 shadow-xl text-white relative overflow-hidden flex flex-col justify-between group">
+                    <div class="absolute -right-10 -bottom-10 w-36 h-36 bg-teal-500/10 rounded-full blur-2xl pointer-events-none"></div>
                     <div>
-                        <span class="text-[11px] text-slate-400 block font-semibold">এককালীন লঞ্চ অফার ফি:</span>
-                        <div class="flex items-baseline gap-2 mt-0.5">
-                            <span class="text-3xl font-black text-amber-400">৳ ১৯৯</span>
-                            <span class="text-sm line-through text-slate-400">৳ ৫৫০</span>
-                            <span class="text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-full font-bold">৬৪% ছাড়</span>
+                        <div class="flex items-center gap-2 flex-wrap mb-3">
+                            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-gradient-to-r from-teal-400 to-emerald-500 text-slate-950 uppercase tracking-wider shadow-sm flex items-center gap-1">
+                                <i class="fa-solid fa-microscope"></i> ৮ম বিজ্ঞান
+                            </span>
+                            <span class="px-2 py-0.5 rounded-md bg-teal-500/20 text-teal-300 border border-teal-500/30 text-[11px] font-bold">
+                                ১৪টি অধ্যায় সম্পূর্ণ
+                            </span>
+                            <span class="px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 text-[11px] font-bold border border-emerald-500/30">
+                                ১ সেট ফ্রি ট্রায়াল
+                            </span>
+                        </div>
+                        <h3 class="text-lg sm:text-xl font-black text-white tracking-tight leading-snug mb-2">
+                            অষ্টম শ্রেণি বিজ্ঞান MCQ Master Course
+                        </h3>
+                        <p class="text-xs text-slate-300 leading-relaxed mb-4">
+                            NCTB ২০২৬ অষ্টম শ্রেণি বিজ্ঞানের সম্পূর্ণ ১৪টি অধ্যায়ের মোট ১৪৭০টি বোর্ড স্ট্যান্ডার্ড প্রশ্নের পূর্ণাঙ্গ ব্যাংক। মোট ৭২টি ওএমআর পরীক্ষা ও আনলিমিটেড স্পিড টেস্ট।
+                        </p>
+                        <div class="p-2.5 rounded-xl bg-teal-500/10 border border-teal-500/20 text-[11px] text-teal-200 mb-4 flex items-center gap-2">
+                            <i class="fa-solid fa-gift text-amber-400"></i>
+                            <span><strong>স্পেশাল অফার:</strong> এই কোর্সটি এনরোল করলে <strong>সিমুলেশন ল্যাব কোর্স ১০০% ফ্রি আনলক!</strong></span>
                         </div>
                     </div>
-                    <div class="flex items-center gap-2 w-full">
-                        <button onclick="startMasterCourseExam('mcq_ch1_set1')" class="flex-1 py-2.5 px-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs transition flex items-center justify-center gap-1.5 shadow-sm whitespace-nowrap">
-                            <i class="fa-solid fa-play"></i> ১ সেট ট্রায়াল দিন
+
+                    <div class="pt-4 border-t border-white/10 flex flex-col gap-3">
+                        <div class="flex items-baseline justify-between">
+                            <span class="text-[11px] text-slate-400 font-semibold">এককালীন লঞ্চ ফি:</span>
+                            <div class="flex items-baseline gap-2">
+                                <span class="text-2xl font-black text-teal-400">৳ ১৪৯</span>
+                                <span class="text-xs line-through text-slate-400">৳ ৩৫০</span>
+                                <span class="text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-full font-bold">৫৮% ছাড়</span>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <button onclick="startClass8TrialExam()" class="py-2 px-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs transition flex items-center justify-center gap-1.5 shadow-sm whitespace-nowrap">
+                                <i class="fa-solid fa-play"></i> ফ্রি ট্রায়াল
+                            </button>
+                            <button onclick="openClass8EnrollModal()" class="py-2 px-3 bg-gradient-to-r from-teal-400 to-emerald-500 hover:from-teal-300 hover:to-emerald-400 text-slate-950 font-black rounded-xl text-xs transition shadow-md whitespace-nowrap flex items-center justify-center gap-1">
+                                <i class="fa-solid fa-bolt"></i> এনরোল (৳১৪৯)
+                            </button>
+                        </div>
+                        <button onclick="selectLevelAndOpen('class8')" class="w-full py-1.5 px-3 rounded-xl bg-white/10 hover:bg-white/20 text-teal-200 text-xs font-bold transition text-center flex items-center justify-center gap-1.5">
+                            <span>৮ম শ্রেণির ক্লাসরুমে প্রবেশ</span> <i class="fa-solid fa-arrow-right text-[10px]"></i>
                         </button>
-                        <button onclick="openEnrollModal()" class="flex-1 py-2.5 px-3 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-black rounded-xl text-xs transition shadow-md whitespace-nowrap flex items-center justify-center gap-1">
-                            <i class="fa-solid fa-bolt"></i> এনরোল (৳১৯৯)
+                    </div>
+                </div>
+
+                <!-- Course 2: SSC Physics MCQ Master Course -->
+                <div class="bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 rounded-3xl p-5 sm:p-6 border-2 border-amber-500/40 shadow-xl text-white relative overflow-hidden flex flex-col justify-between group">
+                    <div class="absolute -right-10 -bottom-10 w-36 h-36 bg-amber-500/10 rounded-full blur-2xl pointer-events-none"></div>
+                    <div>
+                        <div class="flex items-center gap-2 flex-wrap mb-3">
+                            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 uppercase tracking-wider shadow-sm flex items-center gap-1">
+                                <i class="fa-solid fa-crown"></i> SSC Physics
+                            </span>
+                            <span class="px-2 py-0.5 rounded-md bg-blue-500/20 text-blue-300 border border-blue-500/30 text-[11px] font-bold">
+                                ১৩টি অধ্যায় সম্পূর্ণ
+                            </span>
+                            <span class="px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 text-[11px] font-bold border border-emerald-500/30">
+                                ১ সেট ফ্রি ট্রায়াল
+                            </span>
+                        </div>
+                        <h3 class="text-lg sm:text-xl font-black text-white tracking-tight leading-snug mb-2">
+                            SSC Physics MCQ Master Course
+                        </h3>
+                        <p class="text-xs text-slate-300 leading-relaxed mb-4">
+                            NCTB ২০২৬ বইয়ের লাইন-বাই-লাইন ১৩টি অধ্যায়ের মোট ১৩৬৫+ প্রশ্নের সম্পূর্ণ ব্যাংক। মোট ৯০টি ওএমআর পরীক্ষা, স্বয়ংক্রিয় র্যান্ডম প্রশ্ন এবং অটোমেটিক রিভিশন নোট।
+                        </p>
+                        <div class="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-[11px] text-amber-200 mb-4 flex items-center gap-2">
+                            <i class="fa-solid fa-gift text-teal-400"></i>
+                            <span><strong>স্পেশাল অফার:</strong> এই কোর্সটি এনরোল করলে <strong>সিমুলেশন ল্যাব কোর্স ১০০% ফ্রি আনলক!</strong></span>
+                        </div>
+                    </div>
+
+                    <div class="pt-4 border-t border-white/10 flex flex-col gap-3">
+                        <div class="flex items-baseline justify-between">
+                            <span class="text-[11px] text-slate-400 font-semibold">এককালীন লঞ্চ ফি:</span>
+                            <div class="flex items-baseline gap-2">
+                                <span class="text-2xl font-black text-amber-400">৳ ১৯৯</span>
+                                <span class="text-xs line-through text-slate-400">৳ ৫৫০</span>
+                                <span class="text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-full font-bold">৬৪% ছাড়</span>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <button onclick="startMasterCourseExam('mcq_ch1_set1')" class="py-2 px-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs transition flex items-center justify-center gap-1.5 shadow-sm whitespace-nowrap">
+                                <i class="fa-solid fa-play"></i> ফ্রি ট্রায়াল
+                            </button>
+                            <button onclick="openEnrollModal()" class="py-2 px-3 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-black rounded-xl text-xs transition shadow-md whitespace-nowrap flex items-center justify-center gap-1">
+                                <i class="fa-solid fa-bolt"></i> এনরোল (৳১৯৯)
+                            </button>
+                        </div>
+                        <button onclick="selectLevelAndOpen('ssc')" class="w-full py-1.5 px-3 rounded-xl bg-white/10 hover:bg-white/20 text-blue-200 text-xs font-bold transition text-center flex items-center justify-center gap-1.5">
+                            <span>এসএসসি ক্লাসরুমে প্রবেশ</span> <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Course 3: Interactive Simulation Lab Course -->
+                <div class="bg-gradient-to-br from-slate-900 via-cyan-950 to-slate-900 rounded-3xl p-5 sm:p-6 border-2 border-cyan-500/40 shadow-xl text-white relative overflow-hidden flex flex-col justify-between group">
+                    <div class="absolute -right-10 -bottom-10 w-36 h-36 bg-cyan-500/10 rounded-full blur-2xl pointer-events-none"></div>
+                    <div>
+                        <div class="flex items-center gap-2 flex-wrap mb-3">
+                            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-gradient-to-r from-cyan-400 to-blue-500 text-slate-950 uppercase tracking-wider shadow-sm flex items-center gap-1">
+                                <i class="fa-solid fa-flask"></i> ভার্চুয়াল ল্যাব
+                            </span>
+                            <span class="px-2 py-0.5 rounded-md bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 text-[11px] font-bold">
+                                ২৬+ ল্যাবরেটরি
+                            </span>
+                            <span class="px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 text-[11px] font-bold border border-emerald-500/30">
+                                চ্যাপ্টারে ১টি করে ফ্রি
+                            </span>
+                        </div>
+                        <h3 class="text-lg sm:text-xl font-black text-white tracking-tight leading-snug mb-2">
+                            ইন্টারেক্টিভ সিমুলেশন ল্যাব কোর্স
+                        </h3>
+                        <p class="text-xs text-slate-300 leading-relaxed mb-4">
+                            হ্যান্ডস-অন ফিজিক্স ও সায়েন্স ল্যাব। মেকানিক্স, সরল দোলক, আলোর প্রতিসরণ, প্রিজম, বর্তনী ও সৌরজগতের ত্রিমাত্রিক রিয়েল-টাইম কন্ট্রোল ল্যাবরেটরি।
+                        </p>
+                        <div class="p-2.5 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-[11px] text-cyan-200 mb-4 space-y-1">
+                            <div class="flex items-center gap-1.5 font-bold text-white">
+                                <i class="fa-solid fa-circle-check text-emerald-400"></i> আনলকিং শর্তাবলী:
+                            </div>
+                            <p class="text-[10px] leading-relaxed text-slate-300">
+                                • ৮ম শ্রেণি বা এসএসসি বা এইচএসসি-র যেকোনো কোর্স কিনলেই এই ফুল কোর্স <strong>স্বয়ংক্রিয়ভাবে ১০০% ফ্রি আনলক!</strong><br>
+                                • কোর্স না কিনলেও <strong>প্রতিটি অধ্যায়ের ১ম ল্যাব আজীবন ফ্রি!</strong>
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="pt-4 border-t border-white/10 flex flex-col gap-3">
+                        <div class="flex items-baseline justify-between">
+                            <span class="text-[11px] text-slate-400 font-semibold">স্ট্যান্ডঅ্যালোন ফি:</span>
+                            <div class="flex items-baseline gap-2">
+                                <span class="text-2xl font-black text-cyan-400">৳ ১৯৯</span>
+                                <span class="text-[10px] bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded-full font-bold border border-amber-500/30">যেকোনো কোর্সে ফ্রি</span>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <button onclick="openSimulationDirectly()" class="py-2 px-3 bg-cyan-600 hover:bg-cyan-500 text-white font-bold rounded-xl text-xs transition flex items-center justify-center gap-1.5 shadow-sm whitespace-nowrap">
+                                <i class="fa-solid fa-play"></i> ফ্রি ল্যাব চালান
+                            </button>
+                            <button onclick="openSimLabEnrollModal()" class="py-2 px-3 bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-300 hover:to-blue-400 text-slate-950 font-black rounded-xl text-xs transition shadow-md whitespace-nowrap flex items-center justify-center gap-1">
+                                <i class="fa-solid fa-bolt"></i> এনরোল (৳১৯৯)
+                            </button>
+                        </div>
+                        <button onclick="openAllLabsCatalogModal()" class="w-full py-1.5 px-3 rounded-xl bg-white/10 hover:bg-white/20 text-cyan-200 text-xs font-bold transition text-center flex items-center justify-center gap-1.5">
+                            <span>সকল ২৬টি ল্যাব ক্যাটালগ 🔍</span>
                         </button>
                     </div>
                 </div>
@@ -2396,5 +2491,67 @@
             </form>
         </div>
     </div>
+
+    <!-- ====================================================
+         SIMULATION LAB COURSE ENROLLMENT MODAL
+    ==================================================== -->
+    <div id="sim-lab-enroll-modal" class="hidden fixed inset-0 z-[1000] bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-cyan-500/30 rounded-3xl p-6 sm:p-8 max-w-lg w-full text-white shadow-2xl relative">
+            <button onclick="closeSimLabEnrollModal()" class="absolute top-5 right-5 w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div class="space-y-2 mb-6">
+                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
+                    ভার্চুয়াল ল্যাব কোর্স
+                </span>
+                <h3 class="text-xl sm:text-2xl font-black text-white">ইন্টারেক্টিভ সিমুলেশন ল্যাব কোর্স (২৬+ ল্যাব)</h3>
+                <p class="text-xs text-slate-300 leading-relaxed">
+                    মেকানিক্স, আলো, বিদ্যুৎ, আধুনিক পদার্থবিজ্ঞান ও মহাবিশ্বের সকল হ্যান্ডস-অন ল্যাবরেটরি আনলক করুন মাত্র ৳ ১৯৯ টাকায়।
+                </p>
+                <div class="p-3 bg-cyan-500/10 border border-cyan-500/20 rounded-xl text-cyan-200 text-xs">
+                    💡 <strong>টিপস:</strong> আপনি যদি ৮ম শ্রেণি বা এসএসসি-র কোনো কোর্স কিনেন, তবে এই কোর্সটি আলাদা কিনতে হবে না — স্বয়ংক্রিয়ভাবে আনলক হয়ে যাবে!
+                </div>
+            </div>
+
+            <!-- Payment instructions -->
+            <div class="p-4 rounded-2xl bg-slate-800/80 border border-slate-700 space-y-2 mb-6 text-xs">
+                <div class="flex items-center justify-between font-bold">
+                    <span class="text-slate-300">মার্চেন্ট বিকাশ / নগদ নম্বর:</span>
+                    <span class="font-mono text-cyan-400 text-sm font-black">01896464903</span>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="text-slate-400">পেমেন্ট টাইপ:</span>
+                    <span class="text-slate-200 font-semibold">Make Payment / Send Money</span>
+                </div>
+                <div class="flex items-center justify-between border-t border-slate-700/60 pt-2">
+                    <span class="text-slate-400">স্ট্যান্ডঅ্যালোন ফি:</span>
+                    <span class="text-cyan-400 font-black text-sm">৳ ১৯৯ (এককালীন লাইফটাইম)</span>
+                </div>
+            </div>
+
+            <form id="sim-lab-enroll-form" onsubmit="handleSimLabEnrollSubmit(event)" class="space-y-4 text-xs">
+                <div>
+                    <label class="block text-slate-300 font-bold mb-1">আপনার প্রেরক মোবাইল নম্বর (bKash/Nagad):</label>
+                    <input type="tel" id="sim-enroll-phone" required placeholder="01XXXXXXXXX" class="w-full p-3 bg-slate-800 border border-slate-700 rounded-xl text-white font-mono outline-none focus:border-cyan-500">
+                </div>
+
+                <div>
+                    <label class="block text-slate-300 font-bold mb-1">ট্রানজেকশন আইডি (TrxID):</label>
+                    <input type="text" id="sim-enroll-trx" required placeholder="যেমন: BL9X8Z1Q" class="w-full p-3 bg-slate-800 border border-slate-700 rounded-xl text-white font-mono uppercase outline-none focus:border-cyan-500">
+                </div>
+
+                <div class="pt-2 flex items-center justify-end gap-3">
+                    <button type="button" onclick="closeSimLabEnrollModal()" class="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl font-bold transition">
+                        বাতিল
+                    </button>
+                    <button type="submit" class="px-6 py-2.5 bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-300 hover:to-blue-400 text-slate-950 rounded-xl font-black shadow-lg shadow-cyan-500/20 transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-check"></i> জমা দিন
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+        
 </body>
 </html>

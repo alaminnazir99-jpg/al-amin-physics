@@ -1,4 +1,145 @@
 
+/* ===================================================
+   CHAPTER EXAM LOCKING & COURSE REFERRAL LOGIC
+=================================================== */
+function startClass8TrialExam() {
+    currentLevel = 'class8';
+    currentChapterIndex = 0;
+    switchLevel('class8');
+    openClassroomView(false);
+    switchTab('exam');
+    startChapterExamSet('set1');
+}
+
+function isChapterExamUnlocked(level, chapNum, setId) {
+    // Set 1 is ALWAYS FREE for everyone!
+    if (setId === 'set1' || setId === 1) return true;
+
+    // Director has full master access
+    if (window.isDirector || 
+        localStorage.getItem('is_director_logged_in') === 'true' || 
+        sessionStorage.getItem('is_director_logged_in') === 'true' || 
+        localStorage.getItem('alamin_director_session') !== null) {
+        return true;
+    }
+
+    const active = (typeof window.getActiveStudentSession === 'function') 
+        ? window.getActiveStudentSession() 
+        : (window.studentUser || null);
+    const studentIdOrPhone = active ? (active.phone || active.id) : null;
+
+    if (level === 'class8') {
+        return window.C8_MCQ_MASTER ? window.C8_MCQ_MASTER.isStudentEnrolled(studentIdOrPhone) : false;
+    } else if (level === 'ssc') {
+        return window.MCQ_MASTER ? window.MCQ_MASTER.isStudentEnrolled(studentIdOrPhone) : false;
+    } else {
+        try {
+            const generalEnrolled = JSON.parse(localStorage.getItem('alamin_mcq_enrolled_students') || '[]');
+            return studentIdOrPhone ? generalEnrolled.some(s => s.phone === studentIdOrPhone || s.studentId === studentIdOrPhone || s.id === studentIdOrPhone) : false;
+        } catch(e) {
+            return false;
+        }
+    }
+}
+
+function promptCourseUnlockForExam(level, setId) {
+    if (level === 'class8') {
+        openClass8EnrollModal();
+    } else {
+        openEnrollModal();
+    }
+}
+
+/* ===================================================
+   SIMULATION LAB COURSE UNLOCKING & CROSS-GRADE RULES
+=================================================== */
+function hasFullSimulationAccess(level = currentLevel) {
+    if (window.isDirector || 
+        localStorage.getItem('is_director_logged_in') === 'true' || 
+        sessionStorage.getItem('is_director_logged_in') === 'true' || 
+        localStorage.getItem('alamin_director_session') !== null) {
+        return true;
+    }
+
+    const active = (typeof window.getActiveStudentSession === 'function') 
+        ? window.getActiveStudentSession() 
+        : (window.studentUser || null);
+    const studentIdOrPhone = active ? (active.phone || active.id) : null;
+
+    // 1. Standalone simulation lab purchase
+    try {
+        const simEnrolled = JSON.parse(localStorage.getItem('alamin_sim_lab_enrolled_students') || '[]');
+        if (studentIdOrPhone && simEnrolled.some(s => s.phone === studentIdOrPhone || s.studentId === studentIdOrPhone || s.id === studentIdOrPhone)) {
+            return true;
+        }
+    } catch(e) {}
+
+    // 2. Class 8 course unlocks simulation lab
+    if (window.C8_MCQ_MASTER && window.C8_MCQ_MASTER.isStudentEnrolled(studentIdOrPhone)) {
+        return true;
+    }
+
+    // 3. SSC course unlocks simulation lab
+    if (window.MCQ_MASTER && window.MCQ_MASTER.isStudentEnrolled(studentIdOrPhone)) {
+        return true;
+    }
+
+    // 4. HSC / general course unlocks simulation lab
+    try {
+        const generalEnrolled = JSON.parse(localStorage.getItem('alamin_mcq_enrolled_students') || '[]');
+        if (studentIdOrPhone && generalEnrolled.some(s => s.phone === studentIdOrPhone || s.studentId === studentIdOrPhone || s.id === studentIdOrPhone)) {
+            return true;
+        }
+    } catch(e) {}
+
+    return false;
+}
+
+function openRelevantCourseForLevel(lvl) {
+    if (lvl === 'class8') {
+        openClass8EnrollModal();
+    } else if (lvl === 'ssc') {
+        openEnrollModal();
+    } else {
+        openSimLabEnrollModal();
+    }
+}
+
+function openSimLabEnrollModal() {
+    const m = document.getElementById('sim-lab-enroll-modal');
+    if (m) m.classList.remove('hidden');
+}
+
+function closeSimLabEnrollModal() {
+    const m = document.getElementById('sim-lab-enroll-modal');
+    if (m) m.classList.add('hidden');
+}
+
+function handleSimLabEnrollSubmit(e) {
+    e.preventDefault();
+    const phone = document.getElementById('sim-enroll-phone')?.value.trim();
+    const trx = document.getElementById('sim-enroll-trx')?.value.trim();
+    if (!phone || !trx) return;
+
+    try {
+        const requests = JSON.parse(localStorage.getItem('alamin_sim_lab_enroll_requests') || '[]');
+        requests.unshift({
+            id: 'SIM-' + Date.now(),
+            phone: phone,
+            trxId: trx,
+            createdAt: new Date().toLocaleString('bn-BD'),
+            status: 'pending'
+        });
+        localStorage.setItem('alamin_sim_lab_enroll_requests', JSON.stringify(requests));
+        alert('ধন্যবাদ! সিমুলেশন ল্যাব কোর্সের এনরোলমেন্ট রিকোয়েস্ট সফলভাবে জমা হয়েছে। ডিরেক্টর যাচাইপূর্বক আপনার কোর্সটি সক্রিয় করবেন।');
+        closeSimLabEnrollModal();
+    } catch(err) {
+        alert('রিকোয়েস্ট জমা নেওয়া হয়েছে।');
+        closeSimLabEnrollModal();
+    }
+}
+
+
 // Auto-detect Director role from URL or existing session
 (function checkDirectorRole() {
     try {
@@ -442,7 +583,13 @@ function closeHscChoiceModal() {
 }
 
 function selectLevelAndOpen(lvl) {
-    switchLevel(lvl);
+    const wall = document.getElementById('student-login-wall');
+    if (wall) wall.classList.add('hidden');
+    try {
+        switchLevel(lvl);
+    } catch(err) {
+        console.warn('switchLevel error:', err);
+    }
     openClassroomView(false);
     switchTab('basic');
     const subhome = document.getElementById('lms-subhomepage');
@@ -729,7 +876,7 @@ function renderChapterData() {
     const compData = (sscData && sscData.comprehension) ? sscData.comprehension : [
         { q: "গাছ থেকে ফল পড়ার সময় এর ত্বরণ বৃদ্ধি পায় কি? ব্যাখ্যা করো। [ঢাকা বোর্ড ২০২৪]", a: "না। বাতাসের বাধা অগ্রাহ্য করলে অভিকর্ষজ ত্বরণ g = 9.8 m/s² সর্বদা ধ্রুব থাকে। শুধু বেগ বাড়ে।" }
     ];
-    document.getElementById('comprehension-questions-list').innerHTML = compData.map((c, idx) => `
+    const cql = document.getElementById('comprehension-questions-list'); if (cql) cql.innerHTML = compData.map((c, idx) => `
         <div class="p-4 sm:p-5 rounded-2xl border border-slate-200 bg-white shadow-sm card-hover transition">
             <div class="flex items-center justify-between mb-2">
                 <span class="px-2.5 py-0.5 rounded-md bg-amber-100 text-amber-800 text-[11px] font-bold">অনুধাবনমূলক প্রশ্ন নং ${idx + 1}</span>
@@ -753,7 +900,7 @@ function renderChapterData() {
         { tag: "সূত্র ৫", expr: "E_k = \\tfrac{1}{2}mv^2", note: "গতিশক্তি।" },
         { tag: "সূত্র ৬", expr: "T = 2\\pi\\sqrt{\\dfrac{L}{g}}", note: "সরল দোলকের দোলনকাল।" }
     ];
-    document.getElementById('formula-cards-container').innerHTML = formulas.map(f => `
+    const fcc = document.getElementById('formula-cards-container'); if (fcc) fcc.innerHTML = formulas.map(f => `
         <div class="p-4 rounded-2xl bg-white border border-slate-200 card-hover shadow-sm flex flex-col justify-between">
             <div>
                 <span class="text-[10px] font-bold text-blue-700 uppercase tracking-wider block mb-1">${f.tag}</span>
@@ -772,7 +919,7 @@ function renderChapterData() {
             solution: "দেওয়া আছে: u = 0, a = 0.5 m/s², s = 180 m\ns = ½ at² → t = √(2s/a) = √720 ≈ 26.83 s\nv = u + at = 0 + 0.5×26.83 = 13.42 m/s"
         }
     ];
-    document.getElementById('math-problems-list').innerHTML = mathProblems.map((m, idx) => `
+    const mpl = document.getElementById('math-problems-list'); if (mpl) mpl.innerHTML = mathProblems.map((m, idx) => `
         <div class="p-5 rounded-2xl border border-slate-200 bg-white shadow-sm space-y-3 card-hover">
             <div class="flex items-center justify-between">
                 <span class="text-xs font-bold text-indigo-800 bg-indigo-100 px-3 py-1 rounded-full">${m.type || 'বোর্ড ও এডমিশন স্ট্যান্ডার্ড'}</span>
@@ -805,7 +952,7 @@ function renderChapterData() {
             ans_d: "প্রতিক্রিয়া দূরত্ব = 20×0.4 = 8 m। মোট থামার দূরত্ব = 8+38 = 46 m > 40 m। সুতরাং দুর্ঘটনা ঘটবে।"
         }
     ];
-    document.getElementById('board-questions-list').innerHTML = cqs.map((cq, idx) => `
+    const bql = document.getElementById('board-questions-list'); if (bql) bql.innerHTML = cqs.map((cq, idx) => `
         <div class="p-5 sm:p-6 rounded-2xl border border-slate-200 bg-white shadow-sm space-y-4 card-hover">
             <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3">
                 <div class="flex items-center gap-2">
@@ -991,8 +1138,8 @@ function renderChapterData() {
         { label: "লেকচার ৩: জটিল গাণিতিক সমস্যা",       dur: "৩৫ মিনিট", active: false, paid: false },
         { label: "লেকচার ৪: বোর্ড CQ হ্যাকস",             dur: "৪৫ মিনিট", active: false, paid: true  }
     ];
-    document.getElementById('video-now-playing').textContent = `${playlist[0]?.label || chap.title}`;
-    document.getElementById('video-playlist').innerHTML = playlist.map(v => `
+    const vnp = document.getElementById('video-now-playing'); if (vnp) vnp.textContent = `${playlist[0]?.label || chap.title}`;
+    const vp = document.getElementById('video-playlist'); if (vp) vp.innerHTML = playlist.map(v => `
         <div class="p-3 ${v.active ? 'bg-blue-50 border-blue-200' : 'bg-slate-50 border-slate-200 hover:bg-slate-100'} rounded-xl border flex items-center justify-between cursor-pointer transition">
             <div class="flex items-center gap-2.5">
                 <div class="w-7 h-7 rounded-lg ${v.active ? 'bg-blue-600 text-white' : v.paid ? 'bg-amber-100 text-amber-700' : 'bg-slate-200 text-slate-600'} flex items-center justify-center text-xs">
@@ -2325,7 +2472,7 @@ function switchStudentAuthTab(tab) {
     }
 }
 
-function enforceStudentAuth() {
+function enforceStudentAuth(force = false) {
     const isDirector = localStorage.getItem('is_director_logged_in') === 'true' || sessionStorage.getItem('is_director_logged_in') === 'true';
     const activeStudent = getActiveStudentSession();
     const wall = document.getElementById('student-login-wall');
@@ -2333,8 +2480,10 @@ function enforceStudentAuth() {
 
     if (isDirector || activeStudent) {
         wall.classList.add('hidden');
-    } else {
+    } else if (force) {
         wall.classList.remove('hidden');
+    } else {
+        wall.classList.add('hidden');
     }
 }
 
