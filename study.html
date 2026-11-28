@@ -510,24 +510,36 @@
                         </div>
                     </div>
 
-                    <div class="pt-4 border-t border-white/10 flex flex-col gap-3">
-                        <div class="flex items-baseline justify-between">
+                    <div class="pt-4 border-t border-white/10 flex flex-col gap-2.5">
+                        <div class="flex items-baseline justify-between mb-1">
                             <span class="text-[11px] text-slate-400 font-semibold">এককালীন লঞ্চ ফি:</span>
                             <div class="flex items-baseline gap-2">
-                                <span class="text-2xl font-black text-teal-400">৳ ১৪৯</span>
-                                <span class="text-xs line-through text-slate-400">৳ ৩৫০</span>
-                                <span class="text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-full font-bold">৫৮% ছাড়</span>
+                                <span class="text-2xl font-black text-teal-400">৳ ১৯৯</span>
+                                <span class="text-xs line-through text-slate-400">৳ ৫৫০</span>
+                                <span class="text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-full font-bold">৬৪% ছাড়</span>
                             </div>
                         </div>
+
+                        <!-- Direct Navigation Buttons for Class 8 -->
                         <div class="grid grid-cols-2 gap-2">
-                            <button onclick="startClass8TrialExam()" class="py-2 px-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs transition flex items-center justify-center gap-1.5 shadow-sm whitespace-nowrap">
-                                <i class="fa-solid fa-play"></i> ফ্রি ট্রায়াল
+                            <button onclick="openClass8MasterCourseHub()" class="py-2.5 px-3 bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-slate-950 font-black rounded-xl text-xs transition shadow-md flex items-center justify-center gap-1.5 whitespace-nowrap active:scale-95">
+                                <i class="fa-solid fa-crown text-amber-900"></i> ৮ম MCQ হাব (৭২) ➔
                             </button>
-                            <button onclick="openClass8EnrollModal()" class="py-2 px-3 bg-gradient-to-r from-teal-400 to-emerald-500 hover:from-teal-300 hover:to-emerald-400 text-slate-950 font-black rounded-xl text-xs transition shadow-md whitespace-nowrap flex items-center justify-center gap-1">
-                                <i class="fa-solid fa-bolt"></i> এনরোল (৳১৪৯)
+                            <button onclick="openClass8Simulation(0)" class="py-2.5 px-3 bg-teal-600 hover:bg-teal-500 text-white font-bold rounded-xl text-xs transition shadow-sm flex items-center justify-center gap-1.5 whitespace-nowrap active:scale-95">
+                                <i class="fa-solid fa-flask text-teal-200"></i> ৮ম সিমুলেশন ল্যাব ➔
                             </button>
                         </div>
-                        <button onclick="selectLevelAndOpen('class8')" class="w-full py-1.5 px-3 rounded-xl bg-white/10 hover:bg-white/20 text-teal-200 text-xs font-bold transition text-center flex items-center justify-center gap-1.5">
+
+                        <div class="grid grid-cols-2 gap-2">
+                            <button onclick="startClass8TrialExam()" class="py-2 px-3 bg-white/10 hover:bg-white/20 text-teal-200 font-bold rounded-xl text-xs transition flex items-center justify-center gap-1.5 whitespace-nowrap">
+                                <i class="fa-solid fa-play"></i> ফ্রি ট্রায়াল দিন
+                            </button>
+                            <button onclick="openClass8EnrollModal()" class="py-2 px-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs transition flex items-center justify-center gap-1.5 whitespace-nowrap">
+                                <i class="fa-solid fa-unlock"></i> এনরোল (৳ ১৯৯)
+                            </button>
+                        </div>
+
+                        <button onclick="selectLevelAndOpen('class8')" class="w-full py-1.5 px-3 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 text-[11px] font-semibold transition text-center flex items-center justify-center gap-1.5">
                             <span>৮ম শ্রেণির ক্লাসরুমে প্রবেশ</span> <i class="fa-solid fa-arrow-right text-[10px]"></i>
                         </button>
                     </div>
@@ -650,8 +662,8 @@
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
                 <!-- 1. Class 8 Science Card -->
-                <div onclick="selectLevelAndOpen('class8')" class="cursor-pointer bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/90 shadow-sm hover:shadow-md hover:border-teal-500 transition transform hover:-translate-y-0.5 flex flex-col justify-between group">
-                    <div>
+                <div class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/90 shadow-sm hover:shadow-md hover:border-teal-500 transition flex flex-col justify-between group">
+                    <div onclick="selectLevelAndOpen('class8')" class="cursor-pointer">
                         <div class="flex items-center justify-between mb-3">
                             <div class="w-11 h-11 rounded-2xl bg-teal-50 text-teal-600 flex items-center justify-center text-xl group-hover:bg-teal-600 group-hover:text-white transition shadow-xs">
                                 <i class="fa-solid fa-microscope"></i>
@@ -659,8 +671,23 @@
                             <span class="text-xs font-black text-teal-600 uppercase tracking-wide bg-teal-50 px-2.5 py-1 rounded-lg">৮ম শ্রেণি</span>
                         </div>
                         <h3 class="text-base sm:text-lg font-black text-slate-900 group-hover:text-teal-600 transition leading-snug">অষ্টম শ্রেণি (বিজ্ঞান)</h3>
-                        <p class="text-xs font-semibold text-slate-500 mt-1">পদার্থবিজ্ঞান অংশ</p>
+                        <p class="text-xs font-semibold text-slate-500 mt-1">NCTB সম্পূর্ণ ১৪টি অধ্যায়</p>
                     </div>
+                    
+                    <div class="pt-3 mt-4 border-t border-slate-100 flex flex-col gap-2">
+                        <div class="grid grid-cols-2 gap-2">
+                            <button onclick="openClass8MasterCourseHub()" class="py-1.5 px-2.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black rounded-lg text-[11px] transition flex items-center justify-center gap-1 shadow-xs">
+                                <i class="fa-solid fa-crown text-[10px]"></i> MCQ হাব ➔
+                            </button>
+                            <button onclick="openClass8Simulation(0)" class="py-1.5 px-2.5 bg-teal-600 hover:bg-teal-700 text-white font-bold rounded-lg text-[11px] transition flex items-center justify-center gap-1 shadow-xs">
+                                <i class="fa-solid fa-flask text-[10px]"></i> সিমুলেশন ➔
+                            </button>
+                        </div>
+                        <button onclick="selectLevelAndOpen('class8')" class="w-full py-1 text-center text-xs font-bold text-teal-600 hover:text-teal-800 transition">
+                            ক্লাসরুমে প্রবেশ ➔
+                        </button>
+                    </div>
+                </div>
                     <div class="pt-3 mt-4 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-teal-600">
                         <span>ক্লাসে প্রবেশ ➔</span>
                     </div>
@@ -2449,7 +2476,7 @@
                 </span>
                 <h3 class="text-xl sm:text-2xl font-black text-white">Class 8 Science MCQ Master Course</h3>
                 <p class="text-xs text-slate-300 leading-relaxed">
-                    ১ম থেকে ১৪শ অধ্যায়ের ১৪৭০টি স্পেশাল প্রশ্ন, ৭২টি ওএমআর পরীক্ষা ও আনলিমিটেড ট্রায়াল আনলক করুন মাত্র ৳ ১৪৯ টাকায়।
+                    ১ম থেকে ১৪শ অধ্যায়ের ১৪৭০টি স্পেশাল প্রশ্ন, ৭২টি ওএমআর পরীক্ষা ও আনলিমিটেড ট্রায়াল আনলক করুন মাত্র ৳ ১৯৯ টাকায়।
                 </p>
             </div>
 
@@ -2465,7 +2492,7 @@
                 </div>
                 <div class="flex items-center justify-between border-t border-slate-700/60 pt-2">
                     <span class="text-slate-400">কোর্স ফি:</span>
-                    <span class="text-teal-400 font-black text-sm">৳ ১৪৯ (এককালীন)</span>
+                    <span class="text-teal-400 font-black text-sm">৳ ১৯৯ (এককালীন)</span>
                 </div>
             </div>
 

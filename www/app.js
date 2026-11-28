@@ -683,6 +683,7 @@ window.handleAppHardwareBack = function() {
 };
 
 function switchLevel(lvl) {
+
     currentLevel        = lvl;
     currentChapterIndex = 0;
 
@@ -710,6 +711,16 @@ function switchLevel(lvl) {
         select.value = 0;
     }
     renderChapterData();
+
+    const tabMcqBtn = document.getElementById('tab-mcq-master');
+    if (tabMcqBtn) {
+        if (lvl === 'class8') {
+            tabMcqBtn.innerHTML = '<i class="fa-solid fa-crown text-amber-500 mr-1.5"></i> ৮ম বিজ্ঞান MCQ Master (৭২টি টেস্ট)';
+        } else {
+            tabMcqBtn.innerHTML = '<i class="fa-solid fa-crown text-amber-500 mr-1.5"></i> MCQ Master Course (৯০টি টেস্ট)';
+        }
+    }
+
     switchTab('basic');
     openClassroomView();
 }
@@ -1321,7 +1332,10 @@ function getLabSimulationUrl(labId, embed = false) {
 
 function getLabsForChapter(level, chapterIdx) {
     const levelMap = LEVEL_CHAPTER_LAB_MAP[level] || LEVEL_CHAPTER_LAB_MAP['ssc'];
-    const labIds = levelMap[chapterIdx] || ["motion", "energy"];
+    let labIds = levelMap ? levelMap[chapterIdx] : null;
+    if (!labIds || !labIds.length) {
+        labIds = ["density", "energy", "motion"];
+    }
     return labIds.map(id => ALL_PHYSICS_LABS[id]).filter(Boolean);
 }
 
@@ -1334,6 +1348,7 @@ function renderChapterSimulation(preferredLabId = null) {
     const chap = getCurrentChap();
     const levelInfo = APP_DATA[currentLevel] || APP_DATA['ssc'];
     const assignedLabs = getLabsForChapter(currentLevel, currentChapterIndex);
+    const hasFullAccess = hasFullSimulationAccess(currentLevel);
 
     let displayLabs = [...assignedLabs];
     if (preferredLabId && ALL_PHYSICS_LABS[preferredLabId]) {
@@ -1345,11 +1360,16 @@ function renderChapterSimulation(preferredLabId = null) {
         activeViewingLabId = displayLabs[0].id;
     }
 
+    // Check if the currently active lab is locked for this user
+    const activeLabIdx = displayLabs.findIndex(l => l.id === activeViewingLabId);
+    const isActiveLabLocked = (!hasFullAccess && activeLabIdx > 0);
+
     const activeLab = ALL_PHYSICS_LABS[activeViewingLabId] || displayLabs[0];
 
     // Build tab buttons for the current chapter's labs
     const tabsHtml = displayLabs.map((lab, idx) => {
         const isActive = lab.id === activeLab.id;
+        const isLabLocked = (!hasFullAccess && idx > 0);
         const activeClass = "px-3.5 py-2 rounded-xl text-xs font-bold bg-teal-600 text-white shadow-sm transition flex items-center gap-2 whitespace-nowrap";
         const inactiveClass = "px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 transition flex items-center gap-2 whitespace-nowrap";
         const numBg = isActive ? "bg-white/20 text-white" : "bg-white text-slate-600 border border-slate-200";
@@ -1357,6 +1377,7 @@ function renderChapterSimulation(preferredLabId = null) {
             <button id="study-sim-tab-${idx + 1}" onclick="switchStudySimulationLab('${lab.id}', ${idx + 1})" class="${isActive ? activeClass : inactiveClass}">
                 <span class="w-5 h-5 rounded-md ${numBg} text-[10px] flex items-center justify-center font-mono font-bold">${String(lab.num).padStart(2, '0')}</span>
                 <span>${lab.title}</span>
+                ${isLabLocked ? '<i class="fa-solid fa-lock text-[10px] text-amber-500 ml-1"></i>' : ''}
             </button>
         `;
     }).join('');
@@ -1371,6 +1392,8 @@ function renderChapterSimulation(preferredLabId = null) {
     const cardsHtml = displayLabs.map((lab, idx) => {
         const labUrl = getLabSimulationUrl(lab.id, false);
         const isCurrent = lab.id === activeLab.id;
+        const isLabLocked = (!hasFullAccess && idx > 0);
+
         return `
             <div class="p-4 rounded-2xl ${isCurrent ? 'bg-teal-50/50 border-teal-300 ring-1 ring-teal-300' : 'bg-slate-50 border-slate-200'} border space-y-2 flex flex-col justify-between transition">
                 <div class="space-y-1.5">
@@ -1380,15 +1403,23 @@ function renderChapterSimulation(preferredLabId = null) {
                             ${lab.title}
                         </span>
                         <div class="flex items-center gap-2">
-                            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-200 text-slate-700">${lab.cat}</span>
-                            <a href="${labUrl}" target="_blank" class="text-[11px] font-bold text-teal-600 hover:underline">নতুন ট্যাব ↗</a>
+                            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full ${isLabLocked ? 'bg-amber-100 text-amber-800 border border-amber-200' : 'bg-slate-200 text-slate-700'}">
+                                ${isLabLocked ? '🔒 প্রিমিয়াম' : lab.cat}
+                            </span>
+                            ${!isLabLocked ? `<a href="${labUrl}" target="_blank" class="text-[11px] font-bold text-teal-600 hover:underline">নতুন ট্যাব ↗</a>` : ''}
                         </div>
                     </div>
                     <p class="text-xs text-slate-500">${lab.sub}</p>
                 </div>
-                <button onclick="switchStudySimulationLab('${lab.id}', ${idx + 1})" class="w-full py-1.5 px-3 rounded-xl ${isCurrent ? 'bg-teal-600 text-white font-black' : 'bg-white hover:bg-teal-50 border border-slate-200 text-slate-700 font-bold'} text-xs transition">
-                    ${isCurrent ? '✓ বর্তমানে চলছে' : 'এই ল্যাবটি স্ক্রিনে চালু করুন'}
-                </button>
+                ${!isLabLocked ? `
+                    <button onclick="switchStudySimulationLab('${lab.id}', ${idx + 1})" class="w-full py-1.5 px-3 rounded-xl ${isCurrent ? 'bg-teal-600 text-white font-black' : 'bg-white hover:bg-teal-50 border border-slate-200 text-slate-700 font-bold'} text-xs transition">
+                        ${isCurrent ? '✓ বর্তমানে চলছে' : 'এই ল্যাবটি স্ক্রিনে চালু করুন'}
+                    </button>
+                ` : `
+                    <button onclick="openRelevantCourseForLevel(currentLevel)" class="w-full py-1.5 px-3 rounded-xl bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-slate-950 font-black text-xs transition flex items-center justify-center gap-1.5 shadow-sm">
+                        <i class="fa-solid fa-lock"></i> <span>কোর্স কিনে আনলক করুন</span>
+                    </button>
+                `}
             </div>
         `;
     }).join('');
@@ -1402,6 +1433,9 @@ function renderChapterSimulation(preferredLabId = null) {
                         <span class="px-2.5 py-0.5 rounded-md bg-blue-50 text-blue-700 font-bold text-[11px] border border-blue-200">${levelInfo.gradeTag}</span>
                         <span class="px-2.5 py-0.5 rounded-md bg-teal-50 text-teal-700 font-bold text-[11px] border border-teal-200">${chap.title.split(':')[0]}</span>
                         <span class="text-xs font-bold text-slate-400">ভার্চুয়াল ল্যাবরেটরি</span>
+                        ${hasFullAccess 
+                            ? '<span class="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-bold"><i class="fa-solid fa-unlock mr-1"></i> ফুল ল্যাব আনলকড</span>'
+                            : '<span class="px-2 py-0.5 rounded-md bg-amber-50 text-amber-700 border border-amber-200 text-[10px] font-bold"><i class="fa-solid fa-gift mr-1"></i> ১ম ল্যাব ফ্রি মোড</span>'}
                     </div>
                     <h3 class="text-lg sm:text-xl font-bold text-slate-900">${chap.title} — ইন্টারেক্টিভ সিমুলেশন ল্যাব</h3>
                 </div>
@@ -1415,9 +1449,11 @@ function renderChapterSimulation(preferredLabId = null) {
                         </select>
                     </div>
 
-                    <a id="study-sim-fs-btn" href="${getLabSimulationUrl(activeLab.id, false)}" target="_blank" class="px-3.5 py-2 rounded-xl bg-teal-50 hover:bg-teal-100 text-teal-700 text-xs font-bold border border-teal-200 transition flex items-center gap-1.5 shadow-sm">
-                        <i class="fa-solid fa-up-right-and-down-left-from-center"></i> <span>পূর্ণ পর্দায় খুলুন ↗</span>
-                    </a>
+                    ${!isActiveLabLocked ? `
+                        <a id="study-sim-fs-btn" href="${getLabSimulationUrl(activeLab.id, false)}" target="_blank" class="px-3.5 py-2 rounded-xl bg-teal-50 hover:bg-teal-100 text-teal-700 text-xs font-bold border border-teal-200 transition flex items-center gap-1.5 shadow-sm">
+                            <i class="fa-solid fa-up-right-and-down-left-from-center"></i> <span>পূর্ণ পর্দায় খুলুন ↗</span>
+                        </a>
+                    ` : ''}
                     
                     <button onclick="openAllLabsCatalogModal()" class="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
                         <i class="fa-solid fa-flask text-teal-400"></i> <span>সকল ২৬টি ল্যাব 🔍</span>
@@ -1430,9 +1466,29 @@ function renderChapterSimulation(preferredLabId = null) {
                 ${tabsHtml}
             </div>
 
-            <!-- Interactive Iframe -->
+            <!-- Interactive Screen or Locked Banner -->
             <div class="relative w-full rounded-2xl overflow-hidden border border-slate-200 bg-[#08111d] shadow-inner">
-                <iframe id="study-simulation-iframe" src="${getLabSimulationUrl(activeLab.id, true)}" title="${activeLab.title}" class="w-full h-[600px] sm:h-[700px] lg:h-[760px] border-0 bg-[#08111d]" allow="fullscreen; clipboard-write"></iframe>
+                ${!isActiveLabLocked ? `
+                    <iframe id="study-simulation-iframe" src="${getLabSimulationUrl(activeLab.id, true)}" title="${activeLab.title}" class="w-full h-[600px] sm:h-[700px] lg:h-[760px] border-0 bg-[#08111d]" allow="fullscreen; clipboard-write"></iframe>
+                ` : `
+                    <div class="w-full h-[450px] sm:h-[550px] flex flex-col items-center justify-center p-6 text-center text-white bg-slate-900 space-y-4">
+                        <div class="w-16 h-16 rounded-3xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-3xl border border-amber-500/30">
+                            <i class="fa-solid fa-lock"></i>
+                        </div>
+                        <h4 class="text-xl font-black text-white">${activeLab.title} — প্রিমিয়াম সিমুলেশন</h4>
+                        <p class="text-xs sm:text-sm text-slate-300 max-w-md leading-relaxed">
+                            প্রতিটি অধ্যায়ের ১ম ল্যাবটি আজীবন উন্মুক্ত। এই অধ্যায়ের অতিরিক্ত ও প্রিমিয়াম ল্যাবগুলো চালাতে ${currentLevel === 'class8' ? 'অষ্টম শ্রেণি বিজ্ঞান কোর্স' : 'এসএসসি কোর্স'} অথবা সিমুলেশন ল্যাব কোর্সে এনরোল করুন।
+                        </p>
+                        <div class="flex items-center gap-3 pt-2">
+                            <button onclick="openRelevantCourseForLevel(currentLevel)" class="px-6 py-3 rounded-xl bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-slate-950 font-black text-xs sm:text-sm transition shadow-lg flex items-center gap-2">
+                                <i class="fa-solid fa-bolt"></i> এখনই আনলক করুন (৳ ১৯৯)
+                            </button>
+                            <button onclick="switchStudySimulationLab('${displayLabs[0].id}', 1)" class="px-5 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs sm:text-sm font-bold border border-slate-700 transition">
+                                ১ম ফ্রি ল্যাব দেখুন
+                            </button>
+                        </div>
+                    </div>
+                `}
             </div>
 
             <!-- Labs Details Grid -->
@@ -1448,12 +1504,14 @@ function renderChapterSimulation(preferredLabId = null) {
                     </div>
                     <div>
                         <h4 class="text-xs sm:text-sm font-bold text-slate-900">সকল অধ্যায়ের ২৬টি হ্যান্ডস-অন ল্যাবরেটরি লাইব্রেরি</h4>
-                        <p class="text-[11px] text-slate-500">মেকানিক্স, তাপগতিবিদ্যা, আলো, আধুনিক পদার্থবিজ্ঞান ও ইলেকট্রনিক্সের সব সিমুলেশন ফ্রি ব্যবহার করুন।</p>
+                        <p class="text-xs text-slate-500">অষ্টম শ্রেণি বা এসএসসি-র যেকোনো একটি কোর্স কেনা থাকলেই পুরো ল্যাব উন্মুক্ত।</p>
                     </div>
                 </div>
-                <button onclick="openAllLabsCatalogModal()" class="px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white font-bold rounded-xl text-xs transition whitespace-nowrap shadow-sm">
-                    সব ল্যাব দেখুন ও চালান ➔
-                </button>
+                <div class="flex items-center gap-2 w-full sm:w-auto">
+                    <button onclick="openRelevantCourseForLevel(currentLevel)" class="w-full sm:w-auto px-4 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs transition whitespace-nowrap shadow-xs">
+                        ল্যাব কোর্স অফার (৳ ১৯৯)
+                    </button>
+                </div>
             </div>
         </div>
     `;
@@ -1968,7 +2026,8 @@ let examActiveStartTime = 0;
 
 function renderChapterExamSets() {
     const chapNum = currentChapterIndex + 1;
-    const chapData = (currentLevel === 'class8' && window.CLASS8_EXAM_BANK) 
+    const isClass8 = (currentLevel === 'class8');
+    const chapData = (isClass8 && window.CLASS8_EXAM_BANK) 
         ? window.CLASS8_EXAM_BANK[chapNum] 
         : ((window.SSC_EXAM_BANK && window.SSC_EXAM_BANK[chapNum]) || null);
     
@@ -1998,7 +2057,6 @@ function renderChapterExamSets() {
     if (chapData && chapData.sets && chapData.sets.length) {
         sets = chapData.sets;
     } else {
-        // Structured placeholder sets for upcoming chapters
         sets = [
             { id: "set1", setNum: 1, title: "সেট ০১: সহজ (জ্ঞান ও অনুধাবন)", difficulty: "সহজ", badgeColor: "emerald", qCount: 15, timeMinutes: 15, fullMarks: 15, desc: "মৌলিক সংজ্ঞা, একক ও সূত্রের প্রাথমিক ধারণা।" },
             { id: "set2", setNum: 2, title: "সেট ০২: সহজ-মাঝারি (বেসিক প্রয়োগ)", difficulty: "সহজ-মাঝারি", badgeColor: "blue", qCount: 15, timeMinutes: 15, fullMarks: 15, desc: "সাধারণ গাণিতিক সমস্যা ও সম্পর্ক যাচাই।" },
@@ -2011,6 +2069,8 @@ function renderChapterExamSets() {
     const totalQs = sets.reduce((acc, s) => acc + (s.questions ? s.questions.length : s.qCount), 0);
     if (totalBadge) totalBadge.textContent = `${totalQs}টি MCQ`;
 
+    const isEnrolled = isStudentCourseEnrolled(currentLevel);
+
     const colorClasses = {
         emerald: { bg: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
         blue:    { bg: 'bg-blue-50 text-blue-700 border-blue-200' },
@@ -2019,24 +2079,28 @@ function renderChapterExamSets() {
         rose:    { bg: 'bg-rose-50 text-rose-700 border-rose-200' }
     };
 
-    gridEl.innerHTML = sets.map((s) => {
+    gridEl.innerHTML = sets.map((s, sIdx) => {
         const c = colorClasses[s.badgeColor] || colorClasses.blue;
-        const savedScoreKey = `ssc_exam_score_ch${chapNum}_${s.id}`;
+        const savedScoreKey = isClass8 ? `c8_score_ch${chapNum}_${s.id}` : `ssc_exam_score_ch${chapNum}_${s.id}`;
         const savedScore = localStorage.getItem(savedScoreKey);
 
+        // Rule: ONLY Set 1 is free for guests. Sets 2 to 5 require course enrollment!
+        const isFreeSet = (sIdx === 0 || s.id === 'set1');
+        const canTakeExam = isEnrolled || isFreeSet;
+
         return `
-            <div class="p-5 rounded-3xl bg-slate-50/70 hover:bg-white border border-slate-200 hover:border-blue-400 hover:shadow-md transition space-y-4 flex flex-col justify-between group">
+            <div class="p-5 rounded-3xl bg-slate-50/70 hover:bg-white border ${canTakeExam ? 'border-slate-200 hover:border-blue-400' : 'border-slate-200/80 opacity-90'} hover:shadow-md transition space-y-4 flex flex-col justify-between group">
                 <div class="space-y-3">
                     <div class="flex items-center justify-between">
-                        <span class="px-2.5 py-0.5 rounded-lg text-xs font-bold ${c.bg} border">
-                            ${s.difficulty}
+                        <span class="px-2.5 py-0.5 rounded-lg text-xs font-bold ${isFreeSet ? 'bg-emerald-50 text-emerald-700 border-emerald-200 border' : (isEnrolled ? 'bg-blue-50 text-blue-700 border-blue-200 border' : 'bg-amber-50 text-amber-800 border-amber-200 border')}">
+                            ${isFreeSet ? '✓ ফ্রি ট্রায়াল সেট' : (isEnrolled ? s.difficulty : '🔒 প্রিমিয়াম সেট')}
                         </span>
                         ${savedScore !== null ? `
                             <span class="text-[11px] font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-md border border-blue-200">
                                 সেরা স্কোর: ${savedScore}/${s.fullMarks}
                             </span>
                         ` : `
-                            <span class="text-[11px] text-slate-400 font-semibold">নতুন সেট</span>
+                            <span class="text-[11px] text-slate-400 font-semibold">${s.difficulty}</span>
                         `}
                     </div>
 
@@ -2058,9 +2122,15 @@ function renderChapterExamSets() {
                     </div>
                 </div>
 
-                <button onclick="startChapterExamSet('${s.id}')" class="w-full py-2.5 px-4 bg-white group-hover:bg-blue-600 group-hover:text-white border border-slate-200 group-hover:border-blue-600 rounded-xl text-xs font-bold text-slate-800 transition flex items-center justify-center gap-2 shadow-sm">
-                    <span>পরীক্ষা শুরু করুন</span> <i class="fa-solid fa-arrow-right text-[11px]"></i>
-                </button>
+                ${canTakeExam ? `
+                    <button onclick="startChapterExamSet('${s.id}')" class="w-full py-2.5 px-4 bg-white group-hover:bg-blue-600 group-hover:text-white border border-slate-200 group-hover:border-blue-600 rounded-xl text-xs font-bold text-slate-800 transition flex items-center justify-center gap-2 shadow-sm">
+                        <span>পরীক্ষা শুরু করুন</span> <i class="fa-solid fa-arrow-right text-[11px]"></i>
+                    </button>
+                ` : `
+                    <button onclick="promptCourseUnlockForExam(currentLevel, '${s.id}')" class="w-full py-2.5 px-4 bg-slate-100 hover:bg-amber-500 hover:text-slate-950 border border-slate-200 text-slate-700 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 shadow-xs">
+                        <i class="fa-solid fa-lock text-[11px]"></i> <span>আনলক করতে এনরোল করুন (৳ ১৯৯)</span>
+                    </button>
+                `}
             </div>
         `;
     }).join('');
@@ -3001,6 +3071,14 @@ function renderGlobalAggregatorContent() {
 
 function goToSpecificChapterAndTab(lvl, chapIdx, tabKey) {
     currentLevel = lvl;
+    const tabMcqBtn = document.getElementById('tab-btn-mcq-master') || document.querySelector('[onclick*="mcq-master"]');
+    if (tabMcqBtn) {
+        if (lvl === 'class8') {
+            tabMcqBtn.innerHTML = '<i class="fa-solid fa-crown text-amber-400 mr-1.5"></i> ৮ম বিজ্ঞান MCQ Master (৭২টি টেস্ট)';
+        } else {
+            tabMcqBtn.innerHTML = '<i class="fa-solid fa-crown text-amber-400 mr-1.5"></i> MCQ Master Course (৯০টি টেস্ট)';
+        }
+    }
     currentChapterIndex = chapIdx;
 
     const select = document.getElementById('chapter-select');
@@ -3759,10 +3837,28 @@ let antiCheatViolationCount = 0;
 let antiCheatHandlerBound = false;
 
 function initMasterCourseHub() {
-    if (!window.MCQ_MASTER) return;
-
+    const isClass8 = (typeof currentLevel !== 'undefined' && currentLevel === 'class8');
     const student = (typeof getActiveStudentSession === 'function') ? getActiveStudentSession() : null;
-    const isEnrolled = window.MCQ_MASTER.isStudentEnrolled(student ? student.id : null);
+    const studentIdOrPhone = student ? (student.phone || student.id) : null;
+
+    const courseObj = isClass8 ? window.C8_MCQ_MASTER : window.MCQ_MASTER;
+    if (!courseObj) return;
+
+    const isEnrolled = courseObj.isStudentEnrolled(studentIdOrPhone);
+
+    // Update hub title & subtitle
+    const hubTitleEl = document.querySelector('#master-course-hub h2');
+    const hubSubEl = document.querySelector('#master-course-hub p');
+    if (hubTitleEl) {
+        hubTitleEl.innerHTML = isClass8
+            ? '<i class="fa-solid fa-crown text-amber-500"></i> ৮ম শ্রেণি বিজ্ঞান MCQ Master Course'
+            : '<i class="fa-solid fa-crown text-amber-500"></i> SSC Physics MCQ Master Course';
+    }
+    if (hubSubEl) {
+        hubSubEl.textContent = isClass8
+            ? '৭২টি স্পেশাল মডেল টেস্ট • ১,৪৭০টি প্রশ্ন • ১৪টি অধ্যায় সম্পূর্ণ • সেট ০১ সবার জন্য ফ্রি ট্রায়াল'
+            : '৯০টি স্পেশাল মডেল টেস্ট • ১,৩৬৫টি প্রশ্ন • বোর্ড স্ট্যান্ডার্ড ওএমআর প্র্যাকটিস';
+    }
 
     // Update status badge
     const badge = document.getElementById('mcq-enrollment-status-badge');
@@ -3770,25 +3866,43 @@ function initMasterCourseHub() {
     if (badge) {
         if (isEnrolled) {
             badge.className = "px-2.5 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-bold flex items-center gap-1.5";
-            badge.innerHTML = '<i class="fa-solid fa-circle-check"></i> এনরোল্ড (৯০টি পরীক্ষা আনলকড)';
+            badge.innerHTML = isClass8
+                ? '<i class="fa-solid fa-circle-check"></i> এনরোল্ড (৭২টি পরীক্ষা আনলকড)'
+                : '<i class="fa-solid fa-circle-check"></i> এনরোল্ড (৯০টি পরীক্ষা আনলকড)';
         } else {
             badge.className = "px-2.5 py-0.5 rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-bold flex items-center gap-1.5";
-            badge.innerHTML = '<i class="fa-solid fa-lock"></i> ফ্রি ট্রায়াল মোড (সেট ০১ উন্মুক্ত)';
+            badge.innerHTML = isClass8
+                ? '<i class="fa-solid fa-lock"></i> ফ্রি ট্রায়াল মোড (১৪টি অধ্যায়ের সেট ০১ উন্মুক্ত)'
+                : '<i class="fa-solid fa-lock"></i> ফ্রি ট্রায়াল মোড (সেট ০১ উন্মুক্ত)';
         }
     }
 
-    if (actionCard && isEnrolled) {
-        actionCard.innerHTML = `
-            <div class="space-y-1">
-                <span class="text-xs text-emerald-400 font-bold block flex items-center gap-1.5">
-                    <i class="fa-solid fa-circle-check text-emerald-400"></i> কোর্স অ্যাক্টিভেশন সম্পন্ন
-                </span>
-                <p class="text-[11px] text-slate-300">আপনি সকল অধ্যায়, সমন্বিত টেস্ট ও ফাইনাল মক টেস্টে সম্পূর্ণ আনলিমিটেড অ্যাক্সেস পেয়েছেন।</p>
-            </div>
-            <div class="px-3 py-2 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-xs text-emerald-300 font-bold text-center">
-                Master Member Verified
-            </div>
-        `;
+    if (actionCard) {
+        if (isEnrolled) {
+            actionCard.innerHTML = `
+                <div class="space-y-1">
+                    <span class="text-xs text-emerald-400 font-bold block flex items-center gap-1.5">
+                        <i class="fa-solid fa-circle-check text-emerald-400"></i> কোর্স অ্যাক্টিভেশন সম্পন্ন
+                    </span>
+                    <p class="text-[11px] text-slate-300">আপনি ${isClass8 ? 'অষ্টম শ্রেণি বিজ্ঞানের' : 'এসএসসি পদার্থবিজ্ঞানের'} সকল অধ্যায় ও ফাইনাল মক টেস্টে সম্পূর্ণ আনলিমিটেড অ্যাক্সেস পেয়েছেন।</p>
+                </div>
+                <div class="px-3 py-2 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-xs text-emerald-300 font-bold text-center">
+                    Master Member Verified
+                </div>
+            `;
+        } else {
+            actionCard.innerHTML = `
+                <div class="space-y-1">
+                    <span class="text-xs text-amber-400 font-bold block flex items-center gap-1.5">
+                        <i class="fa-solid fa-crown text-amber-400"></i> ${isClass8 ? '৮ম শ্রেণি বিজ্ঞান' : 'এসএসসি পদার্থবিজ্ঞান'} ফুল কোর্স আনলক করুন
+                    </span>
+                    <p class="text-[11px] text-slate-300">এককালীন মাত্র ৳ ১৯৯ (৬৪% অফার)। কোর্স এনরোল করলে সাথে সিমুলেশন ল্যাব কোর্স ১০০% ফ্রি!</p>
+                </div>
+                <button onclick="${isClass8 ? 'openClass8EnrollModal()' : 'openEnrollModal()'}" class="px-5 py-2.5 bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-slate-950 font-black rounded-xl text-xs transition shadow-lg flex items-center justify-center gap-1.5 whitespace-nowrap">
+                    <i class="fa-solid fa-bolt"></i> এনরোল করুন (৳ ১৯৯)
+                </button>
+            `;
+        }
     }
 
     renderMasterExamsGrid(currentMasterExamFilter);
@@ -3810,31 +3924,37 @@ function filterMasterExams(filterKey) {
 
 function renderMasterExamsGrid(filterKey) {
     const grid = document.getElementById('mcq-master-exams-grid');
-    if (!grid || !window.MCQ_MASTER) return;
+    if (!grid) return;
+
+    const isClass8 = (typeof currentLevel !== 'undefined' && currentLevel === 'class8');
+    const courseObj = isClass8 ? window.C8_MCQ_MASTER : window.MCQ_MASTER;
+    if (!courseObj) return;
 
     const student = (typeof getActiveStudentSession === 'function') ? getActiveStudentSession() : null;
-    const isEnrolled = window.MCQ_MASTER.isStudentEnrolled(student ? student.id : null);
-    const allExams = window.MCQ_MASTER.getAllExamDefinitions();
+    const studentIdOrPhone = student ? (student.phone || student.id) : null;
+    const isEnrolled = courseObj.isStudentEnrolled(studentIdOrPhone);
+    const allExams = courseObj.getAllExamDefinitions();
 
     let filtered = allExams;
     if (filterKey === 'free') {
         filtered = allExams.filter(e => e.isFree);
     } else if (filterKey === 'chapter') {
         filtered = allExams.filter(e => e.type === 'chapter');
-    } else if (filterKey === 'part3') {
-        filtered = allExams.filter(e => e.type === 'part3');
-    } else if (filterKey === 'part2') {
-        filtered = allExams.filter(e => e.type === 'part2');
+    } else if (filterKey === 'part3' || filterKey === 'part2') {
+        filtered = allExams.filter(e => e.type === 'part3' || e.type === 'part2' || e.type === 'part');
     } else if (filterKey === 'full_book') {
         filtered = allExams.filter(e => e.type === 'full_book');
     }
 
     grid.innerHTML = filtered.map(exam => {
         const canAccess = isEnrolled || exam.isFree;
-        const savedScoreKey = `mcq_master_score_${exam.id}`;
+        const savedScoreKey = isClass8 ? `c8_mcq_score_${exam.id}` : `mcq_master_score_${exam.id}`;
         const savedScore = localStorage.getItem(savedScoreKey);
 
         const badgeColor = exam.isFree ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : (isEnrolled ? 'bg-blue-50 text-blue-700 border-blue-200' : 'bg-slate-100 text-slate-600 border-slate-300');
+
+        const startFnName = isClass8 ? 'startClass8MasterCourseExam' : 'startMasterCourseExam';
+        const enrollFnName = isClass8 ? 'openClass8EnrollModal()' : 'openEnrollModal()';
 
         return `
             <div class="p-5 rounded-3xl bg-slate-50/70 hover:bg-white border ${canAccess ? 'border-slate-200 hover:border-blue-400' : 'border-slate-200/80 opacity-90'} hover:shadow-md transition space-y-4 flex flex-col justify-between group">
@@ -3848,7 +3968,7 @@ function renderMasterExamsGrid(filterKey) {
                                 সেরা: ${savedScore}/${exam.fullMarks}
                             </span>
                         ` : `
-                            <span class="text-[10px] text-slate-400 font-semibold">${exam.category}</span>
+                            <span class="text-[10px] text-slate-400 font-semibold">${exam.category || ''}</span>
                         `}
                     </div>
 
@@ -3872,11 +3992,11 @@ function renderMasterExamsGrid(filterKey) {
 
                 <div>
                     ${canAccess ? `
-                        <button onclick="startMasterCourseExam('${exam.id}')" class="w-full py-2.5 px-4 bg-white group-hover:bg-blue-600 group-hover:text-white border border-slate-200 group-hover:border-blue-600 rounded-xl text-xs font-bold text-slate-800 transition flex items-center justify-center gap-2 shadow-xs">
+                        <button onclick="${startFnName}('${exam.id}')" class="w-full py-2.5 px-4 bg-white group-hover:bg-blue-600 group-hover:text-white border border-slate-200 group-hover:border-blue-600 rounded-xl text-xs font-bold text-slate-800 transition flex items-center justify-center gap-2 shadow-xs">
                             <i class="fa-solid fa-play text-[11px]"></i> <span>পরীক্ষা শুরু করুন</span>
                         </button>
                     ` : `
-                        <button onclick="openEnrollModal()" class="w-full py-2.5 px-4 bg-slate-100 hover:bg-amber-500 hover:text-slate-950 border border-slate-200 text-slate-600 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 shadow-xs">
+                        <button onclick="${enrollFnName}" class="w-full py-2.5 px-4 bg-slate-100 hover:bg-amber-500 hover:text-slate-950 border border-slate-200 text-slate-600 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 shadow-xs">
                             <i class="fa-solid fa-lock text-[11px]"></i> <span>আনলক করতে এনরোল করুন (৳ ১৯৯)</span>
                         </button>
                     `}
@@ -4290,3 +4410,25 @@ function handleClass8EnrollSubmit(e) {
         closeClass8EnrollModal();
     }
 }
+
+// Direct navigation helpers for Class 8
+function openClass8MasterCourseHub() {
+    if (typeof switchLevel === 'function') switchLevel('class8');
+    if (typeof openClassroomView === 'function') openClassroomView(false);
+    if (typeof switchTab === 'function') switchTab('mcq-master');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function openClass8Simulation(chapterIdx) {
+    if (typeof switchLevel === 'function') switchLevel('class8');
+    if (typeof selectChapter === 'function') {
+        selectChapter(chapterIdx !== undefined ? chapterIdx : 0);
+    } else {
+        currentChapterIndex = chapterIdx !== undefined ? chapterIdx : 0;
+    }
+    if (typeof openClassroomView === 'function') openClassroomView(false);
+    if (typeof switchTab === 'function') switchTab('simulation');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+window.openClass8MasterCourseHub = openClass8MasterCourseHub;
+window.openClass8Simulation = openClass8Simulation;

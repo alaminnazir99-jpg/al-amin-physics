@@ -16,8 +16,8 @@
     const C8_MCQ_CONFIG = {
         courseId: 'class8-science-mcq-master',
         courseName: 'অষ্টম শ্রেণি বিজ্ঞান MCQ Master Course',
-        regularPrice: 350,
-        launchPrice: 149,
+        regularPrice: 550,
+        launchPrice: 199,
         merchantNumber: '01896464903',
         totalExams: 72,
         totalQuestionsPool: 1470,
